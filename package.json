@@ -1,0 +1,18 @@
+{
+  "name": "h1-homework-helper",
+  "version": "1.0.0",
+  "description": "H1 — AI Homework Helper. A student homework assistant with a pluggable server-side AI provider.",
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "license": "UNLICENSED"
+}

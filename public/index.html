@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>H1 — AI Homework Helper</title>
+<meta name="color-scheme" content="dark light" />
+<meta name="theme-color" content="#0a0d14" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c5cff'/%3E%3Cstop offset='1' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Arial, sans-serif' font-weight='800' font-size='28' fill='%230a0d14' text-anchor='middle'%3EH1%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<script>
+  // Applied before first paint to avoid a flash of the wrong theme.
+  (function () {
+    try {
+      var stored = localStorage.getItem("h1-theme") || "dark";
+      var resolved = stored;
+      if (stored === "system") {
+        resolved = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", resolved === "light" ? "light" : "dark");
+    } catch (e) {
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  })();
+</script>
+</head>
+<body>
+  <div class="app" id="app">
+    <a class="skip-link" href="#mainView">Skip to content</a>
+
+    <header class="mobile-topbar">
+      <button id="menuToggle" class="icon-btn" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="brand brand-sm">
+        <span class="brand-mark">H1</span>
+        <span class="brand-name-sm">AI Homework Helper</span>
+      </div>
+      <button id="quickThemeToggle" class="icon-btn" type="button" aria-label="Toggle dark or light mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+    </header>
+
+    <div class="shell">
+      <div id="sidebarBackdrop" class="sidebar-backdrop" hidden></div>
+
+      <nav id="sidebar" class="sidebar" aria-label="Main navigation">
+        <div class="brand">
+          <span class="brand-mark">H1</span>
+          <div class="brand-text">
+            <span class="brand-name">H1</span>
+            <span class="brand-tagline">AI Homework Helper</span>
+          </div>
+          <button id="sidebarClose" class="icon-btn sidebar-close" type="button" aria-label="Close navigation menu">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <button id="commandHint" class="sidebar-command-hint" type="button" aria-label="Open quick search">
+          <span>🔍 Quick search</span>
+          <span class="command-kbd">Ctrl K</span>
+        </button>
+
+        <div class="nav-group" role="tablist" aria-label="Tools">
+          <button class="nav-item active" type="button" data-view="home" role="tab" aria-selected="true">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"></path></svg>
+            <span>Home</span>
+          </button>
+          <button class="nav-item" type="button" data-view="chat" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>Ask H1</span>
+          </button>
+          <button class="nav-item" type="button" data-view="explain" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3a6 6 0 0 0-6 6c0 1.887.83 3.05 1.757 4.05A5.7 5.7 0 0 1 9 16h6a5.7 5.7 0 0 1 1.243-2.95C17.17 12.05 18 10.887 18 9a6 6 0 0 0-6-6z"></path><path d="M9.5 20h5"></path></svg>
+            <span>Step-by-Step</span>
+          </button>
+          <button class="nav-item" type="button" data-view="quiz" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            <span>Quiz</span>
+          </button>
+          <button class="nav-item" type="button" data-view="flashcards" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="14" rx="2"></rect><path d="M7 6V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2"></path></svg>
+            <span>Flashcards</span>
+          </button>
+          <button class="nav-item" type="button" data-view="notes" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="13" y2="17"></line></svg>
+            <span>Notes</span>
+          </button>
+          <button class="nav-item" type="button" data-view="study-mode" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
+            <span>Study Mode</span>
+          </button>
+          <button class="nav-item" type="button" data-view="exam-mode" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"></path></svg>
+            <span>Exam Mode</span>
+          </button>
+          <button class="nav-item" type="button" data-view="progress" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>Progress</span>
+          </button>
+        </div>
+
+        <div class="nav-group nav-group-bottom">
+          <button class="nav-item" type="button" data-view="settings" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Settings</span>
+          </button>
+        </div>
+
+        <button id="sidebarThemeToggle" class="sidebar-theme-toggle" type="button" aria-label="Toggle dark or light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <span id="sidebarThemeLabel">Dark mode</span>
+        </button>
+
+        <div class="sidebar-status" id="sidebarStatus">
+          <span id="sidebarStatusDot" class="status-dot status-dot-pending"></span>
+          <span id="sidebarStatusText">Checking AI status…</span>
+        </div>
+      </nav>
+
+      <main id="mainView" class="main-view" tabindex="-1">
+        <div id="configBanner" class="config-banner" hidden role="alert">
+          <span id="configBannerText"></span>
+          <button id="configBannerClose" class="banner-close" type="button" aria-label="Dismiss">×</button>
+        </div>
+
+        <div class="subject-bar" id="subjectBar" role="radiogroup" aria-label="Subject">
+          <button class="chip" type="button" data-subject="general" role="radio" aria-checked="true">
+            <span class="chip-icon" aria-hidden="true">🎓</span><span>General</span>
+          </button>
+          <button class="chip" type="button" data-subject="math" role="radio" aria-checked="false">
+            <span class="chip-icon" aria-hidden="true">🧮</span><span>Math</span>
+          </button>
+          <button class="chip" type="button" data-subject="science" role="radio" aria-checked="false">
+            <span class="chip-icon" aria-hidden="true">🔬</span><span>Science</span>
+          </button>
+          <button class="chip" type="button" data-subject="english" role="radio" aria-checked="false">
+            <span class="chip-icon" aria-hidden="true">📖</span><span>English</span>
+          </button>
+          <button class="chip" type="button" data-subject="hindi" role="radio" aria-checked="false">
+            <span class="chip-icon" aria-hidden="true">अ</span><span>Hindi</span>
+          </button>
+          <button class="chip" type="button" data-subject="tamil" role="radio" aria-checked="false">
+            <span class="chip-icon" aria-hidden="true">அ</span><span>Tamil</span>
+          </button>
+        </div>
+
+        <!-- ===== Home ===== -->
+        <section id="view-home" class="view view-home" data-view-panel="home">
+          <div class="hero">
+            <h1 class="hero-greeting" id="heroGreeting">Good day 👋</h1>
+            <p class="hero-sub">What are we learning today?</p>
+
+            <form id="heroAskForm" class="hero-ask">
+              <span class="hero-ask-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              </span>
+              <input id="heroAskInput" class="hero-ask-input" type="text" placeholder="Ask H1 anything…" maxlength="4000" aria-label="Ask H1 anything" />
+              <button class="hero-ask-send" type="submit" aria-label="Ask H1">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </form>
+
+            <div class="quick-actions" id="quickActions">
+              <button class="quick-action" type="button" data-quick="explain">Explain this</button>
+              <button class="quick-action" type="button" data-quick="solve">Solve this</button>
+              <button class="quick-action" type="button" data-quick="summarize">Summarize</button>
+              <button class="quick-action" type="button" data-quick="quiz">Make a quiz</button>
+              <button class="quick-action" type="button" data-quick="flashcards">Make flashcards</button>
+              <button class="quick-action" type="button" data-quick="examples">Give me examples</button>
+              <button class="quick-action" type="button" data-quick="simple">Explain simply</button>
+              <button class="quick-action" type="button" data-quick="revise">Help me revise</button>
+            </div>
+          </div>
+
+          <div class="section-heading"><h2>Your progress</h2></div>
+          <div id="homeProgressWidget" class="home-progress-widget"></div>
+
+          <div class="section-heading"><h2>Main tools</h2></div>
+          <div class="tool-grid">
+            <button class="tool-card" type="button" data-open-view="chat">
+              <span class="tool-icon">💬</span>
+              <span class="tool-title">Ask H1</span>
+              <span class="tool-desc">Chat about any homework question and get a clear, step-by-step explanation.</span>
+            </button>
+            <button class="tool-card" type="button" data-open-view="explain">
+              <span class="tool-icon">🧠</span>
+              <span class="tool-title">Step-by-Step</span>
+              <span class="tool-desc">Break a tricky problem into clear, numbered steps you can follow.</span>
+            </button>
+            <button class="tool-card" type="button" data-open-view="quiz">
+              <span class="tool-icon">📝</span>
+              <span class="tool-title">Quiz</span>
+              <span class="tool-desc">Test yourself with a quick multiple-choice quiz on any topic.</span>
+            </button>
+            <button class="tool-card" type="button" data-open-view="flashcards">
+              <span class="tool-icon">🗂️</span>
+              <span class="tool-title">Flashcards</span>
+              <span class="tool-desc">Turn any topic into flippable flashcards you can review anytime.</span>
+            </button>
+          </div>
+
+          <div class="section-heading"><h2>More study tools</h2></div>
+          <div class="tool-grid-secondary">
+            <button class="tool-card-sm" type="button" data-open-view="summarize">
+              <span class="tool-card-sm-icon">📄</span>
+              <span class="tool-card-sm-text">
+                <span class="tool-card-sm-title">Summarize</span>
+                <span class="tool-card-sm-desc">Paste text, get key points</span>
+              </span>
+            </button>
+            <button class="tool-card-sm" type="button" data-open-view="practice">
+              <span class="tool-card-sm-icon">✍️</span>
+              <span class="tool-card-sm-text">
+                <span class="tool-card-sm-title">Practice Questions</span>
+                <span class="tool-card-sm-desc">Short-answer practice</span>
+              </span>
+            </button>
+            <button class="tool-card-sm" type="button" data-open-view="study-plan">
+              <span class="tool-card-sm-icon">🗓️</span>
+              <span class="tool-card-sm-text">
+                <span class="tool-card-sm-title">Study Plan</span>
+                <span class="tool-card-sm-desc">A plan for your study time</span>
+              </span>
+            </button>
+            <button class="tool-card-sm" type="button" data-open-view="vocabulary">
+              <span class="tool-card-sm-icon">🔤</span>
+              <span class="tool-card-sm-text">
+                <span class="tool-card-sm-title">Vocabulary</span>
+                <span class="tool-card-sm-desc">Word meanings & examples</span>
+              </span>
+            </button>
+            <button class="tool-card-sm" type="button" data-open-view="notes">
+              <span class="tool-card-sm-icon">📝</span>
+              <span class="tool-card-sm-text">
+                <span class="tool-card-sm-title">Notes</span>
+                <span class="tool-card-sm-desc">Your private study notes</span>
+              </span>
+            </button>
+            <button class="tool-card-sm" type="button" data-open-view="study-mode">
+              <span class="tool-card-sm-icon">⏱️</span>
+              <span class="tool-card-sm-text">
+                <span class="tool-card-sm-title">Study Mode</span>
+                <span class="tool-card-sm-desc">A focused study timer</span>
+              </span>
+            </button>
+          </div>
+        </section>
+
+        <!-- ===== Chat ===== -->
+        <section id="view-chat" class="view view-chat" data-view-panel="chat" hidden>
+          <div class="view-header">
+            <div>
+              <h1 id="chatTitle">Ask H1</h1>
+              <p class="view-sub">H1 remembers this conversation while you chat.</p>
+            </div>
+            <div class="view-actions">
+              <select id="chatModeSelect" class="mode-select" aria-label="AI tutor mode"></select>
+              <button id="historyBtn" class="btn btn-ghost" type="button" title="Conversation history">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
+                <span>History</span>
+              </button>
+              <button id="newChatBtn" class="btn btn-ghost" type="button" title="New conversation">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>New</span>
+              </button>
+              <button id="clearChatBtn" class="btn btn-ghost" type="button" title="Clear conversation">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <span>Clear</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="chatLog" class="chat-log" aria-live="polite">
+            <div id="emptyState" class="empty-state">
+              <div class="empty-emoji">📚</div>
+              <h2>What are you working on today?</h2>
+              <p>Ask a question in plain words — H1 will walk you through it step by step.</p>
+            </div>
+          </div>
+
+          <div id="attachedFilePreview" class="attached-preview" hidden>
+            <img id="attachedImageThumb" alt="" hidden />
+            <span id="attachedFileLabel"></span>
+            <button id="removeAttachedFileBtn" type="button" class="icon-btn" aria-label="Remove attachment">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+
+          <form id="chatForm" class="composer-form">
+            <button id="attachImageBtn" type="button" class="icon-btn" title="Attach an image (e.g. a photo of your homework)" aria-label="Attach an image">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            </button>
+            <input type="file" id="attachImageInput" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+            <button id="attachDocBtn" type="button" class="icon-btn" title="Attach a text file" aria-label="Attach a text file">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            </button>
+            <input type="file" id="attachDocInput" accept=".txt" hidden />
+            <button id="voiceInputBtn" type="button" class="icon-btn" title="Voice input" aria-label="Voice input" hidden>
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+            </button>
+            <textarea
+              id="messageInput"
+              class="composer-input"
+              placeholder="Ask H1 a homework question…"
+              rows="1"
+              maxlength="4000"
+              autocomplete="off"
+              aria-label="Message"
+            ></textarea>
+            <button id="sendBtn" class="btn btn-send" type="submit" title="Send message" aria-label="Send message">
+              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </form>
+          <p class="composer-hint" id="composerHint">Enter to send · Shift + Enter for a new line</p>
+        </section>
+
+        <!-- ===== Step-by-Step Explainer ===== -->
+        <section id="view-explain" class="view view-explain" data-view-panel="explain" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Step-by-Step Explainer</h1>
+              <p class="view-sub">Enter a question and H1 will break it into clear, numbered steps.</p>
+            </div>
+            <div class="view-actions" id="explainViewToggle" hidden>
+              <button id="explainShowAllBtn" class="btn btn-ghost" type="button">Show all</button>
+              <button id="explainOneByOneBtn" class="btn btn-ghost" type="button" hidden>One at a time</button>
+            </div>
+          </div>
+
+          <form id="explainForm" class="tool-input-row">
+            <textarea id="explainInput" class="tool-textarea" placeholder="e.g. How do you solve 2x + 3 = 11?" rows="2" maxlength="4000" aria-label="Question to explain"></textarea>
+            <button id="explainSubmitBtn" class="btn btn-primary" type="submit">
+              <span>Explain</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </form>
+
+          <div id="explainResult" class="explain-result" aria-live="polite">
+            <div class="empty-state">
+              <div class="empty-emoji">🧠</div>
+              <h2>No explanation yet</h2>
+              <p>Type any homework question above to get a clear, step-by-step breakdown.</p>
+            </div>
+          </div>
+
+          <div class="quiz-nav" id="explainStepNav" hidden>
+            <button id="explainPrevStepBtn" class="btn btn-ghost" type="button">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span>Previous</span>
+            </button>
+            <button id="explainNextStepBtn" class="btn btn-primary" type="button">
+              <span>Next</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- ===== Quiz ===== -->
+        <section id="view-quiz" class="view view-quiz" data-view-panel="quiz" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Quiz</h1>
+              <p class="view-sub">Test yourself with a quick multiple-choice quiz on any topic.</p>
+            </div>
+          </div>
+
+          <div id="quizSetup" class="tool-panel">
+            <label class="field-label" for="quizTopic">Topic</label>
+            <input id="quizTopic" class="tool-input" type="text" placeholder="e.g. Photosynthesis" maxlength="200" />
+
+            <div class="field-row">
+              <div class="field-group">
+                <span class="field-label" id="quizDifficultyLabel">Difficulty</span>
+                <div class="segmented" id="quizDifficulty" role="radiogroup" aria-labelledby="quizDifficultyLabel">
+                  <button type="button" class="segmented-btn active" data-value="easy" role="radio" aria-checked="true">Easy</button>
+                  <button type="button" class="segmented-btn" data-value="medium" role="radio" aria-checked="false">Medium</button>
+                  <button type="button" class="segmented-btn" data-value="hard" role="radio" aria-checked="false">Hard</button>
+                </div>
+              </div>
+              <div class="field-group">
+                <span class="field-label" id="quizCountLabel">Questions</span>
+                <div class="segmented" id="quizCount" role="radiogroup" aria-labelledby="quizCountLabel">
+                  <button type="button" class="segmented-btn active" data-value="5" role="radio" aria-checked="true">5</button>
+                  <button type="button" class="segmented-btn" data-value="10" role="radio" aria-checked="false">10</button>
+                </div>
+              </div>
+            </div>
+
+            <span class="field-label" id="quizTypeLabel">Question type</span>
+            <div class="segmented segmented-wrap" id="quizType" role="radiogroup" aria-labelledby="quizTypeLabel">
+              <button type="button" class="segmented-btn active" data-value="mcq" role="radio" aria-checked="true">Multiple choice</button>
+              <button type="button" class="segmented-btn" data-value="truefalse" role="radio" aria-checked="false">True / False</button>
+              <button type="button" class="segmented-btn" data-value="shortanswer" role="radio" aria-checked="false">Short answer</button>
+              <button type="button" class="segmented-btn" data-value="mixed" role="radio" aria-checked="false">Mixed</button>
+            </div>
+
+            <label class="toggle-row">
+              <span>Timed mode (30s per question)</span>
+              <span class="toggle" id="quizTimedToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
+            </label>
+
+            <button id="quizStartBtn" class="btn btn-primary btn-block" type="button">
+              <span>Start Quiz</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+
+            <div id="quizRecent" hidden>
+              <span class="field-label">Recent quizzes</span>
+              <div class="recent-list" id="quizRecentList"></div>
+            </div>
+          </div>
+
+          <div id="quizPlay" class="quiz-play" hidden>
+            <div class="quiz-progress">
+              <div class="quiz-progress-bar"><div id="quizProgressFill" class="quiz-progress-fill"></div></div>
+              <span id="quizProgressText" class="quiz-progress-text">Question 1 of 5</span>
+            </div>
+            <div class="quiz-question-card">
+              <div class="quiz-question-top">
+                <h2 id="quizQuestionText" class="quiz-question-text"></h2>
+                <span id="quizTimer" class="quiz-timer" hidden></span>
+              </div>
+              <div id="quizOptions" class="quiz-options" role="radiogroup" aria-label="Answer options"></div>
+              <div id="quizShortAnswerWrap" class="quiz-shortanswer" hidden>
+                <input id="quizShortAnswerInput" class="tool-input" type="text" placeholder="Type your answer…" autocomplete="off" />
+                <button id="quizCheckAnswerBtn" class="btn btn-primary" type="button">Check answer</button>
+                <div id="quizSelfGrade" class="quiz-self-grade" hidden>
+                  <p id="quizModelAnswer"></p>
+                  <div class="view-actions">
+                    <button id="quizSelfWrongBtn" class="btn btn-ghost" type="button">I got it wrong</button>
+                    <button id="quizSelfRightBtn" class="btn btn-primary" type="button">I got it right</button>
+                  </div>
+                </div>
+              </div>
+              <p id="quizFeedback" class="quiz-feedback" hidden></p>
+            </div>
+            <div class="quiz-nav">
+              <button id="quizNextBtn" class="btn btn-primary" type="button" disabled>
+                <span>Next</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="quizResults" class="quiz-results" hidden>
+            <div class="quiz-score-ring" id="quizScoreRing" style="--pct:0">
+              <span id="quizScoreText">0/5</span>
+            </div>
+            <h2 id="quizResultTitle">Nice work!</h2>
+            <p id="quizResultSummary" class="view-sub"></p>
+            <div id="quizReview" class="quiz-review"></div>
+            <div class="view-actions view-actions-center">
+              <button id="quizRetryIncorrectBtn" class="btn btn-ghost" type="button" hidden>Retry incorrect only</button>
+              <button id="quizRetryBtn" class="btn btn-ghost" type="button">Retry same quiz</button>
+              <button id="quizNewBtn" class="btn btn-primary" type="button">New quiz</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Flashcards ===== -->
+        <section id="view-flashcards" class="view view-flashcards" data-view-panel="flashcards" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Flashcards</h1>
+              <p class="view-sub">Turn any topic into flashcards you can flip and review.</p>
+            </div>
+          </div>
+
+          <div id="flashSetup" class="tool-panel">
+            <label class="field-label" for="flashTopic">Topic</label>
+            <input id="flashTopic" class="tool-input" type="text" placeholder="e.g. Indian freedom struggle" maxlength="200" />
+            <button id="flashStartBtn" class="btn btn-primary btn-block" type="button">
+              <span>Generate Flashcards</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+
+          <div id="flashPlay" class="flash-play" hidden>
+            <div class="flash-progress-text" id="flashProgressText">Card 1 of 8</div>
+            <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Flashcard, press Enter or Space to flip">
+              <div class="flashcard-inner" id="flashcardInner">
+                <div class="flashcard-face flashcard-front"><span class="flashcard-tag">Question</span><p id="flashFrontText"></p></div>
+                <div class="flashcard-face flashcard-back"><span class="flashcard-tag">Answer</span><p id="flashBackText"></p></div>
+              </div>
+            </div>
+            <p class="flash-hint">Click the card, or press Enter / Space, to flip it. Use ← → to move between cards.</p>
+
+            <div class="flash-mark-row">
+              <button id="flashKnownBtn" class="btn btn-ghost flash-mark-btn known" type="button">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Known</span>
+              </button>
+              <button id="flashPracticeBtn" class="btn btn-ghost flash-mark-btn practice" type="button">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>Need practice</span>
+              </button>
+            </div>
+
+            <div class="flash-nav">
+              <button id="flashPrevBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <span>Prev</span>
+              </button>
+              <button id="flashNextBtn" class="btn btn-primary" type="button">
+                <span>Next</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flash-controls">
+              <button id="flashShuffleBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                <span>Shuffle</span>
+              </button>
+              <button id="flashRestartBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                <span>Restart</span>
+              </button>
+              <button id="flashWrongOnlyBtn" class="btn btn-ghost" type="button">Study only wrong cards</button>
+              <button id="flashNewBtn" class="btn btn-ghost" type="button">New topic</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Summarize ===== -->
+        <section id="view-summarize" class="view view-summarize" data-view-panel="summarize" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Summarize</h1>
+              <p class="view-sub">Paste any text and H1 will pull out the important parts.</p>
+            </div>
+          </div>
+
+          <form id="summarizeForm" class="tool-input-row">
+            <textarea id="summarizeInput" class="tool-textarea" placeholder="Paste a paragraph, article, or notes to summarize…" rows="6" maxlength="6000" aria-label="Text to summarize" style="min-height:120px"></textarea>
+          </form>
+          <div class="view-actions">
+            <div class="segmented" id="summarizeLength" role="radiogroup" aria-label="Summary length">
+              <button type="button" class="segmented-btn" data-value="short" role="radio" aria-checked="false">Short</button>
+              <button type="button" class="segmented-btn active" data-value="normal" role="radio" aria-checked="true">Normal</button>
+              <button type="button" class="segmented-btn" data-value="detailed" role="radio" aria-checked="false">Detailed</button>
+            </div>
+            <button id="summarizeSubmitBtn" class="btn btn-primary" type="button">
+              <span>Summarize</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+
+          <div id="summarizeResult" class="explain-result" aria-live="polite">
+            <div class="empty-state">
+              <div class="empty-emoji">📄</div>
+              <h2>No summary yet</h2>
+              <p>Paste some study text above and H1 will summarize it for you.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Practice Questions ===== -->
+        <section id="view-practice" class="view view-practice" data-view-panel="practice" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Practice Questions</h1>
+              <p class="view-sub">Short-answer questions to test how well you really know a topic.</p>
+            </div>
+          </div>
+
+          <div id="practiceSetup" class="tool-panel">
+            <label class="field-label" for="practiceTopic">Topic</label>
+            <input id="practiceTopic" class="tool-input" type="text" placeholder="e.g. The water cycle" maxlength="200" />
+            <span class="field-label" id="practiceCountLabel">Questions</span>
+            <div class="segmented" id="practiceCount" role="radiogroup" aria-labelledby="practiceCountLabel">
+              <button type="button" class="segmented-btn active" data-value="5" role="radio" aria-checked="true">5</button>
+              <button type="button" class="segmented-btn" data-value="10" role="radio" aria-checked="false">10</button>
+            </div>
+            <button id="practiceStartBtn" class="btn btn-primary btn-block" type="button">
+              <span>Generate Questions</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+
+          <div id="practiceResult" class="explain-result" aria-live="polite"></div>
+        </section>
+
+        <!-- ===== Study Plan ===== -->
+        <section id="view-study-plan" class="view view-study-plan" data-view-panel="study-plan" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Study Plan</h1>
+              <p class="view-sub">Tell H1 your topic and available time — get a realistic plan.</p>
+            </div>
+          </div>
+
+          <div id="studyPlanSetup" class="tool-panel">
+            <label class="field-label" for="studyPlanTopic">Topic</label>
+            <input id="studyPlanTopic" class="tool-input" type="text" placeholder="e.g. Cell biology" maxlength="200" />
+            <span class="field-label" id="studyPlanMinutesLabel">Available time</span>
+            <div class="segmented segmented-wrap" id="studyPlanMinutes" role="radiogroup" aria-labelledby="studyPlanMinutesLabel">
+              <button type="button" class="segmented-btn" data-value="15" role="radio" aria-checked="false">15 min</button>
+              <button type="button" class="segmented-btn active" data-value="30" role="radio" aria-checked="true">30 min</button>
+              <button type="button" class="segmented-btn" data-value="60" role="radio" aria-checked="false">1 hour</button>
+              <button type="button" class="segmented-btn" data-value="90" role="radio" aria-checked="false">1.5 hours</button>
+              <button type="button" class="segmented-btn" data-value="120" role="radio" aria-checked="false">2 hours</button>
+            </div>
+            <button id="studyPlanStartBtn" class="btn btn-primary btn-block" type="button">
+              <span>Build My Plan</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+
+          <div id="studyPlanResult" class="explain-result" aria-live="polite"></div>
+        </section>
+
+        <!-- ===== Vocabulary ===== -->
+        <section id="view-vocabulary" class="view view-vocabulary" data-view-panel="vocabulary" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Language Lab</h1>
+              <p class="view-sub">Word meanings, translation, and vocabulary practice in English, Hindi and Tamil.</p>
+            </div>
+          </div>
+
+          <form id="vocabularyForm" class="tool-input-row">
+            <textarea id="vocabularyInput" class="tool-textarea" placeholder="e.g. photosynthesis" rows="1" maxlength="200" aria-label="Word or phrase"></textarea>
+            <button id="vocabularySubmitBtn" class="btn btn-primary" type="submit">
+              <span>Look up</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </form>
+
+          <div class="field-row">
+            <div class="field-group">
+              <span class="field-label" id="vocabLanguageLabel">Explain in</span>
+              <div class="segmented" id="vocabularyLanguage" role="radiogroup" aria-labelledby="vocabLanguageLabel">
+                <button type="button" class="segmented-btn active" data-value="english" role="radio" aria-checked="true">English</button>
+                <button type="button" class="segmented-btn" data-value="hindi" role="radio" aria-checked="false">Hindi</button>
+                <button type="button" class="segmented-btn" data-value="tamil" role="radio" aria-checked="false">Tamil</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <span class="field-label" id="vocabTranslateLabel">Also translate to</span>
+              <div class="segmented" id="vocabularyTranslate" role="radiogroup" aria-labelledby="vocabTranslateLabel">
+                <button type="button" class="segmented-btn active" data-value="">None</button>
+                <button type="button" class="segmented-btn" data-value="english">English</button>
+                <button type="button" class="segmented-btn" data-value="hindi">Hindi</button>
+                <button type="button" class="segmented-btn" data-value="tamil">Tamil</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="vocabularyResult" class="explain-result" aria-live="polite">
+            <div class="empty-state">
+              <div class="empty-emoji">🔤</div>
+              <h2>No word yet</h2>
+              <p>Type a word or phrase above to see its meaning and an example.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Notes ===== -->
+        <section id="view-notes" class="view view-notes" data-view-panel="notes" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Notes</h1>
+              <p class="view-sub">Your private study notes, saved on this device.</p>
+            </div>
+            <div class="view-actions">
+              <button id="newNoteBtn" class="btn btn-primary" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>New note</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="notes-layout">
+            <div class="notes-list-panel">
+              <input id="notesSearch" class="notes-search" type="search" placeholder="Search notes…" aria-label="Search notes" />
+              <div class="notes-folder-row" id="notesFolderRow"></div>
+              <div id="notesList" class="notes-list"></div>
+            </div>
+            <div id="noteEditorWrap">
+              <div class="empty-state" id="noteEmptyState">
+                <div class="empty-emoji">📝</div>
+                <h2>No notes yet</h2>
+                <p>Create your first note to start collecting what you've learned.</p>
+              </div>
+              <div class="note-editor" id="noteEditor" hidden>
+                <div class="note-editor-top">
+                  <input id="noteTitleInput" class="note-title-input" type="text" placeholder="Note title" maxlength="120" />
+                  <button id="notePinBtn" class="icon-btn" type="button" title="Pin note" aria-label="Pin note" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.5 5.5L19 9l-4 4 1 6-4-3-4 3 1-6-4-4 5.5-1.5z"></path></svg>
+                  </button>
+                </div>
+                <div class="note-meta-row">
+                  <input id="noteFolderInput" class="note-tag-input" type="text" placeholder="Folder (e.g. Science)" maxlength="40" />
+                  <input id="noteTagsInput" class="note-tag-input" type="text" placeholder="Tags, comma separated" maxlength="120" />
+                </div>
+                <textarea id="noteBodyInput" class="note-body-input" placeholder="Start typing…"></textarea>
+
+                <div class="note-checklist" id="noteChecklist"></div>
+                <button id="addChecklistItemBtn" class="icon-btn-sm" type="button">+ Add checklist item</button>
+
+                <div class="note-ai-actions">
+                  <button id="noteSummarizeBtn" class="icon-btn-sm" type="button">Summarize note</button>
+                  <button id="noteExplainBtn" class="icon-btn-sm" type="button">Explain note</button>
+                  <button id="noteQuizBtn" class="icon-btn-sm" type="button">Make quiz</button>
+                  <button id="noteFlashcardsBtn" class="icon-btn-sm" type="button">Make flashcards</button>
+                  <button id="notePracticeBtn" class="icon-btn-sm" type="button">Practice questions</button>
+                </div>
+
+                <div class="note-editor-footer">
+                  <span class="note-meta" id="noteMeta"></span>
+                  <button id="deleteNoteBtn" class="btn btn-danger" type="button">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Study Mode ===== -->
+        <section id="view-study-mode" class="view view-study-mode" data-view-panel="study-mode" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Study Mode</h1>
+              <p class="view-sub">A focused timer to help you sit down and get through one task.</p>
+            </div>
+          </div>
+
+          <div class="study-mode-wrap">
+            <div id="studySetupWrap" class="tool-panel" style="max-width:420px;width:100%">
+              <label class="field-label" for="studyTaskInput">What are you working on?</label>
+              <input id="studyTaskInput" class="tool-input" type="text" placeholder="e.g. Revise chapter 4" maxlength="120" />
+              <span class="field-label" id="studyDurationLabel">Duration</span>
+              <div class="study-duration-row" id="studyDuration" role="radiogroup" aria-labelledby="studyDurationLabel">
+                <button type="button" class="segmented-btn active" data-value="10">10 min</button>
+                <button type="button" class="segmented-btn" data-value="15">15 min</button>
+                <button type="button" class="segmented-btn" data-value="25">25 min</button>
+                <button type="button" class="segmented-btn" data-value="45">45 min</button>
+              </div>
+              <button id="studyStartBtn" class="btn btn-primary btn-block" type="button">
+                <span>Start focus session</span>
+              </button>
+            </div>
+
+            <div id="studyRunningWrap" hidden>
+              <div class="study-timer-ring" id="studyTimerRing">
+                <span class="study-timer-time" id="studyTimerTime">10:00</span>
+                <span class="study-timer-label" id="studyTimerLabel">remaining</span>
+              </div>
+              <div class="study-meta">
+                <strong id="studyMetaTask">Focus session</strong>
+                <span id="studyMetaSubject">General</span>
+              </div>
+              <div class="study-controls">
+                <button id="studyPauseBtn" class="btn btn-ghost" type="button">Pause</button>
+                <button id="studyStopBtn" class="btn btn-danger" type="button">End session</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Exam Mode ===== -->
+        <section id="view-exam-mode" class="view view-exam-mode" data-view-panel="exam-mode" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Exam Mode</h1>
+              <p class="view-sub">Tell H1 what's coming up and it will build a day-by-day plan. A study organizer, not a guarantee.</p>
+            </div>
+          </div>
+
+          <div id="examSetup" class="tool-panel" style="max-width:560px">
+            <label class="field-label" for="examSubjectInput">Subject</label>
+            <input id="examSubjectInput" class="tool-input" type="text" placeholder="e.g. Biology" maxlength="80" />
+            <label class="field-label" for="examTopicsInput" style="margin-top:14px">Chapters / topics (comma separated)</label>
+            <textarea id="examTopicsInput" class="tool-textarea" style="width:100%;margin-top:6px" rows="2" placeholder="e.g. Cell structure, Photosynthesis, Genetics" maxlength="400"></textarea>
+            <label class="field-label" for="examDateInput" style="margin-top:14px">Exam date</label>
+            <input id="examDateInput" class="tool-input" type="date" />
+            <button id="examBuildBtn" class="btn btn-primary btn-block" type="button">
+              <span>Build Exam Plan</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+
+          <div id="examCurrentWrap" hidden>
+            <div class="exam-countdown" id="examCountdown"></div>
+            <div id="examPlanResult" class="explain-result"></div>
+            <div class="view-actions">
+              <button id="examNewPlanBtn" class="btn btn-ghost" type="button">Start a new plan</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Progress ===== -->
+        <section id="view-progress" class="view view-progress" data-view-panel="progress" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Progress</h1>
+              <p class="view-sub">Everything below is tracked from what you've actually done in H1.</p>
+            </div>
+          </div>
+          <div id="progressContent"></div>
+        </section>
+
+        <!-- ===== Settings ===== -->
+        <section id="view-settings" class="view view-settings" data-view-panel="settings" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Settings</h1>
+              <p class="view-sub">Personalize how H1 looks and behaves.</p>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h2>Appearance</h2>
+            <span class="field-label" id="themeSettingLabel">Theme</span>
+            <div class="segmented" id="themeSetting" role="radiogroup" aria-labelledby="themeSettingLabel">
+              <button type="button" class="segmented-btn" data-value="dark" role="radio" aria-checked="false">🌙 Dark</button>
+              <button type="button" class="segmented-btn" data-value="light" role="radio" aria-checked="false">☀️ Light</button>
+              <button type="button" class="segmented-btn" data-value="system" role="radio" aria-checked="false">🖥️ System</button>
+            </div>
+
+            <span class="field-label" id="deviceSettingLabel">Preview layout</span>
+            <p class="settings-hint">See how H1 looks on another device size, regardless of your current screen.</p>
+            <div class="segmented segmented-wrap" id="deviceSetting" role="radiogroup" aria-labelledby="deviceSettingLabel">
+              <button type="button" class="segmented-btn" data-value="auto" role="radio" aria-checked="false">Auto</button>
+              <button type="button" class="segmented-btn" data-value="desktop" role="radio" aria-checked="false">🖥️ Desktop</button>
+              <button type="button" class="segmented-btn" data-value="tablet" role="radio" aria-checked="false">📱 iPad / Tablet</button>
+              <button type="button" class="segmented-btn" data-value="phone" role="radio" aria-checked="false">📱 Phone</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h2>Chat</h2>
+            <span class="field-label" id="enterSettingLabel">Send message with</span>
+            <div class="segmented" id="enterToSendSetting" role="radiogroup" aria-labelledby="enterSettingLabel">
+              <button type="button" class="segmented-btn" data-value="enter" role="radio" aria-checked="false">Enter</button>
+              <button type="button" class="segmented-btn" data-value="ctrlenter" role="radio" aria-checked="false">Ctrl + Enter</button>
+            </div>
+            <label class="toggle-row">
+              <span>Auto-scroll to latest message</span>
+              <span class="toggle" id="autoScrollToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+            </label>
+            <label class="toggle-row">
+              <span>Save conversations on this device</span>
+              <span class="toggle" id="saveConversationsToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+            </label>
+            <button id="settingsClearChatBtn" class="btn btn-ghost" type="button">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Clear current chat</span>
+            </button>
+          </div>
+
+          <div class="settings-section">
+            <h2>AI</h2>
+            <div class="status-row">
+              <span>AI Provider</span>
+              <span id="settingsProviderName" class="status-pill">—</span>
+            </div>
+            <div class="status-row">
+              <span>Status</span>
+              <span id="settingsStatusPill" class="status-pill status-pill-pending">Checking…</span>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h2>Accessibility</h2>
+            <label class="toggle-row">
+              <span>Reduce motion</span>
+              <span class="toggle" id="reduceMotionToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
+            </label>
+            <p class="settings-hint">H1 also automatically respects your system's reduced-motion setting.</p>
+            <label class="toggle-row">
+              <span>Gamification (XP, levels, achievements)</span>
+              <span class="toggle" id="gamificationToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+            </label>
+          </div>
+
+          <div class="settings-section">
+            <h2>Data</h2>
+            <div class="danger-row">
+              <div class="danger-row-text"><strong>Export data</strong><span>Download all your H1 data as a JSON file.</span></div>
+              <button id="exportDataBtn" class="btn btn-ghost" type="button">Export</button>
+            </div>
+            <div class="danger-row">
+              <div class="danger-row-text"><strong>Import data</strong><span>Restore from a previously exported JSON file.</span></div>
+              <button id="importDataBtn" class="btn btn-ghost" type="button">Import</button>
+              <input type="file" id="importDataInput" accept="application/json" hidden />
+            </div>
+          </div>
+
+          <div class="settings-section danger-zone">
+            <h2>Danger zone</h2>
+            <div class="danger-row">
+              <div class="danger-row-text"><strong>Clear conversations</strong><span>Deletes all saved Ask H1 conversations.</span></div>
+              <button id="clearConversationsBtn" class="btn btn-danger" type="button">Clear</button>
+            </div>
+            <div class="danger-row">
+              <div class="danger-row-text"><strong>Clear notes</strong><span>Deletes all saved notes.</span></div>
+              <button id="clearNotesBtn" class="btn btn-danger" type="button">Clear</button>
+            </div>
+            <div class="danger-row">
+              <div class="danger-row-text"><strong>Reset settings</strong><span>Resets theme, subject and preferences to defaults.</span></div>
+              <button id="resetSettingsBtn" class="btn btn-danger" type="button">Reset</button>
+            </div>
+            <div class="danger-row">
+              <div class="danger-row-text"><strong>Reset everything</strong><span>Clears all H1 data stored on this device.</span></div>
+              <button id="resetEverythingBtn" class="btn btn-danger" type="button">Reset all</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h2>About</h2>
+            <p class="about-line"><strong>H1 — AI Homework Helper</strong></p>
+            <p class="settings-hint">Version 3.0 · A friendly AI study companion for Math, Science, English, Hindi, Tamil and general homework.</p>
+            <p class="settings-hint">Developed by - Pranav Ganesh - H1</p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="app-footer">
+      <span>Developed by - Pranav Ganesh - H1</span>
+    </footer>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Generic modal (confirm / rename / prompt) -->
+  <div id="modalOverlay" class="modal-overlay" hidden>
+    <div class="modal" id="modalPanel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h2 id="modalTitle">Title</h2>
+        <button id="modalCloseBtn" class="icon-btn" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="modalMessage"></p>
+        <input id="modalInput" class="tool-input" type="text" hidden />
+      </div>
+      <div class="modal-footer">
+        <button id="modalCancelBtn" class="btn btn-ghost" type="button">Cancel</button>
+        <button id="modalConfirmBtn" class="btn btn-primary" type="button">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conversation history -->
+  <div id="historyOverlay" class="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
+      <div class="modal-header">
+        <h2 id="historyTitle">Conversations</h2>
+        <button id="historyCloseBtn" class="icon-btn" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="historyList" class="history-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="historyNewBtn" class="btn btn-primary" type="button">New conversation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Command palette -->
+  <div id="commandOverlay" class="command-overlay" hidden>
+    <div class="command-palette" role="dialog" aria-modal="true" aria-label="Quick search">
+      <div class="command-input-row">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input id="commandInput" class="command-input" type="text" placeholder="Search actions…" aria-label="Search actions" />
+        <span class="command-kbd">Esc</span>
+      </div>
+      <div id="commandList" class="command-list"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
