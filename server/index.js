@@ -179,7 +179,18 @@ app.use((err, req, res, next) => {
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.get("/api/health", (req, res) => {
-  res.json({ ok: true, ai: getProviderStatus() });
+  // Render sets these automatically on every deploy — surfacing them makes "is production
+  // actually running the commit I just pushed" a one-request check instead of guesswork from
+  // file timestamps or grepping served JS.
+  res.json({
+    ok: true,
+    ai: getProviderStatus(),
+    deploy: {
+      commit: process.env.RENDER_GIT_COMMIT || null,
+      branch: process.env.RENDER_GIT_BRANCH || null,
+      service: process.env.RENDER_SERVICE_NAME || null,
+    },
+  });
 });
 
 function cleanSubject(subject) {
