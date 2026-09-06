@@ -18,6 +18,47 @@ function inline(text) {
 
 var BLOCK_TOKEN_PREFIX = "H1CODEBLOCK";
 
+const LATEX_SYMBOLS = [
+  [/\\times/g, "×"],
+  [/\\div/g, "÷"],
+  [/\\cdot/g, "·"],
+  [/\\pm/g, "±"],
+  [/\\leq?/g, "≤"],
+  [/\\geq?/g, "≥"],
+  [/\\neq/g, "≠"],
+  [/\\approx/g, "≈"],
+  [/\\infty/g, "∞"],
+  [/\\pi/g, "π"],
+  [/\\theta/g, "θ"],
+  [/\\alpha/g, "α"],
+  [/\\beta/g, "β"],
+  [/\\degree/g, "°"],
+];
+
+// The system prompt asks the AI to write math with plain symbols instead of LaTeX, but model
+// compliance isn't perfectly reliable — this is a defensive cleanup pass so a stray "$2x=14$"
+// or "\times" never reaches the student as raw markup. Applied only to prose, never to fenced
+// code (a code sample legitimately showing LaTeX shouldn't be rewritten).
+function cleanLatexArtifacts(text) {
+  let out = text;
+  LATEX_SYMBOLS.forEach(([pattern, symbol]) => {
+    out = out.replace(pattern, symbol);
+  });
+  // Flatten exponent/subscript braces first so a nested case like \sqrt{a^{2}+b^{2}} leaves
+  // \sqrt{a^2+b^2} — a single brace-pair the sqrt/frac patterns below can then match.
+  out = out.replace(/\^\{([^{}]+)\}/g, "^$1");
+  out = out.replace(/_\{([^{}]+)\}/g, "_$1");
+  out = out.replace(/\\sqrt\{([^{}]+)\}/g, "√($1)");
+  out = out.replace(/\\sqrt/g, "√");
+  out = out.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, "($1)/($2)");
+  // Strip LaTeX math delimiters but keep the (now-cleaned) content inside them.
+  out = out.replace(/\$\$([\s\S]+?)\$\$/g, "$1");
+  out = out.replace(/\\\[([\s\S]+?)\\\]/g, "$1");
+  out = out.replace(/\\\(([\s\S]+?)\\\)/g, "$1");
+  out = out.replace(/\$([^$\n]+?)\$/g, "$1");
+  return out;
+}
+
 export function renderMarkdown(raw) {
   const text = escapeHtml(String(raw)).replace(/\r\n/g, "\n");
 
@@ -30,7 +71,7 @@ export function renderMarkdown(raw) {
     return "\n" + BLOCK_TOKEN_PREFIX + idx + "\n";
   });
 
-  const lines = withBlocksExtracted.split("\n");
+  const lines = cleanLatexArtifacts(withBlocksExtracted).split("\n");
   const htmlParts = [];
   let listBuffer = [];
   let listType = null;
