@@ -1,7 +1,6 @@
-import { fetchSummary, fetchPractice, fetchStudyPlan, fetchVocabulary, friendlyErrorMessage } from "./api.js";
+import { fetchSummary, fetchPractice, fetchVocabulary, friendlyErrorMessage } from "./api.js";
 import { appState } from "./state.js";
 import { showToast } from "./toast.js";
-import { safeGetJson, safeSetJson } from "./storage.js";
 import { logEvent } from "./progress.js";
 import { switchView } from "./nav.js";
 import { startQuizWithTopic } from "./quiz.js";
@@ -251,89 +250,6 @@ function practiceFeature() {
   };
 }
 
-function studyPlanFeature() {
-  const topicInput = document.getElementById("studyPlanTopic");
-  const minutesGroup = document.getElementById("studyPlanMinutes");
-  const startBtn = document.getElementById("studyPlanStartBtn");
-  const result = document.getElementById("studyPlanResult");
-  const DONE_KEY = "h1-study-plan-done";
-  let minutes = 30;
-  let currentPlanId = null;
-
-  minutesGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      minutes = Number(btn.dataset.value);
-      syncSegmented(minutesGroup, btn.dataset.value);
-    });
-  });
-
-  function doneMap() {
-    return safeGetJson(DONE_KEY, {});
-  }
-
-  function toggleDone(taskKey) {
-    const map = doneMap();
-    map[taskKey] = !map[taskKey];
-    safeSetJson(DONE_KEY, map);
-    return map[taskKey];
-  }
-
-  async function run(topic) {
-    currentPlanId = `${topic}::${minutes}`;
-    startBtn.disabled = true;
-    result.innerHTML = "";
-    result.appendChild(loadingRow("Building your study plan…"));
-    try {
-      const plan = await fetchStudyPlan(topic, minutes, appState.subject);
-      result.innerHTML = "";
-      const map = doneMap();
-      plan.forEach((task, i) => {
-        const taskKey = `${currentPlanId}::${i}`;
-        const row = document.createElement("div");
-        row.className = "plan-task" + (map[taskKey] ? " done" : "");
-        row.style.animationDelay = `${i * 60}ms`;
-        row.innerHTML = `
-          <div class="plan-checkbox${map[taskKey] ? " checked" : ""}"></div>
-          <div style="flex:1;min-width:0">
-            <div class="plan-task-title"></div>
-            <div class="plan-task-minutes"></div>
-            <div class="plan-task-desc"></div>
-          </div>`;
-        row.querySelector(".plan-task-title").textContent = task.title;
-        row.querySelector(".plan-task-minutes").textContent = `${task.minutes} min`;
-        row.querySelector(".plan-task-desc").textContent = task.description || "";
-        const checkbox = row.querySelector(".plan-checkbox");
-        const checkSvg =
-          '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-        checkbox.innerHTML = map[taskKey] ? checkSvg : "";
-        checkbox.addEventListener("click", () => {
-          const isDone = toggleDone(taskKey);
-          row.classList.toggle("done", isDone);
-          checkbox.classList.toggle("checked", isDone);
-          checkbox.innerHTML = isDone ? checkSvg : "";
-          if (isDone) logEvent("plan_task_done", { title: task.title });
-        });
-        result.appendChild(row);
-      });
-    } catch (err) {
-      result.innerHTML = "";
-      result.appendChild(errorBlock(friendlyErrorMessage(err), () => run(topic)));
-    } finally {
-      startBtn.disabled = false;
-    }
-  }
-
-  startBtn.addEventListener("click", () => {
-    const topic = topicInput.value.trim();
-    if (!topic) {
-      showToast("Enter a topic to build a study plan.", "error");
-      topicInput.focus();
-      return;
-    }
-    run(topic);
-  });
-}
-
 function vocabularyFeature() {
   const form = document.getElementById("vocabularyForm");
   const input = document.getElementById("vocabularyInput");
@@ -421,7 +337,6 @@ let summarizeApi = null;
 export function initMoreTools() {
   summarizeApi = summarizeFeature();
   practiceApi = practiceFeature();
-  studyPlanFeature();
   vocabularyFeature();
 }
 

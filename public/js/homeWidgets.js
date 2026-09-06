@@ -1,81 +1,207 @@
-import { getStats } from "./progress.js";
+import { getStats, getEvents } from "./progress.js";
 import { isEnabled, getXP, getLevel } from "./gamification.js";
 import { loadConversations, setActiveConversationId } from "./conversations.js";
 import { safeGetJson } from "./storage.js";
 import { switchView } from "./nav.js";
+import { getTodayAndUpcoming } from "./homeworkStore.js";
+import { getGrouped as getPlannerGrouped, getExamGroups } from "./plannerStore.js";
+import { startQuizWithTopic } from "./quiz.js";
+import { getDailyGoalMinutes } from "./goalsStore.js";
+import { getDecks, getDueCount } from "./flashcardDecks.js";
 
-const widget = document.getElementById("homeProgressWidget");
+const heroStatStrip = document.getElementById("heroStatStrip");
+const bentoContinue = document.getElementById("bentoContinue");
+const bentoWeak = document.getElementById("bentoWeak");
+const bentoDeadline = document.getElementById("bentoDeadline");
+const bentoNote = document.getElementById("bentoNote");
+const bentoQuiz = document.getElementById("bentoQuiz");
+const bentoFocus = document.getElementById("bentoFocus");
 
-function miniCard(value, label, wide) {
-  const card = document.createElement("div");
-  card.className = "progress-mini-card" + (wide ? " wide" : "");
-  card.innerHTML = `<span class="progress-mini-value"></span><span class="progress-mini-label"></span>`;
-  card.querySelector(".progress-mini-value").textContent = value;
-  card.querySelector(".progress-mini-label").textContent = label;
-  return card;
+function statPill(value, label) {
+  const el = document.createElement("div");
+  el.className = "hero-stat-pill";
+  el.innerHTML = `<strong></strong><span></span>`;
+  el.querySelector("strong").textContent = value;
+  el.querySelector("span").textContent = label;
+  return el;
 }
 
-function recommendNextAction(stats) {
-  if (!stats.hasAnyActivity) return { text: "Ask H1 your first question to get started", view: "chat" };
-  if (stats.weakTopics.length > 0) return { text: `Review "${stats.weakTopics[0].topic}" — you scored low there last time`, view: "quiz" };
-  if (stats.streak === 0) return { text: "Keep your streak going — do something in H1 today", view: "chat" };
-  return { text: "Try a quick quiz to keep your knowledge fresh", view: "quiz" };
+function todayStudyMinutes() {
+  const todayKey = new Date().toDateString();
+  return getEvents()
+    .filter((e) => e.type === "study_session" && new Date(e.ts).toDateString() === todayKey)
+    .reduce((sum, e) => sum + (e.minutes || 0), 0);
+}
+
+function tileContent(eyebrow, title, sub, actionLabel) {
+  return `
+    <div class="bento-tile-eyebrow">${eyebrow}</div>
+    <div class="bento-tile-title">${title}</div>
+    ${sub ? `<div class="bento-tile-sub">${sub}</div>` : ""}
+    ${actionLabel ? `<div class="bento-tile-action">${actionLabel} →</div>` : ""}`;
+}
+
+function renderHeroStrip(stats) {
+  if (!heroStatStrip) return;
+  heroStatStrip.innerHTML = "";
+  if (isEnabled() && stats.hasAnyActivity) {
+    const xp = getXP();
+    const { level } = getLevel(xp);
+    heroStatStrip.appendChild(statPill(`Lv ${level}`, `${xp} XP`));
+  }
+  heroStatStrip.appendChild(statPill(stats.streak, "Day streak 🔥"));
+  const goalMinutes = getDailyGoalMinutes();
+  const todayMinutes = todayStudyMinutes();
+  heroStatStrip.appendChild(statPill(`${Math.min(todayMinutes, goalMinutes)}/${goalMinutes}`, "Today's goal (min)"));
+}
+
+function renderContinue() {
+  if (!bentoContinue) return;
+  const conversations = loadConversations();
+  bentoContinue.onclick = null;
+  if (conversations.length > 0) {
+    const conv = conversations[0];
+    bentoContinue.innerHTML = tileContent("💬 Continue studying", conv.title || "Untitled conversation", "Pick up right where you left off.", "Resume");
+    bentoContinue.onclick = () => {
+      setActiveConversationId(conv.id);
+      switchView("chat");
+      window.dispatchEvent(new CustomEvent("h1:conversation-selected"));
+    };
+  } else {
+    bentoContinue.innerHTML = tileContent("💬 Get started", "Ask H1 your first question", "Type anything you're stuck on — H1 will walk you through it.", "Ask now");
+    bentoContinue.onclick = () => switchView("chat");
+  }
+}
+
+// Adaptive by design: revision that's actually due (real spaced-repetition data) outranks a
+// generic "weak subject" suggestion, since it's a more concrete, time-sensitive action.
+function renderWeak(stats) {
+  if (!bentoWeak) return;
+  const dueCount = getDecks().reduce((sum, d) => sum + getDueCount(d), 0);
+  if (dueCount > 0) {
+    bentoWeak.innerHTML = tileContent("🔁 Revision due", `${dueCount} flashcard${dueCount === 1 ? "" : "s"} ready to review`, "Spaced repetition works best on time.", "Review now");
+    bentoWeak.onclick = () => switchView("flashcards");
+    return;
+  }
+  if (stats.weakTopics.length > 0) {
+    const t = stats.weakTopics[0];
+    bentoWeak.innerHTML = tileContent("📉 Weak subject", t.topic, `You scored ${t.pct}% last time — worth another look.`, "Review");
+    bentoWeak.onclick = () => {
+      switchView("quiz");
+      startQuizWithTopic(t.topic);
+    };
+  } else {
+    bentoWeak.innerHTML = tileContent("📉 Weak subject", "Nothing weak yet", "Take a few quizzes and H1 will spot patterns here.", "Start a quiz");
+    bentoWeak.onclick = () => switchView("quiz");
+  }
+}
+
+// Adaptive priority: a soon exam beats an overdue task beats a plain upcoming deadline —
+// each branch only fires when that real condition actually exists.
+function renderDeadline() {
+  if (!bentoDeadline) return;
+  const today = new Date().toISOString().slice(0, 10);
+
+  const exams = getExamGroups().filter((e) => e.examDate >= today);
+  if (exams.length > 0) {
+    const exam = exams[0];
+    const days = Math.max(0, Math.ceil((new Date(exam.examDate + "T00:00:00") - new Date()) / 86400000));
+    bentoDeadline.innerHTML = tileContent(
+      "📆 Exam coming up",
+      exam.groupLabel,
+      `${days} day${days === 1 ? "" : "s"} to go · ${exam.pct}% of prep done`,
+      "Open Exam Center"
+    );
+    bentoDeadline.onclick = () => switchView("planner");
+    return;
+  }
+
+  const homework = getTodayAndUpcoming(1);
+  const planner = getPlannerGrouped();
+  const plannerNext = [...planner.overdue, ...planner.today, ...planner.thisWeek][0];
+
+  let winner = null;
+  if (homework.length && plannerNext) {
+    winner = homework[0].deadline <= plannerNext.deadline ? { kind: "homework", item: homework[0] } : { kind: "planner", item: plannerNext };
+  } else if (homework.length) {
+    winner = { kind: "homework", item: homework[0] };
+  } else if (plannerNext) {
+    winner = { kind: "planner", item: plannerNext };
+  }
+
+  if (!winner) {
+    bentoDeadline.innerHTML = tileContent("📅 Upcoming", "No deadlines yet", "Add a homework task or plan to see it here.", "Add one");
+    bentoDeadline.onclick = () => switchView("homework");
+    return;
+  }
+  const label = new Date(winner.item.deadline + "T00:00:00").toLocaleDateString([], { month: "short", day: "numeric" });
+  const overdue = winner.item.deadline < today;
+  bentoDeadline.innerHTML = tileContent(
+    overdue ? "⚠️ Overdue" : "📅 Upcoming deadline",
+    winner.item.title,
+    `${overdue ? "Was due" : "Due"} ${label}`,
+    "Open"
+  );
+  bentoDeadline.onclick = () => switchView(winner.kind === "homework" ? "homework" : "planner");
+}
+
+function renderNote() {
+  if (!bentoNote) return;
+  const notes = safeGetJson("h1-notes", []);
+  if (notes.length > 0) {
+    const sorted = [...notes].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+    const n = sorted[0];
+    const snippet = (n.body || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    bentoNote.innerHTML = tileContent("🗒️ Recent note", n.title || "Untitled note", snippet, "Open note");
+  } else {
+    bentoNote.innerHTML = tileContent("🗒️ Notes", "No notes yet", "Save what you learn as you go.", "Create a note");
+  }
+  bentoNote.onclick = () => switchView("notes");
+}
+
+function renderQuiz(stats) {
+  if (!bentoQuiz) return;
+  const topic = stats.weakTopics[0]?.topic;
+  bentoQuiz.innerHTML = tileContent(
+    "🎯 Recommended quiz",
+    topic || "A quick general quiz",
+    topic ? "Turn a weak spot into a strength." : "Test yourself while it's fresh.",
+    "Start quiz"
+  );
+  bentoQuiz.onclick = () => {
+    switchView("quiz");
+    if (topic) startQuizWithTopic(topic);
+  };
+}
+
+function renderFocus() {
+  if (!bentoFocus) return;
+  bentoFocus.innerHTML = `
+    <div>
+      <div class="bento-tile-eyebrow">⏱️ Focus</div>
+      <div class="bento-tile-title">Start a distraction-free session</div>
+    </div>
+    <div class="bento-tile-action">Start focus →</div>`;
+  bentoFocus.onclick = () => switchView("study-mode");
 }
 
 export function renderHomeWidget() {
   const stats = getStats();
-  widget.innerHTML = "";
-
-  if (isEnabled() && stats.hasAnyActivity) {
-    const xp = getXP();
-    const { level } = getLevel(xp);
-    widget.appendChild(miniCard(`Lv ${level}`, `${xp} XP`));
-  }
-  widget.appendChild(miniCard(stats.streak, "Day streak 🔥"));
-  widget.appendChild(miniCard(stats.quizzesCompleted, "Quizzes done"));
-  widget.appendChild(miniCard(stats.studyMinutes, "Study minutes"));
-
-  const rec = recommendNextAction(stats);
-  const recBtn = document.createElement("button");
-  recBtn.type = "button";
-  recBtn.className = "recommend-card wide";
-  recBtn.style.gridColumn = "1 / -1";
-  recBtn.innerHTML = `<span style="font-size:18px">💡</span><span></span>`;
-  recBtn.querySelector("span:last-child").textContent = rec.text;
-  recBtn.addEventListener("click", () => switchView(rec.view));
-  widget.appendChild(recBtn);
-
-  const conversations = loadConversations();
-  const recentQuizzes = safeGetJson("h1-recent-quizzes", []);
-
-  if (conversations.length > 0) {
-    const conv = conversations[0];
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "recommend-card";
-    card.style.gridColumn = "span 1";
-    card.innerHTML = `<span style="font-size:16px">💬</span><span></span>`;
-    card.querySelector("span:last-child").textContent = `Continue: ${conv.title}`;
-    card.addEventListener("click", () => {
-      setActiveConversationId(conv.id);
-      switchView("chat");
-      window.dispatchEvent(new CustomEvent("h1:conversation-selected"));
-    });
-    widget.appendChild(card);
-  }
-
-  if (recentQuizzes.length > 0) {
-    const q = recentQuizzes[0];
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "recommend-card";
-    card.innerHTML = `<span style="font-size:16px">📝</span><span></span>`;
-    card.querySelector("span:last-child").textContent = `Last quiz: ${q.topic} (${q.score}/${q.total})`;
-    card.addEventListener("click", () => switchView("quiz"));
-    widget.appendChild(card);
-  }
+  renderHeroStrip(stats);
+  renderContinue();
+  renderWeak(stats);
+  renderDeadline();
+  renderNote();
+  renderQuiz(stats);
+  renderFocus();
 }
 
 export function initHomeWidgets() {
   renderHomeWidget();
+}
+
+// Kept for main.js compatibility — the bento tiles above already fold in the
+// "today & upcoming" content that used to live in a separate widget.
+export function renderUpcomingWidget() {
+  renderDeadline();
 }

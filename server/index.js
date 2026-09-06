@@ -35,14 +35,36 @@ const SUBJECT_LABELS = {
 
 const AI_MODES = {
   tutor: "Teach step-by-step: walk through the reasoning fully before giving the final answer.",
+  homeworkhelper:
+    "Act as a homework helper: figure out what the student is stuck on, then guide them through their own homework question step-by-step, checking in as you go rather than just handing over a finished answer.",
   examcoach:
     "Act as an exam coach: help the student get there without immediately revealing the final answer. Give hints and ask a guiding question first; only give the full answer if they're still stuck after that or explicitly ask for it.",
   quick: "Give a concise, direct answer with minimal extra explanation — the student wants speed, not a full lesson.",
+  deepexplain:
+    "Give a thorough, detailed explanation: cover the underlying concept, why it works, and a worked example, not just the minimum needed to answer.",
   socratic:
     "Use the Socratic method: mostly respond with guiding questions that lead the student to figure it out themselves, rather than stating the answer outright.",
+  practicecoach:
+    "Act as a practice coach: after addressing the question, offer 1-2 similar practice problems (without answers) so the student can test themselves, and offer to check their attempt.",
+  writingcoach:
+    "Act as a writing coach: help improve clarity, grammar, structure and word choice in the student's writing, explaining the 'why' behind each suggestion rather than just rewriting it for them.",
+  languagetutor:
+    "Act as a language tutor for Hindi, Tamil or English: explain vocabulary, grammar, and usage with simple examples, and reply in the same language the student is practicing unless asked otherwise.",
+  sciencelab:
+    "Act as a science lab guide: explain the underlying scientific concept clearly with an everyday analogy or example, connecting theory to how it would look in practice.",
+  mathcoach:
+    "Act as a math coach: show the full working clearly, one step at a time, naming which rule or method is used at each step.",
   beginner: "Explain using very simple language and everyday analogies, as if teaching someone brand new to the topic.",
   revision: "Focus on the most important points only — like a quick revision session, not a full lesson.",
 };
+
+const LANGUAGE_NAMES = { english: "English", hindi: "Hindi", tamil: "Tamil" };
+
+function languageContextLine(language) {
+  const name = LANGUAGE_NAMES[language];
+  if (!name || language === "english") return "";
+  return `\n\nRespond in ${name} by default, unless the student writes in a different language — then follow their language instead.`;
+}
 
 const BASE_SYSTEM_PROMPT = `You are H1, a friendly and patient AI homework helper and tutor for school students.
 You help with Mathematics, Science, English, Hindi, Tamil, and general homework questions.
@@ -72,8 +94,12 @@ function modeContextLine(mode) {
   return instruction ? `\n\nActive mode — ${instruction}` : "";
 }
 
-function buildChatSystemPrompt(subject, mode) {
-  return BASE_SYSTEM_PROMPT + subjectContextLine(subject) + modeContextLine(mode);
+function buildChatSystemPrompt(subject, mode, language) {
+  return BASE_SYSTEM_PROMPT + subjectContextLine(subject) + modeContextLine(mode) + languageContextLine(language);
+}
+
+function cleanLanguage(language) {
+  return typeof language === "string" && LANGUAGE_NAMES[language] ? language : undefined;
 }
 
 const EXPLAIN_SYSTEM_PROMPT = `${BASE_SYSTEM_PROMPT}
@@ -231,7 +257,7 @@ function validateImage(image, provider) {
 }
 
 app.post("/api/chat", async (req, res) => {
-  const { messages, subject, mode, image } = req.body || {};
+  const { messages, subject, mode, image, language } = req.body || {};
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: 'Request must include a non-empty "messages" array.' });
@@ -261,7 +287,10 @@ app.post("/api/chat", async (req, res) => {
     if (validatedImage) {
       trimmedHistory[trimmedHistory.length - 1].image = validatedImage;
     }
-    const reply = await provider.chat(trimmedHistory, buildChatSystemPrompt(cleanSubject(subject), cleanMode(mode)));
+    const reply = await provider.chat(
+      trimmedHistory,
+      buildChatSystemPrompt(cleanSubject(subject), cleanMode(mode), cleanLanguage(language))
+    );
     res.json({ reply });
   } catch (err) {
     if (err.status === 400) {

@@ -1,4 +1,5 @@
 import { safeGet, safeGetJson, safeSetJson } from "./storage.js";
+import { currentSpaceTag } from "./spacesStore.js";
 
 const CONVERSATIONS_KEY = "h1-conversations";
 const ACTIVE_KEY = "h1-active-conversation";
@@ -58,12 +59,42 @@ export function setActiveConversationId(id) {
 
 export function createConversation(subject) {
   const now = Date.now();
-  const conv = { id: uid(), title: "New conversation", subject: subject || "general", createdAt: now, updatedAt: now, messages: [] };
+  const conv = {
+    id: uid(),
+    title: "New conversation",
+    subject: subject || "general",
+    createdAt: now,
+    updatedAt: now,
+    messages: [],
+    contextNoteIds: [],
+    contextDocIds: [],
+    favorite: false,
+    spaceId: currentSpaceTag(),
+  };
   const list = loadConversations();
   list.unshift(conv);
   saveConversations(list);
   setActiveConversationId(conv.id);
   return conv;
+}
+
+// Older conversations (created before the Context panel existed) won't have these arrays —
+// callers should read through this rather than the raw record.
+export function getConversationContext(id) {
+  const conv = getConversation(id);
+  return {
+    noteIds: (conv && conv.contextNoteIds) || [],
+    docIds: (conv && conv.contextDocIds) || [],
+  };
+}
+
+export function setConversationContext(id, { noteIds, docIds }) {
+  const list = loadConversations();
+  const conv = list.find((c) => c.id === id);
+  if (!conv) return;
+  if (noteIds) conv.contextNoteIds = noteIds;
+  if (docIds) conv.contextDocIds = docIds;
+  saveConversations(list);
 }
 
 export function getConversation(id) {
@@ -86,6 +117,15 @@ export function renameConversation(id, title) {
   if (!conv) return;
   conv.title = title.trim() || conv.title;
   saveConversations(list);
+}
+
+export function toggleConversationFavorite(id) {
+  const list = loadConversations();
+  const conv = list.find((c) => c.id === id);
+  if (!conv) return false;
+  conv.favorite = !conv.favorite;
+  saveConversations(list);
+  return conv.favorite;
 }
 
 export function deleteConversation(id) {

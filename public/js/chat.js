@@ -16,7 +16,11 @@ import {
   createConversation,
   renameConversation,
   deleteConversation,
+  toggleConversationFavorite,
 } from "./conversations.js";
+import { setChatContextConversation, consumeContextPrefix } from "./chatContext.js";
+import { tryHandleAiCommand } from "./aiCommands.js";
+import { isSupported as isSpeechSupported, toggleReadAloud, stopSpeaking } from "./readAloud.js";
 
 const chatTitle = document.getElementById("chatTitle");
 const chatLog = document.getElementById("chatLog");
@@ -35,6 +39,7 @@ const historyOverlay = document.getElementById("historyOverlay");
 const historyList = document.getElementById("historyList");
 const historyCloseBtn = document.getElementById("historyCloseBtn");
 const historyNewBtn = document.getElementById("historyNewBtn");
+const historySearchInput = document.getElementById("historySearchInput");
 
 const attachImageBtn = document.getElementById("attachImageBtn");
 const attachImageInput = document.getElementById("attachImageInput");
@@ -178,6 +183,75 @@ function handleAction(action, index) {
   }
 }
 
+function closeAllPopovers(except) {
+  document.querySelectorAll(".msg-popover").forEach((p) => {
+    if (p !== except) p.hidden = true;
+  });
+}
+document.addEventListener("click", () => closeAllPopovers());
+
+// A contextual popover behind a single "•••" trigger, rather than a permanent row of
+// buttons on every AI message — keeps the conversation canvas calm (see H1 material system).
+function buildMessagePopover(msg, index, isLast) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg-popover-wrap";
+
+  const trigger = document.createElement("button");
+  trigger.type = "button";
+  trigger.className = "msg-more-btn";
+  trigger.setAttribute("aria-label", "Message actions");
+  trigger.innerHTML =
+    '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"></circle><circle cx="12" cy="12" r="1.4"></circle><circle cx="19" cy="12" r="1.4"></circle></svg>';
+
+  const popover = document.createElement("div");
+  popover.className = "msg-popover";
+  popover.hidden = true;
+  popover.setAttribute("role", "menu");
+
+  const copyBtn = actionButton("Copy", "copy");
+  copyBtn.addEventListener("click", () => copyText(msg.content, copyBtn));
+  popover.appendChild(copyBtn);
+
+  const readBtn = actionButton(isSpeechSupported() ? "🔊 Read aloud" : "Read aloud unavailable", "read");
+  readBtn.disabled = !isSpeechSupported();
+  readBtn.addEventListener("click", () => toggleReadAloud(msg.content, readBtn));
+  popover.appendChild(readBtn);
+
+  if (isLast) {
+    [
+      ["Regenerate", "regenerate"],
+      ["Explain simpler", "simpler"],
+      ["Make shorter", "shorter"],
+      ["Give example", "example"],
+    ].forEach(([label, action]) => {
+      const btn = actionButton(label, action);
+      btn.addEventListener("click", () => handleAction(action, index));
+      popover.appendChild(btn);
+    });
+  }
+
+  [
+    ["Turn into quiz", "quiz"],
+    ["Make flashcards", "flashcards"],
+  ].forEach(([label, action]) => {
+    const btn = actionButton(label, action);
+    btn.addEventListener("click", () => handleAction(action, index));
+    popover.appendChild(btn);
+  });
+
+  trigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const willOpen = popover.hidden;
+    closeAllPopovers();
+    popover.hidden = !willOpen;
+  });
+  popover.addEventListener("click", (e) => e.stopPropagation());
+
+  wrap.appendChild(trigger);
+  wrap.appendChild(popover);
+  return wrap;
+}
+
 function renderMessage(msg, index, isLast) {
   const { row, body } = buildMessageRow(msg.role);
   const bubble = document.createElement("div");
@@ -206,39 +280,7 @@ function renderMessage(msg, index, isLast) {
   footer.style.flexWrap = "wrap";
 
   if (msg.role === "assistant") {
-    const bar = document.createElement("div");
-    bar.className = "message-action-bar";
-    const copyBtn = actionButton("Copy", "copy");
-    copyBtn.addEventListener("click", () => copyText(msg.content, copyBtn));
-    bar.appendChild(copyBtn);
-
-    if (isLast) {
-      const regenBtn = actionButton("Regenerate", "regenerate");
-      regenBtn.addEventListener("click", () => handleAction("regenerate", index));
-      bar.appendChild(regenBtn);
-
-      const simplerBtn = actionButton("Explain simpler", "simpler");
-      simplerBtn.addEventListener("click", () => handleAction("simpler", index));
-      bar.appendChild(simplerBtn);
-
-      const shorterBtn = actionButton("Make shorter", "shorter");
-      shorterBtn.addEventListener("click", () => handleAction("shorter", index));
-      bar.appendChild(shorterBtn);
-
-      const exampleBtn = actionButton("Give example", "example");
-      exampleBtn.addEventListener("click", () => handleAction("example", index));
-      bar.appendChild(exampleBtn);
-    }
-
-    const quizBtn = actionButton("Turn into quiz", "quiz");
-    quizBtn.addEventListener("click", () => handleAction("quiz", index));
-    bar.appendChild(quizBtn);
-
-    const flashBtn = actionButton("Make flashcards", "flashcards");
-    flashBtn.addEventListener("click", () => handleAction("flashcards", index));
-    bar.appendChild(flashBtn);
-
-    footer.appendChild(bar);
+    footer.appendChild(buildMessagePopover(msg, index, isLast));
   }
 
   if (msg.ts) {
@@ -321,15 +363,32 @@ function setSending(state) {
 }
 
 async function requestReply(imageForRequest) {
+  // Captured now, not read again after the await — if the user switches to a different
+  // conversation while this request is in flight, the reply must land in the conversation
+  // that actually asked for it, not whatever happens to be on screen when it resolves.
+  const requestConversationId = activeConversation ? activeConversation.id : null;
+  const requestMessages = messages;
   setSending(true);
   showTyping();
   try {
-    const reply = await sendChat(messages, appState.subject, { mode: appState.mode, image: imageForRequest });
+    const contextPrefix = consumeContextPrefix();
+    const payload = contextPrefix
+      ? requestMessages.map((m, i) => (i === requestMessages.length - 1 ? { ...m, content: contextPrefix + m.content } : m))
+      : requestMessages;
+    const reply = await sendChat(payload, appState.subject, { mode: appState.mode, language: appState.language, image: imageForRequest });
     hideTyping();
-    addMessage("assistant", reply);
+    if (activeConversation && activeConversation.id === requestConversationId) {
+      addMessage("assistant", reply);
+    } else {
+      requestMessages.push({ role: "assistant", content: reply, ts: Date.now() });
+      if (saveConversationsEnabled()) updateConversationMessages(requestConversationId, requestMessages);
+      showToast("A reply finished in another conversation — check History.", "success", 3200);
+    }
   } catch (err) {
     hideTyping();
-    showErrorBubble(friendlyErrorMessage(err));
+    if (activeConversation && activeConversation.id === requestConversationId) {
+      showErrorBubble(friendlyErrorMessage(err));
+    }
   } finally {
     setSending(false);
     messageInput.focus();
@@ -338,6 +397,13 @@ async function requestReply(imageForRequest) {
 
 export function sendMessage(text) {
   const image = pendingImage;
+  // Actionable requests ("make flashcards from this", "open my Math space") are routed to
+  // the real H1 feature instead of becoming a normal AI turn — but only when there's no
+  // image attached, since a scanned photo always goes through the real vision flow below.
+  if (!image && tryHandleAiCommand(text)) {
+    clearAttachment();
+    return;
+  }
   addMessage("user", text, image ? { image } : undefined);
   clearAttachment();
   logEvent("question", { source: "chat" });
@@ -516,10 +582,12 @@ if (SpeechRecognitionCtor) {
 }
 
 function loadActiveIntoView() {
+  stopSpeaking();
   activeConversation = ensureActiveConversation(appState.subject);
   messages = activeConversation.messages || [];
   chatTitle.textContent = activeConversation.title || "Ask H1";
   renderAllMessages();
+  setChatContextConversation(activeConversation.id);
 }
 
 function clearChat() {
@@ -540,15 +608,28 @@ newChatBtn.addEventListener("click", () => {
   messages = [];
   chatTitle.textContent = activeConversation.title;
   renderAllMessages();
+  setChatContextConversation(activeConversation.id);
   showToast("Started a new conversation.", "success", 1800);
 });
 
 function renderHistoryList() {
-  const list = loadConversations();
+  const query = historySearchInput.value.trim().toLowerCase();
+  let list = loadConversations();
+  if (query) {
+    list = list.filter((conv) => {
+      if (conv.title.toLowerCase().includes(query)) return true;
+      return conv.messages.some((m) => m.content && m.content.toLowerCase().includes(query));
+    });
+  }
+  // Pinned conversations surface first, most-recent within each group — matches how
+  // Favorites/Spaces already treat "pinned" content as promoted rather than reordering by pin time.
+  list = [...list].sort((a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0));
+
   historyList.innerHTML = "";
   if (list.length === 0) {
-    historyList.innerHTML =
-      '<div class="empty-state"><div class="empty-emoji">💬</div><h2>No conversations yet</h2><p>Start your first question with Ask H1.</p></div>';
+    historyList.innerHTML = query
+      ? '<div class="empty-state"><div class="empty-emoji">🔍</div><h2>No matches</h2><p>Try a different search term.</p></div>'
+      : '<div class="empty-state"><div class="empty-emoji">💬</div><h2>No conversations yet</h2><p>Start your first question with Ask H1.</p></div>';
     return;
   }
   list.forEach((conv) => {
@@ -559,7 +640,7 @@ function renderHistoryList() {
     main.type = "button";
     main.className = "history-item-main";
     main.innerHTML = '<div class="history-item-title"></div><div class="history-item-meta"></div>';
-    main.querySelector(".history-item-title").textContent = conv.title;
+    main.querySelector(".history-item-title").textContent = (conv.favorite ? "📌 " : "") + conv.title;
     const date = new Date(conv.updatedAt).toLocaleDateString([], { month: "short", day: "numeric" });
     main.querySelector(".history-item-meta").textContent = `${date} · ${conv.messages.length} messages`;
     main.addEventListener("click", () => {
@@ -570,6 +651,16 @@ function renderHistoryList() {
 
     const actions = document.createElement("div");
     actions.className = "history-item-actions";
+
+    const pinBtn = document.createElement("button");
+    pinBtn.type = "button";
+    pinBtn.className = "icon-btn-sm";
+    pinBtn.textContent = conv.favorite ? "Unpin" : "Pin";
+    pinBtn.title = conv.favorite ? "Remove from pinned" : "Pin this conversation";
+    pinBtn.addEventListener("click", () => {
+      toggleConversationFavorite(conv.id);
+      renderHistoryList();
+    });
 
     const renameBtn = document.createElement("button");
     renameBtn.type = "button";
@@ -601,6 +692,7 @@ function renderHistoryList() {
       });
     });
 
+    actions.appendChild(pinBtn);
     actions.appendChild(renameBtn);
     actions.appendChild(deleteBtn);
     item.appendChild(main);
@@ -609,9 +701,13 @@ function renderHistoryList() {
   });
 }
 
+historySearchInput.addEventListener("input", renderHistoryList);
+
 historyBtn.addEventListener("click", () => {
+  historySearchInput.value = "";
   renderHistoryList();
   historyOverlay.hidden = false;
+  historySearchInput.focus();
 });
 historyCloseBtn.addEventListener("click", () => {
   historyOverlay.hidden = true;
@@ -624,6 +720,7 @@ historyNewBtn.addEventListener("click", () => {
   messages = [];
   chatTitle.textContent = activeConversation.title;
   renderAllMessages();
+  setChatContextConversation(activeConversation.id);
   historyOverlay.hidden = true;
 });
 document.addEventListener("keydown", (e) => {

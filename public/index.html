@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>H1 — AI Homework Helper</title>
+<title>H1 — The Student OS</title>
 <meta name="color-scheme" content="dark light" />
 <meta name="theme-color" content="#0a0d14" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c5cff'/%3E%3Cstop offset='1' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='42' font-family='Arial, sans-serif' font-weight='800' font-size='28' fill='%230a0d14' text-anchor='middle'%3EH1%3C/text%3E%3C/svg%3E" />
@@ -28,8 +28,59 @@
 </script>
 </head>
 <body>
+  <div class="desktop-atmosphere" aria-hidden="true">
+    <span class="bloom bloom-1"></span>
+    <span class="bloom bloom-2"></span>
+    <span class="bloom bloom-3"></span>
+  </div>
+
   <div class="app" id="app">
     <a class="skip-link" href="#mainView">Skip to content</a>
+
+    <!-- ===== Desktop top bar (macOS-inspired) ===== -->
+    <header class="desktop-topbar" id="desktopTopbar">
+      <span class="traffic-lights" aria-hidden="true">
+        <span class="traffic-light red"></span>
+        <span class="traffic-light yellow"></span>
+        <span class="traffic-light green"></span>
+      </span>
+      <button id="sidebarCollapseToggle" class="icon-btn sidebar-collapse-toggle" type="button" aria-label="Collapse sidebar">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+      </button>
+      <span class="topbar-divider"></span>
+      <span class="topbar-title" id="topbarTitle">Home</span>
+
+      <div class="space-switcher-wrap">
+        <button id="spaceSwitcherBtn" class="space-switcher-btn" type="button" aria-haspopup="true" aria-expanded="false">
+          <span id="spaceSwitcherIcon">🌐</span>
+          <span id="spaceSwitcherLabel">All Spaces</span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div id="spaceSwitcherPopover" class="space-switcher-popover" hidden>
+          <div id="spaceSwitcherList" class="space-switcher-list"></div>
+          <div class="space-switcher-footer">
+            <button id="spaceCreateBtn" class="icon-btn-sm" type="button">+ New Space</button>
+          </div>
+        </div>
+      </div>
+
+      <span class="topbar-spacer"></span>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="topbarSearchBtn" type="button" aria-label="Quick search" title="Quick search (Ctrl K)">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+        <span class="topbar-status" id="topbarStatus">
+          <span id="topbarStatusDot" class="status-dot status-dot-pending"></span>
+          <span id="topbarStatusText">Connecting…</span>
+        </span>
+        <button class="icon-btn" id="topbarProfileBtn" type="button" aria-label="Profile">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg>
+        </button>
+        <button class="icon-btn" id="topbarSettingsBtn" type="button" aria-label="Settings">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+      </div>
+    </header>
 
     <header class="mobile-topbar">
       <button id="menuToggle" class="icon-btn" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
@@ -37,7 +88,7 @@
       </button>
       <div class="brand brand-sm">
         <span class="brand-mark">H1</span>
-        <span class="brand-name-sm">AI Homework Helper</span>
+        <span class="brand-name-sm">The Student OS</span>
       </div>
       <button id="quickThemeToggle" class="icon-btn" type="button" aria-label="Toggle dark or light mode">
         <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
@@ -53,7 +104,7 @@
           <span class="brand-mark">H1</span>
           <div class="brand-text">
             <span class="brand-name">H1</span>
-            <span class="brand-tagline">AI Homework Helper</span>
+            <span class="brand-tagline">The Student OS</span>
           </div>
           <button id="sidebarClose" class="icon-btn sidebar-close" type="button" aria-label="Close navigation menu">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -61,50 +112,81 @@
         </div>
 
         <button id="commandHint" class="sidebar-command-hint" type="button" aria-label="Open quick search">
-          <span>🔍 Quick search</span>
+          <span class="command-hint-icon">🔍</span>
+          <span>Quick search</span>
           <span class="command-kbd">Ctrl K</span>
         </button>
 
-        <div class="nav-group" role="tablist" aria-label="Tools">
+        <div class="nav-group" role="tablist" aria-label="Sections">
+          <div class="nav-active-pill" aria-hidden="true"></div>
           <button class="nav-item active" type="button" data-view="home" role="tab" aria-selected="true">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"></path></svg>
             <span>Home</span>
           </button>
           <button class="nav-item" type="button" data-view="chat" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-            <span>Ask H1</span>
+            <span>AI Tutor</span>
           </button>
-          <button class="nav-item" type="button" data-view="explain" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3a6 6 0 0 0-6 6c0 1.887.83 3.05 1.757 4.05A5.7 5.7 0 0 1 9 16h6a5.7 5.7 0 0 1 1.243-2.95C17.17 12.05 18 10.887 18 9a6 6 0 0 0-6-6z"></path><path d="M9.5 20h5"></path></svg>
-            <span>Step-by-Step</span>
+          <button class="nav-item" type="button" data-view="homework" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M9 3v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3"></path><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="16" x2="13" y2="16"></line></svg>
+            <span>Homework</span>
           </button>
-          <button class="nav-item" type="button" data-view="quiz" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-            <span>Quiz</span>
+          <button class="nav-item" type="button" data-view="scan" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            <span>Scan</span>
           </button>
-          <button class="nav-item" type="button" data-view="flashcards" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="14" rx="2"></rect><path d="M7 6V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2"></path></svg>
-            <span>Flashcards</span>
+          <button class="nav-item" type="button" data-view="subjects" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            <span>Subjects</span>
           </button>
           <button class="nav-item" type="button" data-view="notes" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="13" y2="17"></line></svg>
             <span>Notes</span>
           </button>
+          <button class="nav-item" type="button" data-view="documents" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <span>Documents</span>
+          </button>
+          <button class="nav-item" type="button" data-view="flashcards" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="14" rx="2"></rect><path d="M7 6V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2"></path></svg>
+            <span>Flashcards</span>
+          </button>
+          <button class="nav-item" type="button" data-view="quiz" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            <span>Quiz Lab</span>
+          </button>
+          <button class="nav-item" type="button" data-view="planner" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><polyline points="9 16 11 18 15 13"></polyline></svg>
+            <span>Study Planner</span>
+          </button>
+          <button class="nav-item" type="button" data-view="projects" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span>Projects</span>
+          </button>
+          <button class="nav-item" type="button" data-view="calendar" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span>Calendar</span>
+          </button>
           <button class="nav-item" type="button" data-view="study-mode" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
-            <span>Study Mode</span>
-          </button>
-          <button class="nav-item" type="button" data-view="exam-mode" role="tab" aria-selected="false">
-            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"></path></svg>
-            <span>Exam Mode</span>
+            <span>Focus</span>
           </button>
           <button class="nav-item" type="button" data-view="progress" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
             <span>Progress</span>
           </button>
+          <button class="nav-item" type="button" data-view="achievements" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"></path></svg>
+            <span>Achievements</span>
+          </button>
+          <button class="nav-item" type="button" data-view="tools" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+            <span>Tools</span>
+          </button>
         </div>
 
         <div class="nav-group nav-group-bottom">
+          <div class="nav-active-pill" aria-hidden="true"></div>
           <button class="nav-item" type="button" data-view="settings" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             <span>Settings</span>
@@ -121,6 +203,8 @@
           <span id="sidebarStatusDot" class="status-dot status-dot-pending"></span>
           <span id="sidebarStatusText">Checking AI status…</span>
         </div>
+
+        <div class="sidebar-credit">Developed by - Pranav Ganesh - H1</div>
       </nav>
 
       <main id="mainView" class="main-view" tabindex="-1">
@@ -152,115 +236,114 @@
 
         <!-- ===== Home ===== -->
         <section id="view-home" class="view view-home" data-view-panel="home">
-          <div class="hero">
-            <h1 class="hero-greeting" id="heroGreeting">Good day 👋</h1>
-            <p class="hero-sub">What are we learning today?</p>
-
-            <form id="heroAskForm" class="hero-ask">
-              <span class="hero-ask-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              </span>
-              <input id="heroAskInput" class="hero-ask-input" type="text" placeholder="Ask H1 anything…" maxlength="4000" aria-label="Ask H1 anything" />
-              <button class="hero-ask-send" type="submit" aria-label="Ask H1">
-                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-              </button>
-            </form>
-
-            <div class="quick-actions" id="quickActions">
-              <button class="quick-action" type="button" data-quick="explain">Explain this</button>
-              <button class="quick-action" type="button" data-quick="solve">Solve this</button>
-              <button class="quick-action" type="button" data-quick="summarize">Summarize</button>
-              <button class="quick-action" type="button" data-quick="quiz">Make a quiz</button>
-              <button class="quick-action" type="button" data-quick="flashcards">Make flashcards</button>
-              <button class="quick-action" type="button" data-quick="examples">Give me examples</button>
-              <button class="quick-action" type="button" data-quick="simple">Explain simply</button>
-              <button class="quick-action" type="button" data-quick="revise">Help me revise</button>
+          <div class="bento">
+            <div class="bento-tile bento-hero">
+              <div>
+                <h1 class="hero-greeting" id="heroGreeting">Good day 👋</h1>
+                <p class="hero-sub">What are we learning today?</p>
+              </div>
+              <div class="hero-stat-strip" id="heroStatStrip"></div>
             </div>
+
+            <div class="bento-tile bento-superbar">
+              <form id="heroAskForm" class="superbar">
+                <span class="superbar-icon" aria-hidden="true">✨</span>
+                <input id="heroAskInput" class="superbar-input" type="text" placeholder="What are you studying today?" maxlength="4000" aria-label="Ask H1 anything" />
+                <div class="superbar-actions">
+                  <button type="button" class="icon-btn" id="superbarAttachBtn" title="Attach a file" aria-label="Attach a file">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                  </button>
+                  <button type="button" class="icon-btn" id="superbarScanBtn" title="Scan homework" aria-label="Scan homework">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                  </button>
+                  <button type="button" class="icon-btn" id="superbarCommandBtn" title="Command Center" aria-label="Open command center">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="M9 9h.01M15 9h.01M9 15h6"></path></svg>
+                  </button>
+                  <button class="superbar-send" type="submit" aria-label="Ask H1">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  </button>
+                </div>
+              </form>
+              <div class="superbar-suggestions" id="quickActions">
+                <button class="suggestion-chip" type="button" data-quick="explain">Explain this</button>
+                <button class="suggestion-chip" type="button" data-quick="solve">Solve this</button>
+                <button class="suggestion-chip" type="button" data-quick="summarize">Summarize this PDF</button>
+                <button class="suggestion-chip" type="button" data-quick="quiz">Make a quiz</button>
+                <button class="suggestion-chip" type="button" data-quick="flashcards">Make flashcards</button>
+                <button class="suggestion-chip" type="button" data-quick="plan">Plan my week</button>
+                <button class="suggestion-chip" type="button" data-quick="simple">Explain simply</button>
+                <button class="suggestion-chip" type="button" data-quick="revise">Help me revise</button>
+              </div>
+            </div>
+
+            <div class="bento-tile bento-continue clickable" id="bentoContinue"></div>
+            <div class="bento-tile bento-weak clickable" id="bentoWeak"></div>
+            <div class="bento-tile bento-deadline clickable" id="bentoDeadline"></div>
+            <div class="bento-tile bento-note clickable" id="bentoNote"></div>
+            <div class="bento-tile bento-quiz clickable" id="bentoQuiz"></div>
+            <div class="bento-tile bento-focus clickable" id="bentoFocus"></div>
           </div>
 
-          <div class="section-heading"><h2>Your progress</h2></div>
-          <div id="homeProgressWidget" class="home-progress-widget"></div>
-
-          <div class="section-heading"><h2>Main tools</h2></div>
-          <div class="tool-grid">
-            <button class="tool-card" type="button" data-open-view="chat">
-              <span class="tool-icon">💬</span>
-              <span class="tool-title">Ask H1</span>
-              <span class="tool-desc">Chat about any homework question and get a clear, step-by-step explanation.</span>
-            </button>
-            <button class="tool-card" type="button" data-open-view="explain">
-              <span class="tool-icon">🧠</span>
-              <span class="tool-title">Step-by-Step</span>
-              <span class="tool-desc">Break a tricky problem into clear, numbered steps you can follow.</span>
-            </button>
-            <button class="tool-card" type="button" data-open-view="quiz">
-              <span class="tool-icon">📝</span>
-              <span class="tool-title">Quiz</span>
-              <span class="tool-desc">Test yourself with a quick multiple-choice quiz on any topic.</span>
-            </button>
-            <button class="tool-card" type="button" data-open-view="flashcards">
-              <span class="tool-icon">🗂️</span>
-              <span class="tool-title">Flashcards</span>
-              <span class="tool-desc">Turn any topic into flippable flashcards you can review anytime.</span>
-            </button>
-          </div>
-
-          <div class="section-heading"><h2>More study tools</h2></div>
+          <div class="section-heading"><h2>Explore H1</h2></div>
           <div class="tool-grid-secondary">
-            <button class="tool-card-sm" type="button" data-open-view="summarize">
-              <span class="tool-card-sm-icon">📄</span>
+            <button class="tool-card-sm" type="button" data-open-view="homework">
+              <span class="tool-card-sm-icon">📘</span>
               <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Summarize</span>
-                <span class="tool-card-sm-desc">Paste text, get key points</span>
+                <span class="tool-card-sm-title">Homework</span>
+                <span class="tool-card-sm-desc">Track tasks &amp; deadlines</span>
               </span>
             </button>
-            <button class="tool-card-sm" type="button" data-open-view="practice">
-              <span class="tool-card-sm-icon">✍️</span>
+            <button class="tool-card-sm" type="button" data-open-view="subjects">
+              <span class="tool-card-sm-icon">🧭</span>
               <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Practice Questions</span>
-                <span class="tool-card-sm-desc">Short-answer practice</span>
+                <span class="tool-card-sm-title">Subjects</span>
+                <span class="tool-card-sm-desc">Your subject dashboards</span>
               </span>
             </button>
-            <button class="tool-card-sm" type="button" data-open-view="study-plan">
-              <span class="tool-card-sm-icon">🗓️</span>
+            <button class="tool-card-sm" type="button" data-open-view="documents">
+              <span class="tool-card-sm-icon">📁</span>
               <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Study Plan</span>
-                <span class="tool-card-sm-desc">A plan for your study time</span>
+                <span class="tool-card-sm-title">Documents</span>
+                <span class="tool-card-sm-desc">Upload &amp; study your files</span>
               </span>
             </button>
-            <button class="tool-card-sm" type="button" data-open-view="vocabulary">
-              <span class="tool-card-sm-icon">🔤</span>
+            <button class="tool-card-sm" type="button" data-open-view="calendar">
+              <span class="tool-card-sm-icon">📅</span>
               <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Vocabulary</span>
-                <span class="tool-card-sm-desc">Word meanings & examples</span>
+                <span class="tool-card-sm-title">Calendar</span>
+                <span class="tool-card-sm-desc">Everything on one timeline</span>
               </span>
             </button>
-            <button class="tool-card-sm" type="button" data-open-view="notes">
-              <span class="tool-card-sm-icon">📝</span>
+            <button class="tool-card-sm" type="button" data-open-view="achievements">
+              <span class="tool-card-sm-icon">🏆</span>
               <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Notes</span>
-                <span class="tool-card-sm-desc">Your private study notes</span>
+                <span class="tool-card-sm-title">Achievements</span>
+                <span class="tool-card-sm-desc">See your unlocked badges</span>
               </span>
             </button>
-            <button class="tool-card-sm" type="button" data-open-view="study-mode">
-              <span class="tool-card-sm-icon">⏱️</span>
+            <button class="tool-card-sm" type="button" data-open-view="tools">
+              <span class="tool-card-sm-icon">🧰</span>
               <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Study Mode</span>
-                <span class="tool-card-sm-desc">A focused study timer</span>
+                <span class="tool-card-sm-title">Tools</span>
+                <span class="tool-card-sm-desc">Calculators &amp; more</span>
               </span>
             </button>
           </div>
         </section>
 
-        <!-- ===== Chat ===== -->
+        <!-- ===== AI Tutor (chat) ===== -->
         <section id="view-chat" class="view view-chat" data-view-panel="chat" hidden>
           <div class="view-header">
             <div>
-              <h1 id="chatTitle">Ask H1</h1>
+              <h1 id="chatTitle">AI Tutor</h1>
               <p class="view-sub">H1 remembers this conversation while you chat.</p>
             </div>
             <div class="view-actions">
               <select id="chatModeSelect" class="mode-select" aria-label="AI tutor mode"></select>
+              <button id="chatContextToggleBtn" class="btn btn-ghost" type="button" title="Context" aria-expanded="false">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+                <span>Context</span>
+              </button>
               <button id="historyBtn" class="btn btn-ghost" type="button" title="Conversation history">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
                 <span>History</span>
@@ -276,97 +359,443 @@
             </div>
           </div>
 
-          <div id="chatLog" class="chat-log" aria-live="polite">
-            <div id="emptyState" class="empty-state">
-              <div class="empty-emoji">📚</div>
-              <h2>What are you working on today?</h2>
-              <p>Ask a question in plain words — H1 will walk you through it step by step.</p>
+          <div class="chat-workspace">
+            <div class="chat-main">
+              <div id="chatLog" class="chat-log" aria-live="polite">
+                <div id="emptyState" class="empty-state">
+                  <div class="empty-emoji">📚</div>
+                  <h2>What are you working on today?</h2>
+                  <p>Ask a question in plain words — H1 will walk you through it step by step.</p>
+                </div>
+              </div>
+
+              <div id="attachedFilePreview" class="attached-preview" hidden>
+                <img id="attachedImageThumb" alt="" hidden />
+                <span id="attachedFileLabel"></span>
+                <button id="removeAttachedFileBtn" type="button" class="icon-btn" aria-label="Remove attachment">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+
+              <form id="chatForm" class="composer-form">
+                <button id="attachImageBtn" type="button" class="icon-btn" title="Attach an image (e.g. a photo of your homework)" aria-label="Attach an image">
+                  <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                </button>
+                <input type="file" id="attachImageInput" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+                <button id="attachDocBtn" type="button" class="icon-btn" title="Attach a text file" aria-label="Attach a text file">
+                  <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                </button>
+                <input type="file" id="attachDocInput" accept=".txt" hidden />
+                <button id="voiceInputBtn" type="button" class="icon-btn" title="Voice input" aria-label="Voice input" hidden>
+                  <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                </button>
+                <textarea
+                  id="messageInput"
+                  class="composer-input"
+                  placeholder="Ask H1 a homework question…"
+                  rows="1"
+                  maxlength="4000"
+                  autocomplete="off"
+                  aria-label="Message"
+                ></textarea>
+                <button id="sendBtn" class="btn btn-send" type="submit" title="Send message" aria-label="Send message">
+                  <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+              </form>
+              <p class="composer-hint" id="composerHint">Enter to send · Shift + Enter for a new line</p>
             </div>
-          </div>
 
-          <div id="attachedFilePreview" class="attached-preview" hidden>
-            <img id="attachedImageThumb" alt="" hidden />
-            <span id="attachedFileLabel"></span>
-            <button id="removeAttachedFileBtn" type="button" class="icon-btn" aria-label="Remove attachment">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
+            <aside id="chatContextPanel" class="chat-context-panel" hidden>
+              <div class="inspector-header">
+                <h3>Context</h3>
+                <p class="view-sub" style="margin:2px 0 0">What H1 knows about, beyond this chat.</p>
+              </div>
+              <div class="inspector-section">
+                <div class="inspector-section-title">Subject</div>
+                <div class="context-chip static"><span>🎓</span><span class="context-chip-label" id="chatContextSubject">General</span></div>
+              </div>
+              <div class="inspector-section">
+                <div class="inspector-section-title">Attached</div>
+                <div id="chatContextList"></div>
+                <div class="view-actions" style="margin-top:10px">
+                  <button id="chatContextAddNoteBtn" class="icon-btn-sm" type="button">+ Note</button>
+                  <button id="chatContextAddDocBtn" class="icon-btn-sm" type="button">+ Document</button>
+                </div>
+              </div>
+            </aside>
           </div>
-
-          <form id="chatForm" class="composer-form">
-            <button id="attachImageBtn" type="button" class="icon-btn" title="Attach an image (e.g. a photo of your homework)" aria-label="Attach an image">
-              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-            </button>
-            <input type="file" id="attachImageInput" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
-            <button id="attachDocBtn" type="button" class="icon-btn" title="Attach a text file" aria-label="Attach a text file">
-              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-            </button>
-            <input type="file" id="attachDocInput" accept=".txt" hidden />
-            <button id="voiceInputBtn" type="button" class="icon-btn" title="Voice input" aria-label="Voice input" hidden>
-              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
-            </button>
-            <textarea
-              id="messageInput"
-              class="composer-input"
-              placeholder="Ask H1 a homework question…"
-              rows="1"
-              maxlength="4000"
-              autocomplete="off"
-              aria-label="Message"
-            ></textarea>
-            <button id="sendBtn" class="btn btn-send" type="submit" title="Send message" aria-label="Send message">
-              <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            </button>
-          </form>
-          <p class="composer-hint" id="composerHint">Enter to send · Shift + Enter for a new line</p>
         </section>
 
-        <!-- ===== Step-by-Step Explainer ===== -->
-        <section id="view-explain" class="view view-explain" data-view-panel="explain" hidden>
+        <!-- ===== Homework (tasks + step-by-step) ===== -->
+        <section id="view-homework" class="view view-homework" data-view-panel="homework" data-subtab-scope hidden>
           <div class="view-header">
             <div>
-              <h1>Step-by-Step Explainer</h1>
-              <p class="view-sub">Enter a question and H1 will break it into clear, numbered steps.</p>
+              <h1>Homework</h1>
+              <p class="view-sub">Track what's due, and get a step-by-step breakdown when you're stuck.</p>
             </div>
+            <div class="subtabs" role="tablist">
+              <button type="button" class="subtab-btn active" data-subtab="tasks">My Tasks</button>
+              <button type="button" class="subtab-btn" data-subtab="explain">Step-by-Step</button>
+            </div>
+          </div>
+
+          <div data-subtab-panel="tasks">
+            <div class="homework-toolbar">
+              <input id="homeworkSearch" class="tool-input" type="search" placeholder="Search homework…" aria-label="Search homework" />
+              <select id="homeworkStatusFilter" class="tool-input" style="max-width:130px">
+                <option value="all">All</option>
+                <option value="open" selected>Open</option>
+                <option value="done">Done</option>
+              </select>
+              <select id="homeworkSubjectFilter" class="tool-input" style="max-width:150px">
+                <option value="all">All subjects</option>
+                <option value="general">General</option>
+                <option value="math">Mathematics</option>
+                <option value="science">Science</option>
+                <option value="english">English</option>
+                <option value="hindi">Hindi</option>
+                <option value="tamil">Tamil</option>
+              </select>
+              <select id="homeworkSortSelect" class="tool-input" style="max-width:150px">
+                <option value="deadline">Sort: deadline</option>
+                <option value="priority">Sort: priority</option>
+                <option value="created">Sort: newest</option>
+              </select>
+              <button id="homeworkAddBtn" class="btn btn-primary" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>Add task</span>
+              </button>
+            </div>
+
+            <div id="homeworkForm" class="tool-panel" hidden>
+              <label class="field-label" for="hwTitleInput">Title</label>
+              <input id="hwTitleInput" class="tool-input" type="text" placeholder="e.g. Finish algebra worksheet" maxlength="120" />
+              <div class="field-row">
+                <div class="field-group">
+                  <label class="field-label" for="hwSubjectInput">Subject</label>
+                  <select id="hwSubjectInput" class="tool-input">
+                    <option value="general">General</option>
+                    <option value="math">Mathematics</option>
+                    <option value="science">Science</option>
+                    <option value="english">English</option>
+                    <option value="hindi">Hindi</option>
+                    <option value="tamil">Tamil</option>
+                  </select>
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="hwDeadlineInput">Deadline</label>
+                  <input id="hwDeadlineInput" class="tool-input" type="date" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="hwMinutesInput">Est. minutes</label>
+                  <input id="hwMinutesInput" class="tool-input" type="number" min="0" placeholder="30" />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field-group">
+                  <span class="field-label">Priority</span>
+                  <div class="segmented" id="hwPriorityGroup">
+                    <button type="button" class="segmented-btn" data-value="low">Low</button>
+                    <button type="button" class="segmented-btn active" data-value="medium">Medium</button>
+                    <button type="button" class="segmented-btn" data-value="high">High</button>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <span class="field-label">Difficulty</span>
+                  <div class="segmented" id="hwDifficultyGroup">
+                    <button type="button" class="segmented-btn" data-value="easy">Easy</button>
+                    <button type="button" class="segmented-btn active" data-value="medium">Medium</button>
+                    <button type="button" class="segmented-btn" data-value="hard">Hard</button>
+                  </div>
+                </div>
+              </div>
+              <label class="field-label" for="hwNotesInput">Notes</label>
+              <textarea id="hwNotesInput" class="tool-textarea" rows="2" placeholder="Optional details…"></textarea>
+              <div class="view-actions" style="margin-top:12px">
+                <button id="hwCancelBtn" class="btn btn-ghost" type="button">Cancel</button>
+                <button id="hwSaveBtn" class="btn btn-primary" type="button">Add task</button>
+              </div>
+            </div>
+
+            <div id="homeworkEmptyState" class="empty-state">
+              <div class="empty-emoji">📘</div>
+              <h2>No homework yet</h2>
+              <p>Add your first task to start tracking deadlines and priorities.</p>
+            </div>
+            <div id="homeworkList" class="homework-list"></div>
+          </div>
+
+          <div data-subtab-panel="explain" hidden>
+            <form id="explainForm" class="tool-input-row">
+              <textarea id="explainInput" class="tool-textarea" placeholder="e.g. How do you solve 2x + 3 = 11?" rows="2" maxlength="4000" aria-label="Question to explain"></textarea>
+              <button id="explainSubmitBtn" class="btn btn-primary" type="submit">
+                <span>Explain</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </form>
+
             <div class="view-actions" id="explainViewToggle" hidden>
               <button id="explainShowAllBtn" class="btn btn-ghost" type="button">Show all</button>
               <button id="explainOneByOneBtn" class="btn btn-ghost" type="button" hidden>One at a time</button>
             </div>
-          </div>
 
-          <form id="explainForm" class="tool-input-row">
-            <textarea id="explainInput" class="tool-textarea" placeholder="e.g. How do you solve 2x + 3 = 11?" rows="2" maxlength="4000" aria-label="Question to explain"></textarea>
-            <button id="explainSubmitBtn" class="btn btn-primary" type="submit">
-              <span>Explain</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-          </form>
-
-          <div id="explainResult" class="explain-result" aria-live="polite">
-            <div class="empty-state">
-              <div class="empty-emoji">🧠</div>
-              <h2>No explanation yet</h2>
-              <p>Type any homework question above to get a clear, step-by-step breakdown.</p>
+            <div id="explainResult" class="explain-result" aria-live="polite">
+              <div class="empty-state">
+                <div class="empty-emoji">🧠</div>
+                <h2>No explanation yet</h2>
+                <p>Type any homework question above to get a clear, step-by-step breakdown.</p>
+              </div>
             </div>
-          </div>
 
-          <div class="quiz-nav" id="explainStepNav" hidden>
-            <button id="explainPrevStepBtn" class="btn btn-ghost" type="button">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-              <span>Previous</span>
-            </button>
-            <button id="explainNextStepBtn" class="btn btn-primary" type="button">
-              <span>Next</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
+            <div class="quiz-nav" id="explainStepNav" hidden>
+              <button id="explainPrevStepBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <span>Previous</span>
+              </button>
+              <button id="explainNextStepBtn" class="btn btn-primary" type="button">
+                <span>Next</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
           </div>
         </section>
 
-        <!-- ===== Quiz ===== -->
+        <!-- ===== Scan ===== -->
+        <section id="view-scan" class="view view-scan" data-view-panel="scan" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Scan Homework</h1>
+              <p class="view-sub">Upload a photo of a question and H1 will read it, identify each question, and help you solve it.</p>
+            </div>
+          </div>
+
+          <div id="scanDropzone" class="scan-dropzone" tabindex="0" role="button" aria-label="Choose an image to scan">
+            <span class="scan-dropzone-icon">📸</span>
+            <strong>Click to choose a photo</strong>
+            <span class="view-sub" style="margin:0">PNG, JPEG, WEBP or GIF · max 6MB</span>
+          </div>
+          <input type="file" id="scanFileInput" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+
+          <div id="scanPreviewWrap" class="scan-preview-wrap" hidden>
+            <img id="scanPreviewImg" class="scan-preview-img" alt="Homework photo preview" />
+            <div class="view-actions">
+              <button id="scanAnalyzeBtn" class="btn btn-primary" type="button">
+                <span>Analyze image</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+              <button id="scanResetBtn" class="btn btn-ghost" type="button">Choose another photo</button>
+            </div>
+          </div>
+
+          <div id="scanResult" class="explain-result" aria-live="polite"></div>
+        </section>
+
+        <!-- ===== Subjects ===== -->
+        <section id="view-subjects" class="view view-subjects" data-view-panel="subjects" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Subjects</h1>
+              <p class="view-sub">A dashboard for each subject, built from what you've actually done in H1.</p>
+            </div>
+            <div class="view-actions">
+              <button id="subjectAddBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>Add subject</span>
+              </button>
+            </div>
+          </div>
+          <div id="subjectGrid" class="subject-grid"></div>
+
+          <div class="section-heading"><h2>🧠 Knowledge Map</h2></div>
+          <div id="subjectKnowledgeGraph" class="tool-panel" style="overflow-x:auto"></div>
+        </section>
+
+        <!-- ===== Notes ===== -->
+        <section id="view-notes" class="view view-notes" data-view-panel="notes" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Notes</h1>
+              <p class="view-sub">Your private study notes, saved on this device.</p>
+            </div>
+            <div class="view-actions">
+              <button id="newNoteBtn" class="btn btn-primary" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>New note</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="notes-layout">
+            <div class="notes-list-panel">
+              <input id="notesSearch" class="notes-search" type="search" placeholder="Search notes…" aria-label="Search notes" />
+              <div class="notes-folder-row" id="notesFolderRow"></div>
+              <div id="notesList" class="notes-list"></div>
+            </div>
+            <div id="noteEditorWrap">
+              <div class="empty-state" id="noteEmptyState">
+                <div class="empty-emoji">📝</div>
+                <h2>No notes yet</h2>
+                <p>Create your first note to start collecting what you've learned.</p>
+              </div>
+              <div class="note-editor" id="noteEditor" hidden>
+                <div class="note-editor-top">
+                  <input id="noteTitleInput" class="note-title-input" type="text" placeholder="Note title" maxlength="120" />
+                  <button id="noteFavoriteBtn" class="icon-btn" type="button" title="Favorite note" aria-label="Favorite note" aria-pressed="false">★</button>
+                  <button id="notePinBtn" class="icon-btn" type="button" title="Pin note" aria-label="Pin note" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.5 5.5L19 9l-4 4 1 6-4-3-4 3 1-6-4-4 5.5-1.5z"></path></svg>
+                  </button>
+                </div>
+                <div class="note-meta-row">
+                  <input id="noteFolderInput" class="note-tag-input" type="text" placeholder="Folder (e.g. Science)" maxlength="40" />
+                  <input id="noteTagsInput" class="note-tag-input" type="text" placeholder="Tags, comma separated" maxlength="120" />
+                </div>
+                <textarea id="noteBodyInput" class="note-body-input" placeholder="Start typing…"></textarea>
+
+                <div class="note-checklist" id="noteChecklist"></div>
+                <button id="addChecklistItemBtn" class="icon-btn-sm" type="button">+ Add checklist item</button>
+
+                <div class="note-ai-actions">
+                  <button id="noteSummarizeBtn" class="icon-btn-sm" type="button">Summarize note</button>
+                  <button id="noteExplainBtn" class="icon-btn-sm" type="button">Explain note</button>
+                  <button id="noteQuizBtn" class="icon-btn-sm" type="button">Make quiz</button>
+                  <button id="noteFlashcardsBtn" class="icon-btn-sm" type="button">Make flashcards</button>
+                  <button id="notePracticeBtn" class="icon-btn-sm" type="button">Practice questions</button>
+                </div>
+
+                <div class="note-editor-footer">
+                  <span class="note-meta" id="noteMeta"></span>
+                  <button id="deleteNoteBtn" class="btn btn-danger" type="button">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Documents ===== -->
+        <section id="view-documents" class="view view-documents" data-view-panel="documents" hidden>
+          <div class="view-header" id="documentToolbar">
+            <div>
+              <h1>Documents</h1>
+              <p class="view-sub">Upload a .txt or .pdf file, then summarize it, quiz yourself on it, or ask H1 questions about it.</p>
+            </div>
+            <div class="view-actions">
+              <button id="documentUploadBtn" class="btn btn-primary" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <span>Upload document</span>
+              </button>
+              <input type="file" id="documentFileInput" accept=".txt,.pdf,text/plain,application/pdf" hidden />
+            </div>
+          </div>
+
+          <div id="documentEmptyState" class="empty-state">
+            <div class="empty-emoji">📁</div>
+            <h2>No documents yet</h2>
+            <p>Upload your first .txt or .pdf file to build your document library.</p>
+          </div>
+          <div id="documentGrid" class="document-grid" hidden></div>
+
+          <div id="documentDetail" hidden>
+            <button id="documentDetailBackBtn" class="btn btn-ghost" type="button" style="margin-bottom:14px">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span>Back to library</span>
+            </button>
+            <div class="view-header">
+              <div>
+                <h1 id="documentDetailName">Document</h1>
+                <p class="view-sub" id="documentDetailMeta"></p>
+              </div>
+              <div class="view-actions">
+                <button id="documentSummarizeBtn" class="btn btn-ghost" type="button">Summarize</button>
+                <button id="documentQuizBtn" class="btn btn-ghost" type="button">Make quiz</button>
+                <button id="documentFlashcardsBtn" class="btn btn-ghost" type="button">Make flashcards</button>
+                <button id="documentAskBtn" class="btn btn-ghost" type="button">Ask about this</button>
+                <button id="documentRenameBtn" class="btn btn-ghost" type="button">Rename</button>
+                <button id="documentDeleteBtn" class="btn btn-danger" type="button">Delete</button>
+              </div>
+            </div>
+            <div class="tool-panel" style="white-space:pre-wrap;font-size:13px;color:var(--text-muted);max-height:200px;overflow-y:auto" id="documentDetailPreview"></div>
+            <div id="documentDetailResult" class="explain-result" style="margin-top:16px"></div>
+          </div>
+        </section>
+
+        <!-- ===== Flashcards ===== -->
+        <section id="view-flashcards" class="view view-flashcards" data-view-panel="flashcards" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Flashcards</h1>
+              <p class="view-sub">Turn any topic into flashcards you can flip and review.</p>
+            </div>
+          </div>
+
+          <div id="flashSetup" class="tool-panel">
+            <label class="field-label" for="flashTopic">Topic</label>
+            <input id="flashTopic" class="tool-input" type="text" placeholder="e.g. Indian freedom struggle" maxlength="200" />
+            <button id="flashStartBtn" class="btn btn-primary btn-block" type="button">
+              <span>Generate Flashcards</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+
+            <div id="flashDeckLibrary" hidden style="margin-top:18px">
+              <span class="field-label">Your decks</span>
+              <div id="flashDeckLibraryList"></div>
+            </div>
+          </div>
+
+          <div id="flashPlay" class="flash-play" hidden>
+            <div class="flash-progress-text" id="flashProgressText">Card 1 of 8</div>
+            <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Flashcard, press Enter or Space to flip">
+              <div class="flashcard-inner" id="flashcardInner">
+                <div class="flashcard-face flashcard-front"><span class="flashcard-tag">Question</span><p id="flashFrontText"></p></div>
+                <div class="flashcard-face flashcard-back"><span class="flashcard-tag">Answer</span><p id="flashBackText"></p></div>
+              </div>
+            </div>
+            <p class="flash-hint">Click the card, or press Enter / Space, to flip it. Use ← → to move between cards.</p>
+
+            <div class="flash-mark-row">
+              <button id="flashKnownBtn" class="btn btn-ghost flash-mark-btn known" type="button">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Known</span>
+              </button>
+              <button id="flashPracticeBtn" class="btn btn-ghost flash-mark-btn practice" type="button">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>Need practice</span>
+              </button>
+            </div>
+
+            <div class="flash-nav">
+              <button id="flashPrevBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <span>Prev</span>
+              </button>
+              <button id="flashNextBtn" class="btn btn-primary" type="button">
+                <span>Next</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="flash-controls">
+              <button id="flashShuffleBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                <span>Shuffle</span>
+              </button>
+              <button id="flashRestartBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                <span>Restart</span>
+              </button>
+              <button id="flashWrongOnlyBtn" class="btn btn-ghost" type="button">Study only wrong cards</button>
+              <button id="flashNewBtn" class="btn btn-ghost" type="button">New topic</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Quiz Lab ===== -->
         <section id="view-quiz" class="view view-quiz" data-view-panel="quiz" hidden>
           <div class="view-header">
             <div>
-              <h1>Quiz</h1>
-              <p class="view-sub">Test yourself with a quick multiple-choice quiz on any topic.</p>
+              <h1>Quiz Lab</h1>
+              <p class="view-sub">Test yourself with a quick quiz on any topic.</p>
             </div>
           </div>
 
@@ -463,273 +892,182 @@
           </div>
         </section>
 
-        <!-- ===== Flashcards ===== -->
-        <section id="view-flashcards" class="view view-flashcards" data-view-panel="flashcards" hidden>
+        <!-- ===== Study Planner ===== -->
+        <section id="view-planner" class="view view-planner" data-view-panel="planner" hidden>
           <div class="view-header">
             <div>
-              <h1>Flashcards</h1>
-              <p class="view-sub">Turn any topic into flashcards you can flip and review.</p>
-            </div>
-          </div>
-
-          <div id="flashSetup" class="tool-panel">
-            <label class="field-label" for="flashTopic">Topic</label>
-            <input id="flashTopic" class="tool-input" type="text" placeholder="e.g. Indian freedom struggle" maxlength="200" />
-            <button id="flashStartBtn" class="btn btn-primary btn-block" type="button">
-              <span>Generate Flashcards</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-          </div>
-
-          <div id="flashPlay" class="flash-play" hidden>
-            <div class="flash-progress-text" id="flashProgressText">Card 1 of 8</div>
-            <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Flashcard, press Enter or Space to flip">
-              <div class="flashcard-inner" id="flashcardInner">
-                <div class="flashcard-face flashcard-front"><span class="flashcard-tag">Question</span><p id="flashFrontText"></p></div>
-                <div class="flashcard-face flashcard-back"><span class="flashcard-tag">Answer</span><p id="flashBackText"></p></div>
-              </div>
-            </div>
-            <p class="flash-hint">Click the card, or press Enter / Space, to flip it. Use ← → to move between cards.</p>
-
-            <div class="flash-mark-row">
-              <button id="flashKnownBtn" class="btn btn-ghost flash-mark-btn known" type="button">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                <span>Known</span>
-              </button>
-              <button id="flashPracticeBtn" class="btn btn-ghost flash-mark-btn practice" type="button">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                <span>Need practice</span>
-              </button>
-            </div>
-
-            <div class="flash-nav">
-              <button id="flashPrevBtn" class="btn btn-ghost" type="button">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                <span>Prev</span>
-              </button>
-              <button id="flashNextBtn" class="btn btn-primary" type="button">
-                <span>Next</span>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </button>
-            </div>
-            <div class="flash-controls">
-              <button id="flashShuffleBtn" class="btn btn-ghost" type="button">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
-                <span>Shuffle</span>
-              </button>
-              <button id="flashRestartBtn" class="btn btn-ghost" type="button">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-                <span>Restart</span>
-              </button>
-              <button id="flashWrongOnlyBtn" class="btn btn-ghost" type="button">Study only wrong cards</button>
-              <button id="flashNewBtn" class="btn btn-ghost" type="button">New topic</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- ===== Summarize ===== -->
-        <section id="view-summarize" class="view view-summarize" data-view-panel="summarize" hidden>
-          <div class="view-header">
-            <div>
-              <h1>Summarize</h1>
-              <p class="view-sub">Paste any text and H1 will pull out the important parts.</p>
-            </div>
-          </div>
-
-          <form id="summarizeForm" class="tool-input-row">
-            <textarea id="summarizeInput" class="tool-textarea" placeholder="Paste a paragraph, article, or notes to summarize…" rows="6" maxlength="6000" aria-label="Text to summarize" style="min-height:120px"></textarea>
-          </form>
-          <div class="view-actions">
-            <div class="segmented" id="summarizeLength" role="radiogroup" aria-label="Summary length">
-              <button type="button" class="segmented-btn" data-value="short" role="radio" aria-checked="false">Short</button>
-              <button type="button" class="segmented-btn active" data-value="normal" role="radio" aria-checked="true">Normal</button>
-              <button type="button" class="segmented-btn" data-value="detailed" role="radio" aria-checked="false">Detailed</button>
-            </div>
-            <button id="summarizeSubmitBtn" class="btn btn-primary" type="button">
-              <span>Summarize</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-          </div>
-
-          <div id="summarizeResult" class="explain-result" aria-live="polite">
-            <div class="empty-state">
-              <div class="empty-emoji">📄</div>
-              <h2>No summary yet</h2>
-              <p>Paste some study text above and H1 will summarize it for you.</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- ===== Practice Questions ===== -->
-        <section id="view-practice" class="view view-practice" data-view-panel="practice" hidden>
-          <div class="view-header">
-            <div>
-              <h1>Practice Questions</h1>
-              <p class="view-sub">Short-answer questions to test how well you really know a topic.</p>
-            </div>
-          </div>
-
-          <div id="practiceSetup" class="tool-panel">
-            <label class="field-label" for="practiceTopic">Topic</label>
-            <input id="practiceTopic" class="tool-input" type="text" placeholder="e.g. The water cycle" maxlength="200" />
-            <span class="field-label" id="practiceCountLabel">Questions</span>
-            <div class="segmented" id="practiceCount" role="radiogroup" aria-labelledby="practiceCountLabel">
-              <button type="button" class="segmented-btn active" data-value="5" role="radio" aria-checked="true">5</button>
-              <button type="button" class="segmented-btn" data-value="10" role="radio" aria-checked="false">10</button>
-            </div>
-            <button id="practiceStartBtn" class="btn btn-primary btn-block" type="button">
-              <span>Generate Questions</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-          </div>
-
-          <div id="practiceResult" class="explain-result" aria-live="polite"></div>
-        </section>
-
-        <!-- ===== Study Plan ===== -->
-        <section id="view-study-plan" class="view view-study-plan" data-view-panel="study-plan" hidden>
-          <div class="view-header">
-            <div>
-              <h1>Study Plan</h1>
-              <p class="view-sub">Tell H1 your topic and available time — get a realistic plan.</p>
-            </div>
-          </div>
-
-          <div id="studyPlanSetup" class="tool-panel">
-            <label class="field-label" for="studyPlanTopic">Topic</label>
-            <input id="studyPlanTopic" class="tool-input" type="text" placeholder="e.g. Cell biology" maxlength="200" />
-            <span class="field-label" id="studyPlanMinutesLabel">Available time</span>
-            <div class="segmented segmented-wrap" id="studyPlanMinutes" role="radiogroup" aria-labelledby="studyPlanMinutesLabel">
-              <button type="button" class="segmented-btn" data-value="15" role="radio" aria-checked="false">15 min</button>
-              <button type="button" class="segmented-btn active" data-value="30" role="radio" aria-checked="true">30 min</button>
-              <button type="button" class="segmented-btn" data-value="60" role="radio" aria-checked="false">1 hour</button>
-              <button type="button" class="segmented-btn" data-value="90" role="radio" aria-checked="false">1.5 hours</button>
-              <button type="button" class="segmented-btn" data-value="120" role="radio" aria-checked="false">2 hours</button>
-            </div>
-            <button id="studyPlanStartBtn" class="btn btn-primary btn-block" type="button">
-              <span>Build My Plan</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-          </div>
-
-          <div id="studyPlanResult" class="explain-result" aria-live="polite"></div>
-        </section>
-
-        <!-- ===== Vocabulary ===== -->
-        <section id="view-vocabulary" class="view view-vocabulary" data-view-panel="vocabulary" hidden>
-          <div class="view-header">
-            <div>
-              <h1>Language Lab</h1>
-              <p class="view-sub">Word meanings, translation, and vocabulary practice in English, Hindi and Tamil.</p>
-            </div>
-          </div>
-
-          <form id="vocabularyForm" class="tool-input-row">
-            <textarea id="vocabularyInput" class="tool-textarea" placeholder="e.g. photosynthesis" rows="1" maxlength="200" aria-label="Word or phrase"></textarea>
-            <button id="vocabularySubmitBtn" class="btn btn-primary" type="submit">
-              <span>Look up</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-          </form>
-
-          <div class="field-row">
-            <div class="field-group">
-              <span class="field-label" id="vocabLanguageLabel">Explain in</span>
-              <div class="segmented" id="vocabularyLanguage" role="radiogroup" aria-labelledby="vocabLanguageLabel">
-                <button type="button" class="segmented-btn active" data-value="english" role="radio" aria-checked="true">English</button>
-                <button type="button" class="segmented-btn" data-value="hindi" role="radio" aria-checked="false">Hindi</button>
-                <button type="button" class="segmented-btn" data-value="tamil" role="radio" aria-checked="false">Tamil</button>
-              </div>
-            </div>
-            <div class="field-group">
-              <span class="field-label" id="vocabTranslateLabel">Also translate to</span>
-              <div class="segmented" id="vocabularyTranslate" role="radiogroup" aria-labelledby="vocabTranslateLabel">
-                <button type="button" class="segmented-btn active" data-value="">None</button>
-                <button type="button" class="segmented-btn" data-value="english">English</button>
-                <button type="button" class="segmented-btn" data-value="hindi">Hindi</button>
-                <button type="button" class="segmented-btn" data-value="tamil">Tamil</button>
-              </div>
-            </div>
-          </div>
-
-          <div id="vocabularyResult" class="explain-result" aria-live="polite">
-            <div class="empty-state">
-              <div class="empty-emoji">🔤</div>
-              <h2>No word yet</h2>
-              <p>Type a word or phrase above to see its meaning and an example.</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- ===== Notes ===== -->
-        <section id="view-notes" class="view view-notes" data-view-panel="notes" hidden>
-          <div class="view-header">
-            <div>
-              <h1>Notes</h1>
-              <p class="view-sub">Your private study notes, saved on this device.</p>
+              <h1>Study Planner</h1>
+              <p class="view-sub">Exams, homework, and goals — all in one place with real deadlines.</p>
             </div>
             <div class="view-actions">
-              <button id="newNoteBtn" class="btn btn-primary" type="button">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                <span>New note</span>
-              </button>
+              <button id="plannerAddItemBtn" class="btn btn-ghost" type="button">+ Add item</button>
+              <button id="plannerStudyPlanToggleBtn" class="btn btn-ghost" type="button">🤖 Generate study plan</button>
+              <button id="plannerExamPlanToggleBtn" class="btn btn-primary" type="button">🤖 Generate exam plan</button>
             </div>
           </div>
 
-          <div class="notes-layout">
-            <div class="notes-list-panel">
-              <input id="notesSearch" class="notes-search" type="search" placeholder="Search notes…" aria-label="Search notes" />
-              <div class="notes-folder-row" id="notesFolderRow"></div>
-              <div id="notesList" class="notes-list"></div>
+          <div id="plannerExamCenter" hidden></div>
+
+          <div id="plannerAddItemForm" class="tool-panel" hidden>
+            <label class="field-label" for="plannerItemTitle">Title</label>
+            <input id="plannerItemTitle" class="tool-input" type="text" placeholder="e.g. Finish history essay" maxlength="120" />
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="plannerItemType">Type</label>
+                <select id="plannerItemType" class="tool-input">
+                  <option value="goal">Goal</option>
+                  <option value="exam">Exam</option>
+                  <option value="homework">Homework</option>
+                  <option value="study">Study block</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="plannerItemSubject">Subject</label>
+                <select id="plannerItemSubject" class="tool-input">
+                  <option value="general">General</option>
+                  <option value="math">Mathematics</option>
+                  <option value="science">Science</option>
+                  <option value="english">English</option>
+                  <option value="hindi">Hindi</option>
+                  <option value="tamil">Tamil</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="plannerItemDeadline">Deadline</label>
+                <input id="plannerItemDeadline" class="tool-input" type="date" />
+              </div>
             </div>
-            <div id="noteEditorWrap">
-              <div class="empty-state" id="noteEmptyState">
-                <div class="empty-emoji">📝</div>
-                <h2>No notes yet</h2>
-                <p>Create your first note to start collecting what you've learned.</p>
+            <label class="field-label" for="plannerItemNotes">Notes</label>
+            <textarea id="plannerItemNotes" class="tool-textarea" rows="2"></textarea>
+            <div class="view-actions" style="margin-top:12px">
+              <button id="plannerItemCancelBtn" class="btn btn-ghost" type="button">Cancel</button>
+              <button id="plannerItemSaveBtn" class="btn btn-primary" type="button">Save</button>
+            </div>
+          </div>
+
+          <div id="plannerStudyPlanForm" class="tool-panel" hidden>
+            <label class="field-label" for="plannerStudyTopic">Topic</label>
+            <input id="plannerStudyTopic" class="tool-input" type="text" placeholder="e.g. Cell biology" maxlength="200" />
+            <span class="field-label">Available time</span>
+            <div class="segmented segmented-wrap" id="plannerStudyMinutesGroup">
+              <button type="button" class="segmented-btn" data-value="15">15 min</button>
+              <button type="button" class="segmented-btn active" data-value="30">30 min</button>
+              <button type="button" class="segmented-btn" data-value="60">1 hour</button>
+              <button type="button" class="segmented-btn" data-value="90">1.5 hours</button>
+              <button type="button" class="segmented-btn" data-value="120">2 hours</button>
+            </div>
+            <button id="plannerStudyBuildBtn" class="btn btn-primary btn-block" type="button"><span>Build plan</span></button>
+          </div>
+
+          <div id="plannerExamPlanForm" class="tool-panel" hidden>
+            <label class="field-label" for="plannerExamSubject">Subject</label>
+            <input id="plannerExamSubject" class="tool-input" type="text" placeholder="e.g. Biology" maxlength="80" />
+            <label class="field-label" for="plannerExamTopics" style="margin-top:12px">Chapters / topics (comma separated)</label>
+            <textarea id="plannerExamTopics" class="tool-textarea" rows="2" placeholder="e.g. Cell structure, Photosynthesis, Genetics" maxlength="400"></textarea>
+            <label class="field-label" for="plannerExamDate" style="margin-top:12px">Exam date</label>
+            <input id="plannerExamDate" class="tool-input" type="date" />
+            <button id="plannerExamBuildBtn" class="btn btn-primary btn-block" type="button"><span>Build exam plan</span></button>
+          </div>
+
+          <div id="plannerEmptyState" class="empty-state">
+            <div class="empty-emoji">🗓️</div>
+            <h2>Nothing planned yet</h2>
+            <p>Add an item manually, or let H1 generate a study or exam plan for you.</p>
+          </div>
+          <div id="plannerLists"></div>
+        </section>
+
+        <!-- ===== Projects ===== -->
+        <section id="view-projects" class="view view-projects" data-view-panel="projects" hidden>
+          <div class="view-header" id="projectToolbar">
+            <div>
+              <h1>Projects</h1>
+              <p class="view-sub">Science projects, presentations, assignments — with AI help breaking them down.</p>
+            </div>
+            <div class="view-actions">
+              <button id="projectNewBtn" class="btn btn-primary" type="button">+ New Project</button>
+            </div>
+          </div>
+
+          <div id="projectEmptyState" class="empty-state">
+            <div class="empty-emoji">🧩</div>
+            <h2>No projects yet</h2>
+            <p>Create a project and let H1 break it into tasks, a timeline, and a checklist.</p>
+          </div>
+          <div id="projectGrid" class="subject-grid"></div>
+
+          <div id="projectDetail" hidden>
+            <button id="projectDetailBackBtn" class="btn btn-ghost" type="button" style="margin-bottom:14px">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span>Back to projects</span>
+            </button>
+            <div class="view-header">
+              <div>
+                <h1 id="projectDetailTitle">Project</h1>
+                <p class="view-sub" id="projectDetailMeta"></p>
+                <div class="field-row" style="margin-top:10px">
+                  <div class="field-group">
+                    <label class="field-label" for="projectDeadlineInput">Deadline</label>
+                    <input id="projectDeadlineInput" class="tool-input" type="date" />
+                  </div>
+                </div>
               </div>
-              <div class="note-editor" id="noteEditor" hidden>
-                <div class="note-editor-top">
-                  <input id="noteTitleInput" class="note-title-input" type="text" placeholder="Note title" maxlength="120" />
-                  <button id="notePinBtn" class="icon-btn" type="button" title="Pin note" aria-label="Pin note" aria-pressed="false">
-                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.5 5.5L19 9l-4 4 1 6-4-3-4 3 1-6-4-4 5.5-1.5z"></path></svg>
-                  </button>
-                </div>
-                <div class="note-meta-row">
-                  <input id="noteFolderInput" class="note-tag-input" type="text" placeholder="Folder (e.g. Science)" maxlength="40" />
-                  <input id="noteTagsInput" class="note-tag-input" type="text" placeholder="Tags, comma separated" maxlength="120" />
-                </div>
-                <textarea id="noteBodyInput" class="note-body-input" placeholder="Start typing…"></textarea>
-
-                <div class="note-checklist" id="noteChecklist"></div>
-                <button id="addChecklistItemBtn" class="icon-btn-sm" type="button">+ Add checklist item</button>
-
-                <div class="note-ai-actions">
-                  <button id="noteSummarizeBtn" class="icon-btn-sm" type="button">Summarize note</button>
-                  <button id="noteExplainBtn" class="icon-btn-sm" type="button">Explain note</button>
-                  <button id="noteQuizBtn" class="icon-btn-sm" type="button">Make quiz</button>
-                  <button id="noteFlashcardsBtn" class="icon-btn-sm" type="button">Make flashcards</button>
-                  <button id="notePracticeBtn" class="icon-btn-sm" type="button">Practice questions</button>
-                </div>
-
-                <div class="note-editor-footer">
-                  <span class="note-meta" id="noteMeta"></span>
-                  <button id="deleteNoteBtn" class="btn btn-danger" type="button">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    <span>Delete</span>
-                  </button>
-                </div>
+              <div class="view-actions">
+                <button id="projectFavoriteBtn" class="btn btn-ghost" type="button">☆ Favorite</button>
+                <button id="projectAddDeadlineBtn" class="btn btn-ghost" type="button">📅 Add to Planner</button>
+                <button id="projectDeleteBtn" class="btn btn-danger" type="button">Delete</button>
               </div>
+            </div>
+
+            <div class="section-heading"><h2>AI Assistant</h2></div>
+            <div class="view-actions">
+              <button class="btn btn-ghost project-ai-btn" data-ai-action="tasks" type="button">🤖 Break into tasks</button>
+              <button class="btn btn-ghost project-ai-btn" data-ai-action="timeline" type="button">🤖 Create timeline</button>
+              <button class="btn btn-ghost project-ai-btn" data-ai-action="missing" type="button">🤖 Identify missing steps</button>
+              <button class="btn btn-ghost project-ai-btn" data-ai-action="outline" type="button">🤖 Presentation outline</button>
+            </div>
+            <div id="projectAIResult"></div>
+
+            <div class="section-heading"><h2>Tasks</h2></div>
+            <div class="view-actions"><button id="projectAddTaskBtn" class="icon-btn-sm" type="button">+ Add task</button></div>
+            <div id="projectTasksList"></div>
+
+            <div class="section-heading"><h2>Notes</h2></div>
+            <textarea id="projectNotesInput" class="tool-textarea" rows="4" style="width:100%" placeholder="Project notes…"></textarea>
+
+            <div class="section-heading"><h2>Linked files &amp; notes</h2></div>
+            <div id="projectLinksList"></div>
+            <div class="view-actions">
+              <button id="projectLinkNoteBtn" class="icon-btn-sm" type="button">+ Link note</button>
+              <button id="projectLinkDocBtn" class="icon-btn-sm" type="button">+ Link document</button>
             </div>
           </div>
         </section>
 
-        <!-- ===== Study Mode ===== -->
+        <!-- ===== Calendar ===== -->
+        <section id="view-calendar" class="view view-calendar" data-view-panel="calendar" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Calendar</h1>
+              <p class="view-sub">Homework, exams and focus sessions, all on one timeline.</p>
+            </div>
+          </div>
+          <div class="calendar-header">
+            <button id="calendarPrevBtn" class="btn btn-ghost" type="button">←</button>
+            <span class="calendar-month-label" id="calendarMonthLabel"></span>
+            <button id="calendarNextBtn" class="btn btn-ghost" type="button">→</button>
+            <button id="calendarTodayBtn" class="btn btn-ghost" type="button">Today</button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+          <div class="calendar-agenda" id="calendarAgenda"></div>
+        </section>
+
+        <!-- ===== Focus (Study Mode) ===== -->
         <section id="view-study-mode" class="view view-study-mode" data-view-panel="study-mode" hidden>
           <div class="view-header">
             <div>
-              <h1>Study Mode</h1>
-              <p class="view-sub">A focused timer to help you sit down and get through one task.</p>
+              <h1>Focus</h1>
+              <p class="view-sub">A distraction-free timer to help you sit down and get through one task.</p>
             </div>
           </div>
 
@@ -737,6 +1075,7 @@
             <div id="studySetupWrap" class="tool-panel" style="max-width:420px;width:100%">
               <label class="field-label" for="studyTaskInput">What are you working on?</label>
               <input id="studyTaskInput" class="tool-input" type="text" placeholder="e.g. Revise chapter 4" maxlength="120" />
+              <div id="studyTaskSuggestions" class="subject-bar" style="margin-top:8px" hidden></div>
               <span class="field-label" id="studyDurationLabel">Duration</span>
               <div class="study-duration-row" id="studyDuration" role="radiogroup" aria-labelledby="studyDurationLabel">
                 <button type="button" class="segmented-btn active" data-value="10">10 min</button>
@@ -744,12 +1083,17 @@
                 <button type="button" class="segmented-btn" data-value="25">25 min</button>
                 <button type="button" class="segmented-btn" data-value="45">45 min</button>
               </div>
+              <label class="toggle-row">
+                <span>Auto-start a 5 min break after</span>
+                <span class="toggle on" id="studyAutoBreakToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              </label>
               <button id="studyStartBtn" class="btn btn-primary btn-block" type="button">
                 <span>Start focus session</span>
               </button>
             </div>
 
             <div id="studyRunningWrap" hidden>
+              <div class="focus-cycle-row" id="studyCycleRow"></div>
               <div class="study-timer-ring" id="studyTimerRing">
                 <span class="study-timer-time" id="studyTimerTime">10:00</span>
                 <span class="study-timer-label" id="studyTimerLabel">remaining</span>
@@ -766,37 +1110,6 @@
           </div>
         </section>
 
-        <!-- ===== Exam Mode ===== -->
-        <section id="view-exam-mode" class="view view-exam-mode" data-view-panel="exam-mode" hidden>
-          <div class="view-header">
-            <div>
-              <h1>Exam Mode</h1>
-              <p class="view-sub">Tell H1 what's coming up and it will build a day-by-day plan. A study organizer, not a guarantee.</p>
-            </div>
-          </div>
-
-          <div id="examSetup" class="tool-panel" style="max-width:560px">
-            <label class="field-label" for="examSubjectInput">Subject</label>
-            <input id="examSubjectInput" class="tool-input" type="text" placeholder="e.g. Biology" maxlength="80" />
-            <label class="field-label" for="examTopicsInput" style="margin-top:14px">Chapters / topics (comma separated)</label>
-            <textarea id="examTopicsInput" class="tool-textarea" style="width:100%;margin-top:6px" rows="2" placeholder="e.g. Cell structure, Photosynthesis, Genetics" maxlength="400"></textarea>
-            <label class="field-label" for="examDateInput" style="margin-top:14px">Exam date</label>
-            <input id="examDateInput" class="tool-input" type="date" />
-            <button id="examBuildBtn" class="btn btn-primary btn-block" type="button">
-              <span>Build Exam Plan</span>
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-          </div>
-
-          <div id="examCurrentWrap" hidden>
-            <div class="exam-countdown" id="examCountdown"></div>
-            <div id="examPlanResult" class="explain-result"></div>
-            <div class="view-actions">
-              <button id="examNewPlanBtn" class="btn btn-ghost" type="button">Start a new plan</button>
-            </div>
-          </div>
-        </section>
-
         <!-- ===== Progress ===== -->
         <section id="view-progress" class="view view-progress" data-view-panel="progress" hidden>
           <div class="view-header">
@@ -806,6 +1119,340 @@
             </div>
           </div>
           <div id="progressContent"></div>
+        </section>
+
+        <!-- ===== Achievements ===== -->
+        <section id="view-achievements" class="view view-achievements" data-view-panel="achievements" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Achievements</h1>
+              <p class="view-sub">Badges you unlock by actually studying — nothing here is handed out for free.</p>
+            </div>
+          </div>
+          <div id="achievementsContent"></div>
+        </section>
+
+        <!-- ===== Tools ===== -->
+        <section id="view-tools" class="view view-tools" data-view-panel="tools" data-subtab-scope hidden>
+          <div class="view-header">
+            <div>
+              <h1>Tools</h1>
+              <p class="view-sub">Calculators, converters, references — and H1's writing &amp; language helpers.</p>
+            </div>
+            <div class="subtabs" role="tablist">
+              <button type="button" class="subtab-btn active" data-subtab="utilities">Utilities</button>
+              <button type="button" class="subtab-btn" data-subtab="writing">Writing &amp; Language</button>
+            </div>
+          </div>
+
+          <div data-subtab-panel="utilities">
+            <div class="util-grid">
+              <div class="util-panel">
+                <h3>Calculator</h3>
+                <div class="calc-display" id="calcDisplay">0</div>
+                <div class="calc-pad" id="calcPad">
+                  <button type="button" class="calc-btn" data-action="clear">C</button>
+                  <button type="button" class="calc-btn" data-action="sign">±</button>
+                  <button type="button" class="calc-btn" data-action="percent">%</button>
+                  <button type="button" class="calc-btn op" data-op="÷">÷</button>
+                  <button type="button" class="calc-btn" data-digit="7">7</button>
+                  <button type="button" class="calc-btn" data-digit="8">8</button>
+                  <button type="button" class="calc-btn" data-digit="9">9</button>
+                  <button type="button" class="calc-btn op" data-op="×">×</button>
+                  <button type="button" class="calc-btn" data-digit="4">4</button>
+                  <button type="button" class="calc-btn" data-digit="5">5</button>
+                  <button type="button" class="calc-btn" data-digit="6">6</button>
+                  <button type="button" class="calc-btn op" data-op="-">−</button>
+                  <button type="button" class="calc-btn" data-digit="1">1</button>
+                  <button type="button" class="calc-btn" data-digit="2">2</button>
+                  <button type="button" class="calc-btn" data-digit="3">3</button>
+                  <button type="button" class="calc-btn op" data-op="+">+</button>
+                  <button type="button" class="calc-btn" data-action="sqrt">√</button>
+                  <button type="button" class="calc-btn" data-digit="0">0</button>
+                  <button type="button" class="calc-btn" data-digit=".">.</button>
+                  <button type="button" class="calc-btn equals" data-action="equals">=</button>
+                </div>
+              </div>
+
+              <div class="util-panel">
+                <h3>Fraction Calculator</h3>
+                <div class="util-row">
+                  <input id="fracN1" class="tool-input" type="number" placeholder="Numerator" />
+                  <span>/</span>
+                  <input id="fracD1" class="tool-input" type="number" placeholder="Denominator" />
+                  <select id="fracOp" class="tool-input" style="max-width:60px">
+                    <option value="+">+</option>
+                    <option value="-">−</option>
+                    <option value="×">×</option>
+                    <option value="÷">÷</option>
+                  </select>
+                  <input id="fracN2" class="tool-input" type="number" placeholder="Numerator" />
+                  <span>/</span>
+                  <input id="fracD2" class="tool-input" type="number" placeholder="Denominator" />
+                </div>
+                <button id="fracComputeBtn" class="btn btn-primary btn-block" type="button">Calculate</button>
+                <div class="util-result" id="fracResult"></div>
+              </div>
+
+              <div class="util-panel">
+                <h3>Percentage Calculator</h3>
+                <div class="util-row">
+                  <input id="pctX" class="tool-input" type="number" placeholder="%" />
+                  <span>of</span>
+                  <input id="pctY" class="tool-input" type="number" placeholder="value" />
+                  <button id="pctXOfYBtn" class="btn btn-ghost" type="button">Go</button>
+                </div>
+                <div class="util-result" id="pctXOfYResult"></div>
+                <div class="util-row">
+                  <input id="pctA" class="tool-input" type="number" placeholder="value" />
+                  <span>is % of</span>
+                  <input id="pctB" class="tool-input" type="number" placeholder="total" />
+                  <button id="pctWhatBtn" class="btn btn-ghost" type="button">Go</button>
+                </div>
+                <div class="util-result" id="pctWhatResult"></div>
+                <div class="util-row">
+                  <input id="pctVal" class="tool-input" type="number" placeholder="value" />
+                  <span>± %</span>
+                  <input id="pctChange" class="tool-input" type="number" placeholder="percent" />
+                  <button id="pctChangeBtn" class="btn btn-ghost" type="button">Go</button>
+                </div>
+                <div class="util-result" id="pctChangeResult"></div>
+              </div>
+
+              <div class="util-panel">
+                <h3>Unit Converter</h3>
+                <div class="util-row">
+                  <select id="unitCategory" class="tool-input">
+                    <option value="length">Length</option>
+                    <option value="mass">Mass</option>
+                    <option value="time">Time</option>
+                    <option value="temperature">Temperature</option>
+                  </select>
+                </div>
+                <div class="util-row">
+                  <input id="unitValue" class="tool-input" type="number" value="1" />
+                  <select id="unitFrom" class="tool-input"></select>
+                  <span>→</span>
+                  <select id="unitTo" class="tool-input"></select>
+                </div>
+                <div class="util-result" id="unitResult"></div>
+              </div>
+
+              <div class="util-panel">
+                <h3>Geometry Helper</h3>
+                <div class="util-row">
+                  <select id="geoShape" class="tool-input">
+                    <option value="circle">Circle</option>
+                    <option value="rectangle">Rectangle</option>
+                    <option value="square">Square</option>
+                    <option value="triangle">Triangle</option>
+                    <option value="cylinder">Cylinder</option>
+                    <option value="sphere">Sphere</option>
+                  </select>
+                </div>
+                <div id="geoFields"></div>
+                <div class="util-result" id="geoResult"></div>
+              </div>
+
+              <div class="util-panel">
+                <h3>Random Question</h3>
+                <p class="view-sub" style="margin:0 0 10px">Pulled from your own flashcard decks.</p>
+                <button id="randomQuestionBtn" class="btn btn-primary btn-block" type="button">Give me a question</button>
+                <div id="randomQuestionCard" style="margin-top:12px"></div>
+              </div>
+
+              <div class="util-panel">
+                <h3>Timers</h3>
+                <div class="util-row">
+                  <select id="timerModeSelect" class="tool-input">
+                    <option value="pomodoro">Pomodoro (25 min)</option>
+                    <option value="stopwatch">Stopwatch</option>
+                    <option value="countdown">Countdown</option>
+                  </select>
+                  <input id="timerCountdownMinutes" class="tool-input" type="number" min="1" value="5" style="max-width:80px" />
+                </div>
+                <div class="timer-display" id="timerDisplay">00:00</div>
+                <div class="view-actions view-actions-center">
+                  <button id="timerStartBtn" class="btn btn-primary" type="button">Start</button>
+                  <button id="timerResetBtn" class="btn btn-ghost" type="button">Reset</button>
+                </div>
+              </div>
+
+              <div class="util-panel" style="grid-column:1 / -1">
+                <h3>Formula Reference</h3>
+                <div id="formulaReference" class="util-grid"></div>
+              </div>
+
+              <div class="util-panel" style="grid-column:1 / -1">
+                <h3>Periodic Table</h3>
+                <div class="periodic-table-grid" id="periodicTableGrid"></div>
+                <div class="pt-detail" id="periodicTableDetail"></div>
+              </div>
+            </div>
+          </div>
+
+          <div data-subtab-panel="writing" hidden>
+            <div class="section-heading"><h2>Summarize</h2></div>
+            <form id="summarizeForm" class="tool-input-row">
+              <textarea id="summarizeInput" class="tool-textarea" placeholder="Paste a paragraph, article, or notes to summarize…" rows="6" maxlength="6000" aria-label="Text to summarize" style="min-height:120px"></textarea>
+            </form>
+            <div class="view-actions">
+              <div class="segmented" id="summarizeLength" role="radiogroup" aria-label="Summary length">
+                <button type="button" class="segmented-btn" data-value="short" role="radio" aria-checked="false">Short</button>
+                <button type="button" class="segmented-btn active" data-value="normal" role="radio" aria-checked="true">Normal</button>
+                <button type="button" class="segmented-btn" data-value="detailed" role="radio" aria-checked="false">Detailed</button>
+              </div>
+              <button id="summarizeSubmitBtn" class="btn btn-primary" type="button">
+                <span>Summarize</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+            <div id="summarizeResult" class="explain-result" aria-live="polite">
+              <div class="empty-state">
+                <div class="empty-emoji">📄</div>
+                <h2>No summary yet</h2>
+                <p>Paste some study text above and H1 will summarize it for you.</p>
+              </div>
+            </div>
+
+            <div class="section-heading" style="margin-top:24px"><h2>Practice Questions</h2></div>
+            <div id="practiceSetup" class="tool-panel">
+              <label class="field-label" for="practiceTopic">Topic</label>
+              <input id="practiceTopic" class="tool-input" type="text" placeholder="e.g. The water cycle" maxlength="200" />
+              <span class="field-label" id="practiceCountLabel">Questions</span>
+              <div class="segmented" id="practiceCount" role="radiogroup" aria-labelledby="practiceCountLabel">
+                <button type="button" class="segmented-btn active" data-value="5" role="radio" aria-checked="true">5</button>
+                <button type="button" class="segmented-btn" data-value="10" role="radio" aria-checked="false">10</button>
+              </div>
+              <button id="practiceStartBtn" class="btn btn-primary btn-block" type="button">
+                <span>Generate Questions</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+            <div id="practiceResult" class="explain-result" aria-live="polite"></div>
+
+            <div class="section-heading" style="margin-top:24px"><h2>Vocabulary &amp; Language</h2></div>
+            <form id="vocabularyForm" class="tool-input-row">
+              <textarea id="vocabularyInput" class="tool-textarea" placeholder="e.g. photosynthesis" rows="1" maxlength="200" aria-label="Word or phrase"></textarea>
+              <button id="vocabularySubmitBtn" class="btn btn-primary" type="submit">
+                <span>Look up</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </form>
+            <div class="field-row">
+              <div class="field-group">
+                <span class="field-label" id="vocabLanguageLabel">Explain in</span>
+                <div class="segmented" id="vocabularyLanguage" role="radiogroup" aria-labelledby="vocabLanguageLabel">
+                  <button type="button" class="segmented-btn active" data-value="english" role="radio" aria-checked="true">English</button>
+                  <button type="button" class="segmented-btn" data-value="hindi" role="radio" aria-checked="false">Hindi</button>
+                  <button type="button" class="segmented-btn" data-value="tamil" role="radio" aria-checked="false">Tamil</button>
+                </div>
+              </div>
+              <div class="field-group">
+                <span class="field-label" id="vocabTranslateLabel">Also translate to</span>
+                <div class="segmented" id="vocabularyTranslate" role="radiogroup" aria-labelledby="vocabTranslateLabel">
+                  <button type="button" class="segmented-btn active" data-value="">None</button>
+                  <button type="button" class="segmented-btn" data-value="english">English</button>
+                  <button type="button" class="segmented-btn" data-value="hindi">Hindi</button>
+                  <button type="button" class="segmented-btn" data-value="tamil">Tamil</button>
+                </div>
+              </div>
+            </div>
+            <div id="vocabularyResult" class="explain-result" aria-live="polite">
+              <div class="empty-state">
+                <div class="empty-emoji">🔤</div>
+                <h2>No word yet</h2>
+                <p>Type a word or phrase above to see its meaning and an example.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Profile ===== -->
+        <!-- ===== Favorites ===== -->
+        <section id="view-favorites" class="view view-favorites" data-view-panel="favorites" hidden>
+          <div class="view-header">
+            <div>
+              <h1>⭐ Favorites</h1>
+              <p class="view-sub">Everything you've starred, in one place.</p>
+            </div>
+          </div>
+          <div id="favoritesContent"></div>
+        </section>
+
+        <section id="view-profile" class="view view-profile" data-view-panel="profile" hidden>
+          <div class="view-header">
+            <div class="profile-identity">
+              <div class="profile-avatar" id="profileAvatar">S</div>
+              <div>
+                <h1 id="profileName">Student</h1>
+                <p class="view-sub">Your study identity — level, streak, and goals, all in one place.</p>
+                <input id="profileNameInput" class="tool-input" type="text" placeholder="Set a display name (optional)" maxlength="30" style="margin-top:8px;max-width:260px" />
+              </div>
+            </div>
+          </div>
+
+          <div id="profileLevelCard" class="level-card" hidden></div>
+
+          <div class="section-heading"><h2>Study statistics</h2></div>
+          <div id="profileStatsGrid" class="progress-stats-grid"></div>
+
+          <div class="section-heading"><h2>Favorite subjects</h2></div>
+          <div id="profileFavoriteSubjects" class="subject-bar" style="padding:0"></div>
+
+          <div class="section-heading"><h2>Achievements</h2></div>
+          <div id="profileAchievementsPreview" class="achievements-grid"></div>
+
+          <div class="section-heading"><h2>Goals</h2></div>
+          <div class="tool-panel">
+            <label class="field-label" for="profileDailyGoalInput">Daily study goal (minutes)</label>
+            <input id="profileDailyGoalInput" class="tool-input" type="number" min="5" max="480" style="max-width:120px" />
+          </div>
+
+          <div id="profileGoalsList"></div>
+
+          <div class="view-actions">
+            <button id="profileAddGoalBtn" class="btn btn-ghost" type="button">+ Add a goal</button>
+          </div>
+
+          <div id="profileGoalForm" class="tool-panel" hidden>
+            <label class="field-label" for="profileGoalTitle">Title</label>
+            <input id="profileGoalTitle" class="tool-input" type="text" placeholder="e.g. Finish revising Algebra" maxlength="120" />
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="profileGoalType">Type</label>
+                <select id="profileGoalType" class="tool-input">
+                  <option value="daily">Daily (minutes)</option>
+                  <option value="weekly">Weekly (minutes)</option>
+                  <option value="subject">Subject goal</option>
+                  <option value="exam">Exam goal</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="profileGoalSubject">Subject</label>
+                <select id="profileGoalSubject" class="tool-input">
+                  <option value="general">General</option>
+                  <option value="math">Mathematics</option>
+                  <option value="science">Science</option>
+                  <option value="english">English</option>
+                  <option value="hindi">Hindi</option>
+                  <option value="tamil">Tamil</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="profileGoalMinutes">Target minutes</label>
+                <input id="profileGoalMinutes" class="tool-input" type="number" min="0" placeholder="30" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="profileGoalDeadline">Deadline</label>
+                <input id="profileGoalDeadline" class="tool-input" type="date" />
+              </div>
+            </div>
+            <div class="view-actions" style="margin-top:12px">
+              <button id="profileGoalCancelBtn" class="btn btn-ghost" type="button">Cancel</button>
+              <button id="profileGoalSaveBtn" class="btn btn-primary" type="button">Save goal</button>
+            </div>
+          </div>
         </section>
 
         <!-- ===== Settings ===== -->
@@ -859,14 +1506,26 @@
 
           <div class="settings-section">
             <h2>AI</h2>
-            <div class="status-row">
-              <span>AI Provider</span>
-              <span id="settingsProviderName" class="status-pill">—</span>
-            </div>
-            <div class="status-row">
+            <span class="field-label" id="aiLanguageSettingLabel">AI response language</span>
+            <p class="settings-hint">Changes the language H1 replies in across the AI Tutor, hints, and explanations.</p>
+            <div class="segmented" id="aiLanguageSetting" role="radiogroup" aria-labelledby="aiLanguageSettingLabel"></div>
+            <div class="status-row" style="margin-top:14px">
               <span>Status</span>
               <span id="settingsStatusPill" class="status-pill status-pill-pending">Checking…</span>
             </div>
+          </div>
+
+          <div class="settings-section">
+            <h2>Notifications</h2>
+            <label class="toggle-row">
+              <span>Deadline reminders</span>
+              <span class="toggle" id="deadlineRemindersToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
+            </label>
+            <p class="settings-hint">Only works while H1 is open in this browser tab — this is not a background/push notification. When on, H1 checks your homework and planner deadlines and lets you know if something is due today or overdue.</p>
+            <label class="toggle-row">
+              <span>Achievement unlock notifications</span>
+              <span class="toggle on" id="achievementNotificationsToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+            </label>
           </div>
 
           <div class="settings-section">
@@ -880,6 +1539,11 @@
               <span>Gamification (XP, levels, achievements)</span>
               <span class="toggle" id="gamificationToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
+          </div>
+
+          <div class="settings-section">
+            <h2>Privacy</h2>
+            <p class="settings-hint">H1 stores your conversations, notes, homework, documents, flashcards, quiz history and settings in this browser's local storage only. Nothing is uploaded except the text/image you send to the AI Tutor when you ask a question — and only the current message, not your other stored data.</p>
           </div>
 
           <div class="settings-section">
@@ -906,6 +1570,10 @@
               <button id="clearNotesBtn" class="btn btn-danger" type="button">Clear</button>
             </div>
             <div class="danger-row">
+              <div class="danger-row-text"><strong>Reset progress</strong><span>Clears XP, streaks and achievements only.</span></div>
+              <button id="resetProgressBtn" class="btn btn-danger" type="button">Reset</button>
+            </div>
+            <div class="danger-row">
               <div class="danger-row-text"><strong>Reset settings</strong><span>Resets theme, subject and preferences to defaults.</span></div>
               <button id="resetSettingsBtn" class="btn btn-danger" type="button">Reset</button>
             </div>
@@ -917,17 +1585,98 @@
 
           <div class="settings-section">
             <h2>About</h2>
-            <p class="about-line"><strong>H1 — AI Homework Helper</strong></p>
-            <p class="settings-hint">Version 3.0 · A friendly AI study companion for Math, Science, English, Hindi, Tamil and general homework.</p>
+            <p class="about-line"><strong>H1 — The Student OS</strong></p>
+            <p class="settings-hint">Version 4.0 · An AI-powered study companion for Math, Science, English, Hindi, Tamil and general homework.</p>
             <p class="settings-hint">Developed by - Pranav Ganesh - H1</p>
           </div>
         </section>
       </main>
     </div>
 
-    <footer class="app-footer">
-      <span>Developed by - Pranav Ganesh - H1</span>
-    </footer>
+    <!-- ===== Floating dock (desktop) ===== -->
+    <div class="dock-wrap">
+      <nav class="dock" id="dock" aria-label="Quick shortcuts">
+        <button class="dock-item" type="button" data-view="home" aria-label="Home">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"></path></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Home</span>
+        </button>
+        <button class="dock-item" type="button" data-view="chat" aria-label="AI Tutor">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">AI Tutor</span>
+        </button>
+        <button class="dock-item" type="button" data-view="homework" aria-label="Homework">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M9 3v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3"></path><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="16" x2="13" y2="16"></line></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Homework</span>
+        </button>
+        <button class="dock-item" type="button" data-view="scan" aria-label="Scan">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Scan</span>
+        </button>
+        <button class="dock-item" type="button" data-view="notes" aria-label="Notes">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Notes</span>
+        </button>
+        <button class="dock-item" type="button" data-view="flashcards" aria-label="Flashcards">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="14" rx="2"></rect><path d="M7 6V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2"></path></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Flashcards</span>
+        </button>
+        <button class="dock-item" type="button" data-view="quiz" aria-label="Quiz Lab">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Quiz Lab</span>
+        </button>
+        <button class="dock-item" type="button" data-view="planner" aria-label="Study Planner">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><polyline points="9 16 11 18 15 13"></polyline></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Study Planner</span>
+        </button>
+        <button class="dock-item" type="button" data-view="study-mode" aria-label="Focus">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Focus</span>
+        </button>
+        <button class="dock-item" type="button" data-view="tools" aria-label="Tools">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Tools</span>
+        </button>
+        <button class="dock-item" type="button" data-view="progress" aria-label="Progress">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          <span class="dock-item-dot"></span>
+          <span class="dock-tooltip">Progress</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- ===== Mobile bottom navigation ===== -->
+    <nav class="mobile-bottom-nav" aria-label="Primary">
+      <button class="mobile-nav-item" type="button" data-view="home">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"></path></svg>
+        <span>Home</span>
+      </button>
+      <button class="mobile-nav-item" type="button" data-view="chat">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        <span>AI</span>
+      </button>
+      <button class="mobile-nav-item" type="button" data-view="homework">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M9 3v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3"></path><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="16" x2="13" y2="16"></line></svg>
+        <span>Homework</span>
+      </button>
+      <button class="mobile-nav-item" type="button" data-view="quiz">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+        <span>Quiz</span>
+      </button>
+      <button class="mobile-nav-item" type="button" id="mobileMoreBtn">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg>
+        <span>More</span>
+      </button>
+    </nav>
   </div>
 
   <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
@@ -944,6 +1693,7 @@
       <div class="modal-body">
         <p id="modalMessage"></p>
         <input id="modalInput" class="tool-input" type="text" hidden />
+        <div id="modalList" class="modal-list" hidden></div>
       </div>
       <div class="modal-footer">
         <button id="modalCancelBtn" class="btn btn-ghost" type="button">Cancel</button>
@@ -962,6 +1712,7 @@
         </button>
       </div>
       <div class="modal-body">
+        <input id="historySearchInput" class="history-search-input" type="text" placeholder="Search conversations…" aria-label="Search conversations" />
         <div id="historyList" class="history-list"></div>
       </div>
       <div class="modal-footer">
@@ -979,6 +1730,36 @@
         <span class="command-kbd">Esc</span>
       </div>
       <div id="commandList" class="command-list"></div>
+    </div>
+  </div>
+
+  <!-- Shortcuts reference (press ?) -->
+  <div id="shortcutsOverlay" class="command-overlay" hidden>
+    <div class="command-palette" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+      <div class="command-input-row">
+        <span style="font-size:15px;font-weight:700">⌨️ Keyboard shortcuts</span>
+        <button id="shortcutsCloseBtn" class="icon-btn" type="button" aria-label="Close" style="margin-left:auto">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div id="shortcutsList" class="shortcuts-list"></div>
+    </div>
+  </div>
+
+  <!-- Quick Capture (Ctrl/Cmd+Shift+Space) -->
+  <div id="quickCaptureOverlay" class="quick-capture-overlay" hidden>
+    <div id="quickCaptureSheet" class="quick-capture-sheet" role="dialog" aria-modal="true" aria-label="Quick capture">
+      <div class="qc-header">
+        <span class="qc-header-icon">⚡</span>
+        <h3>Quick Capture</h3>
+        <span class="command-kbd">Esc</span>
+      </div>
+      <div id="quickCaptureTypes" class="qc-types"></div>
+      <textarea id="quickCaptureInput" class="qc-input" rows="3" placeholder="What do you want to remember?"></textarea>
+      <div class="qc-footer">
+        <span class="qc-hint">Enter to save · Shift+Enter for a new line</span>
+        <button id="quickCaptureSaveBtn" class="btn btn-primary" type="button">Save</button>
+      </div>
     </div>
   </div>
 

@@ -6,6 +6,7 @@ import { switchView } from "./nav.js";
 import { explainQuestion } from "./explain.js";
 import { startQuizWithTopic } from "./quiz.js";
 import { startFlashcardsWithTopic } from "./flashcards.js";
+import { currentSpaceTag, matchesCurrentSpace } from "./spacesStore.js";
 
 const NOTES_KEY = "h1-notes";
 
@@ -20,6 +21,7 @@ const noteBodyInput = document.getElementById("noteBodyInput");
 const noteFolderInput = document.getElementById("noteFolderInput");
 const noteTagsInput = document.getElementById("noteTagsInput");
 const notePinBtn = document.getElementById("notePinBtn");
+const noteFavoriteBtn = document.getElementById("noteFavoriteBtn");
 const noteChecklist = document.getElementById("noteChecklist");
 const addChecklistItemBtn = document.getElementById("addChecklistItemBtn");
 const noteMeta = document.getElementById("noteMeta");
@@ -53,7 +55,11 @@ function formatMeta(note) {
 }
 
 function allFolders() {
-  const set = new Set(loadNotes().map((n) => n.folder || "General"));
+  const set = new Set(
+    loadNotes()
+      .filter((n) => matchesCurrentSpace(n.spaceId))
+      .map((n) => n.folder || "General")
+  );
   return Array.from(set).sort();
 }
 
@@ -89,6 +95,7 @@ function renderList() {
   const query = notesSearch.value.trim().toLowerCase();
   const notes = loadNotes()
     .slice()
+    .filter((n) => matchesCurrentSpace(n.spaceId))
     .filter((n) => !activeFolder || (n.folder || "General") === activeFolder)
     .filter(
       (n) =>
@@ -166,6 +173,7 @@ function openNote(id) {
   noteFolderInput.value = note.folder === "General" ? "" : note.folder;
   noteTagsInput.value = note.tags.join(", ");
   notePinBtn.setAttribute("aria-pressed", String(Boolean(note.pinned)));
+  noteFavoriteBtn.setAttribute("aria-pressed", String(Boolean(note.favorite)));
   renderChecklist(note);
   noteMeta.textContent = formatMeta(note);
   renderList();
@@ -209,6 +217,12 @@ notePinBtn.addEventListener("click", () => {
   renderList();
 });
 
+noteFavoriteBtn.addEventListener("click", () => {
+  if (!activeId) return;
+  toggleNoteFavorite(activeId);
+  noteFavoriteBtn.setAttribute("aria-pressed", String(Boolean(currentNote()?.favorite)));
+});
+
 addChecklistItemBtn.addEventListener("click", () => {
   const note = currentNote();
   if (!note) return;
@@ -222,7 +236,7 @@ addChecklistItemBtn.addEventListener("click", () => {
 
 newNoteBtn.addEventListener("click", () => {
   const now = Date.now();
-  const note = { id: uid(), title: "", body: "", folder: "General", tags: [], checklist: [], pinned: false, createdAt: now, updatedAt: now };
+  const note = { id: uid(), title: "", body: "", folder: "General", tags: [], checklist: [], pinned: false, favorite: false, spaceId: currentSpaceTag(), createdAt: now, updatedAt: now };
   const list = loadNotes();
   list.unshift(note);
   saveNotes(list);
@@ -304,9 +318,9 @@ export function bindMoreTools(api) {
 
 // Used by moreTools.js's "Save to notes" action (Summarizer) — kept independent of the
 // editor's own open/active-note flow so it works even when Notes isn't the current view.
-export function saveQuickNote(title, body) {
+export function saveQuickNote(title, body, folder) {
   const now = Date.now();
-  const note = { id: uid(), title, body, folder: "General", tags: [], checklist: [], pinned: false, createdAt: now, updatedAt: now };
+  const note = { id: uid(), title, body, folder: folder || "General", tags: [], checklist: [], pinned: false, favorite: false, spaceId: currentSpaceTag(), createdAt: now, updatedAt: now };
   const list = loadNotes();
   list.unshift(note);
   saveNotes(list);
@@ -326,6 +340,21 @@ export function initNotes() {
     noteEmptyState.hidden = false;
     noteEditor.hidden = true;
   }
+}
+
+export function toggleNoteFavorite(id) {
+  const list = loadNotes();
+  const note = list.find((n) => n.id === id);
+  if (!note) return;
+  note.favorite = !note.favorite;
+  saveNotes(list);
+  renderList();
+}
+
+export function refreshNotes() {
+  activeFolder = "";
+  renderFolderChips();
+  renderList();
 }
 
 export function clearAllNotesData() {

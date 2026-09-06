@@ -1,6 +1,6 @@
 import "./nav.js";
 import { switchView, onViewChange } from "./nav.js";
-import { appState, setSubject } from "./state.js";
+import { appState, setSubject, AI_LANGUAGES, setLanguage } from "./state.js";
 import {
   getStoredTheme,
   setTheme,
@@ -17,19 +17,37 @@ import { onHealthChange, startHealthPolling } from "./health.js";
 import { confirmDanger } from "./modal.js";
 import { safeGet, safeSet } from "./storage.js";
 import { exportData, importData } from "./dataTransfer.js";
-import { isEnabled as gamificationEnabled, setEnabled as setGamificationEnabled } from "./gamification.js";
+import { isEnabled as gamificationEnabled, setEnabled as setGamificationEnabled, checkAndNotifyAchievements } from "./gamification.js";
 import { clearAllConversations } from "./conversations.js";
 import { initChat, openChatWithMessage, prefillChat, setEnterMode, clearAllConversationsData } from "./chat.js";
 import { initExplain } from "./explain.js";
 import { initQuiz } from "./quiz.js";
-import { initFlashcards } from "./flashcards.js";
-import { initNotes, clearAllNotesData, bindMoreTools } from "./notes.js";
+import { initFlashcards, refreshFlashcards } from "./flashcards.js";
+import { initNotes, clearAllNotesData, bindMoreTools, refreshNotes } from "./notes.js";
 import { initStudyMode } from "./studyMode.js";
 import { initMoreTools, summarizeText, generatePracticeFromSource } from "./moreTools.js";
-import { initCommandPalette } from "./commandPalette.js";
-import { initExamMode } from "./examMode.js";
+import { initCommandPalette, openPalette } from "./commandPalette.js";
 import { initProgressPage, renderProgressPage } from "./progressPage.js";
-import { initHomeWidgets, renderHomeWidget } from "./homeWidgets.js";
+import { initHomeWidgets, renderHomeWidget, renderUpcomingWidget } from "./homeWidgets.js";
+import { initHomework, refreshHomework } from "./homework.js";
+import { initScan } from "./scan.js";
+import { initSubjects, refreshSubjects } from "./subjects.js";
+import { initDocuments, refreshDocuments } from "./documents.js";
+import { initPlanner, refreshPlanner } from "./planner.js";
+import { initCalendar, refreshCalendar } from "./calendarView.js";
+import { initAchievements, renderAchievements } from "./achievements.js";
+import { initToolsHub } from "./toolsHub.js";
+import { initSubtabs, selectSubtabInView } from "./subtabs.js";
+import { initNotifications, setEnabled as setRemindersEnabled } from "./notifications.js";
+import { initDock } from "./dock.js";
+import { initMagnetic } from "./magnetic.js";
+import { initProfile, renderProfile } from "./profile.js";
+import { initQuickCapture } from "./quickCapture.js";
+import { initSpacesUI, onSpaceUIRefresh } from "./spacesUI.js";
+import { initProjects, refreshProjects } from "./projects.js";
+import { initFavorites, render as renderFavorites } from "./favorites.js";
+import { initShortcuts } from "./shortcuts.js";
+import { clearEvents } from "./progress.js";
 
 /* ---------------------------------------------------------
    DOM references
@@ -40,8 +58,11 @@ const configBannerText = document.getElementById("configBannerText");
 const configBannerClose = document.getElementById("configBannerClose");
 const sidebarStatusDot = document.getElementById("sidebarStatusDot");
 const sidebarStatusText = document.getElementById("sidebarStatusText");
-const settingsProviderName = document.getElementById("settingsProviderName");
+const topbarStatusDot = document.getElementById("topbarStatusDot");
+const topbarStatusText = document.getElementById("topbarStatusText");
 const settingsStatusPill = document.getElementById("settingsStatusPill");
+const topbarSearchBtn = document.getElementById("topbarSearchBtn");
+const topbarSettingsBtn = document.getElementById("topbarSettingsBtn");
 
 const quickThemeToggle = document.getElementById("quickThemeToggle");
 const sidebarThemeToggle = document.getElementById("sidebarThemeToggle");
@@ -54,6 +75,9 @@ const autoScrollToggle = document.getElementById("autoScrollToggle");
 const saveConversationsToggle = document.getElementById("saveConversationsToggle");
 const reduceMotionToggle = document.getElementById("reduceMotionToggle");
 const gamificationToggle = document.getElementById("gamificationToggle");
+const aiLanguageGroup = document.getElementById("aiLanguageSetting");
+const deadlineRemindersToggle = document.getElementById("deadlineRemindersToggle");
+const achievementNotificationsToggle = document.getElementById("achievementNotificationsToggle");
 
 const heroGreeting = document.getElementById("heroGreeting");
 const heroAskForm = document.getElementById("heroAskForm");
@@ -148,6 +172,26 @@ deviceSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
 refreshDeviceUI();
 
 /* ===========================================================
+   AI response language
+   =========================================================== */
+AI_LANGUAGES.forEach((lang) => {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "segmented-btn";
+  btn.dataset.value = lang.value;
+  btn.setAttribute("role", "radio");
+  btn.textContent = lang.label;
+  aiLanguageGroup.appendChild(btn);
+});
+syncSegmented(aiLanguageGroup, appState.language);
+aiLanguageGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    setLanguage(btn.dataset.value);
+    syncSegmented(aiLanguageGroup, btn.dataset.value);
+  });
+});
+
+/* ===========================================================
    Chat-related settings (Enter mode, auto-scroll, save conversations)
    =========================================================== */
 let enterMode = safeGet("h1-enter-mode", "enter");
@@ -192,16 +236,15 @@ wireToggle(gamificationToggle, "h1-gamification-enabled", true, (on) => {
   setGamificationEnabled(on);
   renderHomeWidget();
 });
+wireToggle(achievementNotificationsToggle, "h1-achievement-notifications", true);
+wireToggle(deadlineRemindersToggle, "h1-deadline-reminders", false, (on) => setRemindersEnabled(on));
 setReduceMotion(getStoredReduceMotion());
 setGamificationEnabled(gamificationEnabled());
 
 /* ===========================================================
-   Health status → sidebar dot, settings pill, banner
+   Health status → sidebar dot, topbar pill, settings pill, banner
+   Never names the underlying AI provider — see H1's no-branding rule.
    =========================================================== */
-function capitalize(s) {
-  return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
-}
-
 let dismissedBannerMessage = null;
 
 function showBanner(text) {
@@ -220,38 +263,53 @@ configBannerClose.addEventListener("click", () => {
   configBanner.hidden = true;
 });
 
+function setStatus(dotClass, text, pillClass, pillText) {
+  sidebarStatusDot.className = `status-dot ${dotClass}`;
+  sidebarStatusText.textContent = text;
+  if (topbarStatusDot) topbarStatusDot.className = `status-dot ${dotClass}`;
+  if (topbarStatusText) topbarStatusText.textContent = text;
+  settingsStatusPill.textContent = pillText;
+  settingsStatusPill.className = `status-pill ${pillClass}`;
+}
+
 onHealthChange((status) => {
   if (!status.reachable) {
-    sidebarStatusDot.className = "status-dot status-dot-bad";
-    sidebarStatusText.textContent = "Server unreachable";
-    settingsProviderName.textContent = "—";
-    settingsStatusPill.textContent = "Unreachable";
-    settingsStatusPill.className = "status-pill status-pill-bad";
+    setStatus("status-dot-bad", "Server unreachable", "status-pill-bad", "Unreachable");
     showBanner("Couldn't reach the H1 server. Check your connection — answers won't work until it's back.");
     return;
   }
 
   const ai = status.ai || {};
   if (ai.configured) {
-    sidebarStatusDot.className = "status-dot status-dot-ok";
-    sidebarStatusText.textContent = `${capitalize(ai.provider)} connected`;
-    settingsProviderName.textContent = capitalize(ai.provider);
-    settingsStatusPill.textContent = "Connected";
-    settingsStatusPill.className = "status-pill status-pill-ok";
+    setStatus("status-dot-ok", "AI Connected", "status-pill-ok", "Connected");
     hideBanner();
   } else {
-    sidebarStatusDot.className = "status-dot status-dot-bad";
-    sidebarStatusText.textContent = "AI not configured";
-    settingsProviderName.textContent = ai.provider ? capitalize(ai.provider) : "None";
-    settingsStatusPill.textContent = "Not configured";
-    settingsStatusPill.className = "status-pill status-pill-bad";
+    setStatus("status-dot-bad", "AI Offline", "status-pill-bad", "Not configured");
     showBanner(
-      "The AI backend isn't configured yet. You can still browse the app, but answers won't be available until an API key is set on the server."
+      "The AI backend isn't configured yet. You can still browse H1, but AI answers won't be available until an API key is set on the server."
     );
   }
 });
 
+setStatus("status-dot-pending", "Connecting…", "status-pill-pending", "Checking…");
 startHealthPolling();
+
+/* ===========================================================
+   Desktop topbar actions
+   =========================================================== */
+const topbarProfileBtn = document.getElementById("topbarProfileBtn");
+if (topbarSearchBtn) topbarSearchBtn.addEventListener("click", openPalette);
+if (topbarSettingsBtn) topbarSettingsBtn.addEventListener("click", () => switchView("settings"));
+if (topbarProfileBtn) topbarProfileBtn.addEventListener("click", () => switchView("profile"));
+
+/* ===========================================================
+   Achievement-unlock notifications
+   =========================================================== */
+window.addEventListener("h1:activity-logged", () => {
+  if (safeGet("h1-achievement-notifications", "1") !== "0") {
+    checkAndNotifyAchievements();
+  }
+});
 
 /* ===========================================================
    Home: hero greeting, ask bar, quick actions
@@ -272,7 +330,6 @@ heroAskForm.addEventListener("submit", (e) => {
 });
 
 const QUICK_ACTION_PREFILL = {
-  explain: "Explain this: ",
   solve: "Solve this: ",
   examples: "Give me examples of ",
   simple: "Explain simply: ",
@@ -280,15 +337,41 @@ const QUICK_ACTION_PREFILL = {
 };
 
 quickActions.addEventListener("click", (e) => {
-  const btn = e.target.closest(".quick-action");
+  const btn = e.target.closest(".suggestion-chip");
   if (!btn) return;
   const action = btn.dataset.quick;
-  if (action === "summarize") return switchView("summarize");
+  if (action === "explain") {
+    switchView("homework");
+    selectSubtabInView("homework", "explain");
+    return;
+  }
+  if (action === "summarize") {
+    switchView("tools");
+    selectSubtabInView("tools", "writing");
+    return;
+  }
+  if (action === "plan") return switchView("planner");
   if (action === "quiz") return switchView("quiz");
   if (action === "flashcards") return switchView("flashcards");
   const prefill = QUICK_ACTION_PREFILL[action];
   if (prefill) prefillChat(prefill);
 });
+
+/* ===========================================================
+   Home superbar — attach / scan / command shortcuts
+   =========================================================== */
+const superbarAttachBtn = document.getElementById("superbarAttachBtn");
+const superbarScanBtn = document.getElementById("superbarScanBtn");
+const superbarCommandBtn = document.getElementById("superbarCommandBtn");
+
+if (superbarAttachBtn) {
+  superbarAttachBtn.addEventListener("click", () => {
+    switchView("chat");
+    document.getElementById("attachImageBtn")?.click();
+  });
+}
+if (superbarScanBtn) superbarScanBtn.addEventListener("click", () => switchView("scan"));
+if (superbarCommandBtn) superbarCommandBtn.addEventListener("click", openPalette);
 
 /* ===========================================================
    Settings → Data (export / import + destructive actions, all confirmed)
@@ -332,6 +415,19 @@ document.getElementById("clearNotesBtn").addEventListener("click", () => {
   });
 });
 
+document.getElementById("resetProgressBtn").addEventListener("click", () => {
+  confirmDanger("Reset progress?", "This clears your XP, streaks and achievement history.", "Reset", () => {
+    clearEvents();
+    try {
+      localStorage.removeItem("h1-achievements-seen");
+    } catch {
+      // ignored
+    }
+    showToast("Progress reset. Reloading…", "success");
+    setTimeout(() => window.location.reload(), 600);
+  });
+});
+
 const SETTINGS_KEYS = [
   "h1-theme",
   "h1-device-preview",
@@ -341,7 +437,11 @@ const SETTINGS_KEYS = [
   "h1-save-conversations",
   "h1-reduce-motion",
   "h1-ai-mode",
+  "h1-ai-language",
   "h1-gamification-enabled",
+  "h1-achievement-notifications",
+  "h1-deadline-reminders",
+  "h1-sidebar-collapsed",
 ];
 
 document.getElementById("resetSettingsBtn").addEventListener("click", () => {
@@ -381,15 +481,57 @@ initNotes();
 initStudyMode();
 initMoreTools();
 initCommandPalette();
-initExamMode();
 initProgressPage();
 initHomeWidgets();
+initHomework();
+initScan();
+initSubjects();
+initDocuments();
+initPlanner();
+initCalendar();
+initAchievements();
+initToolsHub();
+initSubtabs();
+initNotifications();
+initDock();
+initProfile();
+initQuickCapture();
+initSpacesUI();
+initProjects();
+initFavorites();
+initShortcuts();
+
+// Switching Spaces re-filters every space-aware list view at once, so the switch feels
+// instantaneous no matter which view the user is currently on.
+onSpaceUIRefresh(() => {
+  refreshHomework();
+  refreshNotes();
+  refreshDocuments();
+  refreshFlashcards();
+  refreshPlanner();
+  refreshProjects();
+  renderHomeWidget();
+  renderUpcomingWidget();
+  renderProfile();
+});
+initMagnetic(".bento-tile", 5);
 
 bindMoreTools({ summarizeText, generatePracticeFromSource });
 
 onViewChange((view) => {
-  if (view === "home") renderHomeWidget();
+  if (view === "home") {
+    renderHomeWidget();
+    renderUpcomingWidget();
+  }
   if (view === "progress") renderProgressPage();
+  if (view === "homework") refreshHomework();
+  if (view === "planner") refreshPlanner();
+  if (view === "calendar") refreshCalendar();
+  if (view === "subjects") refreshSubjects();
+  if (view === "achievements") renderAchievements();
+  if (view === "profile") renderProfile();
+  if (view === "projects") refreshProjects();
+  if (view === "favorites") renderFavorites();
 });
 
 switchView("home");

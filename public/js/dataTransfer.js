@@ -1,6 +1,9 @@
-const EXPORT_VERSION = 1;
+const EXPORT_VERSION = 2;
 
 // Every H1 localStorage key that represents real user data (not transient UI state).
+// Values are round-tripped as raw strings (see exportData/importData below) so this works
+// uniformly whether a key was written with storage.js's safeSet (plain string) or
+// safeSetJson (JSON-encoded string) — no need to track which is which here.
 const KNOWN_KEYS = [
   "h1-theme",
   "h1-device-preview",
@@ -10,16 +13,29 @@ const KNOWN_KEYS = [
   "h1-save-conversations",
   "h1-reduce-motion",
   "h1-ai-mode",
+  "h1-ai-language",
   "h1-gamification-enabled",
+  "h1-achievement-notifications",
+  "h1-deadline-reminders",
+  "h1-sidebar-collapsed",
   "h1-conversations",
   "h1-active-conversation",
   "h1-notes",
   "h1-recent-quizzes",
-  "h1-quiz-history",
   "h1-flashcard-progress",
-  "h1-study-plan-done",
-  "h1-exam-plans",
+  "h1-flashcard-decks",
+  "h1-homework-tasks",
+  "h1-planner-items",
+  "h1-documents",
+  "h1-custom-subjects",
   "h1-progress-events",
+  "h1-achievements-seen",
+  "h1-goals",
+  "h1-daily-goal-minutes",
+  "h1-display-name",
+  "h1-spaces",
+  "h1-current-space",
+  "h1-projects",
 ];
 
 export function exportData() {
@@ -27,9 +43,11 @@ export function exportData() {
   KNOWN_KEYS.forEach((key) => {
     try {
       const raw = localStorage.getItem(key);
-      if (raw !== null) data[key] = JSON.parse(raw);
+      // Stored verbatim as a string — the surrounding JSON.stringify(payload) below escapes
+      // it correctly whether it's a plain value ("dark") or an already-JSON-encoded one.
+      if (raw !== null) data[key] = raw;
     } catch {
-      // skip keys that fail to read/parse rather than corrupting the whole export
+      // skip keys that fail to read rather than corrupting the whole export
     }
   });
 
@@ -61,8 +79,10 @@ export function importData(jsonText) {
   const importedKeys = [];
   for (const key of KNOWN_KEYS) {
     if (!(key in parsed.data)) continue;
+    const value = parsed.data[key];
+    if (typeof value !== "string") continue;
     try {
-      localStorage.setItem(key, JSON.stringify(parsed.data[key]));
+      localStorage.setItem(key, value);
       importedKeys.push(key);
     } catch {
       // skip a single bad key rather than failing the whole import

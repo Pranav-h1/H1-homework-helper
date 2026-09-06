@@ -3,6 +3,7 @@ import { appState } from "./state.js";
 import { showToast } from "./toast.js";
 import { safeGetJson, safeSetJson } from "./storage.js";
 import { logEvent } from "./progress.js";
+import { addMistake } from "./mistakeBookStore.js";
 
 const RECENT_KEY = "h1-recent-quizzes";
 const MAX_RECENT = 6;
@@ -317,6 +318,19 @@ function showQuizResults() {
     item.querySelector("strong").textContent = q.question;
     item.querySelector("span").textContent = `Correct answer: ${questionAnswerLabel(q)}`;
     quizReview.appendChild(item);
+
+    if (!answer.correct) {
+      const studentAnswer =
+        q.type === "shortanswer" ? "(short answer, self-graded incorrect)" : answer.selectedIndex >= 0 ? q.options[answer.selectedIndex] : "No answer (time ran out)";
+      addMistake({
+        question: q.question,
+        subject: appState.subject,
+        topic: quizState.topic,
+        studentAnswer,
+        correctAnswer: questionAnswerLabel(q),
+        explanation: q.explanation || "",
+      });
+    }
   });
 }
 

@@ -1,8 +1,10 @@
 import { fetchFlashcards, friendlyErrorMessage } from "./api.js";
-import { appState } from "./state.js";
+import { appState, SUBJECT_LABELS } from "./state.js";
 import { showToast } from "./toast.js";
 import { safeGetJson, safeSetJson } from "./storage.js";
 import { logEvent } from "./progress.js";
+import { createDeck, getDecks, deleteDeck, markCard as markDeckCard, getDueCount } from "./flashcardDecks.js";
+import { matchesCurrentSpace } from "./spacesStore.js";
 
 const PROGRESS_KEY = "h1-flashcard-progress";
 
@@ -22,8 +24,52 @@ const flashRestartBtn = document.getElementById("flashRestartBtn");
 const flashWrongOnlyBtn = document.getElementById("flashWrongOnlyBtn");
 const flashKnownBtn = document.getElementById("flashKnownBtn");
 const flashPracticeBtn = document.getElementById("flashPracticeBtn");
+const flashDeckLibrary = document.getElementById("flashDeckLibrary");
+const flashDeckLibraryList = document.getElementById("flashDeckLibraryList");
 
-const flashState = { topic: "", cards: [], fullDeck: [], index: 0, wrongOnly: false };
+const flashState = { topic: "", cards: [], fullDeck: [], index: 0, wrongOnly: false, deckId: null };
+
+function renderDeckLibrary() {
+  if (!flashDeckLibrary || !flashDeckLibraryList) return;
+  const decks = getDecks().filter((d) => matchesCurrentSpace(d.spaceId));
+  flashDeckLibrary.hidden = decks.length === 0;
+  flashDeckLibraryList.innerHTML = "";
+  decks.forEach((deck) => {
+    const due = getDueCount(deck);
+    const row = document.createElement("div");
+    row.className = "deck-row";
+    row.innerHTML = `
+      <button type="button" class="deck-row-main">
+        <span class="deck-row-title"></span>
+        <span class="deck-row-meta"></span>
+      </button>
+      <button type="button" class="icon-btn deck-row-delete" aria-label="Delete deck">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      </button>`;
+    row.querySelector(".deck-row-title").textContent = deck.topic;
+    row.querySelector(".deck-row-meta").textContent = `${deck.cards.length} cards · ${SUBJECT_LABELS[deck.subject] || deck.subject}${due > 0 ? ` · ${due} due` : ""}`;
+    row.querySelector(".deck-row-main").addEventListener("click", () => resumeDeck(deck));
+    row.querySelector(".deck-row-delete").addEventListener("click", () => {
+      deleteDeck(deck.id);
+      renderDeckLibrary();
+      showToast("Deck deleted.", "success", 1500);
+    });
+    flashDeckLibraryList.appendChild(row);
+  });
+}
+
+function resumeDeck(deck) {
+  flashState.topic = deck.topic;
+  flashState.cards = deck.cards;
+  flashState.fullDeck = deck.cards;
+  flashState.deckId = deck.id;
+  flashState.wrongOnly = false;
+  flashState.index = 0;
+  flashWrongOnlyBtn.textContent = "Study only wrong cards";
+  flashSetup.hidden = true;
+  flashPlay.hidden = false;
+  renderFlashCard();
+}
 
 function progressMap() {
   return safeGetJson(PROGRESS_KEY, {});
@@ -96,13 +142,24 @@ flashNextBtn.addEventListener("click", () => {
   }
 });
 
+function deckCardIndex(card) {
+  if (!flashState.deckId) return -1;
+  return flashState.fullDeck.indexOf(card);
+}
+
 flashKnownBtn.addEventListener("click", () => {
   const card = flashState.cards[flashState.index];
-  if (card) markCard(card.front, "known");
+  if (!card) return;
+  markCard(card.front, "known");
+  const idx = deckCardIndex(card);
+  if (idx !== -1) markDeckCard(flashState.deckId, idx, true);
 });
 flashPracticeBtn.addEventListener("click", () => {
   const card = flashState.cards[flashState.index];
-  if (card) markCard(card.front, "practice");
+  if (!card) return;
+  markCard(card.front, "practice");
+  const idx = deckCardIndex(card);
+  if (idx !== -1) markDeckCard(flashState.deckId, idx, false);
 });
 
 flashShuffleBtn.addEventListener("click", () => {
@@ -145,6 +202,7 @@ flashWrongOnlyBtn.addEventListener("click", () => {
 flashNewBtn.addEventListener("click", () => {
   flashPlay.hidden = true;
   flashSetup.hidden = false;
+  renderDeckLibrary();
 });
 
 async function startFlashcards(topicOverride, sourceText) {
@@ -158,9 +216,11 @@ async function startFlashcards(topicOverride, sourceText) {
   flashStartBtn.querySelector("span").textContent = "Generating…";
   try {
     const cards = await fetchFlashcards(topic, appState.subject, sourceText);
+    const deck = createDeck(topic, appState.subject, cards);
     flashState.topic = topic;
     flashState.cards = cards;
     flashState.fullDeck = cards;
+    flashState.deckId = deck.id;
     flashState.wrongOnly = false;
     flashState.index = 0;
     flashWrongOnlyBtn.textContent = "Study only wrong cards";
@@ -179,7 +239,11 @@ async function startFlashcards(topicOverride, sourceText) {
 flashStartBtn.addEventListener("click", () => startFlashcards());
 
 export function initFlashcards() {
-  // kept for symmetry with other feature modules — nothing to prime on load
+  renderDeckLibrary();
+}
+
+export function refreshFlashcards() {
+  renderDeckLibrary();
 }
 
 export function startFlashcardsWithTopic(topic, sourceText) {

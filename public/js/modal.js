@@ -3,6 +3,7 @@ const panel = document.getElementById("modalPanel");
 const titleEl = document.getElementById("modalTitle");
 const messageEl = document.getElementById("modalMessage");
 const inputEl = document.getElementById("modalInput");
+const listEl = document.getElementById("modalList");
 const cancelBtn = document.getElementById("modalCancelBtn");
 const confirmBtn = document.getElementById("modalConfirmBtn");
 const closeBtn = document.getElementById("modalCloseBtn");
@@ -13,6 +14,9 @@ let lastFocused = null;
 function close() {
   overlay.hidden = true;
   onConfirm = null;
+  listEl.hidden = true;
+  listEl.innerHTML = "";
+  confirmBtn.hidden = false;
   if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
 }
 
@@ -47,6 +51,9 @@ document.addEventListener("keydown", (e) => {
 // onConfirm receives `true` for a plain confirm dialog, or the trimmed string for a prompt dialog.
 export function openModal(options) {
   lastFocused = document.activeElement;
+  listEl.hidden = true;
+  listEl.innerHTML = "";
+  confirmBtn.hidden = false;
   titleEl.textContent = options.title || "";
   messageEl.textContent = options.message || "";
   messageEl.hidden = !options.message;
@@ -75,6 +82,42 @@ export function confirmDanger(title, message, confirmLabel, onConfirmCb) {
   openModal({ title, message, confirmLabel: confirmLabel || "Delete", danger: true, onConfirm: onConfirmCb });
 }
 
-export function promptForText(title, currentValue, onConfirmCb) {
-  openModal({ title, inputValue: currentValue, confirmLabel: "Save", onConfirm: onConfirmCb });
+export function promptForText(title, currentValue, onConfirmCb, placeholder) {
+  openModal({ title, inputValue: currentValue, inputPlaceholder: placeholder, confirmLabel: "Save", onConfirm: onConfirmCb });
+}
+
+// A lightweight sheet-style picker (real UI, not window.prompt) — items: [{ id, icon, label, sublabel }].
+// Picking an item closes the sheet and calls onPick(item.id) immediately.
+export function openListPicker(title, items, onPick, emptyMessage) {
+  lastFocused = document.activeElement;
+  titleEl.textContent = title || "";
+  messageEl.hidden = true;
+  inputEl.hidden = true;
+  confirmBtn.hidden = true;
+  onConfirm = null;
+
+  listEl.innerHTML = "";
+  listEl.hidden = false;
+
+  if (items.length === 0) {
+    listEl.innerHTML = `<p class="context-empty">${emptyMessage || "Nothing available yet."}</p>`;
+  } else {
+    items.forEach((item) => {
+      const row = document.createElement("button");
+      row.type = "button";
+      row.className = "modal-list-item";
+      row.innerHTML = `<span class="modal-list-icon"></span><span class="modal-list-text"><strong></strong><span></span></span>`;
+      row.querySelector(".modal-list-icon").textContent = item.icon || "•";
+      row.querySelector("strong").textContent = item.label;
+      row.querySelector(".modal-list-text span").textContent = item.sublabel || "";
+      row.addEventListener("click", () => {
+        close();
+        onPick(item.id);
+      });
+      listEl.appendChild(row);
+    });
+  }
+
+  overlay.hidden = false;
+  cancelBtn.focus();
 }

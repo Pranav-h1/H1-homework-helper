@@ -32,10 +32,10 @@ export async function fetchHealth() {
   return res.json();
 }
 
-// options: { mode, image: { mimeType, data } }
+// options: { mode, language, image: { mimeType, data } }
 export async function sendChat(messages, subject, options) {
   const opts = options || {};
-  const data = await postJson("/api/chat", { messages, subject, mode: opts.mode, image: opts.image });
+  const data = await postJson("/api/chat", { messages, subject, mode: opts.mode, language: opts.language, image: opts.image });
   if (typeof data.reply !== "string") {
     throw new Error("The server sent back an unexpected response. Please try again.");
   }

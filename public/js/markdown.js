@@ -76,6 +76,13 @@ export function renderMarkdown(raw) {
       continue;
     }
 
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+      flushParagraph();
+      flushList();
+      htmlParts.push("<hr>");
+      continue;
+    }
+
     if (isTableRow(trimmed) && i + 1 < lines.length && isTableSeparator(lines[i + 1])) {
       flushParagraph();
       flushList();
@@ -108,7 +115,8 @@ export function renderMarkdown(raw) {
     if (headingMatch) {
       flushParagraph();
       flushList();
-      htmlParts.push("<p><strong>" + inline(headingMatch[2]) + "</strong></p>");
+      const level = Math.min(headingMatch[1].length + 2, 5); // "#" -> h3, "##" -> h4, "###"/"####" -> h5
+      htmlParts.push(`<h${level}>` + inline(headingMatch[2]) + `</h${level}>`);
       continue;
     }
 
