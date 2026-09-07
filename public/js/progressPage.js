@@ -1,5 +1,5 @@
-import { getStats, getHeatmapDays, getWeeklyStats } from "./progress.js";
-import { sendChat, friendlyErrorMessage } from "./api.js";
+import { getStats, getHeatmapDays, getWeeklyStats, logEvent } from "./progress.js";
+import { sendChat, fetchPractice, friendlyErrorMessage } from "./api.js";
 import { appState, SUBJECT_LABELS } from "./state.js";
 import { isEnabled, getXP, getLevel, getAchievements } from "./gamification.js";
 import { switchView } from "./nav.js";
@@ -80,6 +80,68 @@ function buildHeatmap() {
   return wrap;
 }
 
+// Compiles the student's actual recorded mistakes into source material for the AI, so the
+// generated practice targets what they really got wrong instead of a generic topic guess.
+function mistakesAsSourceText(mistakes) {
+  return mistakes
+    .slice(0, 15)
+    .map((m) => `Question: ${m.question}\nStudent's incorrect answer: ${m.studentAnswer}\nCorrect answer: ${m.correctAnswer}${m.explanation ? `\nWhy: ${m.explanation}` : ""}`)
+    .join("\n\n")
+    .slice(0, 4000);
+}
+
+function buildPracticeMistakesSection(mistakes) {
+  const section = document.createElement("div");
+  section.style.marginTop = "14px";
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn btn-primary";
+  btn.textContent = "Practice my mistakes";
+  const result = document.createElement("div");
+  result.style.marginTop = "12px";
+  section.appendChild(btn);
+  section.appendChild(result);
+
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    result.innerHTML = '<div class="loading-row"><span class="spinner"></span><span>Building practice from your mistakes…</span></div>';
+    try {
+      const topic = getMistakePatterns()[0]?.topic || appState.subject;
+      const questions = await fetchPractice(topic, 5, appState.subject, { sourceText: mistakesAsSourceText(mistakes) });
+      result.innerHTML = "";
+      questions.forEach((q) => {
+        const card = document.createElement("div");
+        card.className = "practice-card";
+        card.style.marginBottom = "8px";
+        card.innerHTML =
+          '<div class="practice-question"></div><button type="button" class="icon-btn-sm">Reveal answer</button><div class="practice-answer" hidden></div>';
+        card.querySelector(".practice-question").textContent = q.question;
+        const answerEl = card.querySelector(".practice-answer");
+        answerEl.textContent = q.answer;
+        const revealBtn = card.querySelector("button");
+        revealBtn.addEventListener("click", () => {
+          const wasHidden = answerEl.hidden;
+          answerEl.hidden = !answerEl.hidden;
+          revealBtn.textContent = answerEl.hidden ? "Reveal answer" : "Hide answer";
+          if (wasHidden) logEvent("question", { source: "mistake_practice" });
+        });
+        result.appendChild(card);
+      });
+    } catch (err) {
+      result.innerHTML = "";
+      const errorCard = document.createElement("div");
+      errorCard.className = "step-card";
+      errorCard.style.borderColor = "var(--danger-border)";
+      errorCard.textContent = friendlyErrorMessage(err);
+      result.appendChild(errorCard);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  return section;
+}
+
 function buildMistakeBook() {
   const mistakes = getMistakes();
   if (mistakes.length === 0) return null;
@@ -122,6 +184,7 @@ function buildMistakeBook() {
     row.appendChild(delBtn);
     wrap.appendChild(row);
   });
+  wrap.appendChild(buildPracticeMistakesSection(mistakes));
   return wrap;
 }
 

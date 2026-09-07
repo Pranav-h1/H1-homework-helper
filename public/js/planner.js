@@ -307,3 +307,12 @@ export function initPlanner() {
 export function refreshPlanner() {
   renderAll();
 }
+
+// Used by the AI composer's "/plan" command — opens the real study-plan form with the topic
+// filled in, same as clicking "Generate a study plan" yourself. The student still reviews and
+// clicks "Build plan", since that's a real network call that can fail.
+export function prefillStudyPlan(topic) {
+  studyPlanForm.hidden = false;
+  studyPlanTopic.value = topic;
+  studyPlanTopic.focus();
+}

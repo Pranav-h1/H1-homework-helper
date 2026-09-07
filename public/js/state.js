@@ -47,6 +47,7 @@ export const AI_MODES = [
   { value: "mathcoach", label: "Math Coach", icon: "📐", description: "Step-by-step math reasoning" },
   { value: "beginner", label: "Beginner", icon: "🌱", description: "Very simple language" },
   { value: "revision", label: "Revision", icon: "📌", description: "Key points only" },
+  { value: "teachme", label: "Teach Me", icon: "🧑‍🏫", description: "A guided lesson with a check-in question" },
 ];
 
 export function setMode(mode) {

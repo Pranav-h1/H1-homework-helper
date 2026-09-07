@@ -66,6 +66,18 @@
 
       <span class="topbar-spacer"></span>
       <div class="topbar-actions">
+        <div class="notif-center-wrap">
+          <button class="icon-btn" id="notifCenterBtn" type="button" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span id="notifCenterBadge" class="notif-badge" hidden>0</span>
+          </button>
+          <div id="notifCenterPopover" class="notif-center-popover" hidden>
+            <div class="notif-center-header">
+              <h3>Notifications</h3>
+            </div>
+            <div id="notifCenterList" class="notif-center-list"></div>
+          </div>
+        </div>
         <button class="icon-btn" id="topbarSearchBtn" type="button" aria-label="Quick search" title="Quick search (Ctrl K)">
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </button>
@@ -376,6 +388,8 @@
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
               </div>
+
+              <div id="slashMenu" class="slash-menu" hidden role="listbox" aria-label="Slash commands"></div>
 
               <form id="chatForm" class="composer-form">
                 <button id="attachImageBtn" type="button" class="icon-btn" title="Attach an image (e.g. a photo of your homework)" aria-label="Attach an image">
@@ -1471,6 +1485,16 @@
               <button type="button" class="segmented-btn" data-value="dark" role="radio" aria-checked="false">🌙 Dark</button>
               <button type="button" class="segmented-btn" data-value="light" role="radio" aria-checked="false">☀️ Light</button>
               <button type="button" class="segmented-btn" data-value="system" role="radio" aria-checked="false">🖥️ System</button>
+            </div>
+
+            <span class="field-label" id="accentSettingLabel">Accent color</span>
+            <div class="accent-swatch-group" id="accentSetting" role="radiogroup" aria-labelledby="accentSettingLabel">
+              <button type="button" class="accent-swatch" data-value="purple" role="radio" aria-checked="false" title="Purple" style="--swatch-1:#7c5cff;--swatch-2:#22d3ee"></button>
+              <button type="button" class="accent-swatch" data-value="blue" role="radio" aria-checked="false" title="Blue" style="--swatch-1:#3b82f6;--swatch-2:#22d3ee"></button>
+              <button type="button" class="accent-swatch" data-value="cyan" role="radio" aria-checked="false" title="Cyan" style="--swatch-1:#06b6d4;--swatch-2:#7c5cff"></button>
+              <button type="button" class="accent-swatch" data-value="green" role="radio" aria-checked="false" title="Green" style="--swatch-1:#22c55e;--swatch-2:#22d3ee"></button>
+              <button type="button" class="accent-swatch" data-value="orange" role="radio" aria-checked="false" title="Orange" style="--swatch-1:#f97316;--swatch-2:#fbbf24"></button>
+              <button type="button" class="accent-swatch" data-value="pink" role="radio" aria-checked="false" title="Pink" style="--swatch-1:#ec4899;--swatch-2:#f97316"></button>
             </div>
 
             <span class="field-label" id="deviceSettingLabel">Preview layout</span>

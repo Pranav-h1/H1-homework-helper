@@ -11,6 +11,9 @@ import {
   applyDevice,
   getStoredReduceMotion,
   setReduceMotion,
+  getStoredAccent,
+  setAccent,
+  applyAccent,
 } from "./theme.js";
 import { showToast } from "./toast.js";
 import { onHealthChange, startHealthPolling } from "./health.js";
@@ -47,6 +50,7 @@ import { initSpacesUI, onSpaceUIRefresh } from "./spacesUI.js";
 import { initProjects, refreshProjects } from "./projects.js";
 import { initFavorites, render as renderFavorites } from "./favorites.js";
 import { initShortcuts } from "./shortcuts.js";
+import { initNotifCenter, refreshNotifCenter } from "./notifCenter.js";
 import { clearEvents } from "./progress.js";
 
 /* ---------------------------------------------------------
@@ -170,6 +174,29 @@ deviceSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
 });
 
 refreshDeviceUI();
+
+/* ===========================================================
+   Accent color
+   =========================================================== */
+const accentSettingGroup = document.getElementById("accentSetting");
+
+function syncAccentSwatches(value) {
+  accentSettingGroup.querySelectorAll(".accent-swatch").forEach((btn) => {
+    const active = btn.dataset.value === value;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-checked", String(active));
+  });
+}
+
+accentSettingGroup.querySelectorAll(".accent-swatch").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    setAccent(btn.dataset.value);
+    syncAccentSwatches(btn.dataset.value);
+  });
+});
+
+applyAccent(getStoredAccent());
+syncAccentSwatches(getStoredAccent());
 
 /* ===========================================================
    AI response language
@@ -500,6 +527,7 @@ initSpacesUI();
 initProjects();
 initFavorites();
 initShortcuts();
+initNotifCenter();
 
 // Switching Spaces re-filters every space-aware list view at once, so the switch feels
 // instantaneous no matter which view the user is currently on.
@@ -532,6 +560,7 @@ onViewChange((view) => {
   if (view === "profile") renderProfile();
   if (view === "projects") refreshProjects();
   if (view === "favorites") renderFavorites();
+  refreshNotifCenter();
 });
 
 switchView("home");

@@ -2,7 +2,29 @@ import { safeGet, safeSet } from "./storage.js";
 
 const THEME_KEY = "h1-theme";
 const DEVICE_KEY = "h1-device-preview";
+const ACCENT_KEY = "h1-accent";
+const ACCENT_VALUES = ["purple", "blue", "cyan", "green", "orange", "pink"];
 const lightQuery = window.matchMedia("(prefers-color-scheme: light)");
+
+export function getStoredAccent() {
+  const v = safeGet(ACCENT_KEY, "purple");
+  return ACCENT_VALUES.includes(v) ? v : "purple";
+}
+
+export function applyAccent(value) {
+  // "purple" is the token defaults baked into :root, so it needs no [data-accent] override —
+  // removing the attribute rather than setting data-accent="purple" keeps the CSS simpler.
+  if (value === "purple") {
+    document.documentElement.removeAttribute("data-accent");
+  } else {
+    document.documentElement.setAttribute("data-accent", value);
+  }
+}
+
+export function setAccent(value) {
+  safeSet(ACCENT_KEY, value);
+  applyAccent(value);
+}
 
 export function getStoredTheme() {
   const v = safeGet(THEME_KEY, "dark");

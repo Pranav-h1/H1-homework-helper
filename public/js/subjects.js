@@ -126,11 +126,13 @@ function renderKnowledgeGraph() {
     });
 
     svg += `<circle cx="${cx}" cy="${subjectY}" r="16" fill="url(#kgGrad)"></circle>`;
-    svg += `<text x="${cx}" y="${subjectY + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#0a0a10">${escapeXml(label.slice(0, 2).toUpperCase())}</text>`;
+    svg += `<text x="${cx}" y="${subjectY + 4}" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--accent-contrast)">${escapeXml(label.slice(0, 2).toUpperCase())}</text>`;
     svg += `<text x="${cx}" y="${subjectY + 34}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--text)">${escapeXml(label)}</text>`;
   });
 
-  svg += `<defs><linearGradient id="kgGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs>`;
+  // Presentation attributes can't see CSS custom properties, but inline `style` can — this
+  // keeps the knowledge map's header nodes in sync with the user's chosen accent color.
+  svg += `<defs><linearGradient id="kgGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--accent-1)"/><stop offset="1" style="stop-color:var(--accent-2)"/></linearGradient></defs>`;
   svg += `</svg>`;
   graphWrap.innerHTML = svg;
 }

@@ -56,6 +56,8 @@ const AI_MODES = {
     "Act as a math coach: show the full working clearly, one step at a time, naming which rule or method is used at each step.",
   beginner: "Explain using very simple language and everyday analogies, as if teaching someone brand new to the topic.",
   revision: "Focus on the most important points only — like a quick revision session, not a full lesson.",
+  teachme:
+    "Act as a real tutor running a short guided lesson, not a one-shot answer. In this single reply: (1) explain the core concept clearly, (2) give one concrete example, (3) end with ONE simple check-in question to test understanding, and stop there — do not answer your own check-in question. Wait for the student's reply before continuing, evaluating their answer, and then either giving another example, increasing the difficulty, or moving to a short recap if they've shown they understand.",
 };
 
 const LANGUAGE_NAMES = { english: "English", hindi: "Hindi", tamil: "Tamil" };

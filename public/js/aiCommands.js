@@ -7,12 +7,15 @@ import { switchView } from "./nav.js";
 import { showToast } from "./toast.js";
 import { startQuizWithTopic } from "./quiz.js";
 import { startFlashcardsWithTopic } from "./flashcards.js";
+import { generatePracticeFromSource } from "./moreTools.js";
+import { prefillStudyPlan } from "./planner.js";
 import { createTask } from "./homeworkStore.js";
 import { createItem as createPlannerItem } from "./plannerStore.js";
 import { getSpaces } from "./spacesStore.js";
 import { switchToSpace } from "./spacesUI.js";
 import { addMistake } from "./mistakeBookStore.js";
-import { appState } from "./state.js";
+import { saveQuickNote } from "./notes.js";
+import { appState, setMode } from "./state.js";
 
 function confirmAction(text) {
   showToast(`✓ ${text}`, "success", 3200);
@@ -112,4 +115,124 @@ export function tryHandleAiCommand(text) {
   }
 
   return false;
+}
+
+// Reference list for the composer's "/" autocomplete — kept separate from the handler logic
+// below so the menu can be built without duplicating behavior.
+export const SLASH_COMMANDS = [
+  { name: "explain", hint: "<topic> — a clear step-by-step explanation" },
+  { name: "solve", hint: "<problem> — solve with full working shown" },
+  { name: "hint", hint: "[detail] — a hint, not the full answer" },
+  { name: "quiz", hint: "<topic> — start a quiz on this topic" },
+  { name: "flashcards", hint: "<topic> — generate a flashcard deck" },
+  { name: "practice", hint: "<topic> — generate practice questions" },
+  { name: "summarize", hint: "<text> — summarize this text" },
+  { name: "simplify", hint: "— explain the last answer more simply" },
+  { name: "notes", hint: "<text> — save this as a new note" },
+  { name: "revise", hint: "— open your Revision Center" },
+  { name: "plan", hint: "<topic> — start a study plan" },
+  { name: "check", hint: "<your reasoning> — check your work" },
+  { name: "teach", hint: "<topic> — a guided lesson with a check-in" },
+  { name: "examples", hint: "— another example of the last topic" },
+  { name: "mistakes", hint: "— open your Mistake Book" },
+];
+
+function firstWord(text) {
+  const m = text.trim().match(/^\/(\S+)\s*(.*)$/s);
+  return m ? { cmd: m[1].toLowerCase(), rest: m[2].trim() } : null;
+}
+
+// Slash commands are deterministic (no fuzzy NLP needed) — each either performs a real action
+// immediately ({ action: "handled" }) or hands back rewritten text for a normal AI turn
+// ({ action: "rewrite", text }). Returns null when the input isn't a recognized slash command,
+// so the caller can fall through to a normal message untouched.
+export function resolveSlashCommand(text) {
+  const parsed = firstWord(text);
+  if (!parsed) return null;
+  const { cmd, rest } = parsed;
+
+  switch (cmd) {
+    case "explain":
+      if (!rest) return null;
+      return { action: "rewrite", text: `Explain ${rest} clearly, step by step.` };
+
+    case "solve":
+      if (!rest) return null;
+      return { action: "rewrite", text: `Solve this step by step, showing your full working: ${rest}` };
+
+    case "hint":
+      return { action: "rewrite", text: rest ? `Give me a hint for this, not the full answer yet: ${rest}` : "Give me a hint for this, not the full answer yet." };
+
+    case "check":
+      if (!rest) return null;
+      return { action: "rewrite", text: `Check my reasoning and tell me if it's correct, explaining any mistakes: ${rest}` };
+
+    case "simplify":
+      return { action: "rewrite", text: "Can you explain your last answer more simply?" };
+
+    case "examples":
+      return { action: "rewrite", text: "Can you give another concrete example?" };
+
+    case "summarize":
+      return { action: "rewrite", text: rest ? `Summarize this:\n\n${rest}` : "Summarize your last answer in a few short bullet points." };
+
+    case "quiz": {
+      const topic = rest || appState.subject;
+      switchView("quiz");
+      startQuizWithTopic(topic);
+      showToast(`Building a quiz${rest ? ` on "${rest}"` : ""}…`, "success", 2200);
+      return { action: "handled" };
+    }
+
+    case "flashcards": {
+      const topic = rest || appState.subject;
+      switchView("flashcards");
+      startFlashcardsWithTopic(topic);
+      showToast(`Building flashcards${rest ? ` on "${rest}"` : ""}…`, "success", 2200);
+      return { action: "handled" };
+    }
+
+    case "practice": {
+      const topic = rest || appState.subject;
+      generatePracticeFromSource(topic, undefined);
+      showToast(`Writing practice questions${rest ? ` on "${rest}"` : ""}…`, "success", 2200);
+      return { action: "handled" };
+    }
+
+    case "plan":
+      switchView("planner");
+      prefillStudyPlan(rest || appState.subject);
+      showToast("Topic filled in — review and click \"Build plan\".", "success", 2600);
+      return { action: "handled" };
+
+    case "revise":
+      switchView("progress");
+      confirmAction("Opened Revision Center");
+      return { action: "handled" };
+
+    case "mistakes":
+      switchView("progress");
+      requestAnimationFrame(() => {
+        const card = [...document.querySelectorAll(".chart-card")].find((el) => el.textContent.includes("Mistake book"));
+        card?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      confirmAction("Opened your Mistake Book");
+      return { action: "handled" };
+
+    case "notes":
+      if (!rest) {
+        showToast("Usage: /notes <what to save>", "error");
+        return { action: "handled" };
+      }
+      saveQuickNote(rest.slice(0, 60), rest);
+      confirmAction("Saved to Notes");
+      return { action: "handled" };
+
+    case "teach":
+      setMode("teachme");
+      return { action: "rewrite", text: rest ? `Teach me ${rest}.` : "Teach me about this." };
+
+    default:
+      return null;
+  }
 }

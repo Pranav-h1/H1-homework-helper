@@ -3,6 +3,7 @@ import { appState } from "./state.js";
 import { showToast } from "./toast.js";
 import { logEvent } from "./progress.js";
 import { switchView } from "./nav.js";
+import { selectSubtabInView } from "./subtabs.js";
 import { startQuizWithTopic } from "./quiz.js";
 import { startFlashcardsWithTopic } from "./flashcards.js";
 import { saveQuickNote } from "./notes.js";
@@ -340,13 +341,19 @@ export function initMoreTools() {
   vocabularyFeature();
 }
 
+// Summarize and Practice Questions both live in the Tools view's "Writing & Language"
+// subtab, not as their own top-level views — switchView("summarize"/"practice") matched no
+// real panel and left the whole app blank (every [data-view-panel] hidden). Route to the
+// panel that actually exists, then land on the tab that holds these tools.
 export function summarizeText(text) {
-  switchView("summarize");
+  switchView("tools");
+  selectSubtabInView("tools", "writing");
   summarizeApi.setInput(text);
   summarizeApi.run(text);
 }
 
 export function generatePracticeFromSource(topic, sourceText) {
-  switchView("practice");
+  switchView("tools");
+  selectSubtabInView("tools", "writing");
   practiceApi.runFromSource(topic, sourceText);
 }

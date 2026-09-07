@@ -2,7 +2,7 @@ import { renderMarkdown } from "./markdown.js";
 import { safeGet, safeSet } from "./storage.js";
 import { showToast } from "./toast.js";
 import { sendChat, friendlyErrorMessage } from "./api.js";
-import { appState, AI_MODES, setMode } from "./state.js";
+import { appState, AI_MODES, setMode, onModeChange } from "./state.js";
 import { switchView } from "./nav.js";
 import { confirmDanger, promptForText } from "./modal.js";
 import { logEvent } from "./progress.js";
@@ -19,8 +19,10 @@ import {
   toggleConversationFavorite,
 } from "./conversations.js";
 import { setChatContextConversation, consumeContextPrefix } from "./chatContext.js";
-import { tryHandleAiCommand } from "./aiCommands.js";
+import { tryHandleAiCommand, resolveSlashCommand, SLASH_COMMANDS } from "./aiCommands.js";
 import { isSupported as isSpeechSupported, toggleReadAloud, stopSpeaking } from "./readAloud.js";
+import { saveQuickNote } from "./notes.js";
+import { prefillStudyPlan } from "./planner.js";
 
 const chatTitle = document.getElementById("chatTitle");
 const chatLog = document.getElementById("chatLog");
@@ -170,6 +172,23 @@ function handleAction(action, index) {
   if (action === "simpler") return sendFollowUp("Can you explain your last answer more simply?");
   if (action === "shorter") return sendFollowUp("Can you make your last answer shorter and more to the point?");
   if (action === "example") return sendFollowUp("Can you give a concrete example for that?");
+  if (action === "harder") return sendFollowUp("Can you give me a harder, more challenging version of this?");
+  if (action === "hint") return sendFollowUp("Instead of the full answer, can you just give me a hint so I can try it myself?");
+
+  if (action === "notes") {
+    const topic = topicFromIndex(index);
+    saveQuickNote(topic.slice(0, 60) || "From AI Tutor", msg.content);
+    showToast("Saved to Notes.", "success", 2000);
+    return;
+  }
+
+  if (action === "plan") {
+    const topic = topicFromIndex(index);
+    switchView("planner");
+    prefillStudyPlan(topic);
+    showToast("Topic filled in — review and click \"Build plan\".", "success", 2600);
+    return;
+  }
 
   if (action === "quiz" || action === "flashcards") {
     const topic = topicFromIndex(index);
@@ -223,6 +242,8 @@ function buildMessagePopover(msg, index, isLast) {
       ["Explain simpler", "simpler"],
       ["Make shorter", "shorter"],
       ["Give example", "example"],
+      ["Make harder", "harder"],
+      ["Give me a hint instead", "hint"],
     ].forEach(([label, action]) => {
       const btn = actionButton(label, action);
       btn.addEventListener("click", () => handleAction(action, index));
@@ -231,6 +252,8 @@ function buildMessagePopover(msg, index, isLast) {
   }
 
   [
+    ["Add to Notes", "notes"],
+    ["Add to Study Plan", "plan"],
     ["Turn into quiz", "quiz"],
     ["Make flashcards", "flashcards"],
   ].forEach(([label, action]) => {
@@ -397,14 +420,26 @@ async function requestReply(imageForRequest) {
 
 export function sendMessage(text) {
   const image = pendingImage;
-  // Actionable requests ("make flashcards from this", "open my Math space") are routed to
-  // the real H1 feature instead of becoming a normal AI turn — but only when there's no
-  // image attached, since a scanned photo always goes through the real vision flow below.
-  if (!image && tryHandleAiCommand(text)) {
-    clearAttachment();
-    return;
+  let outgoing = text;
+
+  // "/quiz fractions", "/hint", "/notes save this" etc. — deterministic, only checked when
+  // there's no image attached (a scanned photo always goes through the real vision flow below).
+  if (!image) {
+    const slash = resolveSlashCommand(text);
+    if (slash) {
+      if (slash.action === "handled") {
+        clearAttachment();
+        return;
+      }
+      outgoing = slash.text;
+    } else if (tryHandleAiCommand(text)) {
+      // Actionable natural-language requests ("make flashcards from this", "open my Math
+      // space") are routed to the real H1 feature instead of becoming a normal AI turn.
+      clearAttachment();
+      return;
+    }
   }
-  addMessage("user", text, image ? { image } : undefined);
+  addMessage("user", outgoing, image ? { image } : undefined);
   clearAttachment();
   logEvent("question", { source: "chat" });
   requestReply(image || undefined);
@@ -438,7 +473,90 @@ chatForm.addEventListener("submit", (e) => {
   sendMessage(finalText);
 });
 
+/* ---------------------------------------------------------
+   Slash command menu — shows real, discoverable commands as
+   soon as the composer starts with "/", instead of hidden
+   functionality only power users would ever find.
+   --------------------------------------------------------- */
+const slashMenu = document.getElementById("slashMenu");
+let slashMenuMatches = [];
+let slashMenuActiveIndex = -1;
+
+function insertSlashCommand(name) {
+  messageInput.value = `/${name} `;
+  autoGrow(messageInput);
+  closeSlashMenu();
+  messageInput.focus();
+}
+
+function renderSlashMenu() {
+  slashMenu.innerHTML = "";
+  slashMenuMatches.forEach((cmd, i) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "slash-menu-item" + (i === slashMenuActiveIndex ? " active" : "");
+    btn.setAttribute("role", "option");
+    btn.innerHTML = `<strong></strong><span></span>`;
+    btn.querySelector("strong").textContent = `/${cmd.name}`;
+    btn.querySelector("span").textContent = cmd.hint;
+    btn.addEventListener("click", () => insertSlashCommand(cmd.name));
+    slashMenu.appendChild(btn);
+  });
+}
+
+function openSlashMenu(query) {
+  slashMenuMatches = SLASH_COMMANDS.filter((c) => c.name.startsWith(query));
+  if (slashMenuMatches.length === 0) {
+    closeSlashMenu();
+    return;
+  }
+  slashMenuActiveIndex = 0;
+  slashMenu.hidden = false;
+  renderSlashMenu();
+}
+
+function closeSlashMenu() {
+  slashMenu.hidden = true;
+  slashMenuMatches = [];
+  slashMenuActiveIndex = -1;
+}
+
+function syncSlashMenu() {
+  const value = messageInput.value;
+  const match = value.match(/^\/(\S*)$/);
+  if (match) {
+    openSlashMenu(match[1].toLowerCase());
+  } else {
+    closeSlashMenu();
+  }
+}
+
 messageInput.addEventListener("keydown", (e) => {
+  if (!slashMenu.hidden) {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      slashMenuActiveIndex = (slashMenuActiveIndex + 1) % slashMenuMatches.length;
+      renderSlashMenu();
+      return;
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      slashMenuActiveIndex = (slashMenuActiveIndex - 1 + slashMenuMatches.length) % slashMenuMatches.length;
+      renderSlashMenu();
+      return;
+    }
+    if (e.key === "Enter" || e.key === "Tab") {
+      e.preventDefault();
+      insertSlashCommand(slashMenuMatches[slashMenuActiveIndex].name);
+      return;
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeSlashMenu();
+      return;
+    }
+  }
+
   if (e.key !== "Enter") return;
   if (enterMode === "enter" && !e.shiftKey) {
     e.preventDefault();
@@ -449,7 +567,12 @@ messageInput.addEventListener("keydown", (e) => {
   }
 });
 
-messageInput.addEventListener("input", () => autoGrow(messageInput));
+messageInput.addEventListener("input", () => {
+  autoGrow(messageInput);
+  syncSlashMenu();
+});
+
+chatForm.addEventListener("submit", () => closeSlashMenu());
 
 export function setEnterMode(mode) {
   enterMode = mode;
@@ -473,6 +596,12 @@ modeSelect.addEventListener("change", () => {
   setMode(modeSelect.value);
   const found = AI_MODES.find((m) => m.value === modeSelect.value);
   if (found) showToast(`Mode: ${found.label} — ${found.description}`, "success", 2200);
+});
+
+// The mode can also change from outside this dropdown (e.g. the "/teach" slash command) —
+// keep the visible selector honest about which mode is actually active either way.
+onModeChange((mode) => {
+  modeSelect.value = mode;
 });
 
 /* ---------------------------------------------------------
