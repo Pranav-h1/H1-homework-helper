@@ -31,6 +31,7 @@ const VIEW_LABELS = {
   documents: "Documents",
   flashcards: "Flashcards",
   quiz: "Quiz Lab",
+  exam: "Exam Simulator",
   planner: "Study Planner",
   projects: "Projects",
   calendar: "Calendar",
@@ -45,7 +46,7 @@ const VIEW_LABELS = {
 
 const VIEW_ICONS = {
   home: "🏠", chat: "💬", homework: "📘", scan: "📸", subjects: "🧭", notes: "📝",
-  documents: "📁", flashcards: "🗂️", quiz: "✅", planner: "🗓️", calendar: "📅",
+  documents: "📁", flashcards: "🗂️", quiz: "✅", exam: "📝", planner: "🗓️", calendar: "📅",
   "study-mode": "⏱️", progress: "📈", achievements: "🏆", tools: "🧰", settings: "⚙️", profile: "👤", projects: "🧩", favorites: "⭐",
 };
 

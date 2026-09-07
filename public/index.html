@@ -167,6 +167,10 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
             <span>Quiz Lab</span>
           </button>
+          <button class="nav-item" type="button" data-view="exam" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg>
+            <span>Exam Simulator</span>
+          </button>
           <button class="nav-item" type="button" data-view="planner" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><polyline points="9 16 11 18 15 13"></polyline></svg>
             <span>Study Planner</span>
@@ -903,6 +907,154 @@
               <button id="quizRetryBtn" class="btn btn-ghost" type="button">Retry same quiz</button>
               <button id="quizNewBtn" class="btn btn-primary" type="button">New quiz</button>
             </div>
+          </div>
+        </section>
+
+        <!-- ===== Exam Simulator ===== -->
+        <section id="view-exam" class="view view-exam" data-view-panel="exam" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Exam Simulator</h1>
+              <p class="view-sub">A serious, timed, multi-topic exam with real topic-by-topic analysis.</p>
+            </div>
+          </div>
+
+          <div id="examSetup" class="tool-panel">
+            <div id="examResumeBanner" class="config-banner" hidden style="margin-bottom:14px">
+              <span id="examResumeText"></span>
+              <div class="view-actions">
+                <button id="examResumeBtn" class="btn btn-primary" type="button">Resume exam</button>
+                <button id="examDiscardBtn" class="icon-btn" type="button" aria-label="Discard in-progress exam">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+            </div>
+
+            <span class="field-label">Presets</span>
+            <div class="segmented segmented-wrap" id="examPresets" role="group" aria-label="Exam presets">
+              <button type="button" class="segmented-btn" data-preset="quick">Quick Test</button>
+              <button type="button" class="segmented-btn" data-preset="standard">Standard Exam</button>
+              <button type="button" class="segmented-btn" data-preset="difficult">Difficult Exam</button>
+              <button type="button" class="segmented-btn" data-preset="revision">Revision Test</button>
+              <button type="button" class="segmented-btn" data-preset="weak">Weak Areas Test</button>
+            </div>
+
+            <label class="field-label" for="examTitle">Exam name</label>
+            <input id="examTitle" class="tool-input" type="text" placeholder="e.g. Chapter 4 Test" maxlength="80" />
+
+            <label class="field-label" for="examTopics">Topics (comma-separated)</label>
+            <input id="examTopics" class="tool-input" type="text" placeholder="e.g. Algebra, Linear Equations, Graphs" maxlength="300" />
+
+            <div class="field-row">
+              <div class="field-group">
+                <span class="field-label" id="examDifficultyLabel">Difficulty</span>
+                <div class="segmented" id="examDifficulty" role="radiogroup" aria-labelledby="examDifficultyLabel">
+                  <button type="button" class="segmented-btn active" data-value="easy" role="radio" aria-checked="true">Easy</button>
+                  <button type="button" class="segmented-btn" data-value="medium" role="radio" aria-checked="false">Medium</button>
+                  <button type="button" class="segmented-btn" data-value="hard" role="radio" aria-checked="false">Hard</button>
+                </div>
+              </div>
+              <div class="field-group">
+                <span class="field-label" id="examCountLabel">Questions per topic</span>
+                <div class="segmented" id="examCount" role="radiogroup" aria-labelledby="examCountLabel">
+                  <button type="button" class="segmented-btn active" data-value="5" role="radio" aria-checked="true">5</button>
+                  <button type="button" class="segmented-btn" data-value="10" role="radio" aria-checked="false">10</button>
+                </div>
+              </div>
+            </div>
+
+            <span class="field-label" id="examTypeLabel">Question type</span>
+            <div class="segmented segmented-wrap" id="examType" role="radiogroup" aria-labelledby="examTypeLabel">
+              <button type="button" class="segmented-btn active" data-value="mcq" role="radio" aria-checked="true">Multiple choice</button>
+              <button type="button" class="segmented-btn" data-value="truefalse" role="radio" aria-checked="false">True / False</button>
+              <button type="button" class="segmented-btn" data-value="shortanswer" role="radio" aria-checked="false">Short answer</button>
+              <button type="button" class="segmented-btn" data-value="mixed" role="radio" aria-checked="false">Mixed</button>
+            </div>
+
+            <span class="field-label" id="examTimeLabel">Time limit</span>
+            <div class="segmented segmented-wrap" id="examTimeLimit" role="radiogroup" aria-labelledby="examTimeLabel">
+              <button type="button" class="segmented-btn" data-value="0">No limit</button>
+              <button type="button" class="segmented-btn active" data-value="10">10 min</button>
+              <button type="button" class="segmented-btn" data-value="20">20 min</button>
+              <button type="button" class="segmented-btn" data-value="30">30 min</button>
+              <button type="button" class="segmented-btn" data-value="45">45 min</button>
+            </div>
+
+            <p id="examQuestionCountPreview" class="settings-hint"></p>
+
+            <button id="examStartBtn" class="btn btn-primary btn-block" type="button">
+              <span>Start Exam</span>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+
+          <div id="examPlay" class="exam-play" hidden>
+            <div class="exam-play-header">
+              <div>
+                <strong id="examPlayTitle">Exam</strong>
+                <span id="examPlayProgressText" class="view-sub"></span>
+              </div>
+              <span id="examTimerBadge" class="exam-timer-badge" hidden></span>
+              <button id="examSubmitBtn" class="btn btn-primary" type="button">Submit exam</button>
+            </div>
+
+            <div id="examNavGrid" class="exam-nav-grid" role="list" aria-label="Question navigator"></div>
+
+            <div class="quiz-question-card">
+              <div class="quiz-question-top">
+                <h2 id="examQuestionText" class="quiz-question-text"></h2>
+                <span id="examQuestionTopic" class="exam-question-topic"></span>
+              </div>
+              <div id="examOptions" class="quiz-options" role="radiogroup" aria-label="Answer options"></div>
+              <div id="examShortAnswerWrap" class="quiz-shortanswer" hidden>
+                <textarea id="examShortAnswerInput" class="tool-textarea" placeholder="Type your answer…" rows="3"></textarea>
+                <button id="examCheckAnswerBtn" class="btn btn-primary" type="button">Check against model answer</button>
+                <div id="examSelfGrade" class="quiz-self-grade" hidden>
+                  <p id="examModelAnswer"></p>
+                  <div class="view-actions">
+                    <button id="examSelfWrongBtn" class="btn btn-ghost" type="button">I got it wrong</button>
+                    <button id="examSelfRightBtn" class="btn btn-primary" type="button">I got it right</button>
+                  </div>
+                </div>
+              </div>
+              <button id="examMarkReviewBtn" class="btn btn-ghost" type="button">🚩 Mark for review</button>
+            </div>
+
+            <div class="quiz-nav">
+              <button id="examPrevBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <span>Previous</span>
+              </button>
+              <button id="examNextBtn" class="btn btn-primary" type="button">
+                <span>Next</span>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="examResults" class="exam-results" hidden>
+            <div class="quiz-score-ring" id="examScoreRing" style="--pct:0">
+              <span id="examScoreText">0/0</span>
+            </div>
+            <h2 id="examResultTitle">Exam complete</h2>
+            <p id="examResultSummary" class="view-sub"></p>
+
+            <div class="progress-stats-grid" id="examStatsGrid"></div>
+
+            <div class="chart-card">
+              <h3 style="margin:0 0 12px;font-size:13px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em">Topic analysis</h3>
+              <div id="examTopicAnalysis"></div>
+            </div>
+
+            <div class="chart-card">
+              <h3 style="margin:0 0 10px;font-size:13px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em">🤖 AI Analysis</h3>
+              <button id="examAiAnalysisBtn" class="btn btn-primary" type="button">Generate AI analysis</button>
+              <div id="examAiAnalysisResult" style="margin-top:14px"></div>
+            </div>
+
+            <div id="examReview" class="quiz-review"></div>
+
+            <div class="view-actions view-actions-center" id="examResultActions"></div>
           </div>
         </section>
 

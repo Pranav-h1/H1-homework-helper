@@ -1,4 +1,5 @@
 import { getStats, getHeatmapDays, getWeeklyStats, logEvent } from "./progress.js";
+import { renderMarkdown } from "./markdown.js";
 import { sendChat, fetchPractice, friendlyErrorMessage } from "./api.js";
 import { appState, SUBJECT_LABELS } from "./state.js";
 import { isEnabled, getXP, getLevel, getAchievements } from "./gamification.js";
@@ -221,8 +222,8 @@ function buildWeeklyReview() {
 
     try {
       const reply = await sendChat([{ role: "user", content: prompt }], appState.subject);
-      resultEl.innerHTML = `<div class="result-card"><p style="white-space:pre-wrap;margin:0"></p></div>`;
-      resultEl.querySelector("p").textContent = reply;
+      resultEl.innerHTML = `<div class="bubble" style="background:var(--surface);border:1px solid var(--border)"></div>`;
+      resultEl.querySelector(".bubble").innerHTML = renderMarkdown(reply);
     } catch (err) {
       resultEl.innerHTML = "";
       const errorCard = document.createElement("div");

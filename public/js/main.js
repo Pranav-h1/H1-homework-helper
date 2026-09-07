@@ -25,6 +25,7 @@ import { clearAllConversations } from "./conversations.js";
 import { initChat, openChatWithMessage, prefillChat, setEnterMode, clearAllConversationsData } from "./chat.js";
 import { initExplain } from "./explain.js";
 import { initQuiz } from "./quiz.js";
+import { initExamSimulator } from "./examSimulator.js";
 import { initFlashcards, refreshFlashcards } from "./flashcards.js";
 import { initNotes, clearAllNotesData, bindMoreTools, refreshNotes } from "./notes.js";
 import { initStudyMode } from "./studyMode.js";
@@ -503,6 +504,7 @@ document.getElementById("resetEverythingBtn").addEventListener("click", () => {
 initChat();
 initExplain();
 initQuiz();
+initExamSimulator();
 initFlashcards();
 initNotes();
 initStudyMode();
