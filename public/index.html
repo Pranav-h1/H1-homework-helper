@@ -199,6 +199,10 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
             <span>Tools</span>
           </button>
+          <button class="nav-item" type="button" data-view="quotes" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8c-2.5 0-4 2-4 4.5S4.5 17 7 17c.5 2-1 4-3 4.5"></path><path d="M17 8c-2.5 0-4 2-4 4.5S14.5 17 17 17c.5 2-1 4-3 4.5"></path></svg>
+            <span>Quotes Factory</span>
+          </button>
         </div>
 
         <div class="nav-group nav-group-bottom">
@@ -1619,6 +1623,51 @@
               <button id="profileGoalSaveBtn" class="btn btn-primary" type="button">Save goal</button>
             </div>
           </div>
+        </section>
+
+        <!-- ===== Quotes Factory ===== -->
+        <section id="view-quotes" class="view view-quotes" data-view-panel="quotes" hidden>
+          <div class="quotes-hero">
+            <div class="quotes-hero-icon">✦</div>
+            <h1>Quotes Factory</h1>
+            <p class="quotes-hero-sub">Ideas that inspire. Words that move. Mindsets that build.</p>
+            <p class="quotes-hero-desc">A collection of 200 ideas on entrepreneurship, creativity, leadership, innovation, and growth — pulled up whenever you need a spark.</p>
+          </div>
+
+          <div class="quotes-featured" id="quotesFeatured">
+            <div class="quotes-featured-eyebrow">Quote of the Moment</div>
+            <div class="quotes-featured-mark">“</div>
+            <p class="quotes-featured-text" id="quotesFeaturedText"></p>
+            <span class="quotes-featured-category" id="quotesFeaturedCategory"></span>
+            <div class="quotes-featured-actions">
+              <button id="quotesInspireBtn" class="btn btn-primary" type="button">✨ Inspire Me</button>
+              <button id="quotesFeaturedFavBtn" class="icon-btn" type="button" aria-label="Favorite this quote" aria-pressed="false">★</button>
+              <button id="quotesFeaturedCopyBtn" class="icon-btn" type="button" aria-label="Copy this quote">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+              <button id="quotesFeaturedShareBtn" class="icon-btn" type="button" aria-label="Share this quote" hidden>
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="quotes-toolbar">
+            <div class="quotes-search-wrap">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input id="quotesSearchInput" type="text" placeholder="Search the quote vault…" aria-label="Search quotes" />
+            </div>
+            <span class="quotes-count" id="quotesCount"></span>
+          </div>
+
+          <div class="quotes-chip-row" id="quotesCategoryChips" role="group" aria-label="Filter by category"></div>
+
+          <div id="quotesEmptyState" class="empty-state" hidden>
+            <div class="empty-emoji">🔍</div>
+            <h2>No inspiration found.</h2>
+            <p>Try another idea, keyword, or category.</p>
+          </div>
+
+          <div id="quotesGrid" class="quotes-grid"></div>
         </section>
 
         <!-- ===== Settings ===== -->

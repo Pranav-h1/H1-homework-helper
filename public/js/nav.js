@@ -29,6 +29,7 @@ const VIEWS_WITHOUT_SUBJECT_BAR = new Set([
   "profile",
   "projects",
   "favorites",
+  "quotes",
 ]);
 
 // Sections reachable from the mobile bottom nav's fixed slots — everything else lives

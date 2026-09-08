@@ -26,6 +26,7 @@ import { initChat, openChatWithMessage, prefillChat, setEnterMode, clearAllConve
 import { initExplain } from "./explain.js";
 import { initQuiz } from "./quiz.js";
 import { initExamSimulator } from "./examSimulator.js";
+import { initQuotes } from "./quotes.js";
 import { initFlashcards, refreshFlashcards } from "./flashcards.js";
 import { initNotes, clearAllNotesData, bindMoreTools, refreshNotes } from "./notes.js";
 import { initStudyMode } from "./studyMode.js";
@@ -505,6 +506,7 @@ initChat();
 initExplain();
 initQuiz();
 initExamSimulator();
+initQuotes();
 initFlashcards();
 initNotes();
 initStudyMode();
