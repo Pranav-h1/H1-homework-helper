@@ -203,6 +203,10 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8c-2.5 0-4 2-4 4.5S4.5 17 7 17c.5 2-1 4-3 4.5"></path><path d="M17 8c-2.5 0-4 2-4 4.5S14.5 17 17 17c.5 2-1 4-3 4.5"></path></svg>
             <span>Quotes Factory</span>
           </button>
+          <button class="nav-item" type="button" data-view="favorites" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.3 4.6 2.4 7.4L12 16.8l-6.1 4.6 2.4-7.4L2 9.4h7.6z"></path></svg>
+            <span>H1 Vault</span>
+          </button>
         </div>
 
         <div class="nav-group nav-group-bottom">
@@ -302,6 +306,18 @@
             <div class="bento-tile bento-note clickable" id="bentoNote"></div>
             <div class="bento-tile bento-quiz clickable" id="bentoQuiz"></div>
             <div class="bento-tile bento-focus clickable" id="bentoFocus"></div>
+          </div>
+
+          <div class="daily-inspiration">
+            <span class="daily-inspiration-mark">“</span>
+            <p class="daily-inspiration-text" id="dailyInspirationText"></p>
+            <div class="daily-inspiration-actions">
+              <button id="dailyInspirationFavBtn" class="icon-btn" type="button" aria-label="Favorite this quote" aria-pressed="false">★</button>
+              <button id="dailyInspirationCopyBtn" class="icon-btn" type="button" aria-label="Copy this quote">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+              <button id="dailyInspirationOpenBtn" class="btn btn-ghost" type="button">Quotes Factory →</button>
+            </div>
           </div>
 
           <div class="section-heading"><h2>Explore H1</h2></div>
@@ -1543,8 +1559,8 @@
         <section id="view-favorites" class="view view-favorites" data-view-panel="favorites" hidden>
           <div class="view-header">
             <div>
-              <h1>⭐ Favorites</h1>
-              <p class="view-sub">Everything you've starred, in one place.</p>
+              <h1>💎 H1 Vault</h1>
+              <p class="view-sub">Everything you've starred or saved, in one place.</p>
             </div>
           </div>
           <div id="favoritesContent"></div>

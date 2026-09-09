@@ -128,6 +128,7 @@ export const SLASH_COMMANDS = [
   { name: "practice", hint: "<topic> — generate practice questions" },
   { name: "summarize", hint: "<text> — summarize this text" },
   { name: "simplify", hint: "— explain the last answer more simply" },
+  { name: "improve", hint: "[your answer] — improve clarity and correctness" },
   { name: "notes", hint: "<text> — save this as a new note" },
   { name: "revise", hint: "— open your Revision Center" },
   { name: "plan", hint: "<topic> — start a study plan" },
@@ -169,6 +170,10 @@ export function resolveSlashCommand(text) {
 
     case "simplify":
       return { action: "rewrite", text: "Can you explain your last answer more simply?" };
+
+    case "improve":
+      if (!rest) return { action: "rewrite", text: "Can you improve that answer — keep the same core idea, but make it clearer and more correct?" };
+      return { action: "rewrite", text: `Improve this answer while keeping the original idea — focus on clarity and correctness: ${rest}` };
 
     case "examples":
       return { action: "rewrite", text: "Can you give another concrete example?" };

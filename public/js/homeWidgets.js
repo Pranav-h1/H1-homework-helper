@@ -1,13 +1,15 @@
 import { getStats, getEvents } from "./progress.js";
 import { isEnabled, getXP, getLevel } from "./gamification.js";
 import { loadConversations, setActiveConversationId } from "./conversations.js";
-import { safeGetJson } from "./storage.js";
+import { safeGetJson, safeSetJson } from "./storage.js";
 import { switchView } from "./nav.js";
 import { getTodayAndUpcoming } from "./homeworkStore.js";
 import { getGrouped as getPlannerGrouped, getExamGroups } from "./plannerStore.js";
 import { startQuizWithTopic } from "./quiz.js";
 import { getDailyGoalMinutes } from "./goalsStore.js";
 import { getDecks, getDueCount } from "./flashcardDecks.js";
+import { QUOTES } from "./quotesData.js";
+import { showToast } from "./toast.js";
 
 const heroStatStrip = document.getElementById("heroStatStrip");
 const bentoContinue = document.getElementById("bentoContinue");
@@ -16,6 +18,11 @@ const bentoDeadline = document.getElementById("bentoDeadline");
 const bentoNote = document.getElementById("bentoNote");
 const bentoQuiz = document.getElementById("bentoQuiz");
 const bentoFocus = document.getElementById("bentoFocus");
+const dailyInspirationText = document.getElementById("dailyInspirationText");
+const dailyInspirationFavBtn = document.getElementById("dailyInspirationFavBtn");
+const dailyInspirationCopyBtn = document.getElementById("dailyInspirationCopyBtn");
+const dailyInspirationOpenBtn = document.getElementById("dailyInspirationOpenBtn");
+const QUOTE_FAVORITES_KEY = "h1-quote-favorites";
 
 function statPill(value, label) {
   const el = document.createElement("div");
@@ -185,6 +192,34 @@ function renderFocus() {
   bentoFocus.onclick = () => switchView("study-mode");
 }
 
+// Deterministic per calendar day (not re-randomized on every visit) — "Daily" means it
+// actually rotates once a day, the same quote all day, same as a real daily-inspiration feed.
+function renderDailyInspiration() {
+  if (!dailyInspirationText) return;
+  const dayIndex = Math.floor(Date.now() / 86400000);
+  const quote = QUOTES[dayIndex % QUOTES.length];
+  dailyInspirationText.textContent = `“${quote.text}”`;
+
+  const isFavorited = () => new Set(safeGetJson(QUOTE_FAVORITES_KEY, [])).has(quote.id);
+  dailyInspirationFavBtn.setAttribute("aria-pressed", String(isFavorited()));
+  dailyInspirationFavBtn.onclick = () => {
+    const set = new Set(safeGetJson(QUOTE_FAVORITES_KEY, []));
+    if (set.has(quote.id)) set.delete(quote.id);
+    else set.add(quote.id);
+    safeSetJson(QUOTE_FAVORITES_KEY, [...set]);
+    dailyInspirationFavBtn.setAttribute("aria-pressed", String(set.has(quote.id)));
+  };
+  dailyInspirationCopyBtn.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(quote.text);
+      showToast("Quote copied!", "success", 1800);
+    } catch {
+      showToast("Couldn't copy that quote.", "error");
+    }
+  };
+  dailyInspirationOpenBtn.onclick = () => switchView("quotes");
+}
+
 export function renderHomeWidget() {
   const stats = getStats();
   renderHeroStrip(stats);
@@ -194,6 +229,7 @@ export function renderHomeWidget() {
   renderNote();
   renderQuiz(stats);
   renderFocus();
+  renderDailyInspiration();
 }
 
 export function initHomeWidgets() {

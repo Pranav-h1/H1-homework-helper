@@ -38,7 +38,7 @@ const MOBILE_BOTTOM_VIEWS = new Set(["home", "chat", "homework", "quiz"]);
 
 // Views reachable only from the top bar / command palette (no sidebar nav-item to read a
 // label from) — used as a topbar-title fallback.
-const EXTRA_VIEW_LABELS = { profile: "Profile", favorites: "Favorites" };
+const EXTRA_VIEW_LABELS = { profile: "Profile", favorites: "H1 Vault" };
 
 const listeners = [];
 

@@ -42,13 +42,13 @@ const VIEW_LABELS = {
   quotes: "Quotes Factory",
   settings: "Settings",
   profile: "Profile",
-  favorites: "Favorites",
+  favorites: "H1 Vault",
 };
 
 const VIEW_ICONS = {
   home: "🏠", chat: "💬", homework: "📘", scan: "📸", subjects: "🧭", notes: "📝",
   documents: "📁", flashcards: "🗂️", quiz: "✅", exam: "📝", planner: "🗓️", calendar: "📅",
-  "study-mode": "⏱️", progress: "📈", achievements: "🏆", tools: "🧰", quotes: "✨", settings: "⚙️", profile: "👤", projects: "🧩", favorites: "⭐",
+  "study-mode": "⏱️", progress: "📈", achievements: "🏆", tools: "🧰", quotes: "✨", settings: "⚙️", profile: "👤", projects: "🧩", favorites: "💎",
 };
 
 const NAV_COMMANDS = Object.keys(VIEW_LABELS).map((view) => ({

@@ -23,6 +23,7 @@ import { tryHandleAiCommand, resolveSlashCommand, SLASH_COMMANDS } from "./aiCom
 import { isSupported as isSpeechSupported, toggleReadAloud, stopSpeaking } from "./readAloud.js";
 import { saveQuickNote } from "./notes.js";
 import { prefillStudyPlan } from "./planner.js";
+import { saveAnswer } from "./vaultStore.js";
 
 const chatTitle = document.getElementById("chatTitle");
 const chatLog = document.getElementById("chatLog");
@@ -174,11 +175,18 @@ function handleAction(action, index) {
   if (action === "example") return sendFollowUp("Can you give a concrete example for that?");
   if (action === "harder") return sendFollowUp("Can you give me a harder, more challenging version of this?");
   if (action === "hint") return sendFollowUp("Instead of the full answer, can you just give me a hint so I can try it myself?");
+  if (action === "improve") return sendFollowUp("Can you improve that answer — keep the same core idea, but make it clearer and more correct?");
 
   if (action === "notes") {
     const topic = topicFromIndex(index);
     saveQuickNote(topic.slice(0, 60) || "From AI Tutor", msg.content);
     showToast("Saved to Notes.", "success", 2000);
+    return;
+  }
+
+  if (action === "vault") {
+    saveAnswer({ question: topicFromIndex(index), answer: msg.content, subject: appState.subject });
+    showToast("Saved to your Vault.", "success", 2000);
     return;
   }
 
@@ -244,6 +252,7 @@ function buildMessagePopover(msg, index, isLast) {
       ["Give example", "example"],
       ["Make harder", "harder"],
       ["Give me a hint instead", "hint"],
+      ["Improve this answer", "improve"],
     ].forEach(([label, action]) => {
       const btn = actionButton(label, action);
       btn.addEventListener("click", () => handleAction(action, index));
@@ -253,6 +262,7 @@ function buildMessagePopover(msg, index, isLast) {
 
   [
     ["Add to Notes", "notes"],
+    ["💾 Save to Vault", "vault"],
     ["Add to Study Plan", "plan"],
     ["Turn into quiz", "quiz"],
     ["Make flashcards", "flashcards"],
