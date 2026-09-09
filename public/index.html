@@ -872,6 +872,11 @@
               <span class="toggle" id="quizTimedToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
 
+            <label class="toggle-row">
+              <span>🧠 Adaptive difficulty <span class="settings-hint" style="display:block;margin-top:2px">Gets harder when you're doing well, easier when you're not — starts from the difficulty above.</span></span>
+              <span class="toggle" id="quizAdaptiveToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
+            </label>
+
             <button id="quizStartBtn" class="btn btn-primary btn-block" type="button">
               <span>Start Quiz</span>
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
@@ -891,6 +896,7 @@
             <div class="quiz-question-card">
               <div class="quiz-question-top">
                 <h2 id="quizQuestionText" class="quiz-question-text"></h2>
+                <span id="quizAdaptiveBadge" class="quiz-adaptive-badge" hidden></span>
                 <span id="quizTimer" class="quiz-timer" hidden></span>
               </div>
               <div id="quizOptions" class="quiz-options" role="radiogroup" aria-label="Answer options"></div>
@@ -921,6 +927,7 @@
             </div>
             <h2 id="quizResultTitle">Nice work!</h2>
             <p id="quizResultSummary" class="view-sub"></p>
+            <div id="quizDifficultyProgression" class="quiz-difficulty-progression" hidden></div>
             <div id="quizReview" class="quiz-review"></div>
             <div class="view-actions view-actions-center">
               <button id="quizRetryIncorrectBtn" class="btn btn-ghost" type="button" hidden>Retry incorrect only</button>

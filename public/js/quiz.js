@@ -15,6 +15,9 @@ const quizDifficultyGroup = document.getElementById("quizDifficulty");
 const quizCountGroup = document.getElementById("quizCount");
 const quizTypeGroup = document.getElementById("quizType");
 const quizTimedToggle = document.getElementById("quizTimedToggle");
+const quizAdaptiveToggle = document.getElementById("quizAdaptiveToggle");
+const quizAdaptiveBadge = document.getElementById("quizAdaptiveBadge");
+const quizDifficultyProgression = document.getElementById("quizDifficultyProgression");
 const quizStartBtn = document.getElementById("quizStartBtn");
 const quizPlay = document.getElementById("quizPlay");
 const quizProgressFill = document.getElementById("quizProgressFill");
@@ -56,12 +59,31 @@ function syncToggle(el, on) {
   el.setAttribute("aria-checked", String(on));
 }
 
+const DIFFICULTY_LADDER = ["easy", "medium", "hard"];
+
+// Correct -> harder, incorrect -> easier, clamped to the ladder ends. This is the entire
+// adaptive mechanism — deliberately simple and visible (the badge/progression dots show it
+// happening) rather than a hidden black box.
+function nudgeDifficulty(current, wasCorrect) {
+  const i = DIFFICULTY_LADDER.indexOf(current);
+  const next = wasCorrect ? i + 1 : i - 1;
+  return DIFFICULTY_LADDER[Math.max(0, Math.min(DIFFICULTY_LADDER.length - 1, next))];
+}
+
+function difficultyLabel(level) {
+  return level === "easy" ? "Easy" : level === "hard" ? "Hard" : "Medium";
+}
+
 const quizState = {
   topic: "",
   difficulty: "easy",
   count: 5,
   questionType: "mcq",
   timed: false,
+  adaptive: false,
+  currentDifficulty: "easy",
+  difficultyHistory: [],
+  totalPlanned: 5,
   questions: [],
   index: 0,
   score: 0,
@@ -100,6 +122,17 @@ quizTimedToggle.addEventListener("keydown", (e) => {
   if (e.key === "Enter" || e.key === " ") {
     e.preventDefault();
     quizTimedToggle.click();
+  }
+});
+
+quizAdaptiveToggle.addEventListener("click", () => {
+  quizState.adaptive = !quizState.adaptive;
+  syncToggle(quizAdaptiveToggle, quizState.adaptive);
+});
+quizAdaptiveToggle.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    quizAdaptiveToggle.click();
   }
 });
 
@@ -171,6 +204,7 @@ function autoFailCurrentQuestion() {
   quizState.answered = true;
   quizState.answers.push({ selectedIndex: -1, correct: false });
   logEvent("question", { source: "quiz", correct: false });
+  recordDifficultyOutcome(false);
   if (q.type === "shortanswer") {
     quizShortAnswerInput.disabled = true;
     quizCheckAnswerBtn.disabled = true;
@@ -186,7 +220,7 @@ function autoFailCurrentQuestion() {
 }
 
 function renderQuizQuestion() {
-  const total = quizState.questions.length;
+  const total = quizState.adaptive ? quizState.totalPlanned : quizState.questions.length;
   const q = quizState.questions[quizState.index];
   quizProgressFill.style.width = `${(quizState.index / total) * 100}%`;
   quizProgressText.textContent = `Question ${quizState.index + 1} of ${total}`;
@@ -195,6 +229,13 @@ function renderQuizQuestion() {
   quizFeedback.textContent = "";
   quizNextBtn.disabled = true;
   quizNextBtn.querySelector("span").textContent = quizState.index === total - 1 ? "See results" : "Next";
+
+  if (quizState.adaptive) {
+    quizAdaptiveBadge.hidden = false;
+    quizAdaptiveBadge.textContent = `🧠 ${difficultyLabel(quizState.currentDifficulty)}`;
+  } else {
+    quizAdaptiveBadge.hidden = true;
+  }
 
   const isShortAnswer = q.type === "shortanswer";
   quizOptions.hidden = isShortAnswer;
@@ -225,6 +266,14 @@ function renderQuizQuestion() {
   startTimer();
 }
 
+// Records which difficulty the just-answered question actually was, then nudges the ladder
+// for whichever question comes next — the only place adaptive difficulty actually changes.
+function recordDifficultyOutcome(correct) {
+  if (!quizState.adaptive) return;
+  quizState.difficultyHistory.push(quizState.currentDifficulty);
+  quizState.currentDifficulty = nudgeDifficulty(quizState.currentDifficulty, correct);
+}
+
 function selectQuizOption(i) {
   if (quizState.answered) return;
   stopTimer();
@@ -234,6 +283,7 @@ function selectQuizOption(i) {
   if (correct) quizState.score += 1;
   quizState.answers.push({ selectedIndex: i, correct });
   logEvent("question", { source: "quiz", correct });
+  recordDifficultyOutcome(correct);
 
   const optionButtons = quizOptions.querySelectorAll(".quiz-option");
   optionButtons.forEach((btn, idx) => {
@@ -262,6 +312,7 @@ function gradeShortAnswer(correct) {
   if (correct) quizState.score += 1;
   quizState.answers.push({ selectedIndex: -1, correct });
   logEvent("question", { source: "quiz", correct });
+  recordDifficultyOutcome(correct);
   quizSelfGrade.hidden = true;
   quizFeedback.hidden = false;
   const q = quizState.questions[quizState.index];
@@ -271,15 +322,43 @@ function gradeShortAnswer(correct) {
 quizSelfRightBtn.addEventListener("click", () => gradeShortAnswer(true));
 quizSelfWrongBtn.addEventListener("click", () => gradeShortAnswer(false));
 
-quizNextBtn.addEventListener("click", () => {
-  const total = quizState.questions.length;
-  if (quizState.index + 1 < total) {
-    quizState.index += 1;
-    quizState.answered = false;
-    renderQuizQuestion();
-  } else {
+async function fetchNextAdaptiveQuestion() {
+  const type = quizState.questionType === "mixed" ? ["mcq", "truefalse", "shortanswer"][Math.floor(Math.random() * 3)] : quizState.questionType;
+  const questions = await fetchQuiz(quizState.topic, quizState.currentDifficulty, 1, appState.subject, { questionType: type });
+  return questions[0];
+}
+
+quizNextBtn.addEventListener("click", async () => {
+  const total = quizState.adaptive ? quizState.totalPlanned : quizState.questions.length;
+  if (quizState.index + 1 >= total) {
     showQuizResults();
+    return;
   }
+
+  if (quizState.adaptive) {
+    // The next question doesn't exist yet — it's generated just-in-time at whatever
+    // difficulty recordDifficultyOutcome() just moved to, which is the entire point of
+    // "adaptive": nothing beyond the current question is ever pre-committed.
+    quizNextBtn.disabled = true;
+    const originalLabel = quizNextBtn.querySelector("span").textContent;
+    quizNextBtn.querySelector("span").textContent = "Loading…";
+    try {
+      const nextQuestion = await fetchNextAdaptiveQuestion();
+      quizState.questions.push(nextQuestion);
+      quizState.index += 1;
+      quizState.answered = false;
+      renderQuizQuestion();
+    } catch (err) {
+      quizNextBtn.disabled = false;
+      quizNextBtn.querySelector("span").textContent = originalLabel;
+      showToast(friendlyErrorMessage(err), "error", 4500);
+    }
+    return;
+  }
+
+  quizState.index += 1;
+  quizState.answered = false;
+  renderQuizQuestion();
 });
 
 function questionAnswerLabel(q) {
@@ -296,9 +375,26 @@ function showQuizResults() {
   quizScoreRing.style.setProperty("--pct", pct);
   quizScoreText.textContent = `${quizState.score}/${total}`;
   quizResultTitle.textContent = pct >= 80 ? "Excellent work! 🎉" : pct >= 50 ? "Good effort! 👍" : "Keep practicing! 💪";
-  quizResultSummary.textContent = `${quizState.score} correct, ${total - quizState.score} incorrect — ${pct}% on "${quizState.topic}" (${quizState.difficulty}).`;
+  quizResultSummary.textContent = quizState.adaptive
+    ? `${quizState.score} correct, ${total - quizState.score} incorrect — ${pct}% on "${quizState.topic}" (adaptive difficulty).`
+    : `${quizState.score} correct, ${total - quizState.score} incorrect — ${pct}% on "${quizState.topic}" (${quizState.difficulty}).`;
 
-  saveRecent({ topic: quizState.topic, difficulty: quizState.difficulty, score: quizState.score, total, date: Date.now() });
+  if (quizState.adaptive && quizState.difficultyHistory.length > 0) {
+    quizDifficultyProgression.hidden = false;
+    quizDifficultyProgression.innerHTML = '<span class="quiz-difficulty-progression-label">Difficulty path:</span>';
+    quizState.difficultyHistory.forEach((level, i) => {
+      const dot = document.createElement("span");
+      dot.className = "quiz-difficulty-dot";
+      dot.dataset.level = level;
+      dot.title = `Question ${i + 1}: ${difficultyLabel(level)}`;
+      dot.textContent = level[0].toUpperCase();
+      quizDifficultyProgression.appendChild(dot);
+    });
+  } else {
+    quizDifficultyProgression.hidden = true;
+  }
+
+  saveRecent({ topic: quizState.topic, difficulty: quizState.adaptive ? "adaptive" : quizState.difficulty, score: quizState.score, total, date: Date.now() });
   logEvent("quiz_completed", { topic: quizState.topic, score: quizState.score, total, difficulty: quizState.difficulty });
 
   const hasIncorrect = quizState.answers.some((a) => !a.correct);
@@ -344,16 +440,27 @@ async function startQuiz(sourceText) {
   quizStartBtn.disabled = true;
   quizStartBtn.querySelector("span").textContent = "Generating…";
   try {
-    const questions = await fetchQuiz(topic, quizState.difficulty, quizState.count, appState.subject, {
-      questionType: quizState.questionType,
-      sourceText,
-    });
     quizState.topic = topic;
-    quizState.questions = questions;
     quizState.index = 0;
     quizState.score = 0;
     quizState.answered = false;
     quizState.answers = [];
+
+    if (quizState.adaptive) {
+      // Only the first question is generated upfront — every question after it is fetched
+      // just-in-time at whatever difficulty the running performance has moved to.
+      quizState.totalPlanned = quizState.count;
+      quizState.currentDifficulty = quizState.difficulty;
+      quizState.difficultyHistory = [];
+      const first = await fetchNextAdaptiveQuestion();
+      quizState.questions = [first];
+    } else {
+      quizState.questions = await fetchQuiz(topic, quizState.difficulty, quizState.count, appState.subject, {
+        questionType: quizState.questionType,
+        sourceText,
+      });
+    }
+
     quizSetup.hidden = true;
     quizResults.hidden = true;
     quizPlay.hidden = false;
@@ -369,6 +476,9 @@ async function startQuiz(sourceText) {
 quizStartBtn.addEventListener("click", startQuiz);
 
 quizRetryBtn.addEventListener("click", () => {
+  // Replaying a fixed, already-generated list — not adaptive generation, so the total must
+  // come from the actual array length rather than the original run's totalPlanned.
+  quizState.adaptive = false;
   quizState.index = 0;
   quizState.score = 0;
   quizState.answered = false;
@@ -381,6 +491,7 @@ quizRetryBtn.addEventListener("click", () => {
 quizRetryIncorrectBtn.addEventListener("click", () => {
   const incorrectQuestions = quizState.questions.filter((_, i) => !quizState.answers[i].correct);
   if (incorrectQuestions.length === 0) return;
+  quizState.adaptive = false;
   quizState.questions = incorrectQuestions;
   quizState.index = 0;
   quizState.score = 0;

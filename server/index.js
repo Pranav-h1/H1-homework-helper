@@ -13,7 +13,10 @@ const MAX_SOURCE_TEXT_LENGTH = 4000;
 const MAX_EXAM_TOPICS_LENGTH = 400;
 const MAX_IMAGE_BYTES = 6 * 1024 * 1024; // 6MB decoded
 const ALLOWED_IMAGE_MIME = /^image\/(png|jpe?g|webp|gif)$/i;
-const QUIZ_COUNTS = [5, 10];
+// 1 is included for Adaptive Quiz mode, which fetches one question at a time so it can pick
+// the next difficulty from the student's actual running performance instead of committing to
+// a fixed difficulty for the whole quiz upfront.
+const QUIZ_COUNTS = [1, 5, 10];
 const QUIZ_DIFFICULTIES = ["easy", "medium", "hard"];
 const QUIZ_TYPES = ["mcq", "truefalse", "shortanswer", "mixed"];
 const PRACTICE_COUNTS = [5, 10];

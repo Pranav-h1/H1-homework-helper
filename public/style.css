@@ -4380,6 +4380,50 @@ textarea::placeholder {
   border-color: var(--danger-border);
 }
 
+.quiz-adaptive-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--accent-grad-soft);
+  border: 1px solid rgba(var(--accent-1-rgb), 0.3);
+  color: var(--text);
+}
+
+.quiz-difficulty-progression {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 2px;
+}
+
+.quiz-difficulty-progression-label {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin-right: 4px;
+}
+
+.quiz-difficulty-dot {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--accent-contrast);
+}
+
+.quiz-difficulty-dot[data-level="easy"] { background: var(--success); }
+.quiz-difficulty-dot[data-level="medium"] { background: var(--warning); }
+.quiz-difficulty-dot[data-level="hard"] { background: var(--danger); }
+
 .quiz-shortanswer {
   display: flex;
   flex-direction: column;
