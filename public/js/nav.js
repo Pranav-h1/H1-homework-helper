@@ -19,6 +19,7 @@ const VIEWS_WITHOUT_SUBJECT_BAR = new Set([
   "notes",
   "study-mode",
   "progress",
+  "brain",
   "homework",
   "subjects",
   "documents",

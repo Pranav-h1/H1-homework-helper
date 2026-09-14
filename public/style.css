@@ -6458,3 +6458,781 @@ textarea::placeholder {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================================
+   Learning Brain
+   ========================================================= */
+.brain-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.brain-hero h1 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+
+.brain-hero-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 68ch;
+  margin: 0;
+}
+
+.cooked-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brain-card {
+  background: var(--glass-elevated-bg);
+  border: 1px solid var(--glass-elevated-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-elevated-shadow);
+  backdrop-filter: blur(var(--glass-elevated-blur));
+  padding: 22px;
+}
+
+.brain-card h2 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  margin: 0;
+}
+
+.brain-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.brain-card-sub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 6px 0 0;
+  max-width: 74ch;
+}
+
+.brain-section + .brain-section,
+.brain-stats + .brain-section {
+  margin-top: 20px;
+}
+
+/* --- Empty state ---------------------------------------------------- */
+.brain-empty {
+  text-align: center;
+  padding: 56px 24px;
+  background: var(--glass-base-bg);
+  border: 1px solid var(--glass-base-border);
+  border-radius: var(--radius-lg);
+}
+
+.brain-empty-icon {
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+
+.brain-empty h2 {
+  font-family: var(--font-display);
+  font-size: 21px;
+  margin: 0 0 10px;
+}
+
+.brain-empty p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  max-width: 60ch;
+  margin: 0 auto;
+}
+
+.brain-empty-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.brain-empty-line {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+  padding: 14px 0;
+}
+
+/* --- Top row: score + mission --------------------------------------- */
+.brain-top {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.brain-score-card {
+  text-align: center;
+}
+
+.brain-score-ring {
+  --brain-score: 0;
+  width: 168px;
+  height: 168px;
+  margin: 18px auto 14px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background:
+    conic-gradient(var(--accent-1) calc(var(--brain-score) * 1%), rgba(255, 255, 255, 0.07) 0),
+    var(--surface-solid);
+  transition: background var(--t-slow) var(--ease);
+}
+
+.brain-score-inner {
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  background: var(--surface-solid);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.brain-score-number {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.brain-score-outof {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  letter-spacing: 0.04em;
+}
+
+.brain-score-caption {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0 0 16px;
+}
+
+.brain-score-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.brain-score-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.brain-score-label {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.brain-score-value {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.brain-score-bar,
+.brain-topic-bar {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.brain-score-fill,
+.brain-topic-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--accent-grad);
+  transition: width var(--t-slow) var(--ease);
+}
+
+/* --- "Why this?" ----------------------------------------------------- */
+.brain-why {
+  margin-top: 8px;
+}
+
+.brain-why-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent-2);
+  letter-spacing: 0.02em;
+}
+
+.brain-why-btn:hover {
+  text-decoration: underline;
+}
+
+.brain-why-body {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 7px 0 0;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 2px solid rgba(var(--accent-2-rgb), 0.5);
+  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+}
+
+/* --- Mission --------------------------------------------------------- */
+.mission-budget-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.mission-budget-field select {
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--text);
+  font-size: 13px;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mission-task {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
+  transition: background var(--t-fast) var(--ease), opacity var(--t-base) var(--ease);
+}
+
+.mission-task[data-level="critical"] { border-left-color: var(--danger); }
+.mission-task[data-level="high"] { border-left-color: var(--warning); }
+.mission-task[data-level="medium"] { border-left-color: var(--accent-2); }
+.mission-task[data-level="low"] { border-left-color: var(--text-faint); }
+
+.mission-task.done {
+  opacity: 0.5;
+}
+
+.mission-task.done .mission-task-title {
+  text-decoration: line-through;
+}
+
+.mission-check {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 1px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-strong);
+  background: transparent;
+  color: transparent;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.mission-check:hover {
+  border-color: var(--accent-1);
+}
+
+.mission-task.done .mission-check {
+  background: var(--accent-grad);
+  border-color: transparent;
+  color: var(--accent-contrast);
+}
+
+.mission-task-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.mission-task-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.mission-task-icon {
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mission-task-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.mission-task-detail {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 5px 0 0;
+}
+
+.mission-task-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mission-time {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mission-progress {
+  font-size: 12.5px;
+  color: var(--text-faint);
+  margin: 14px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.brain-btn-sm {
+  padding: 6px 11px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* --- Stat tiles ------------------------------------------------------ */
+.brain-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.brain-stat {
+  background: var(--glass-base-bg);
+  border: 1px solid var(--glass-base-border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+
+.brain-stat-value {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.brain-stat-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 7px;
+}
+
+.brain-stat-hint {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* --- Signals --------------------------------------------------------- */
+.brain-signals {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.brain-signal {
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
+}
+
+.brain-signal[data-level="critical"] { border-left-color: var(--danger); }
+.brain-signal[data-level="high"] { border-left-color: var(--warning); }
+.brain-signal[data-level="medium"] { border-left-color: var(--accent-2); }
+.brain-signal[data-level="low"] { border-left-color: var(--text-faint); }
+
+.brain-signal-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.brain-signal-icon {
+  font-size: 15px;
+  line-height: 1.3;
+  flex-shrink: 0;
+}
+
+.brain-signal-titles {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.brain-signal-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.brain-signal-detail {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.brain-level-badge {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 9px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-muted);
+}
+
+.brain-level-badge[data-level="critical"] { background: var(--danger-bg); color: var(--danger); }
+.brain-level-badge[data-level="high"] { background: var(--warning-bg); color: var(--warning); }
+.brain-level-badge[data-level="medium"] { background: rgba(var(--accent-2-rgb), 0.14); color: var(--accent-2); }
+
+.brain-signal-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.brain-confidence {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+/* --- Topics ---------------------------------------------------------- */
+.brain-topics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.brain-topic {
+  padding: 15px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--border-strong);
+}
+
+.brain-topic[data-status="weak"] { border-top-color: var(--danger); }
+.brain-topic[data-status="shaky"] { border-top-color: var(--warning); }
+.brain-topic[data-status="solid"] { border-top-color: var(--success); }
+.brain-topic[data-status="unknown"] { border-top-color: var(--text-faint); }
+
+.brain-topic[data-status="weak"] .brain-topic-fill { background: var(--danger); }
+.brain-topic[data-status="shaky"] .brain-topic-fill { background: var(--warning); }
+.brain-topic[data-status="solid"] .brain-topic-fill { background: var(--success); }
+
+.brain-topic-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.brain-topic-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.brain-topic-pct {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.brain-topic-meta {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  line-height: 1.5;
+  margin: 9px 0 0;
+}
+
+.brain-topic-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.brain-topic-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+}
+
+.brain-topic-tag[data-status="weak"] { background: var(--danger-bg); color: var(--danger); }
+.brain-topic-tag[data-status="shaky"] { background: var(--warning-bg); color: var(--warning); }
+.brain-topic-tag[data-status="solid"] { background: var(--success-bg); color: var(--success); }
+.brain-topic-tag[data-trend="improving"] { background: var(--success-bg); color: var(--success); }
+.brain-topic-tag[data-trend="slipping"] { background: var(--danger-bg); color: var(--danger); }
+
+.brain-topic-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* --- "I'm Cooked" ----------------------------------------------------- */
+.cooked-panel {
+  background: var(--glass-floating-bg);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-floating-shadow);
+  backdrop-filter: blur(var(--glass-floating-blur));
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+.cooked-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cooked-panel-head h2 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  margin: 0;
+}
+
+.cooked-panel-sub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 6px 0 0;
+  max-width: 70ch;
+}
+
+.cooked-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin: 18px 0;
+}
+
+.brain-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.brain-field-grow {
+  flex: 1;
+  min-width: 180px;
+}
+
+.brain-field input,
+.brain-field select {
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 400;
+  min-width: 120px;
+}
+
+.brain-field input:focus,
+.brain-field select:focus {
+  outline: none;
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 3px rgba(var(--accent-1-rgb), 0.18);
+}
+
+.cooked-result {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cooked-summary strong {
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+
+.cooked-note {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 6px 0 0;
+}
+
+.cooked-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
+}
+
+.cooked-block[data-level="critical"] { border-left-color: var(--danger); }
+.cooked-block[data-level="high"] { border-left-color: var(--warning); }
+.cooked-block[data-level="medium"] { border-left-color: var(--accent-2); }
+
+.cooked-block-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--danger-bg);
+  color: var(--danger);
+  display: grid;
+  place-items: center;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.cooked-block-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.cooked-block-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.cooked-block-detail {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 5px 0 0;
+}
+
+.cooked-block-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 980px) {
+  .brain-top {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .brain-hero h1 {
+    font-size: 25px;
+  }
+
+  .cooked-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .mission-task-side,
+  .cooked-block-side {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .brain-topic-actions {
+    flex-wrap: wrap;
+  }
+}
+
+.mission-divider {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  margin: 8px 0 2px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mission-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.mission-task.stretch {
+  background: transparent;
+  border-style: dashed;
+}

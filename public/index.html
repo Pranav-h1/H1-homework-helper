@@ -187,6 +187,10 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
             <span>Focus</span>
           </button>
+          <button class="nav-item" type="button" data-view="brain" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44A2.5 2.5 0 0 1 4 17.5a2.5 2.5 0 0 1-.94-4.32A2.5 2.5 0 0 1 3.5 8.5a2.5 2.5 0 0 1 1.6-2.33A2.5 2.5 0 0 1 9.5 2z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44A2.5 2.5 0 0 0 20 17.5a2.5 2.5 0 0 0 .94-4.32A2.5 2.5 0 0 0 20.5 8.5a2.5 2.5 0 0 0-1.6-2.33A2.5 2.5 0 0 0 14.5 2z"></path></svg>
+            <span>Learning Brain</span>
+          </button>
           <button class="nav-item" type="button" data-view="progress" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
             <span>Progress</span>
@@ -1304,6 +1308,108 @@
         </section>
 
         <!-- ===== Progress ===== -->
+        <section id="view-brain" class="view view-brain" data-view-panel="brain" hidden>
+          <div class="brain-hero">
+            <div>
+              <h1>Your Learning Brain</h1>
+              <p class="brain-hero-sub">Everything here is worked out from what you've actually done in H1 — your quizzes, your mistakes, your deadlines. Nothing is estimated, and nothing is made up.</p>
+            </div>
+            <button id="cookedBtn" class="btn btn-danger cooked-btn" type="button" aria-expanded="false" aria-controls="cookedPanel">
+              <span aria-hidden="true">🚨</span>
+              <span>I'm Cooked</span>
+            </button>
+          </div>
+
+          <div id="cookedPanel" class="cooked-panel" hidden>
+            <div class="cooked-panel-head">
+              <div>
+                <h2>Emergency plan</h2>
+                <p class="cooked-panel-sub">Tell H1 how long you've actually got. It ranks what's on record by what costs you most if you skip it, and splits your time across it.</p>
+              </div>
+              <button id="cookedCloseBtn" class="icon-btn" type="button" aria-label="Close emergency plan">×</button>
+            </div>
+            <div class="cooked-controls">
+              <label class="brain-field">
+                <span>Minutes left</span>
+                <input id="cookedMinutes" type="number" min="10" max="600" step="5" value="60" />
+              </label>
+              <label class="brain-field">
+                <span>Subject</span>
+                <select id="cookedSubject"></select>
+              </label>
+              <label class="brain-field brain-field-grow">
+                <span>Specific topic (optional)</span>
+                <input id="cookedTopic" type="text" placeholder="e.g. Fractions" autocomplete="off" />
+              </label>
+              <button id="cookedBuildBtn" class="btn btn-primary" type="button">Build the plan</button>
+            </div>
+            <div id="cookedResult" class="cooked-result"></div>
+          </div>
+
+          <div id="brainEmpty" class="brain-empty" hidden></div>
+
+          <div id="brainBody" class="brain-body" hidden>
+            <div class="brain-top">
+              <div class="brain-card brain-score-card">
+                <h2>Brain score</h2>
+                <div class="brain-score-ring" id="brainScoreRing">
+                  <div class="brain-score-inner">
+                    <span class="brain-score-number" id="brainScoreValue">—</span>
+                    <span class="brain-score-outof">/ 100</span>
+                  </div>
+                </div>
+                <p class="brain-score-caption" id="brainScoreCaption"></p>
+                <div class="brain-score-breakdown" id="brainScoreBreakdown"></div>
+              </div>
+
+              <div class="brain-card brain-mission-card">
+                <div class="brain-card-head">
+                  <div>
+                    <h2>Today's mission</h2>
+                    <p class="brain-card-sub" id="missionMeta"></p>
+                  </div>
+                  <label class="mission-budget-field">
+                    <span>I have</span>
+                    <select id="missionBudget">
+                      <option value="15">15 min</option>
+                      <option value="30" selected>30 min</option>
+                      <option value="45">45 min</option>
+                      <option value="60">1 hour</option>
+                      <option value="90">1.5 hours</option>
+                      <option value="120">2 hours</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="mission-list" id="missionList"></div>
+                <p class="mission-progress" id="missionProgress"></p>
+              </div>
+            </div>
+
+            <div class="brain-stats" id="brainStats"></div>
+
+            <div class="brain-card brain-section">
+              <div class="brain-card-head">
+                <div>
+                  <h2>What H1 noticed</h2>
+                  <p class="brain-card-sub">Ordered by what matters most right now. Open "Why this?" on any of them to see exactly which of your activity it came from.</p>
+                </div>
+              </div>
+              <div class="brain-signals" id="brainSignalsList"></div>
+            </div>
+
+            <div class="brain-card brain-section">
+              <div class="brain-card-head">
+                <div>
+                  <h2>Your topics</h2>
+                  <p class="brain-card-sub">Every topic you've been quizzed on or built cards for. A topic only gets scored once you've answered at least four questions on it — anything less isn't evidence yet.</p>
+                </div>
+              </div>
+              <p class="brain-empty-line" id="brainTopicsEmpty" hidden></p>
+              <div class="brain-topics" id="brainTopicsGrid"></div>
+            </div>
+          </div>
+        </section>
+
         <section id="view-progress" class="view view-progress" data-view-panel="progress" hidden>
           <div class="view-header">
             <div>

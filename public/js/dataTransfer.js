@@ -30,6 +30,7 @@ const KNOWN_KEYS = [
   "h1-documents",
   "h1-custom-subjects",
   "h1-progress-events",
+  "h1-mission-state",
   "h1-achievements-seen",
   "h1-goals",
   "h1-daily-goal-minutes",

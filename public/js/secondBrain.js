@@ -777,6 +777,9 @@ export function getBrainState() {
 // One task per kind keeps a mission varied — five "practise topic X" steps is not a plan.
 const MISSION_KIND_LIMIT = { weak_topic: 2, stale_topic: 1, shaky_topic: 1 };
 
+// How many extra "if you get through that" steps to offer past the stated time budget.
+const MISSION_STRETCH_LIMIT = 2;
+
 export function getMission({ minutes } = {}) {
   const budget = Number(minutes) > 0 ? Number(minutes) : getDailyGoalMinutes();
   const signals = getSignals();
@@ -787,6 +790,7 @@ export function getMission({ minutes } = {}) {
       ready: false,
       budget,
       tasks: [],
+      stretch: [],
       totalMinutes: 0,
       reason: `H1 needs a bit more to go on — ${state.eventCount} of ${MIN_EVENTS_FOR_INSIGHT} study actions recorded so far. Ask a question, take a quiz or finish a task and your first mission will build itself.`,
     };
@@ -794,7 +798,25 @@ export function getMission({ minutes } = {}) {
 
   const used = {};
   const tasks = [];
+  const stretch = [];
   let spent = 0;
+
+  const toTask = (s) => ({
+    id: s.id,
+    kind: s.kind,
+    title: s.title,
+    detail: s.detail,
+    why: s.reason,
+    minutes: s.minutes,
+    level: s.level,
+    topic: s.topic || null,
+    subject: s.subject || null,
+    action: s.action,
+    // XP for the mission tick itself. The underlying work still earns its own XP through
+    // the normal event log — this is a small bonus for following the plan, not a parallel
+    // currency, and it is only granted once per task per day (see missionStore).
+    xp: s.level === "critical" ? 25 : s.level === "high" ? 20 : s.level === "medium" ? 15 : 10,
+  });
 
   signals.forEach((s) => {
     if (spent >= budget) return;
@@ -804,29 +826,29 @@ export function getMission({ minutes } = {}) {
     // task — a single oversized step would otherwise blow the whole budget.
     if (spent > 0 && spent + s.minutes > budget + 5) return;
     used[s.kind] = (used[s.kind] || 0) + 1;
-    tasks.push({
-      id: s.id,
-      kind: s.kind,
-      title: s.title,
-      detail: s.detail,
-      why: s.reason,
-      minutes: s.minutes,
-      level: s.level,
-      topic: s.topic || null,
-      subject: s.subject || null,
-      action: s.action,
-      // XP for the mission tick itself. The underlying work still earns its own XP through
-      // the normal event log — this is a small bonus for following the plan, not a
-      // parallel currency, and it is only granted once per task per day (see missionStore).
-      xp: s.level === "critical" ? 25 : s.level === "high" ? 20 : s.level === "medium" ? 15 : 10,
-    });
+    tasks.push(toTask(s));
     spent += s.minutes;
+  });
+
+  // One honest 30-minute task can fill a 30-minute budget on its own, which leaves a plan of
+  // exactly one line. Rather than shrink the estimate to pad the list out — that would be
+  // lying about how long the work takes — the next couple of priorities are offered
+  // separately as "if you get through that", clearly outside the time they said they had.
+  const chosen = new Set(tasks.map((t) => t.id));
+  signals.forEach((s) => {
+    if (stretch.length >= MISSION_STRETCH_LIMIT || chosen.has(s.id)) return;
+    const limit = MISSION_KIND_LIMIT[s.kind] ?? 1;
+    if ((used[s.kind] || 0) >= limit) return;
+    used[s.kind] = (used[s.kind] || 0) + 1;
+    chosen.add(s.id);
+    stretch.push({ ...toTask(s), stretch: true });
   });
 
   return {
     ready: tasks.length > 0,
     budget,
     tasks,
+    stretch,
     totalMinutes: spent,
     reason:
       tasks.length > 0

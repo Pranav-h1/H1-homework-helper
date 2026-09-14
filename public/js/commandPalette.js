@@ -37,6 +37,7 @@ const VIEW_LABELS = {
   calendar: "Calendar",
   "study-mode": "Focus",
   progress: "Progress",
+  brain: "Learning Brain",
   achievements: "Achievements",
   tools: "Tools",
   quotes: "Quotes Factory",
@@ -48,7 +49,7 @@ const VIEW_LABELS = {
 const VIEW_ICONS = {
   home: "🏠", chat: "💬", homework: "📘", scan: "📸", subjects: "🧭", notes: "📝",
   documents: "📁", flashcards: "🗂️", quiz: "✅", exam: "📝", planner: "🗓️", calendar: "📅",
-  "study-mode": "⏱️", progress: "📈", achievements: "🏆", tools: "🧰", quotes: "✨", settings: "⚙️", profile: "👤", projects: "🧩", favorites: "💎",
+  "study-mode": "⏱️", progress: "📈", brain: "🧠", achievements: "🏆", tools: "🧰", quotes: "✨", settings: "⚙️", profile: "👤", projects: "🧩", favorites: "💎",
 };
 
 const NAV_COMMANDS = Object.keys(VIEW_LABELS).map((view) => ({

@@ -14,6 +14,7 @@ const XP_RULES = {
   homework_completed: 8,
   document_created: 4,
   focus_break_completed: 3,
+  mission_task_done: 5,
 };
 const LEVEL_THRESHOLDS = [0, 50, 120, 220, 350, 520, 750, 1050, 1450, 2000];
 
