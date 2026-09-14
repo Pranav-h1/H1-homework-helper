@@ -997,6 +997,7 @@ textarea::placeholder {
   grid-template-areas:
     "hero hero hero hero"
     "super super super super"
+    "brain brain brain brain"
     "continue continue weak deadline"
     "continue continue note quiz"
     "focus focus focus focus";
@@ -1175,6 +1176,7 @@ textarea::placeholder {
   border-color: rgba(var(--accent-1-rgb), 0.3);
 }
 
+.bento-brain { grid-area: brain; }
 .bento-weak { grid-area: weak; }
 .bento-deadline { grid-area: deadline; }
 .bento-note { grid-area: note; }
@@ -1231,6 +1233,7 @@ textarea::placeholder {
     grid-template-areas:
       "hero hero"
       "super super"
+      "brain brain"
       "continue continue"
       "weak deadline"
       "note quiz"
@@ -1244,6 +1247,7 @@ textarea::placeholder {
     grid-template-areas:
       "hero"
       "super"
+      "brain"
       "continue"
       "weak"
       "deadline"

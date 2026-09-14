@@ -10,8 +10,11 @@ import { getDailyGoalMinutes } from "./goalsStore.js";
 import { getDecks, getDueCount } from "./flashcardDecks.js";
 import { QUOTES } from "./quotesData.js";
 import { showToast } from "./toast.js";
+import { getBrainState, getMission, invalidateBrain } from "./secondBrain.js";
+import { getCompletedCount } from "./missionStore.js";
 
 const heroStatStrip = document.getElementById("heroStatStrip");
+const bentoBrain = document.getElementById("bentoBrain");
 const bentoContinue = document.getElementById("bentoContinue");
 const bentoWeak = document.getElementById("bentoWeak");
 const bentoDeadline = document.getElementById("bentoDeadline");
@@ -40,12 +43,25 @@ function todayStudyMinutes() {
     .reduce((sum, e) => sum + (e.minutes || 0), 0);
 }
 
+// Several of these tiles show text the student typed — note titles, conversation titles,
+// quiz topics, homework titles — and this builds an innerHTML string, so every field is
+// escaped. No caller passes markup deliberately; if one ever needs to, it should build
+// nodes rather than loosen this.
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function tileContent(eyebrow, title, sub, actionLabel) {
   return `
-    <div class="bento-tile-eyebrow">${eyebrow}</div>
-    <div class="bento-tile-title">${title}</div>
-    ${sub ? `<div class="bento-tile-sub">${sub}</div>` : ""}
-    ${actionLabel ? `<div class="bento-tile-action">${actionLabel} →</div>` : ""}`;
+    <div class="bento-tile-eyebrow">${escapeHtml(eyebrow)}</div>
+    <div class="bento-tile-title">${escapeHtml(title)}</div>
+    ${sub ? `<div class="bento-tile-sub">${escapeHtml(sub)}</div>` : ""}
+    ${actionLabel ? `<div class="bento-tile-action">${escapeHtml(actionLabel)} →</div>` : ""}`;
 }
 
 function renderHeroStrip(stats) {
@@ -60,6 +76,51 @@ function renderHeroStrip(stats) {
   const goalMinutes = getDailyGoalMinutes();
   const todayMinutes = todayStudyMinutes();
   heroStatStrip.appendChild(statPill(`${Math.min(todayMinutes, goalMinutes)}/${goalMinutes}`, "Today's goal (min)"));
+}
+
+// The Learning Brain's headline, on Home. Deliberately not a second copy of the "weak
+// subject" tile below it: this one shows what H1 has decided is the single most important
+// thing right now, plus how far into today's plan the student already is.
+function renderBrainTile() {
+  if (!bentoBrain) return;
+  invalidateBrain();
+  const state = getBrainState();
+  bentoBrain.onclick = () => switchView("brain");
+
+  if (!state.hasEnoughData) {
+    const left = state.minEventsForInsight - state.eventCount;
+    bentoBrain.innerHTML = tileContent(
+      "\u{1F9E0} Your Learning Brain",
+      "Still getting to know you",
+      `H1 needs ${left} more study action${left === 1 ? "" : "s"} before it starts spotting patterns. It won't guess in the meantime.`,
+      "See what it tracks"
+    );
+    return;
+  }
+
+  const top = state.signals[0];
+  if (!top) {
+    bentoBrain.innerHTML = tileContent(
+      "\u{1F9E0} Your Learning Brain",
+      "Nothing pressing",
+      "No overdue work, nothing due for review, no weak topics on record.",
+      "Open the dashboard"
+    );
+    return;
+  }
+
+  const mission = getMission();
+  const ticked = Math.min(getCompletedCount(), mission.tasks.length);
+  const progress = mission.tasks.length > 0 ? `${ticked} of ${mission.tasks.length} of today's plan done` : "";
+  const scoreBit = state.score !== null ? `Brain score ${state.score}/100` : "";
+  const sub = [top.detail, progress || scoreBit].filter(Boolean).join(" \u00B7 ");
+
+  bentoBrain.innerHTML = tileContent(
+    scoreBit ? `\u{1F9E0} Top priority \u00B7 ${scoreBit}` : "\u{1F9E0} Top priority",
+    top.title,
+    sub,
+    "Open your plan"
+  );
 }
 
 function renderContinue() {
@@ -223,6 +284,7 @@ function renderDailyInspiration() {
 export function renderHomeWidget() {
   const stats = getStats();
   renderHeroStrip(stats);
+  renderBrainTile();
   renderContinue();
   renderWeak(stats);
   renderDeadline();
