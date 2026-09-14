@@ -60,6 +60,9 @@ export async function fetchQuiz(topic, difficulty, count, subject, options) {
     subject,
     questionType: opts.questionType,
     sourceText: opts.sourceText,
+    // Optional. When given, each returned question carries the one it covers, so a mixed
+    // quiz's result can be logged against the real topics instead of a combined label.
+    topics: opts.topics,
   });
   if (!Array.isArray(data.questions)) {
     throw new Error("The server sent back an unexpected response. Please try again.");

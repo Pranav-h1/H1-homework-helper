@@ -171,6 +171,10 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg>
             <span>Exam Simulator</span>
           </button>
+          <button class="nav-item" type="button" data-view="boss" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 15.4 6.8 18.1l1-5.8L3.5 8.2l5.9-.9z"></path><path d="M12 15.4V22"></path></svg>
+            <span>Boss Battle</span>
+          </button>
           <button class="nav-item" type="button" data-view="planner" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><polyline points="9 16 11 18 15 13"></polyline></svg>
             <span>Study Planner</span>
@@ -1309,16 +1313,93 @@
         </section>
 
         <!-- ===== Progress ===== -->
+        <section id="view-boss" class="view view-boss" data-view-panel="boss" hidden>
+          <div class="view-header">
+            <div>
+              <h1>Boss Battle</h1>
+              <p class="view-sub">A hard, mixed quiz assembled from the topics you're actually weakest at. Win or lose, the result counts toward those topics.</p>
+            </div>
+          </div>
+
+          <div id="bossIntro" class="boss-panel" hidden>
+            <div id="bossIntroBody" class="boss-intro-body"></div>
+            <div class="boss-intro-actions">
+              <button id="bossStartBtn" class="btn btn-danger" type="button">Start the battle</button>
+              <span id="bossLoading" class="boss-loading" hidden>Building your boss…</span>
+            </div>
+          </div>
+
+          <div id="bossFight" class="boss-panel boss-fight" hidden>
+            <div class="boss-hud">
+              <div class="boss-hud-top">
+                <div>
+                  <div class="boss-hud-name" id="bossName"></div>
+                  <span class="boss-topic-tag" id="bossTopicTag" hidden></span>
+                </div>
+                <div class="boss-hud-right">
+                  <span class="boss-combo" id="bossCombo"></span>
+                  <div class="boss-lives" id="bossLives" role="img"></div>
+                </div>
+              </div>
+              <div class="boss-hp" role="progressbar" aria-label="Boss health" aria-valuemin="0" aria-valuemax="100">
+                <div class="boss-hp-fill" id="bossHpFill"></div>
+              </div>
+              <div class="boss-hud-bottom">
+                <span class="boss-counter" id="bossCounter"></span>
+                <span class="boss-hp-label" id="bossHpLabel"></span>
+              </div>
+            </div>
+
+            <p class="boss-question" id="bossQuestion"></p>
+
+            <div class="boss-options" id="bossOptions"></div>
+
+            <div class="boss-short" id="bossShortWrap" hidden>
+              <input id="bossShortInput" class="tool-input" type="text" placeholder="Type your answer…" autocomplete="off" aria-label="Your answer" />
+              <button id="bossCheckBtn" class="btn btn-primary" type="button">Check answer</button>
+              <p class="boss-model-answer" id="bossModelAnswer"></p>
+              <div class="boss-self-grade" id="bossSelfGrade" hidden>
+                <span>Did you get it right?</span>
+                <button id="bossSelfRightBtn" class="btn btn-ghost" type="button">I got it</button>
+                <button id="bossSelfWrongBtn" class="btn btn-ghost" type="button">I missed it</button>
+              </div>
+            </div>
+
+            <p class="boss-feedback" id="bossFeedback" hidden></p>
+
+            <div class="boss-fight-actions">
+              <button id="bossQuitBtn" class="btn btn-ghost" type="button">Abandon</button>
+              <button id="bossNextBtn" class="btn btn-primary" type="button" disabled>Next</button>
+            </div>
+          </div>
+
+          <div id="bossResults" class="boss-panel boss-results" hidden>
+            <h2 id="bossResultTitle"></h2>
+            <p class="boss-result-sub" id="bossResultSub"></p>
+            <div class="boss-breakdown" id="bossResultBreakdown"></div>
+            <div class="boss-intro-actions">
+              <button id="bossAgainBtn" class="btn btn-danger" type="button">Fight again</button>
+              <button id="bossBackBtn" class="btn btn-ghost" type="button">Back to Learning Brain</button>
+            </div>
+          </div>
+        </section>
+
         <section id="view-brain" class="view view-brain" data-view-panel="brain" hidden>
           <div class="brain-hero">
             <div>
               <h1>Your Learning Brain</h1>
               <p class="brain-hero-sub">Everything here is worked out from what you've actually done in H1 — your quizzes, your mistakes, your deadlines. Nothing is estimated, and nothing is made up.</p>
             </div>
-            <button id="cookedBtn" class="btn btn-danger cooked-btn" type="button" aria-expanded="false" aria-controls="cookedPanel">
-              <span aria-hidden="true">🚨</span>
-              <span>I'm Cooked</span>
-            </button>
+            <div class="brain-hero-actions">
+              <button id="brainBossBtn" class="btn btn-ghost cooked-btn" type="button">
+                <span aria-hidden="true">👾</span>
+                <span>Boss Battle</span>
+              </button>
+              <button id="cookedBtn" class="btn btn-danger cooked-btn" type="button" aria-expanded="false" aria-controls="cookedPanel">
+                <span aria-hidden="true">🚨</span>
+                <span>I'm Cooked</span>
+              </button>
+            </div>
           </div>
 
           <div id="cookedPanel" class="cooked-panel" hidden>

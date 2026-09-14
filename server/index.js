@@ -132,6 +132,17 @@ Rules per question type:
 - "shortanswer": options must be [], correctIndex left as 0, and correctAnswer holds a short model answer (1 sentence) the student's typed answer will be compared against by the student themself.
 Keep questions and options concise and age-appropriate for a school student.`;
 
+// Boss Battle mixes several of a student's weak topics into one quiz, and the result has to
+// be logged back per topic — attributing a mixed score to a made-up combined topic would put
+// a subject the student never studied into their own progress data. So when the caller names
+// the topics, each question is asked to declare which one it covers, and the tag is validated
+// against that list rather than trusted.
+const QUIZ_TOPIC_TAG_RULE = (topics) =>
+  `
+Every question must also include a "topic" field whose value is EXACTLY one of these strings: ${topics
+    .map((t) => JSON.stringify(t))
+    .join(", ")}. Spread the questions roughly evenly across them. Do not invent any other topic value.`;
+
 const FLASHCARDS_SYSTEM_PROMPT = `${BASE_SYSTEM_PROMPT}
 
 You are generating study flashcards for the H1 app.
@@ -373,7 +384,15 @@ app.post("/api/explain", async (req, res) => {
 
 app.post("/api/quiz", async (req, res) => {
   const { topic, subject, sourceText } = req.body || {};
-  let { difficulty, count, questionType } = req.body || {};
+  let { difficulty, count, questionType, topics } = req.body || {};
+
+  // Optional: the caller can name the topics a mixed quiz should draw from, and each returned
+  // question is then tagged with the one it covers so the result can be logged per topic.
+  const requestedTopics = Array.isArray(topics)
+    ? [...new Set(topics.map((t) => (typeof t === "string" ? t.trim() : "")).filter(Boolean))]
+        .filter((t) => t.length <= MAX_TOPIC_LENGTH)
+        .slice(0, 6)
+    : [];
 
   if (typeof topic !== "string" || !topic.trim()) {
     return res.status(400).json({ error: 'Request must include a non-empty "topic" string.' });
@@ -396,8 +415,9 @@ app.post("/api/quiz", async (req, res) => {
       questionType === "mixed"
         ? "Use a mix of \"mcq\", \"truefalse\" and \"shortanswer\" question types across the set."
         : `Every question must have "type": "${questionType}".`;
+    const topicRule = requestedTopics.length > 0 ? QUIZ_TOPIC_TAG_RULE(requestedTopics) : "";
     const userMessage = withSource(
-      `Create a ${count}-question ${difficulty} quiz about: "${trimmedTopic}". ${typeInstruction}`,
+      `Create a ${count}-question ${difficulty} quiz about: "${trimmedTopic}". ${typeInstruction}${topicRule}`,
       cleanedSource
     );
     const reply = await provider.chat(
@@ -421,10 +441,16 @@ app.post("/api/quiz", async (req, res) => {
             if (!question) return null;
             const explanation = typeof q.explanation === "string" ? q.explanation.trim() : "";
 
+            // Only ever echo back a topic the caller actually asked for. Guessing which topic
+            // an untagged question belongs to would write fiction into the student's progress
+            // log, so an unrecognised tag becomes null and the client leaves it unattributed.
+            const tagged = typeof q.topic === "string" ? q.topic.trim() : "";
+            const questionTopic = requestedTopics.find((t) => t.toLowerCase() === tagged.toLowerCase()) || null;
+
             if (type === "shortanswer") {
               const correctAnswer = typeof q.correctAnswer === "string" ? q.correctAnswer.trim() : "";
               if (!correctAnswer) return null;
-              return { type, question, options: [], correctIndex: -1, correctAnswer, explanation };
+              return { type, question, topic: questionTopic, options: [], correctIndex: -1, correctAnswer, explanation };
             }
 
             let options = Array.isArray(q.options) ? q.options.map((o) => (typeof o === "string" ? o.trim() : "")).filter(Boolean) : [];
@@ -434,7 +460,7 @@ app.post("/api/quiz", async (req, res) => {
             if (options.length < 2) return null;
             let correctIndex = Number.isInteger(q.correctIndex) ? q.correctIndex : 0;
             if (correctIndex < 0 || correctIndex >= options.length) correctIndex = 0;
-            return { type, question, options, correctIndex, correctAnswer: "", explanation };
+            return { type, question, topic: questionTopic, options, correctIndex, correctAnswer: "", explanation };
           })
           .filter(Boolean)
           .slice(0, count)

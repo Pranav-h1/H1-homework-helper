@@ -34,6 +34,7 @@ import { initMoreTools, summarizeText, generatePracticeFromSource } from "./more
 import { initCommandPalette, openPalette } from "./commandPalette.js";
 import { initProgressPage, renderProgressPage } from "./progressPage.js";
 import { initBrain, renderBrain } from "./brain.js";
+import { initBoss, renderBoss } from "./boss.js";
 import { initHomeWidgets, renderHomeWidget, renderUpcomingWidget } from "./homeWidgets.js";
 import { initHomework, refreshHomework } from "./homework.js";
 import { initScan } from "./scan.js";
@@ -518,6 +519,7 @@ initMoreTools();
 initCommandPalette();
 initProgressPage();
 initBrain();
+initBoss();
 initHomeWidgets();
 initHomework();
 initScan();
@@ -562,6 +564,7 @@ onViewChange((view) => {
   }
   if (view === "progress") renderProgressPage();
   if (view === "brain") renderBrain();
+  if (view === "boss") renderBoss();
   if (view === "homework") refreshHomework();
   if (view === "planner") refreshPlanner();
   if (view === "calendar") refreshCalendar();

@@ -38,6 +38,7 @@ const topicsGrid = document.getElementById("brainTopicsGrid");
 const topicsEmpty = document.getElementById("brainTopicsEmpty");
 
 const cookedBtn = document.getElementById("cookedBtn");
+const brainBossBtn = document.getElementById("brainBossBtn");
 const cookedPanel = document.getElementById("cookedPanel");
 const cookedMinutes = document.getElementById("cookedMinutes");
 const cookedSubject = document.getElementById("cookedSubject");
@@ -485,6 +486,7 @@ export function initBrain() {
 
   missionBudget.addEventListener("change", renderMission);
 
+  if (brainBossBtn) brainBossBtn.addEventListener("click", () => switchView("boss"));
   cookedBtn.addEventListener("click", () => (cookedPanel.hidden ? openCooked() : closeCooked()));
   cookedCloseBtn.addEventListener("click", closeCooked);
   cookedBuildBtn.addEventListener("click", renderCooked);

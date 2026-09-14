@@ -38,6 +38,7 @@ const VIEW_LABELS = {
   "study-mode": "Focus",
   progress: "Progress",
   brain: "Learning Brain",
+  boss: "Boss Battle",
   achievements: "Achievements",
   tools: "Tools",
   quotes: "Quotes Factory",
@@ -49,7 +50,7 @@ const VIEW_LABELS = {
 const VIEW_ICONS = {
   home: "🏠", chat: "💬", homework: "📘", scan: "📸", subjects: "🧭", notes: "📝",
   documents: "📁", flashcards: "🗂️", quiz: "✅", exam: "📝", planner: "🗓️", calendar: "📅",
-  "study-mode": "⏱️", progress: "📈", brain: "🧠", achievements: "🏆", tools: "🧰", quotes: "✨", settings: "⚙️", profile: "👤", projects: "🧩", favorites: "💎",
+  "study-mode": "⏱️", progress: "📈", brain: "🧠", boss: "👾", achievements: "🏆", tools: "🧰", quotes: "✨", settings: "⚙️", profile: "👤", projects: "🧩", favorites: "💎",
 };
 
 const NAV_COMMANDS = Object.keys(VIEW_LABELS).map((view) => ({
