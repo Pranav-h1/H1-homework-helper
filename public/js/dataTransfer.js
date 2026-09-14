@@ -11,6 +11,7 @@ const KNOWN_KEYS = [
   "h1-enter-mode",
   "h1-auto-scroll",
   "h1-save-conversations",
+  "h1-ai-knows-me",
   "h1-reduce-motion",
   "h1-ai-mode",
   "h1-ai-language",

@@ -1,4 +1,5 @@
-import { safeGetJson } from "./storage.js";
+import { safeGet, safeGetJson } from "./storage.js";
+import { buildAiContext, getContextSignature } from "./secondBrain.js";
 import { getConversationContext, setConversationContext } from "./conversations.js";
 import { getDocument, getDocuments } from "./documentsStore.js";
 import { showToast } from "./toast.js";
@@ -16,6 +17,21 @@ renderSubject();
 // Per attached item, per message-send budget — keeps a context-heavy message safely under
 // the backend's 4000-char cap even with 2-3 items attached plus the student's own question.
 const MAX_ITEM_CHARS = 900;
+
+// The backend rejects any single message over this with a 400, so everything prepended to
+// the student's question has to fit inside it alongside the question itself.
+const MAX_MESSAGE_CHARS = 4000;
+const SEND_MARGIN_CHARS = 120;
+// The Second Brain briefing's own framing text, excluded from the body budget.
+const BRAIN_WRAPPER_CHARS = 300;
+// Below this there isn't room for a briefing worth sending, so it's skipped entirely.
+const MIN_BRAIN_CHARS = 500;
+
+const BRAIN_SETTING_KEY = "h1-ai-knows-me";
+
+export function aiKnowsMeEnabled() {
+  return safeGet(BRAIN_SETTING_KEY, "1") !== "0";
+}
 
 const panel = document.getElementById("chatContextPanel");
 const toggleBtn = document.getElementById("chatContextToggleBtn");
@@ -154,6 +170,40 @@ export function consumeContextPrefix() {
   });
   if (parts.length === 0) return "";
   return `Using this attached context:\n\n${parts.join("\n\n")}\n\n---\n\n`;
+}
+
+// Remembers the material signature of the briefing last sent per conversation, so an
+// unchanged picture isn't repeated on every turn — the model already has it in the history.
+const sentBrainSignatures = {};
+
+// The Second Brain briefing: what H1 actually knows about this student's studying, prepended
+// to an outgoing message so the tutor can answer "what should I revise?" from their real
+// data instead of guessing.
+//
+// It yields to two things. Attachments the student picked by hand come first — they asked
+// for those — so this only gets whatever room is left under the backend's message cap. And
+// it re-sends only when the *material* picture has changed since the last one in this
+// conversation (see getContextSignature), so a long chat doesn't carry the same block over
+// and over just because the question counter ticked up.
+export function consumeBrainPrefix(userContent = "", attachmentPrefix = "") {
+  if (!aiKnowsMeEnabled()) return "";
+
+  const id = currentConversationId || "__none__";
+  const signature = getContextSignature();
+  if (!signature || sentBrainSignatures[id] === signature) return "";
+
+  const room = MAX_MESSAGE_CHARS - SEND_MARGIN_CHARS - userContent.length - attachmentPrefix.length;
+  if (room < MIN_BRAIN_CHARS) return "";
+
+  const briefing = buildAiContext({ maxChars: Math.max(0, room - BRAIN_WRAPPER_CHARS) });
+  if (!briefing) return "";
+  // buildAiContext caps the body, not its framing — if the whole thing still doesn't fit,
+  // drop it rather than send a message the backend will reject. Don't record the signature
+  // in that case either, so it gets another chance on a shorter message.
+  if (briefing.length > room) return "";
+
+  sentBrainSignatures[id] = signature;
+  return briefing;
 }
 
 export function initChatContext() {

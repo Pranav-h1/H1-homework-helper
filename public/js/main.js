@@ -79,6 +79,7 @@ const deviceSettingGroup = document.getElementById("deviceSetting");
 const enterToSendGroup = document.getElementById("enterToSendSetting");
 const autoScrollToggle = document.getElementById("autoScrollToggle");
 const saveConversationsToggle = document.getElementById("saveConversationsToggle");
+const aiKnowsMeToggle = document.getElementById("aiKnowsMeToggle");
 const reduceMotionToggle = document.getElementById("reduceMotionToggle");
 const gamificationToggle = document.getElementById("gamificationToggle");
 const aiLanguageGroup = document.getElementById("aiLanguageSetting");
@@ -260,6 +261,7 @@ function wireToggle(el, key, defaultOn, onChange) {
 
 wireToggle(autoScrollToggle, "h1-auto-scroll", true);
 wireToggle(saveConversationsToggle, "h1-save-conversations", true);
+wireToggle(aiKnowsMeToggle, "h1-ai-knows-me", true);
 wireToggle(reduceMotionToggle, "h1-reduce-motion", false, (on) => setReduceMotion(on));
 wireToggle(gamificationToggle, "h1-gamification-enabled", true, (on) => {
   setGamificationEnabled(on);
@@ -464,6 +466,7 @@ const SETTINGS_KEYS = [
   "h1-enter-mode",
   "h1-auto-scroll",
   "h1-save-conversations",
+  "h1-ai-knows-me",
   "h1-reduce-motion",
   "h1-ai-mode",
   "h1-ai-language",

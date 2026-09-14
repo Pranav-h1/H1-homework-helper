@@ -24,6 +24,8 @@ function getProvider() {
 }
 
 // Status info for health checks / diagnostics (never includes secrets).
+// Full status — includes the vendor name. Server-side only (boot logs, diagnostics).
+// Never send this straight to a browser: see getPublicProviderStatus below.
 function getProviderStatus() {
   const name = currentProviderName();
   const provider = PROVIDERS[name];
@@ -35,4 +37,13 @@ function getProviderStatus() {
   };
 }
 
-module.exports = { getProvider, getProviderStatus };
+// What the browser is allowed to know: whether the AI is usable and whether it can take
+// images — never which vendor or model is behind it. H1 presents one AI ("the H1 model"),
+// and the provider is an implementation detail that must not reach the client, since anything
+// in an HTTP response is visible in devtools.
+function getPublicProviderStatus() {
+  const { known, configured, supportsImages } = getProviderStatus();
+  return { known, configured, supportsImages };
+}
+
+module.exports = { getProvider, getProviderStatus, getPublicProviderStatus };

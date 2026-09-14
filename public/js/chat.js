@@ -18,7 +18,7 @@ import {
   deleteConversation,
   toggleConversationFavorite,
 } from "./conversations.js";
-import { setChatContextConversation, consumeContextPrefix } from "./chatContext.js";
+import { setChatContextConversation, consumeContextPrefix, consumeBrainPrefix } from "./chatContext.js";
 import { tryHandleAiCommand, resolveSlashCommand, SLASH_COMMANDS } from "./aiCommands.js";
 import { isSupported as isSpeechSupported, toggleReadAloud, stopSpeaking } from "./readAloud.js";
 import { saveQuickNote } from "./notes.js";
@@ -404,9 +404,16 @@ async function requestReply(imageForRequest) {
   setSending(true);
   showTyping();
   try {
+    // Two prefixes ride along on the outgoing message only (never stored or rendered):
+    // what the student attached by hand, and what the Second Brain knows about how their
+    // studying is actually going. The brain briefing is sized against whatever room is left
+    // under the backend's per-message cap, so attachments never get squeezed out by it.
+    const lastMessage = requestMessages[requestMessages.length - 1];
     const contextPrefix = consumeContextPrefix();
-    const payload = contextPrefix
-      ? requestMessages.map((m, i) => (i === requestMessages.length - 1 ? { ...m, content: contextPrefix + m.content } : m))
+    const brainPrefix = consumeBrainPrefix(lastMessage ? lastMessage.content : "", contextPrefix);
+    const prefix = brainPrefix + contextPrefix;
+    const payload = prefix
+      ? requestMessages.map((m, i) => (i === requestMessages.length - 1 ? { ...m, content: prefix + m.content } : m))
       : requestMessages;
     const reply = await sendChat(payload, appState.subject, { mode: appState.mode, language: appState.language, image: imageForRequest });
     hideTyping();

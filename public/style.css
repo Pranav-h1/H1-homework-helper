@@ -3570,6 +3570,25 @@ textarea::placeholder {
   font-size: 13.5px;
 }
 
+/* Opt-in modifier for a toggle that needs a line of explanation under its label. Top-aligns
+   the switch so it sits with the label rather than floating beside the description. */
+.toggle-row-stacked {
+  align-items: flex-start;
+}
+
+.toggle-row-stacked span:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.toggle-row-stacked small {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-faint);
+  max-width: 46ch;
+}
+
 .toggle {
   position: relative;
   display: inline-flex;
