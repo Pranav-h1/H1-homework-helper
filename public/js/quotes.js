@@ -1,4 +1,4 @@
-// Quotes Factory — browse, search, filter, favorite, copy, and share from the full 200-quote
+// Quotes Factory — browse, search, filter, favorite, copy, and share from the full quote
 // vault in quotesData.js. Favorites persist through the same safeGetJson/safeSetJson pattern
 // used everywhere else in H1; nothing here is faked (search/filter run against the real
 // array, "random" genuinely randomizes, share only appears where navigator.share exists).
@@ -181,22 +181,64 @@ function buildCard(quote) {
   return card;
 }
 
-function renderGrid() {
-  const filtered = QUOTES.filter((q) => matchesFilter(q) && matchesQuery(q));
-  countEl.textContent = `${filtered.length} of ${QUOTES.length} quotes`;
-  grid.innerHTML = "";
-  emptyState.hidden = filtered.length > 0;
-  filtered.forEach((q) => grid.appendChild(buildCard(q)));
+// The vault is large enough that building every card up front is a visible stall (~700ms for
+// 718 cards), so the grid renders a page at a time and tops itself up as the student scrolls.
+const PAGE_SIZE = 60;
+let filtered = [];
+let renderedCount = 0;
+let sentinel = null;
+
+function appendPage() {
+  const next = filtered.slice(renderedCount, renderedCount + PAGE_SIZE);
+  if (next.length === 0) return;
+  const frag = document.createDocumentFragment();
+  next.forEach((q) => frag.appendChild(buildCard(q)));
+  grid.appendChild(frag);
+  renderedCount += next.length;
+  syncSentinel();
 }
 
+function syncSentinel() {
+  if (!sentinel) return;
+  const done = renderedCount >= filtered.length;
+  sentinel.hidden = done;
+  sentinel.textContent = done ? "" : `Showing ${renderedCount} of ${filtered.length} — keep scrolling for more`;
+}
+
+function renderGrid() {
+  filtered = QUOTES.filter((q) => matchesFilter(q) && matchesQuery(q));
+  countEl.textContent = `${filtered.length} of ${QUOTES.length} quotes`;
+  grid.innerHTML = "";
+  renderedCount = 0;
+  emptyState.hidden = filtered.length > 0;
+  appendPage();
+}
+
+let searchTimer = null;
 searchInput.addEventListener("input", () => {
-  query = searchInput.value.trim();
-  renderGrid();
+  // Debounced: re-filtering and rebuilding the grid on every keystroke made typing lag.
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    query = searchInput.value.trim();
+    renderGrid();
+  }, 130);
 });
 
 if (navigator.share) featuredShareBtn.hidden = false;
 
 export function initQuotes() {
+  // Derived, not hardcoded — the hero copy stays truthful whenever the vault grows.
+  const heroCount = document.getElementById("quotesHeroCount");
+  if (heroCount) heroCount.textContent = String(QUOTES.length);
+  if (!sentinel) {
+    sentinel = document.createElement("div");
+    sentinel.className = "quotes-sentinel";
+    grid.insertAdjacentElement("afterend", sentinel);
+    // Tops the grid up before the student actually reaches the bottom.
+    new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) appendPage();
+    }, { rootMargin: "500px" }).observe(sentinel);
+  }
   buildChips();
   renderFeatured(pickRandomQuote());
   renderGrid();

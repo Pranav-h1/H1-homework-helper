@@ -6283,6 +6283,14 @@ textarea::placeholder {
   gap: 14px;
 }
 
+/* Load-more marker for the paged quote grid — an IntersectionObserver watches it. */
+.quotes-sentinel {
+  padding: 18px 0 4px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+
 .quote-card {
   position: relative;
   display: flex;
