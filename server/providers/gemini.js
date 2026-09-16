@@ -40,7 +40,10 @@ async function chat(messages, systemPrompt) {
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     const err = new Error(`Gemini API error (${res.status}): ${text.slice(0, 300)}`);
-    err.status = 502;
+    // A rate limit isn't a broken gateway — nothing is misconfigured and retrying straight
+    // away makes it worse, so it's kept distinct all the way to the student-facing message.
+    err.rateLimited = res.status === 429;
+    err.status = err.rateLimited ? 429 : 502;
     throw err;
   }
 

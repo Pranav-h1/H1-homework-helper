@@ -125,7 +125,8 @@ const QUIZ_SYSTEM_PROMPT = `${BASE_SYSTEM_PROMPT}
 
 You are generating a quiz for the H1 app.
 Respond with ONLY a strict JSON object, no markdown code fences, no commentary before or after it, in this exact shape:
-{"questions": [{"type": "mcq", "question": "text", "options": ["a", "b", "c", "d"], "correctIndex": 0, "correctAnswer": "", "explanation": "short reason the correct answer is right"}]}
+{"questions": [{"type": "mcq", "question": "text", "options": ["a", "b", "c", "d"], "correctIndex": 0, "correctAnswer": "", "explanation": "short reason the correct answer is right"}, {"type": "truefalse", "question": "second question", "options": ["True", "False"], "correctIndex": 1, "correctAnswer": "", "explanation": "short reason"}]}
+Every element of the array must be a complete object with its own opening AND closing brace, separated by "}, {". A missing opening brace on the second or later element makes the whole reply unparseable and it will be discarded.
 Rules per question type:
 - "mcq": exactly 4 options, correctIndex is the 0-based index of the correct option, correctAnswer left as "".
 - "truefalse": options must be exactly ["True", "False"], correctIndex is 0 or 1, correctAnswer left as "".
@@ -147,14 +148,16 @@ const FLASHCARDS_SYSTEM_PROMPT = `${BASE_SYSTEM_PROMPT}
 
 You are generating study flashcards for the H1 app.
 Respond with ONLY a strict JSON object, no markdown code fences, no commentary before or after it, in this exact shape:
-{"cards": [{"front": "short question or term", "back": "concise, clear answer or definition"}]}
+{"cards": [{"front": "short question or term", "back": "concise, clear answer or definition"}, {"front": "second question", "back": "second answer"}]}
+Every element of the array must be a complete object with its own opening AND closing brace, separated by "}, {". A missing opening brace on the second or later element makes the whole reply unparseable and it will be discarded.
 Keep each card focused on a single idea a student can memorize or quickly recall.`;
 
 const PRACTICE_SYSTEM_PROMPT = `${BASE_SYSTEM_PROMPT}
 
 You are generating short-answer practice questions for the H1 app.
 Respond with ONLY a strict JSON object, no markdown code fences, no commentary before or after it, in this exact shape:
-{"questions": [{"question": "text", "answer": "a model short answer, 1-3 sentences"}]}
+{"questions": [{"question": "text", "answer": "a model short answer, 1-3 sentences"}, {"question": "second question", "answer": "second answer"}]}
+Every element of the array must be a complete object with its own opening AND closing brace, separated by "}, {". A missing opening brace on the second or later element makes the whole reply unparseable and it will be discarded.
 Questions should require the student to recall or work something out, not just recognize an option.`;
 
 const SUMMARIZE_SYSTEM_PROMPT = `${BASE_SYSTEM_PROMPT}
@@ -256,6 +259,47 @@ function parseJsonObject(text) {
   return JSON.parse(text.slice(start, end + 1));
 }
 
+// Generation endpoints ask the model for strict JSON, and occasionally it doesn't comply —
+// the observed failure is a dropped opening brace on every array element after the first,
+// which makes the whole reply unparseable. It's intermittent, not systematic: the identical
+// request usually succeeds on a second attempt.
+//
+// So: one retry. Deliberately not a repair heuristic — inferring the intended structure of
+// broken JSON risks handing a student content the model never actually produced, and a
+// flashcard with a guessed answer on it is worse than no flashcard.
+//
+// `extract` pulls the value out of the parsed object and is expected to validate it; an
+// empty array or null counts as a failed attempt, since "valid JSON containing nothing
+// usable" needs retrying for the same reason unparseable JSON does.
+// One place that turns a thrown generation error into a response. Rate limiting gets its own
+// message because the student can act on it — waiting works — whereas "try again in a moment"
+// invites them to hammer a limit that's already tripped.
+function sendGenerationError(res, err, fallback) {
+  if (err && err.rateLimited) {
+    return res.status(429).json({
+      error: "H1 is being rate-limited right now. Give it a minute and try again — nothing you did is wrong.",
+    });
+  }
+  return res.status(err && err.status ? err.status : 500).json({ error: fallback });
+}
+
+async function generateJson(provider, messages, systemPrompt, extract, failMessage) {
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const reply = await provider.chat(messages, systemPrompt);
+    let value = null;
+    try {
+      value = extract(parseJsonObject(reply));
+    } catch {
+      value = null;
+    }
+    if (value != null && (!Array.isArray(value) || value.length > 0)) return value;
+    if (attempt === 2) {
+      console.error(`Generation failed twice (${failMessage}). Last reply:`, JSON.stringify(reply).slice(0, 600));
+    }
+  }
+  throw generationError(failMessage);
+}
+
 function generationError(detail) {
   const err = new Error(detail);
   err.status = 502;
@@ -331,9 +375,7 @@ app.post("/api/chat", async (req, res) => {
       return res.status(400).json({ error: err.message });
     }
     console.error("AI provider error:", err);
-    res.status(err.status || 500).json({
-      error: "The AI backend had trouble answering that. Please try again in a moment.",
-    });
+    sendGenerationError(res, err, "The AI backend had trouble answering that. Please try again in a moment.");
   }
 });
 
@@ -376,9 +418,7 @@ app.post("/api/explain", async (req, res) => {
     res.json({ steps });
   } catch (err) {
     console.error("Explain generation error:", err);
-    res.status(err.status || 500).json({
-      error: "H1 had trouble building that explanation. Please try again in a moment.",
-    });
+    sendGenerationError(res, err, "H1 had trouble building that explanation. Please try again in a moment.");
   }
 });
 
@@ -420,62 +460,52 @@ app.post("/api/quiz", async (req, res) => {
       `Create a ${count}-question ${difficulty} quiz about: "${trimmedTopic}". ${typeInstruction}${topicRule}`,
       cleanedSource
     );
-    const reply = await provider.chat(
+    const questions = await generateJson(
+      provider,
       [{ role: "user", content: userMessage }],
-      QUIZ_SYSTEM_PROMPT + subjectContextLine(cleanSubject(subject))
+      QUIZ_SYSTEM_PROMPT + subjectContextLine(cleanSubject(subject)),
+      (parsed) =>
+        Array.isArray(parsed.questions)
+          ? parsed.questions
+              .map((q) => {
+                if (!q || typeof q.question !== "string") return null;
+                let type = ["mcq", "truefalse", "shortanswer"].includes(q.type) ? q.type : "mcq";
+                const question = q.question.trim();
+                if (!question) return null;
+                const explanation = typeof q.explanation === "string" ? q.explanation.trim() : "";
+
+                // Only ever echo back a topic the caller actually asked for. Guessing which
+                // topic an untagged question belongs to would write fiction into the
+                // student's progress log, so an unrecognised tag becomes null and the client
+                // leaves those questions unattributed.
+                const tagged = typeof q.topic === "string" ? q.topic.trim() : "";
+                const questionTopic = requestedTopics.find((t) => t.toLowerCase() === tagged.toLowerCase()) || null;
+
+                if (type === "shortanswer") {
+                  const correctAnswer = typeof q.correctAnswer === "string" ? q.correctAnswer.trim() : "";
+                  if (!correctAnswer) return null;
+                  return { type, question, topic: questionTopic, options: [], correctIndex: -1, correctAnswer, explanation };
+                }
+
+                let options = Array.isArray(q.options) ? q.options.map((o) => (typeof o === "string" ? o.trim() : "")).filter(Boolean) : [];
+                if (type === "truefalse") {
+                  options = ["True", "False"];
+                }
+                if (options.length < 2) return null;
+                let correctIndex = Number.isInteger(q.correctIndex) ? q.correctIndex : 0;
+                if (correctIndex < 0 || correctIndex >= options.length) correctIndex = 0;
+                return { type, question, topic: questionTopic, options, correctIndex, correctAnswer: "", explanation };
+              })
+              .filter(Boolean)
+              .slice(0, count)
+          : [],
+      "H1 couldn't build that quiz. Please try again."
     );
-
-    let parsed;
-    try {
-      parsed = parseJsonObject(reply);
-    } catch {
-      throw generationError("H1 couldn't build that quiz. Please try again.");
-    }
-
-    const questions = Array.isArray(parsed.questions)
-      ? parsed.questions
-          .map((q) => {
-            if (!q || typeof q.question !== "string") return null;
-            let type = ["mcq", "truefalse", "shortanswer"].includes(q.type) ? q.type : "mcq";
-            const question = q.question.trim();
-            if (!question) return null;
-            const explanation = typeof q.explanation === "string" ? q.explanation.trim() : "";
-
-            // Only ever echo back a topic the caller actually asked for. Guessing which topic
-            // an untagged question belongs to would write fiction into the student's progress
-            // log, so an unrecognised tag becomes null and the client leaves it unattributed.
-            const tagged = typeof q.topic === "string" ? q.topic.trim() : "";
-            const questionTopic = requestedTopics.find((t) => t.toLowerCase() === tagged.toLowerCase()) || null;
-
-            if (type === "shortanswer") {
-              const correctAnswer = typeof q.correctAnswer === "string" ? q.correctAnswer.trim() : "";
-              if (!correctAnswer) return null;
-              return { type, question, topic: questionTopic, options: [], correctIndex: -1, correctAnswer, explanation };
-            }
-
-            let options = Array.isArray(q.options) ? q.options.map((o) => (typeof o === "string" ? o.trim() : "")).filter(Boolean) : [];
-            if (type === "truefalse") {
-              options = ["True", "False"];
-            }
-            if (options.length < 2) return null;
-            let correctIndex = Number.isInteger(q.correctIndex) ? q.correctIndex : 0;
-            if (correctIndex < 0 || correctIndex >= options.length) correctIndex = 0;
-            return { type, question, topic: questionTopic, options, correctIndex, correctAnswer: "", explanation };
-          })
-          .filter(Boolean)
-          .slice(0, count)
-      : [];
-
-    if (questions.length === 0) {
-      throw generationError("H1 couldn't build that quiz. Please try again.");
-    }
 
     res.json({ topic: trimmedTopic, difficulty, questionType, questions });
   } catch (err) {
     console.error("Quiz generation error:", err);
-    res.status(err.status || 500).json({
-      error: "H1 had trouble building that quiz. Please try again in a moment.",
-    });
+    sendGenerationError(res, err, "H1 had trouble building that quiz. Please try again in a moment.");
   }
 });
 
@@ -496,41 +526,30 @@ app.post("/api/flashcards", async (req, res) => {
 
   try {
     const userMessage = withSource(`Create ${FLASHCARD_COUNT} study flashcards about: "${trimmedTopic}"`, cleanedSource);
-    const reply = await provider.chat(
+    const cards = await generateJson(
+      provider,
       [{ role: "user", content: userMessage }],
-      FLASHCARDS_SYSTEM_PROMPT + subjectContextLine(cleanSubject(subject))
+      FLASHCARDS_SYSTEM_PROMPT + subjectContextLine(cleanSubject(subject)),
+      (parsed) =>
+        Array.isArray(parsed.cards)
+          ? parsed.cards
+              .map((c) => {
+                if (!c || typeof c.front !== "string" || typeof c.back !== "string") return null;
+                const front = c.front.trim();
+                const back = c.back.trim();
+                if (!front || !back) return null;
+                return { front, back };
+              })
+              .filter(Boolean)
+              .slice(0, FLASHCARD_COUNT)
+          : [],
+      "H1 couldn't build those flashcards. Please try again."
     );
-
-    let parsed;
-    try {
-      parsed = parseJsonObject(reply);
-    } catch {
-      throw generationError("H1 couldn't build those flashcards. Please try again.");
-    }
-
-    const cards = Array.isArray(parsed.cards)
-      ? parsed.cards
-          .map((c) => {
-            if (!c || typeof c.front !== "string" || typeof c.back !== "string") return null;
-            const front = c.front.trim();
-            const back = c.back.trim();
-            if (!front || !back) return null;
-            return { front, back };
-          })
-          .filter(Boolean)
-          .slice(0, FLASHCARD_COUNT)
-      : [];
-
-    if (cards.length === 0) {
-      throw generationError("H1 couldn't build those flashcards. Please try again.");
-    }
 
     res.json({ topic: trimmedTopic, cards });
   } catch (err) {
     console.error("Flashcards generation error:", err);
-    res.status(err.status || 500).json({
-      error: "H1 had trouble building those flashcards. Please try again in a moment.",
-    });
+    sendGenerationError(res, err, "H1 had trouble building those flashcards. Please try again in a moment.");
   }
 });
 
@@ -589,9 +608,7 @@ app.post("/api/practice", async (req, res) => {
     res.json({ topic: trimmedTopic, difficulty, questions });
   } catch (err) {
     console.error("Practice generation error:", err);
-    res.status(err.status || 500).json({
-      error: "H1 had trouble building those practice questions. Please try again in a moment.",
-    });
+    sendGenerationError(res, err, "H1 had trouble building those practice questions. Please try again in a moment.");
   }
 });
 
@@ -650,9 +667,7 @@ app.post("/api/summarize", async (req, res) => {
     res.json({ summary, keyPoints, terms, revision, possibleQuestions });
   } catch (err) {
     console.error("Summarize generation error:", err);
-    res.status(err.status || 500).json({
-      error: "H1 had trouble summarizing that. Please try again in a moment.",
-    });
+    sendGenerationError(res, err, "H1 had trouble summarizing that. Please try again in a moment.");
   }
 });
 
@@ -702,9 +717,7 @@ app.post("/api/vocabulary", async (req, res) => {
     res.json({ word: trimmedWord, language, meaning, explanation, example, related, translation });
   } catch (err) {
     console.error("Vocabulary generation error:", err);
-    res.status(err.status || 500).json({
-      error: "H1 had trouble looking that up. Please try again in a moment.",
-    });
+    sendGenerationError(res, err, "H1 had trouble looking that up. Please try again in a moment.");
   }
 });
 
@@ -762,9 +775,7 @@ app.post("/api/study-plan", async (req, res) => {
     res.json({ topic: trimmedTopic, minutes, plan });
   } catch (err) {
     console.error("Study plan generation error:", err);
-    res.status(err.status || 500).json({
-      error: "H1 had trouble building that study plan. Please try again in a moment.",
-    });
+    sendGenerationError(res, err, "H1 had trouble building that study plan. Please try again in a moment.");
   }
 });
 
@@ -823,9 +834,7 @@ app.post("/api/exam-plan", async (req, res) => {
     res.json({ topics: trimmedTopics, days, plan });
   } catch (err) {
     console.error("Exam plan generation error:", err);
-    res.status(err.status || 500).json({
-      error: "H1 had trouble building that exam plan. Please try again in a moment.",
-    });
+    sendGenerationError(res, err, "H1 had trouble building that exam plan. Please try again in a moment.");
   }
 });
 
