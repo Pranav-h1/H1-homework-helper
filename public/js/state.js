@@ -19,6 +19,7 @@ export const SUBJECT_LABELS = {
   english: "English",
   hindi: "Hindi",
   tamil: "Tamil",
+  coding: "Coding",
 };
 
 export function setSubject(subject) {

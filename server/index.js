@@ -33,6 +33,7 @@ const SUBJECT_LABELS = {
   english: "English",
   hindi: "Hindi",
   tamil: "Tamil",
+  coding: "Coding",
   general: "General homework",
 };
 

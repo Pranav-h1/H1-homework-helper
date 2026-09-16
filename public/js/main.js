@@ -35,6 +35,8 @@ import { initCommandPalette, openPalette } from "./commandPalette.js";
 import { initProgressPage, renderProgressPage } from "./progressPage.js";
 import { initBrain, renderBrain } from "./brain.js";
 import { initBoss, renderBoss } from "./boss.js";
+import { initCodeLab, renderCodeLab } from "./codeLab.js";
+import { initWebBuilder, renderWebBuilder, flushBuilder } from "./webBuilder.js";
 import { initHomeWidgets, renderHomeWidget, renderUpcomingWidget } from "./homeWidgets.js";
 import { initHomework, refreshHomework } from "./homework.js";
 import { initScan } from "./scan.js";
@@ -520,6 +522,8 @@ initCommandPalette();
 initProgressPage();
 initBrain();
 initBoss();
+initCodeLab();
+initWebBuilder();
 initHomeWidgets();
 initHomework();
 initScan();
@@ -565,6 +569,13 @@ onViewChange((view) => {
   if (view === "progress") renderProgressPage();
   if (view === "brain") renderBrain();
   if (view === "boss") renderBoss();
+  if (view === "code") {
+    renderCodeLab();
+    renderWebBuilder();
+  } else {
+    // Leaving the builder shouldn't lose a change typed a moment ago.
+    flushBuilder();
+  }
   if (view === "homework") refreshHomework();
   if (view === "planner") refreshPlanner();
   if (view === "calendar") refreshCalendar();

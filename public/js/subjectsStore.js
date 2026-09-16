@@ -7,7 +7,7 @@ import { getDecks } from "./flashcardDecks.js";
 
 const CUSTOM_KEY = "h1-custom-subjects";
 
-const BUILTIN_ICONS = { general: "🎓", math: "🧮", science: "🔬", english: "📖", hindi: "अ", tamil: "அ" };
+const BUILTIN_ICONS = { general: "🎓", math: "🧮", science: "🔬", english: "📖", hindi: "अ", tamil: "அ", coding: "💻" };
 const BUILTIN_COLORS = {
   general: "var(--subject-general)",
   math: "var(--subject-math)",
@@ -15,6 +15,7 @@ const BUILTIN_COLORS = {
   english: "var(--subject-english)",
   hindi: "var(--subject-hindi)",
   tamil: "var(--subject-tamil)",
+  coding: "var(--subject-coding)",
 };
 
 function uid() {

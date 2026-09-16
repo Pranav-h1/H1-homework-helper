@@ -21,6 +21,7 @@ const VIEWS_WITHOUT_SUBJECT_BAR = new Set([
   "progress",
   "brain",
   "boss",
+  "code",
   "homework",
   "subjects",
   "documents",

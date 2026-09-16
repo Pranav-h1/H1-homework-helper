@@ -159,6 +159,10 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
             <span>Documents</span>
           </button>
+          <button class="nav-item" type="button" data-view="code" role="tab" aria-selected="false">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span>Code Lab</span>
+          </button>
           <button class="nav-item" type="button" data-view="flashcards" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="14" rx="2"></rect><path d="M7 6V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2"></path></svg>
             <span>Flashcards</span>
@@ -263,6 +267,9 @@
           </button>
           <button class="chip" type="button" data-subject="tamil" role="radio" aria-checked="false">
             <span class="chip-icon" aria-hidden="true">அ</span><span>Tamil</span>
+          </button>
+          <button class="chip" type="button" data-subject="coding" role="radio" aria-checked="false">
+            <span class="chip-icon" aria-hidden="true">💻</span><span>Coding</span>
           </button>
         </div>
 
@@ -1317,6 +1324,27 @@
         </section>
 
         <!-- ===== Progress ===== -->
+        <section id="view-code" class="view view-code" data-view-panel="code" data-subtab-scope hidden>
+          <div class="view-header">
+            <div>
+              <h1>Code Lab</h1>
+              <p class="view-sub">Learn to code by writing real code H1 actually runs — then build and publish your own web pages.</p>
+            </div>
+            <div class="subtabs" role="tablist">
+              <button type="button" class="subtab-btn active" data-subtab="learn">Learn</button>
+              <button type="button" class="subtab-btn" data-subtab="build">Build</button>
+            </div>
+          </div>
+
+          <div data-subtab-panel="learn">
+            <div id="codeLearnRoot"></div>
+          </div>
+
+          <div data-subtab-panel="build" hidden>
+            <div id="codeBuildRoot"></div>
+          </div>
+        </section>
+
         <section id="view-boss" class="view view-boss" data-view-panel="boss" hidden>
           <div class="view-header">
             <div>
