@@ -19,12 +19,15 @@ import { startFlashcardsWithTopic } from "./flashcards.js";
 import { prefillChat } from "./chat.js";
 import { getAllSubjects } from "./subjectsStore.js";
 import { isEnabled as gamificationEnabled } from "./gamification.js";
+import { renderWeaknessRadar } from "./weaknessRadar.js";
+import { requestReplay } from "./mistakeReplay.js";
 
 const scoreRing = document.getElementById("brainScoreRing");
 const scoreValue = document.getElementById("brainScoreValue");
 const scoreCaption = document.getElementById("brainScoreCaption");
 const scoreBreakdown = document.getElementById("brainScoreBreakdown");
 const brainStats = document.getElementById("brainStats");
+const brainRadar = document.getElementById("brainRadar");
 const brainEmpty = document.getElementById("brainEmpty");
 const brainBody = document.getElementById("brainBody");
 
@@ -114,8 +117,8 @@ function runAction(action) {
     return;
   }
   if (action.type === "mistakes") {
+    requestReplay(action.topic);
     switchView("progress");
-    showToast("Your mistake book is here — open a mistake to practise it again.", "success", 3000);
     return;
   }
   if (action.type === "chat") {
@@ -176,7 +179,7 @@ function renderStats(state) {
     { label: "Topics tracked", value: state.topics.topics.length, hint: `${state.topics.graded.length} with enough data to score` },
     { label: "Cards due", value: state.counts.cardsDue, hint: `${state.counts.decks} deck${state.counts.decks === 1 ? "" : "s"}` },
     { label: "Open homework", value: state.counts.openHomework, hint: `${state.counts.planOpen} plan item${state.counts.planOpen === 1 ? "" : "s"}` },
-    { label: "Mistakes saved", value: state.counts.mistakes, hint: "In your mistake book" },
+    { label: "Mistakes open", value: state.counts.mistakes, hint: state.counts.mistakesResolved > 0 ? `${state.counts.mistakesResolved} drilled back to correct` : "In your mistake book" },
   ];
   cards.forEach((c) => {
     const tile = el("div", "brain-stat");
@@ -474,6 +477,7 @@ export function renderBrain() {
 
   renderScore(state);
   renderStats(state);
+  renderWeaknessRadar(brainRadar);
   renderMission();
   renderSignals();
   renderTopics();

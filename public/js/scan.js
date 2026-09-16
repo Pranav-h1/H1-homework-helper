@@ -1,6 +1,7 @@
 import { sendChat, friendlyErrorMessage } from "./api.js";
 import { renderMarkdown } from "./markdown.js";
 import { appState } from "./state.js";
+import { buildStudyPack } from "./studyPack.js";
 import { showToast } from "./toast.js";
 
 const MAX_BYTES = 6 * 1024 * 1024;
@@ -12,6 +13,7 @@ const previewWrap = document.getElementById("scanPreviewWrap");
 const previewImg = document.getElementById("scanPreviewImg");
 const analyzeBtn = document.getElementById("scanAnalyzeBtn");
 const resetBtn = document.getElementById("scanResetBtn");
+const packBtn = document.getElementById("scanPackBtn");
 const resultWrap = document.getElementById("scanResult");
 
 let currentImage = null; // { mimeType, data }
@@ -206,6 +208,20 @@ analyzeBtn.addEventListener("click", async () => {
     resultWrap.innerHTML = "";
     resultWrap.appendChild(errorBlock(friendlyErrorMessage(err), () => analyzeBtn.click()));
   } finally {
+    analyzeBtn.disabled = false;
+  }
+});
+
+// One image, one pass: transcribe the page and build a summary, cards and a quiz from it,
+// instead of making the student retype the same content into four different views.
+packBtn.addEventListener("click", async () => {
+  if (!currentImage) return;
+  packBtn.disabled = true;
+  analyzeBtn.disabled = true;
+  try {
+    await buildStudyPack(currentImage, resultWrap);
+  } finally {
+    packBtn.disabled = false;
     analyzeBtn.disabled = false;
   }
 });

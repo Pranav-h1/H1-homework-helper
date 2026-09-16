@@ -5,10 +5,10 @@ import { appState, SUBJECT_LABELS } from "./state.js";
 import { isEnabled, getXP, getLevel, getAchievements } from "./gamification.js";
 import { switchView } from "./nav.js";
 import { getDecks, getDueCount } from "./flashcardDecks.js";
-import { getMistakes, getMistakePatterns, deleteMistake } from "./mistakeBookStore.js";
+import { getActiveMistakes, getResolvedMistakes, getMistakePatterns } from "./mistakeBookStore.js";
+import * as mistakeReplay from "./mistakeReplay.js";
 import { getGrouped as getPlannerGrouped } from "./plannerStore.js";
 import { startQuizWithTopic } from "./quiz.js";
-import { confirmDanger } from "./modal.js";
 
 const container = document.getElementById("progressContent");
 
@@ -144,8 +144,10 @@ function buildPracticeMistakesSection(mistakes) {
 }
 
 function buildMistakeBook() {
-  const mistakes = getMistakes();
-  if (mistakes.length === 0) return null;
+  const active = getActiveMistakes();
+  const resolved = getResolvedMistakes();
+  if (active.length === 0 && resolved.length === 0) return null;
+
   const wrap = document.createElement("div");
   wrap.className = "chart-card";
   wrap.innerHTML = '<h3 style="margin:0 0 4px;font-size:13px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em">Mistake book</h3>';
@@ -155,37 +157,17 @@ function buildMistakeBook() {
     const insight = document.createElement("p");
     insight.className = "view-sub";
     insight.style.margin = "0 0 12px";
-    insight.textContent = `Pattern spotted: you often miss questions on "${patterns[0].topic}" (${patterns[0].count} times).`;
+    insight.textContent = `Pattern spotted: you often miss questions on "${patterns[0].topic}" (${patterns[0].count} still open).`;
     wrap.appendChild(insight);
   }
 
-  mistakes.slice(0, 8).forEach((m) => {
-    const row = document.createElement("div");
-    row.className = "practice-card";
-    row.style.marginBottom = "8px";
-    row.innerHTML = `
-      <div class="practice-question"></div>
-      <div class="practice-answer" style="border-top:none;padding-top:0">
-        <strong>Your answer:</strong> <span class="mb-student"></span><br>
-        <strong>Correct:</strong> <span class="mb-correct"></span>
-      </div>`;
-    row.querySelector(".practice-question").textContent = m.question;
-    row.querySelector(".mb-student").textContent = m.studentAnswer;
-    row.querySelector(".mb-correct").textContent = m.correctAnswer;
-    const delBtn = document.createElement("button");
-    delBtn.type = "button";
-    delBtn.className = "icon-btn-sm";
-    delBtn.textContent = "Remove";
-    delBtn.addEventListener("click", () => {
-      confirmDanger("Remove this mistake?", "", "Remove", () => {
-        deleteMistake(m.id);
-        renderProgressPage();
-      });
-    });
-    row.appendChild(delBtn);
-    wrap.appendChild(row);
-  });
-  wrap.appendChild(buildPracticeMistakesSection(mistakes));
+  // The replay drill owns everything below the heading, and re-renders the whole page when
+  // it changes anything so the counts and pattern line above it can't go stale.
+  const replayHost = document.createElement("div");
+  wrap.appendChild(replayHost);
+  mistakeReplay.render(replayHost, renderProgressPage);
+
+  if (active.length > 0) wrap.appendChild(buildPracticeMistakesSection(active));
   return wrap;
 }
 
@@ -250,6 +232,10 @@ function renderEmptyState() {
 }
 
 export function renderProgressPage() {
+  // A "Replay mistakes" action elsewhere in H1 can name a topic to open straight into.
+  const requested = mistakeReplay.consumeRequestedTopic();
+  if (requested && !mistakeReplay.hasActiveSession()) mistakeReplay.startReplayForTopic(requested);
+
   const stats = getStats();
   container.innerHTML = "";
 

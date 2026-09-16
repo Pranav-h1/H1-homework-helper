@@ -11,7 +11,7 @@
 // produced it. That's deliberate: a student should always be able to ask "why is H1 telling
 // me this?" and get an answer traceable to their own activity.
 import { getEvents, getStats, getStreak, getWeeklyStats } from "./progress.js";
-import { getMistakes, getMistakePatterns } from "./mistakeBookStore.js";
+import { getActiveMistakes, getResolvedMistakes, getMistakePatterns } from "./mistakeBookStore.js";
 import { getDecks, getDueCount, getMasteredCount, getTotalDueCount } from "./flashcardDecks.js";
 import { getItems, getExamGroups, getGrouped } from "./plannerStore.js";
 import { getTasks } from "./homeworkStore.js";
@@ -29,7 +29,9 @@ const DAY_MS = 86400000;
 // (see MIN_QUESTIONS_FOR_BAND) — otherwise its status is "unknown", not "weak".
 const WEAK_PCT = 60;
 const SOLID_PCT = 80;
-const MIN_QUESTIONS_FOR_BAND = 4;
+// Exported so anything else that decides "is there enough evidence to judge this?" uses the
+// same bar rather than inventing its own.
+export const MIN_QUESTIONS_FOR_BAND = 4;
 const MIN_ATTEMPTS_FOR_TREND = 4;
 
 // Spaced-review thresholds. These are review *prompts*, not claims about memory decay:
@@ -169,7 +171,9 @@ export function getTopicIntel() {
       }
     });
 
-    getMistakes().forEach((m) => {
+    // Active only: a mistake the student has drilled back to correct twice is no longer a
+    // gap, and counting it would keep a fixed topic looking broken.
+    getActiveMistakes().forEach((m) => {
       if (!m.topic) return;
       const t = ensure(m.topic, m.subject);
       t.mistakes += 1;
@@ -527,7 +531,7 @@ function reviewSignals() {
   // getMistakePatterns() groups by topic alone, so a pattern arrives with no subject on it.
   // Recover the subject from the entries themselves (most common wins) — without it, a
   // subject-filtered view has no way to tell a maths pattern from a Hindi one and shows both.
-  const mistakes = getMistakes();
+  const mistakes = getActiveMistakes();
   const subjectForTopic = (topic) => {
     const counts = {};
     mistakes.forEach((m) => {
@@ -758,7 +762,8 @@ export function getBrainState() {
         cardsDue: getTotalDueCount(),
         openHomework: tasks.filter((t) => t.status !== "done").length,
         planOpen: planItems.filter((i) => !i.done).length,
-        mistakes: getMistakes().length,
+        mistakes: getActiveMistakes().length,
+        mistakesResolved: getResolvedMistakes().length,
         documents: getDocuments().length,
         conversations: loadConversations().length,
       },

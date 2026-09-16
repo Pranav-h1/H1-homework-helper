@@ -513,6 +513,32 @@ export function initQuiz() {
   renderRecent();
 }
 
+// Starts a quiz from questions that have already been generated elsewhere — used by the
+// Study Pack, which builds a quiz from a scanned page as part of the pack. Without this the
+// pack's quiz would be generated, shown as ready, then thrown away and generated a second
+// time the moment the student clicked through, which is both slower and a different quiz
+// from the one they were promised.
+export function startQuizWithQuestions(topic, questions, difficulty = "medium") {
+  if (!Array.isArray(questions) || questions.length === 0) return false;
+  quizTopic.value = topic;
+  quizState.topic = topic;
+  // A fixed, pre-generated list is by definition not adaptive: there's nothing left to
+  // choose a difficulty for.
+  quizState.adaptive = false;
+  syncToggle(quizAdaptiveToggle, false);
+  quizState.difficulty = difficulty;
+  quizState.questions = questions;
+  quizState.index = 0;
+  quizState.score = 0;
+  quizState.answered = false;
+  quizState.answers = [];
+  quizSetup.hidden = true;
+  quizResults.hidden = true;
+  quizPlay.hidden = false;
+  renderQuizQuestion();
+  return true;
+}
+
 export function startQuizWithTopic(topic, sourceText) {
   quizTopic.value = topic;
   quizSetup.hidden = false;

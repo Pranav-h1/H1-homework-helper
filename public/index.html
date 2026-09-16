@@ -630,6 +630,10 @@
                 <span>Analyze image</span>
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
               </button>
+              <button id="scanPackBtn" class="btn btn-ghost" type="button">
+                <span aria-hidden="true">📦</span>
+                <span>Make a study pack</span>
+              </button>
               <button id="scanResetBtn" class="btn btn-ghost" type="button">Choose another photo</button>
             </div>
           </div>
@@ -1468,6 +1472,16 @@
             </div>
 
             <div class="brain-stats" id="brainStats"></div>
+
+            <div class="brain-card brain-section">
+              <div class="brain-card-head">
+                <div>
+                  <h2>Weakness radar</h2>
+                  <p class="brain-card-sub">Quiz accuracy per subject. The dents are where the easiest marks are — click any point to open that subject.</p>
+                </div>
+              </div>
+              <div id="brainRadar"></div>
+            </div>
 
             <div class="brain-card brain-section">
               <div class="brain-card-head">
