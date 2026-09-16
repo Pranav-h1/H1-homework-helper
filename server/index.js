@@ -13,6 +13,13 @@ const MAX_SOURCE_TEXT_LENGTH = 4000;
 const MAX_EXAM_TOPICS_LENGTH = 400;
 const MAX_IMAGE_BYTES = 6 * 1024 * 1024; // 6MB decoded
 const ALLOWED_IMAGE_MIME = /^image\/(png|jpe?g|webp|gif)$/i;
+// Attachments ride alongside the typed message rather than inside it, so a 30-page PDF isn't
+// blocked by the 4000-character limit that exists to stop runaway typed input. They get their
+// own, much larger budget instead.
+const MAX_IMAGES_PER_REQUEST = 8;
+const MAX_DOCUMENTS_PER_REQUEST = 12;
+const MAX_DOCUMENT_NAME = 200;
+const MAX_DOCUMENT_CHARS_TOTAL = 150000;
 // 1 is included for Adaptive Quiz mode, which fetches one question at a time so it can pick
 // the next difficulty from the student's actual running performance instead of committing to
 // a fixed difficulty for the whole quiz upfront.
@@ -189,7 +196,8 @@ Respond with ONLY a strict JSON object, no markdown code fences, no commentary b
 {"plan": [{"day": 1, "focus": "short label for what this day covers", "tasks": ["short task", "..."]}]}
 Cover the given chapters/topics across the available days, spending more time on earlier/harder material and using the last day mainly for light review rather than new material. Use 2 to 5 short tasks per day (e.g. "Review chapter 2 notes", "10 practice questions on fractions", "15 flashcards on cell biology", "Take a short mixed quiz"). Produce exactly one plan entry per day for the number of days given. This is a study organization tool, not an authoritative guarantee of exam readiness.`;
 
-app.use(express.json({ limit: "10mb" }));
+// Room for a handful of downscaled images per message; the client shrinks them first.
+app.use(express.json({ limit: "32mb" }));
 
 // express.json() throws a raw SyntaxError for malformed bodies; turn it into a clean JSON error
 // instead of letting Express's default HTML error page leak a stack trace to the client.
@@ -335,6 +343,63 @@ function validateImage(image, provider) {
   return { mimeType: image.mimeType, data: image.data };
 }
 
+// Validates the files attached to each message and folds document text into that message.
+// Images stay separate (they're sent to the model as image parts); documents become clearly
+// framed text so the model can tell a student's question from the file they attached.
+function attachFiles(history, provider) {
+  let imageCount = 0;
+  let docCount = 0;
+  let docChars = 0;
+
+  // Newest messages first, so if the budget runs out it's the oldest files that get cut.
+  for (let i = history.length - 1; i >= 0; i--) {
+    const m = history[i];
+    const images = Array.isArray(m.images) ? m.images : [];
+    const documents = Array.isArray(m.documents) ? m.documents : [];
+    delete m.images;
+    delete m.documents;
+    if (m.role !== "user") continue;
+
+    const validImages = [];
+    for (const img of images) {
+      if (imageCount >= MAX_IMAGES_PER_REQUEST) break;
+      validImages.push(validateImage(img, provider));
+      imageCount++;
+    }
+    if (validImages.length) m.images = validImages;
+
+    const blocks = [];
+    for (const d of documents) {
+      if (docCount >= MAX_DOCUMENTS_PER_REQUEST) break;
+      if (!d || typeof d.name !== "string" || typeof d.text !== "string") {
+        const err = new Error("Each attached document needs a name and text.");
+        err.status = 400;
+        throw err;
+      }
+      const name = d.name.slice(0, MAX_DOCUMENT_NAME).replace(/[\r\n]+/g, " ");
+      const room = MAX_DOCUMENT_CHARS_TOTAL - docChars;
+      if (room <= 0) {
+        blocks.push(`[Attached file: ${name} — not included, because the files in this conversation are over the size H1 can read at once.]`);
+        continue;
+      }
+      let text = d.text;
+      let cut = Boolean(d.truncated);
+      if (text.length > room) {
+        text = text.slice(0, room);
+        cut = true;
+      }
+      docChars += text.length;
+      docCount++;
+      const note = cut ? " (only the first part is included — it was too long to send in full)" : "";
+      blocks.push(`[Attached file: ${name}${note}]\n${text}\n[End of ${name}]`);
+    }
+    if (blocks.length) {
+      const plural = blocks.length === 1 ? "" : "s";
+      m.content = `${blocks.join("\n\n")}\n\nThe student's message about the file${plural} above:\n${m.content}`;
+    }
+  }
+}
+
 app.post("/api/chat", async (req, res) => {
   const { messages, subject, mode, image, language } = req.body || {};
 
@@ -351,20 +416,24 @@ app.post("/api/chat", async (req, res) => {
     if (!content) {
       return res.status(400).json({ error: "Message content cannot be empty." });
     }
+    // The limit applies to what was typed; attached files are budgeted separately below.
     if (content.length > MAX_MESSAGE_LENGTH) {
       return res.status(400).json({ error: `Message is too long (max ${MAX_MESSAGE_LENGTH} characters).` });
     }
-    cleaned.push({ role: m.role, content });
+    cleaned.push({ role: m.role, content, images: m.images, documents: m.documents });
   }
 
   const provider = requireProvider(res);
   if (!provider) return;
 
   try {
-    const validatedImage = validateImage(image, provider);
     const trimmedHistory = cleaned.slice(-MAX_HISTORY_MESSAGES);
-    if (validatedImage) {
-      trimmedHistory[trimmedHistory.length - 1].image = validatedImage;
+    attachFiles(trimmedHistory, provider);
+    // Older clients send a single top-level `image` for the latest message.
+    const legacyImage = validateImage(image, provider);
+    if (legacyImage) {
+      const last = trimmedHistory[trimmedHistory.length - 1];
+      last.images = [...(last.images || []), legacyImage];
     }
     const reply = await provider.chat(
       trimmedHistory,

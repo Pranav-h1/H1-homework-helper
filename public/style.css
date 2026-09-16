@@ -4349,27 +4349,6 @@ textarea::placeholder {
   cursor: pointer;
 }
 
-.attached-preview {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-  margin-bottom: 8px;
-  font-size: 12.5px;
-  color: var(--text-muted);
-  width: fit-content;
-}
-
-.attached-preview img {
-  width: 32px;
-  height: 32px;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
 .composer-form .icon-btn {
   flex-shrink: 0;
 }
@@ -8942,5 +8921,494 @@ textarea::placeholder {
   .builder-tools {
     margin-left: 0;
     width: 100%;
+  }
+}
+
+/* =========================================================
+   Composer v2 — attachments, + menu, drop overlay
+   One rounded surface: files on top, text in the middle, tools underneath.
+   ========================================================= */
+.chat-workspace {
+  position: relative;
+}
+
+.composer-form.composer-v2 {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 10px 10px 8px 14px;
+  border-radius: 26px;
+}
+
+.composer-v2 .composer-input {
+  width: 100%;
+  padding: 8px 6px 4px;
+  max-height: 220px;
+}
+
+.composer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: -6px;
+}
+
+.composer-toolbar-spacer {
+  flex: 1;
+}
+
+.composer-tool {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.composer-tool:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.composer-tool:active {
+  transform: scale(0.94);
+}
+
+.composer-tool[aria-expanded="true"] {
+  background: var(--glass-active-bg);
+  color: var(--text);
+  border-color: var(--accent-1);
+}
+
+.composer-tool[aria-expanded="true"] svg {
+  transform: rotate(45deg);
+}
+
+.composer-tool svg {
+  transition: transform var(--t-base) var(--ease);
+}
+
+.composer-v2 .btn-send {
+  width: 38px;
+  height: 38px;
+  transition: transform var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+.composer-v2 .btn-send:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.composer-v2 .btn-send:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.composer-v2 .btn-send:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* --- + menu -------------------------------------------------------- */
+.composer-attach-wrap {
+  position: relative;
+}
+
+.attach-menu {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 10px);
+  z-index: 30;
+  width: min(330px, calc(100vw - 48px));
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* Solid, not glass: the attachment chips sit directly behind this menu and showed through. */
+  background: var(--surface-elevated);
+  border: 1px solid var(--glass-floating-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-floating-shadow);
+  animation: attachMenuIn 150ms var(--ease);
+  transform-origin: bottom left;
+}
+
+@keyframes attachMenuIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.attach-menu > button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.attach-menu > button:hover,
+.attach-menu > button:focus-visible {
+  background: var(--surface-hover);
+  outline: none;
+}
+
+.attach-menu-icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(var(--accent-1-rgb), 0.14);
+  color: var(--accent-1);
+}
+
+.attach-menu-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.attach-menu-text strong {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.attach-menu-text small {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  line-height: 1.4;
+}
+
+.attach-menu-tip {
+  margin: 4px 6px 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  color: var(--text-faint);
+  line-height: 1.5;
+}
+
+.attach-menu-tip kbd {
+  font-family: inherit;
+  font-size: 10.5px;
+  padding: 1px 5px;
+  border-radius: 5px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
+/* --- Chips --------------------------------------------------------- */
+.composer-attachments {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 6px;
+  scrollbar-width: thin;
+}
+
+.attach-chip {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 260px;
+  padding: 7px 34px 7px 7px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  animation: chipIn 180ms var(--ease);
+}
+
+@keyframes chipIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+.attach-chip[data-state="error"] {
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+}
+
+.attach-chip-thumb {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--surface-solid);
+}
+
+.attach-chip-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.attach-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 4px;
+  border-radius: 9px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #fff;
+  background: #64748b;
+}
+
+.attach-badge[data-format="pdf"],
+.attach-badge[data-format="pdf-scanned"] { background: #e5484d; }
+.attach-badge[data-format="docx"] { background: #2f6fe4; }
+.attach-badge[data-format="pptx"] { background: #e8742b; }
+.attach-badge[data-format="xlsx"] { background: #1f9d55; }
+.attach-badge[data-format="text"] { background: #7c5cff; }
+
+.attach-chip-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.attach-chip-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.attach-chip-sub {
+  font-size: 11px;
+  color: var(--text-faint);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.attach-chip[data-state="error"] .attach-chip-sub {
+  color: var(--danger);
+}
+
+.attach-chip-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: none;
+  background: var(--surface-hover);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.attach-chip-remove:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.attach-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent-1);
+  animation: attachSpin 700ms linear infinite;
+}
+
+@keyframes attachSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Drop overlay -------------------------------------------------- */
+.chat-drop-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-lg);
+  background: rgba(var(--accent-1-rgb), 0.08);
+  border: 2px dashed rgba(var(--accent-1-rgb), 0.6);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  animation: attachMenuIn 120ms var(--ease);
+}
+
+.chat-drop-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 22px 30px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-floating-bg);
+  border: 1px solid var(--glass-floating-border);
+  box-shadow: var(--glass-floating-shadow);
+  color: var(--accent-1);
+  text-align: center;
+}
+
+.chat-drop-card strong {
+  font-size: 16px;
+  color: var(--text);
+}
+
+.chat-drop-card span {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* --- Attachments inside a sent message ----------------------------- */
+.bubble-text {
+  white-space: pre-wrap;
+}
+
+.bubble-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.bubble-image {
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface-solid);
+  cursor: zoom-in;
+  transition: transform var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+
+.bubble-image:hover {
+  transform: translateY(-1px);
+  border-color: var(--border-strong);
+}
+
+.bubble-image img {
+  display: block;
+  width: 132px;
+  height: 132px;
+  object-fit: cover;
+}
+
+.bubble-file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px 8px 8px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid var(--border);
+  max-width: 280px;
+}
+
+.bubble-file-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.bubble-file-name {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bubble-file-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* --- Lightbox ------------------------------------------------------ */
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  background: rgba(5, 5, 10, 0.82);
+  backdrop-filter: blur(6px);
+  animation: attachMenuIn 140ms var(--ease);
+  cursor: zoom-out;
+}
+
+.image-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  cursor: default;
+}
+
+.image-lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+}
+
+.image-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 620px) {
+  .attach-chip {
+    max-width: 210px;
+  }
+
+  .bubble-image img {
+    width: 104px;
+    height: 104px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attach-menu,
+  .attach-chip,
+  .chat-drop-overlay,
+  .image-lightbox {
+    animation: none;
+  }
+
+  .attach-spinner {
+    animation-duration: 2s;
   }
 }

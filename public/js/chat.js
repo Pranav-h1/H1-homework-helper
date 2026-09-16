@@ -24,6 +24,16 @@ import { isSupported as isSpeechSupported, toggleReadAloud, stopSpeaking } from 
 import { saveQuickNote } from "./notes.js";
 import { prefillStudyPlan } from "./planner.js";
 import { saveAnswer } from "./vaultStore.js";
+import {
+  initChatAttachments,
+  clearAttachments,
+  hasAttachments,
+  isReading,
+  commitAttachments,
+  defaultPromptFor,
+} from "./chatAttachments.js";
+import { getFile, deleteFilesForConversation, clearAllFiles, isPersistent } from "./fileStore.js";
+import { formatBytes } from "./fileReaders.js";
 
 const chatTitle = document.getElementById("chatTitle");
 const chatLog = document.getElementById("chatLog");
@@ -44,21 +54,12 @@ const historyCloseBtn = document.getElementById("historyCloseBtn");
 const historyNewBtn = document.getElementById("historyNewBtn");
 const historySearchInput = document.getElementById("historySearchInput");
 
-const attachImageBtn = document.getElementById("attachImageBtn");
-const attachImageInput = document.getElementById("attachImageInput");
-const attachDocBtn = document.getElementById("attachDocBtn");
-const attachDocInput = document.getElementById("attachDocInput");
 const voiceInputBtn = document.getElementById("voiceInputBtn");
-const attachedPreview = document.getElementById("attachedFilePreview");
-const attachedImageThumb = document.getElementById("attachedImageThumb");
-const attachedFileLabel = document.getElementById("attachedFileLabel");
-const removeAttachedFileBtn = document.getElementById("removeAttachedFileBtn");
 
 let activeConversation = null;
 let messages = [];
 let isSending = false;
 let enterMode = safeGet("h1-enter-mode", "enter");
-let pendingImage = null; // { mimeType, data (base64, no prefix) }
 
 function autoScrollEnabled() {
   return safeGet("h1-auto-scroll", "1") !== "0";
@@ -285,6 +286,109 @@ function buildMessagePopover(msg, index, isLast) {
   return wrap;
 }
 
+const ATTACH_BADGE = { pdf: "PDF", "pdf-scanned": "PDF", docx: "DOC", pptx: "PPT", xlsx: "XLS", text: "TXT" };
+
+function attachmentSubtitle(ref) {
+  if (ref.kind === "image") return ref.size ? formatBytes(ref.size) : "Image";
+  const unit = ref.format === "pptx" ? "slide" : ref.format === "xlsx" ? "sheet" : "page";
+  const bits = [];
+  if (ref.pages) bits.push(`${ref.pages} ${unit}${ref.pages === 1 ? "" : "s"}`);
+  if (ref.size) bits.push(formatBytes(ref.size));
+  if (ref.truncated) bits.push("partly sent");
+  return bits.join(" · ") || "Document";
+}
+
+// The files a student sent, shown inside their own message: thumbnails for pictures (click
+// for the full image), a labelled card for documents. Older messages that embedded a single
+// image directly still render.
+function renderAttachmentStrip(msg) {
+  const refs = msg.attachments || [];
+  if (!refs.length && !msg.image) return null;
+  const strip = document.createElement("div");
+  strip.className = "bubble-attachments";
+
+  if (msg.image) {
+    const url = `data:${msg.image.mimeType};base64,${msg.image.data}`;
+    strip.appendChild(imageTile(url, "Attached image", () => Promise.resolve(url)));
+  }
+
+  refs.forEach((ref) => {
+    if (ref.kind === "image") {
+      strip.appendChild(
+        imageTile(ref.thumb, ref.name, async () => {
+          const rec = await getFile(ref.id);
+          return rec && rec.data ? `data:${rec.mimeType};base64,${rec.data}` : ref.thumb;
+        })
+      );
+      return;
+    }
+    const card = document.createElement("div");
+    card.className = "bubble-file";
+    const badge = document.createElement("span");
+    badge.className = "attach-badge";
+    badge.dataset.format = ref.format || "file";
+    badge.textContent = ATTACH_BADGE[ref.format] || (/\.([a-z0-9]+)$/i.exec(ref.name || "") || [, "FILE"])[1].slice(0, 4).toUpperCase();
+    const meta = document.createElement("span");
+    meta.className = "bubble-file-meta";
+    const name = document.createElement("span");
+    name.className = "bubble-file-name";
+    name.textContent = ref.name;
+    const sub = document.createElement("span");
+    sub.className = "bubble-file-sub";
+    sub.textContent = attachmentSubtitle(ref);
+    meta.appendChild(name);
+    meta.appendChild(sub);
+    card.appendChild(badge);
+    card.appendChild(meta);
+    strip.appendChild(card);
+  });
+  return strip;
+}
+
+function imageTile(thumbUrl, label, loadFull) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "bubble-image";
+  btn.setAttribute("aria-label", `View ${label}`);
+  const img = document.createElement("img");
+  img.src = thumbUrl || "";
+  img.alt = label;
+  img.loading = "lazy";
+  btn.appendChild(img);
+  btn.addEventListener("click", async () => openLightbox(await loadFull(), label));
+  return btn;
+}
+
+let lightbox = null;
+function openLightbox(url, label) {
+  if (!url) return;
+  if (!lightbox) {
+    lightbox = document.createElement("div");
+    lightbox.className = "image-lightbox";
+    lightbox.setAttribute("role", "dialog");
+    lightbox.setAttribute("aria-modal", "true");
+    lightbox.innerHTML =
+      '<button type="button" class="image-lightbox-close" aria-label="Close image">' +
+      '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>' +
+      "</button><img alt=\"\" />";
+    const close = () => {
+      lightbox.hidden = true;
+    };
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox || e.target.closest(".image-lightbox-close")) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && lightbox && !lightbox.hidden) close();
+    });
+    document.body.appendChild(lightbox);
+  }
+  const img = lightbox.querySelector("img");
+  img.src = url;
+  img.alt = label || "";
+  lightbox.hidden = false;
+  lightbox.querySelector(".image-lightbox-close").focus();
+}
+
 function renderMessage(msg, index, isLast) {
   const { row, body } = buildMessageRow(msg.role);
   const bubble = document.createElement("div");
@@ -292,17 +396,12 @@ function renderMessage(msg, index, isLast) {
   if (msg.role === "assistant") {
     bubble.innerHTML = renderMarkdown(msg.content);
   } else {
-    bubble.textContent = msg.content;
-    if (msg.image) {
-      const thumb = document.createElement("img");
-      thumb.src = `data:${msg.image.mimeType};base64,${msg.image.data}`;
-      thumb.alt = "Attached image";
-      thumb.style.maxWidth = "180px";
-      thumb.style.borderRadius = "12px";
-      thumb.style.display = "block";
-      thumb.style.marginTop = "8px";
-      bubble.appendChild(thumb);
-    }
+    const text = document.createElement("div");
+    text.className = "bubble-text";
+    text.textContent = msg.content;
+    const strip = renderAttachmentStrip(msg);
+    if (strip) bubble.appendChild(strip);
+    bubble.appendChild(text);
   }
   body.appendChild(bubble);
 
@@ -395,7 +494,74 @@ function setSending(state) {
   messageInput.disabled = state;
 }
 
-async function requestReply(imageForRequest) {
+// How much document text the client sends in one request. The server enforces its own budget
+// on top; this just avoids uploading text the server would only cut off.
+const CLIENT_DOC_BUDGET = 140000;
+const HISTORY_SENT = 20;
+
+// Builds what's actually sent: each message's typed text, plus the real contents of any files
+// attached to it, fetched back out of IndexedDB. Files are re-sent with every request so a
+// follow-up like "what does page 3 say?" works — the model only ever sees what's in the
+// request. Images are limited to the two most recent messages that had any, since re-sending
+// every photo in a long conversation would be slow and rarely useful; document text is
+// budgeted newest-first so the oldest files are the ones that get dropped.
+async function buildRequestMessages(requestMessages, prefix) {
+  const recent = requestMessages.slice(-HISTORY_SENT);
+  const offset = requestMessages.length - recent.length;
+
+  const imageTurns = new Set();
+  for (let i = recent.length - 1; i >= 0 && imageTurns.size < 2; i--) {
+    const m = recent[i];
+    if (m.role !== "user") continue;
+    const hasImages = Boolean(m.image) || (m.attachments || []).some((a) => a.kind === "image" || a.format === "pdf-scanned");
+    if (hasImages) imageTurns.add(i);
+  }
+
+  let docBudget = CLIENT_DOC_BUDGET;
+  const out = new Array(recent.length);
+  for (let i = recent.length - 1; i >= 0; i--) {
+    const m = recent[i];
+    const isLast = i + offset === requestMessages.length - 1;
+    const entry = { role: m.role, content: isLast && prefix ? prefix + m.content : m.content };
+
+    if (m.role === "user") {
+      const images = [];
+      const documents = [];
+      if (m.image && imageTurns.has(i)) images.push({ mimeType: m.image.mimeType, data: m.image.data });
+
+      for (const ref of m.attachments || []) {
+        const rec = await getFile(ref.id);
+        if (!rec) {
+          documents.push({
+            name: ref.name,
+            text: "[This file was attached earlier but its contents aren't available on this device any more. If you need it, ask the student to attach it again.]",
+          });
+          continue;
+        }
+        if (rec.kind === "image") {
+          if (imageTurns.has(i)) images.push({ mimeType: rec.mimeType, data: rec.data });
+          continue;
+        }
+        if (rec.images && rec.images.length && imageTurns.has(i)) rec.images.forEach((img) => images.push(img));
+        if (rec.text) {
+          if (docBudget <= 0) {
+            documents.push({ name: rec.name, text: "[Not included — the files in this conversation are more than H1 can read at once.]" });
+            continue;
+          }
+          const text = rec.text.slice(0, docBudget);
+          docBudget -= text.length;
+          documents.push({ name: rec.name, text, truncated: Boolean(rec.truncated) || text.length < rec.text.length });
+        }
+      }
+      if (images.length) entry.images = images.slice(0, 8);
+      if (documents.length) entry.documents = documents;
+    }
+    out[i] = entry;
+  }
+  return out;
+}
+
+async function requestReply() {
   // Captured now, not read again after the await — if the user switches to a different
   // conversation while this request is in flight, the reply must land in the conversation
   // that actually asked for it, not whatever happens to be on screen when it resolves.
@@ -411,11 +577,8 @@ async function requestReply(imageForRequest) {
     const lastMessage = requestMessages[requestMessages.length - 1];
     const contextPrefix = consumeContextPrefix();
     const brainPrefix = consumeBrainPrefix(lastMessage ? lastMessage.content : "", contextPrefix);
-    const prefix = brainPrefix + contextPrefix;
-    const payload = prefix
-      ? requestMessages.map((m, i) => (i === requestMessages.length - 1 ? { ...m, content: prefix + m.content } : m))
-      : requestMessages;
-    const reply = await sendChat(payload, appState.subject, { mode: appState.mode, language: appState.language, image: imageForRequest });
+    const payload = await buildRequestMessages(requestMessages, brainPrefix + contextPrefix);
+    const reply = await sendChat(payload, appState.subject, { mode: appState.mode, language: appState.language });
     hideTyping();
     if (activeConversation && activeConversation.id === requestConversationId) {
       addMessage("assistant", reply);
@@ -435,31 +598,46 @@ async function requestReply(imageForRequest) {
   }
 }
 
-export function sendMessage(text) {
-  const image = pendingImage;
-  let outgoing = text;
+export async function sendMessage(text) {
+  const withFiles = hasAttachments();
+  let outgoing = (text || "").trim();
 
-  // "/quiz fractions", "/hint", "/notes save this" etc. — deterministic, only checked when
-  // there's no image attached (a scanned photo always goes through the real vision flow below).
-  if (!image) {
-    const slash = resolveSlashCommand(text);
+  // "/quiz fractions", "/hint", "/notes save this" etc. — deterministic, and only checked when
+  // nothing is attached: a message with files always goes to the AI with those files.
+  if (!withFiles) {
+    if (!outgoing) return;
+    const slash = resolveSlashCommand(outgoing);
     if (slash) {
-      if (slash.action === "handled") {
-        clearAttachment();
-        return;
-      }
+      if (slash.action === "handled") return;
       outgoing = slash.text;
-    } else if (tryHandleAiCommand(text)) {
+    } else if (tryHandleAiCommand(outgoing)) {
       // Actionable natural-language requests ("make flashcards from this", "open my Math
       // space") are routed to the real H1 feature instead of becoming a normal AI turn.
-      clearAttachment();
       return;
     }
+    addMessage("user", outgoing);
+    logEvent("question", { source: "chat" });
+    requestReply();
+    return;
   }
-  addMessage("user", outgoing, image ? { image } : undefined);
-  clearAttachment();
-  logEvent("question", { source: "chat" });
-  requestReply(image || undefined);
+
+  setSending(true);
+  let refs = [];
+  try {
+    refs = await commitAttachments(activeConversation ? activeConversation.id : "unsaved");
+  } catch {
+    setSending(false);
+    showToast("Couldn't prepare your files. Try attaching them again.", "error", 3600);
+    return;
+  }
+  clearAttachments();
+  if (!outgoing) outgoing = defaultPromptFor(refs);
+  if (!isPersistent()) {
+    showToast("Your browser isn't letting H1 store files, so these attachments will only last until you reload.", "error", 4200);
+  }
+  addMessage("user", outgoing, { attachments: refs });
+  logEvent("question", { source: "chat", attachments: refs.length });
+  requestReply();
 }
 
 // Entry point for quick actions / hero search elsewhere in the app.
@@ -482,12 +660,15 @@ export function prefillChat(text) {
 chatForm.addEventListener("submit", (e) => {
   e.preventDefault();
   if (isSending) return;
+  if (isReading()) {
+    showToast("Still reading your files — send again in a moment.", "error", 2400);
+    return;
+  }
   const text = messageInput.value.trim();
-  if (!text && !pendingImage) return;
-  const finalText = text || "What can you tell me about this image?";
+  if (!text && !hasAttachments()) return;
   messageInput.value = "";
   autoGrow(messageInput);
-  sendMessage(finalText);
+  sendMessage(text);
 });
 
 /* ---------------------------------------------------------
@@ -622,72 +803,8 @@ onModeChange((mode) => {
 });
 
 /* ---------------------------------------------------------
-   Attachments: image, text document, voice input
+   Voice input (file, photo and screenshot attachments live in chatAttachments.js)
    --------------------------------------------------------- */
-function readFileAsDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-}
-
-function clearAttachment() {
-  pendingImage = null;
-  attachedPreview.hidden = true;
-  attachedImageThumb.hidden = true;
-  attachImageInput.value = "";
-}
-
-attachImageBtn.addEventListener("click", () => attachImageInput.click());
-attachImageInput.addEventListener("change", async () => {
-  const file = attachImageInput.files[0];
-  if (!file) return;
-  const MAX_BYTES = 6 * 1024 * 1024;
-  if (file.size > MAX_BYTES) {
-    showToast("That image is too large (max 6MB).", "error");
-    attachImageInput.value = "";
-    return;
-  }
-  try {
-    const dataUrl = await readFileAsDataUrl(file);
-    const [, base64] = dataUrl.split(",");
-    pendingImage = { mimeType: file.type, data: base64 };
-    attachedImageThumb.src = dataUrl;
-    attachedImageThumb.hidden = false;
-    attachedFileLabel.textContent = file.name;
-    attachedPreview.hidden = false;
-    messageInput.focus();
-  } catch {
-    showToast("Couldn't read that image.", "error");
-  }
-});
-
-attachDocBtn.addEventListener("click", () => attachDocInput.click());
-attachDocInput.addEventListener("change", async () => {
-  const file = attachDocInput.files[0];
-  if (!file) return;
-  if (!/\.txt$/i.test(file.name)) {
-    showToast("Only .txt files are supported for document upload right now.", "error");
-    attachDocInput.value = "";
-    return;
-  }
-  try {
-    const text = await file.text();
-    const trimmed = text.trim().slice(0, 4000);
-    messageInput.value = messageInput.value ? `${messageInput.value}\n\n${trimmed}` : trimmed;
-    autoGrow(messageInput);
-    showToast(`Added "${file.name}" to your message.`, "success");
-  } catch {
-    showToast("Couldn't read that file.", "error");
-  } finally {
-    attachDocInput.value = "";
-  }
-});
-
-removeAttachedFileBtn.addEventListener("click", clearAttachment);
-
 // Voice input via the Web Speech API — only shown when the browser actually supports it.
 const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SpeechRecognitionCtor) {
@@ -742,6 +859,7 @@ function clearChat() {
     messages = [];
     persist();
     renderAllMessages();
+    if (activeConversation) deleteFilesForConversation(activeConversation.id);
     showToast("Chat cleared.", "success");
   });
 }
@@ -830,6 +948,7 @@ function renderHistoryList() {
     deleteBtn.addEventListener("click", () => {
       confirmDanger("Delete this conversation?", "This can't be undone.", "Delete", () => {
         deleteConversation(conv.id);
+        deleteFilesForConversation(conv.id);
         renderHistoryList();
         if (activeConversation && activeConversation.id === conv.id) {
           loadActiveIntoView();
@@ -876,10 +995,18 @@ document.addEventListener("keydown", (e) => {
 window.addEventListener("h1:conversation-selected", loadActiveIntoView);
 
 export function initChat() {
+  initChatAttachments({
+    onChange: () => {
+      messageInput.placeholder = hasAttachments() || isReading()
+        ? "Ask about what you attached — or just press send"
+        : "Ask H1 anything — or attach a file, photo or screenshot";
+    },
+  });
   loadActiveIntoView();
 }
 
 export function clearAllConversationsData() {
   messages = [];
+  clearAllFiles();
   renderAllMessages();
 }

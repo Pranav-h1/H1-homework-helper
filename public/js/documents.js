@@ -8,9 +8,8 @@ import { startQuizWithTopic } from "./quiz.js";
 import { startFlashcardsWithTopic } from "./flashcards.js";
 import { openChatWithMessage } from "./chat.js";
 import { matchesCurrentSpace } from "./spacesStore.js";
+import { readAnyFile, classifyFile, unsupportedReason, MAX_FILE_BYTES, formatBytes as formatFileBytes } from "./fileReaders.js";
 
-const MAX_BYTES = 8 * 1024 * 1024;
-const MAX_PDF_PAGES = 40;
 
 const uploadBtn = document.getElementById("documentUploadBtn");
 const fileInput = document.getElementById("documentFileInput");
@@ -22,41 +21,6 @@ const detailMeta = document.getElementById("documentDetailMeta");
 const detailPreview = document.getElementById("documentDetailPreview");
 const detailResult = document.getElementById("documentDetailResult");
 const detailBackBtn = document.getElementById("documentDetailBackBtn");
-
-let pdfJsReady = null;
-
-function loadPdfJs() {
-  if (pdfJsReady) return pdfJsReady;
-  pdfJsReady = new Promise((resolve, reject) => {
-    if (window.pdfjsLib) {
-      resolve(window.pdfjsLib);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
-    script.onload = () => {
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-      resolve(window.pdfjsLib);
-    };
-    script.onerror = () => reject(new Error("Couldn't load the PDF reader. Check your connection and try again."));
-    document.head.appendChild(script);
-  });
-  return pdfJsReady;
-}
-
-async function extractPdfText(arrayBuffer) {
-  const pdfjsLib = await loadPdfJs();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  const pageCount = Math.min(pdf.numPages, MAX_PDF_PAGES);
-  let text = "";
-  for (let i = 1; i <= pageCount; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    text += content.items.map((item) => item.str).join(" ") + "\n\n";
-  }
-  return text.trim();
-}
 
 function loadingRow(text) {
   const row = document.createElement("div");
@@ -92,35 +56,34 @@ fileInput.addEventListener("change", async () => {
   const file = fileInput.files[0];
   fileInput.value = "";
   if (!file) return;
-  if (file.size > MAX_BYTES) {
-    showToast("That file is too large (max 8MB).", "error");
+  if (file.size > MAX_FILE_BYTES) {
+    showToast(`That file is too large (max ${formatFileBytes(MAX_FILE_BYTES)}).`, "error");
     return;
   }
-  const isTxt = file.type === "text/plain" || /\.txt$/i.test(file.name);
-  const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
-  if (!isTxt && !isPdf) {
-    showToast("Only .txt and .pdf files are supported right now.", "error");
+  // The library stores text, so images don't belong here - they go to the chat or Scan.
+  const format = classifyFile(file);
+  if (format === "image") {
+    showToast("Pictures can't be stored as documents. Attach them in the AI Tutor, or use Scan.", "error", 4200);
+    return;
+  }
+  if (["unsupported", "heic", "legacy-office"].includes(format)) {
+    showToast(unsupportedReason(format, file), "error", 4500);
     return;
   }
 
   showToast("Reading document…", "success", 2000);
   try {
-    let text;
-    if (isTxt) {
-      text = await file.text();
-    } else {
-      const buffer = await file.arrayBuffer();
-      text = await extractPdfText(buffer);
-    }
-    if (!text.trim()) {
-      showToast("Couldn't find any text in that file (it may be a scanned image PDF).", "error", 4500);
+    const result = await readAnyFile(file);
+    if (!result.text || !result.text.trim()) {
+      showToast("That PDF is scanned pages with no text in it. Attach it in the AI Tutor instead — H1 can read the pages as images there.", "error", 5200);
       return;
     }
-    addDocument({ name: file.name, type: isTxt ? "txt" : "pdf", text, sizeBytes: file.size, subject: appState.subject });
+    const type = result.format === "text" ? "txt" : result.format;
+    addDocument({ name: file.name, type, text: result.text, sizeBytes: file.size, subject: appState.subject });
     renderGrid();
     showToast("Document added.", "success");
   } catch (err) {
-    showToast(friendlyErrorMessage(err), "error", 4500);
+    showToast(err && err.message ? err.message : friendlyErrorMessage(err), "error", 4500);
   }
 });
 

@@ -11,13 +11,15 @@ function isConfigured() {
 
 // Gemini has no "assistant" role and no separate system message slot in `contents`;
 // assistant turns become "model" turns and the system prompt goes in `systemInstruction`.
-// A message may optionally carry `image: { mimeType, data (base64) }`, attached as an extra part.
+// A message may carry `images: [{ mimeType, data (base64) }]` (or the older single `image`),
+// each attached as an extra part after the text.
 function toGeminiContents(messages) {
   return messages.map((m) => {
     const parts = [{ text: m.content }];
-    if (m.image && m.image.mimeType && m.image.data) {
-      parts.push({ inlineData: { mimeType: m.image.mimeType, data: m.image.data } });
-    }
+    const images = [...(Array.isArray(m.images) ? m.images : []), ...(m.image ? [m.image] : [])];
+    images.forEach((img) => {
+      if (img && img.mimeType && img.data) parts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
+    });
     return {
       role: m.role === "assistant" ? "model" : "user",
       parts,

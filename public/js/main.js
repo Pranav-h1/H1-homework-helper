@@ -23,6 +23,7 @@ import { exportData, importData } from "./dataTransfer.js";
 import { isEnabled as gamificationEnabled, setEnabled as setGamificationEnabled, checkAndNotifyAchievements } from "./gamification.js";
 import { clearAllConversations } from "./conversations.js";
 import { initChat, openChatWithMessage, prefillChat, setEnterMode, clearAllConversationsData } from "./chat.js";
+import { openFilePicker } from "./chatAttachments.js";
 import { initExplain } from "./explain.js";
 import { initQuiz } from "./quiz.js";
 import { initExamSimulator } from "./examSimulator.js";
@@ -402,7 +403,8 @@ const superbarCommandBtn = document.getElementById("superbarCommandBtn");
 if (superbarAttachBtn) {
   superbarAttachBtn.addEventListener("click", () => {
     switchView("chat");
-    document.getElementById("attachImageBtn")?.click();
+    // Same gesture, so the browser still allows the file picker to open.
+    openFilePicker();
   });
 }
 if (superbarScanBtn) superbarScanBtn.addEventListener("click", () => switchView("scan"));
