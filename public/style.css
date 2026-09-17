@@ -21,8 +21,15 @@
   --border: rgba(255, 255, 255, 0.09);
   --border-strong: rgba(255, 255, 255, 0.2);
   --text: #f1f1f6;
-  --text-muted: #9d9db3;
-  --text-faint: #6d6d84;
+  --text-muted: #b3b3c7;
+  --text-faint: #9494a9;
+  /* The accent as text: the chosen accent, lightened just enough to stay readable (4.5:1+) on
+     dark surfaces for every accent preset. Fills, borders and glows still use --accent-1. */
+  --accent-text: color-mix(in srgb, var(--accent-1) 72%, #ffffff);
+  --accent-2-text: color-mix(in srgb, var(--accent-2) 72%, #ffffff);
+  /* Text drawn on a solid status colour. */
+  --on-success: #06281c;
+  --on-danger: #2a0508;
 
   /* --- H1 material system: four glass "elevations" every surface picks from --- */
   --glass-base-bg: rgba(255, 255, 255, 0.045);
@@ -117,8 +124,15 @@
   --border: rgba(20, 25, 40, 0.09);
   --border-strong: rgba(20, 25, 40, 0.18);
   --text: #15161f;
-  --text-muted: #5b5f74;
-  --text-faint: #8b8fa3;
+  --text-muted: #474b5f;
+  --text-faint: #63677a;
+  --accent-text: color-mix(in srgb, var(--accent-1) 60%, #000000);
+  --accent-2-text: color-mix(in srgb, var(--accent-2) 45%, #000000);
+  /* The dark theme's bright status colours are unreadable as text on white. */
+  --success: #087049;
+  --warning: #854d0e;
+  --on-success: #ffffff;
+  --on-danger: #ffffff;
 
   --glass-base-bg: rgba(255, 255, 255, 0.55);
   --glass-base-border: rgba(20, 25, 40, 0.07);
@@ -140,9 +154,9 @@
   --ai-bubble: var(--glass-elevated-bg);
   --success-bg: rgba(16, 150, 100, 0.1);
   --warning-bg: rgba(180, 130, 10, 0.12);
-  --danger: #d5303f;
-  --danger-bg: rgba(213, 48, 63, 0.08);
-  --danger-border: rgba(213, 48, 63, 0.28);
+  --danger: #c22a3a;
+  --danger-bg: rgba(194, 42, 58, 0.08);
+  --danger-border: rgba(194, 42, 58, 0.28);
   --shadow-sm: 0 1px 2px rgba(20, 25, 40, 0.08);
   --shadow-md: 0 10px 28px rgba(20, 25, 40, 0.1);
   --shadow-lg: 0 22px 50px rgba(20, 25, 40, 0.14);
@@ -524,7 +538,7 @@ textarea::placeholder {
 }
 
 .nav-item.active svg {
-  color: var(--accent-1);
+  color: var(--accent-text);
 }
 
 .sidebar-theme-toggle {
@@ -1245,7 +1259,7 @@ textarea::placeholder {
   gap: 5px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--accent-1);
+  color: var(--accent-text);
 }
 
 @media (max-width: 900px) {
@@ -1881,7 +1895,7 @@ textarea::placeholder {
 }
 
 .slash-menu-item strong {
-  color: var(--accent-1);
+  color: var(--accent-text);
   font-size: 13.5px;
   font-weight: 700;
   flex-shrink: 0;
@@ -2343,7 +2357,7 @@ textarea::placeholder {
 
 .quiz-option.correct .quiz-option-letter {
   background: var(--success);
-  color: #06281c;
+  color: var(--on-success);
   border-color: var(--success);
 }
 
@@ -2354,7 +2368,7 @@ textarea::placeholder {
 
 .quiz-option.incorrect .quiz-option-letter {
   background: var(--danger);
-  color: #2a0508;
+  color: var(--on-danger);
   border-color: var(--danger);
 }
 
@@ -2873,7 +2887,7 @@ textarea::placeholder {
   }
 
   .mobile-nav-item.active {
-    color: var(--accent-1);
+    color: var(--accent-text);
     background: var(--glass-active-bg);
   }
 
@@ -4482,7 +4496,7 @@ textarea::placeholder {
 }
 
 #notePinBtn[aria-pressed="true"] {
-  color: var(--accent-1);
+  color: var(--accent-text);
   background: var(--accent-grad-soft);
 }
 
@@ -4994,7 +5008,7 @@ textarea::placeholder {
   padding: 0 3px;
   border-radius: var(--radius-full);
   background: var(--danger);
-  color: #fff;
+  color: var(--on-danger);
   font-size: 9.5px;
   font-weight: 800;
   line-height: 15px;
@@ -5364,7 +5378,7 @@ textarea::placeholder {
 .dock-item.active {
   background: var(--accent-grad-soft);
   border-color: rgba(var(--accent-1-rgb), 0.4);
-  color: var(--accent-1);
+  color: var(--accent-text);
 }
 
 .dock-item svg {
@@ -5869,7 +5883,7 @@ textarea::placeholder {
 }
 
 .calendar-day.other-month {
-  opacity: 0.35;
+  opacity: 0.6;
 }
 
 .calendar-day.today {
@@ -6030,7 +6044,7 @@ textarea::placeholder {
 
 .calc-btn.op {
   background: var(--accent-grad-soft);
-  color: var(--accent-1);
+  color: var(--accent-text);
 }
 
 .calc-btn.equals {
@@ -6075,7 +6089,7 @@ textarea::placeholder {
   margin-top: 10px;
   font-size: 15px;
   font-weight: 700;
-  color: var(--accent-1);
+  color: var(--accent-text);
   min-height: 20px;
 }
 
@@ -6694,7 +6708,7 @@ textarea::placeholder {
   cursor: pointer;
   font-size: 11.5px;
   font-weight: 600;
-  color: var(--accent-2);
+  color: var(--accent-2-text);
   letter-spacing: 0.02em;
 }
 
@@ -6951,7 +6965,7 @@ textarea::placeholder {
 
 .brain-level-badge[data-level="critical"] { background: var(--danger-bg); color: var(--danger); }
 .brain-level-badge[data-level="high"] { background: var(--warning-bg); color: var(--warning); }
-.brain-level-badge[data-level="medium"] { background: rgba(var(--accent-2-rgb), 0.14); color: var(--accent-2); }
+.brain-level-badge[data-level="medium"] { background: rgba(var(--accent-2-rgb), 0.14); color: var(--accent-2-text); }
 
 .brain-signal-foot {
   display: flex;
@@ -7552,7 +7566,7 @@ textarea::placeholder {
   padding: 3px 9px;
   border-radius: var(--radius-full);
   background: rgba(var(--accent-2-rgb), 0.14);
-  color: var(--accent-2);
+  color: var(--accent-2-text);
 }
 
 .boss-hud-right {
@@ -7999,7 +8013,7 @@ textarea::placeholder {
   padding: 3px 9px;
   border-radius: var(--radius-full);
   background: rgba(var(--accent-2-rgb), 0.14);
-  color: var(--accent-2);
+  color: var(--accent-2-text);
   margin-bottom: 10px;
 }
 
@@ -8253,6 +8267,8 @@ textarea::placeholder {
 }
 
 .code-track-card {
+  display: flex;
+  flex-direction: column;
   text-align: left;
   padding: 20px;
   border-radius: var(--radius-lg);
@@ -8283,6 +8299,7 @@ textarea::placeholder {
 }
 
 .code-track-blurb {
+  flex: 1;
   font-size: 12.5px;
   color: var(--text-muted);
   line-height: 1.55;
@@ -8427,7 +8444,7 @@ textarea::placeholder {
 
 .code-lesson-goal-big {
   font-size: 13px;
-  color: var(--accent-2);
+  color: var(--accent-2-text);
   margin: 0 0 16px;
 }
 
@@ -8534,7 +8551,7 @@ textarea::placeholder {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--accent-2);
+  color: var(--accent-2-text);
   margin-bottom: 8px;
 }
 
@@ -9094,7 +9111,7 @@ textarea::placeholder {
   place-items: center;
   border-radius: 10px;
   background: rgba(var(--accent-1-rgb), 0.14);
-  color: var(--accent-1);
+  color: var(--accent-text);
 }
 
 .attach-menu-text {
@@ -9291,7 +9308,7 @@ textarea::placeholder {
   background: var(--glass-floating-bg);
   border: 1px solid var(--glass-floating-border);
   box-shadow: var(--glass-floating-shadow);
-  color: var(--accent-1);
+  color: var(--accent-text);
   text-align: center;
 }
 
@@ -9460,7 +9477,7 @@ textarea::placeholder {
 
 :root[data-theme="light"] {
   --tok-kw: #8839ef;
-  --tok-str: #40862f;
+  --tok-str: #357025;
   --tok-num: #c4541b;
   --tok-com: #8a8fa3;
   --tok-fn: #1e66f5;
@@ -9655,7 +9672,7 @@ textarea::placeholder {
 }
 
 .code-block-run {
-  color: var(--accent-1);
+  color: var(--accent-text);
   border-color: rgba(var(--accent-1-rgb), 0.3);
 }
 
@@ -10095,7 +10112,7 @@ textarea::placeholder {
   padding: 2px 8px;
   border-radius: 6px;
   background: var(--danger);
-  color: #fff;
+  color: var(--on-danger);
 }
 
 .pyw-err-title {
@@ -10140,7 +10157,7 @@ textarea::placeholder {
   border: 0;
   background: none;
   padding: 0;
-  color: var(--accent-1);
+  color: var(--accent-text);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -10353,7 +10370,7 @@ body.pyw-fullscreen-open {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent-2);
+  color: var(--accent-2-text);
   margin-bottom: 6px;
 }
 
@@ -10385,7 +10402,7 @@ body.pyw-fullscreen-open {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent-1);
+  color: var(--accent-text);
 }
 
 .pyc-next.done .pyc-next-k {
@@ -10546,7 +10563,7 @@ body.pyw-fullscreen-open {
 .pyc-row.done .pyc-row-num {
   background: var(--success);
   border-color: var(--success);
-  color: var(--accent-contrast);
+  color: var(--on-success);
 }
 
 .pyc-row-main {
@@ -10636,7 +10653,7 @@ body.pyw-fullscreen-open {
   padding: 3px 10px;
   border-radius: var(--radius-full);
   background: rgba(55, 118, 171, 0.18);
-  color: var(--accent-2);
+  color: var(--accent-2-text);
   margin-bottom: 8px;
 }
 
@@ -10685,7 +10702,7 @@ body.pyw-fullscreen-open {
 .pyl-step.done .pyl-step-dot {
   background: var(--success);
   border-color: var(--success);
-  color: var(--accent-contrast);
+  color: var(--on-success);
 }
 
 .pyl-section {
@@ -10775,7 +10792,7 @@ body.pyw-fullscreen-open {
 }
 
 .pyl-hint::marker {
-  color: var(--accent-1);
+  color: var(--accent-text);
   font-weight: 700;
 }
 
@@ -11064,7 +11081,7 @@ body.pyw-fullscreen-open {
 .ch-card-xp {
   font-size: 11.5px;
   font-weight: 700;
-  color: var(--accent-1);
+  color: var(--accent-text);
   font-variant-numeric: tabular-nums;
 }
 
@@ -11099,10 +11116,6 @@ body.pyw-fullscreen-open {
 
 :root[data-theme="light"] .ch-diff-beginner {
   color: #0e7490;
-}
-
-:root[data-theme="light"] .ch-diff-medium {
-  color: #a16207;
 }
 
 .ch-empty {
@@ -11230,7 +11243,7 @@ body.pyw-fullscreen-open {
 
 .builder-kind.python {
   background: rgba(55, 118, 171, 0.2);
-  color: var(--accent-2);
+  color: var(--accent-2-text);
 }
 
 .builder-py-layout {
@@ -11381,4 +11394,48 @@ samp,
 
 .pyl-step.is-plain {
   padding-left: 12px;
+}
+
+/* --- Progress: coding card ---------------------------------------------- */
+.coding-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.coding-progress-section {
+  margin: 14px 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.coding-progress-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 12px;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 13px;
+}
+
+.coding-progress-label {
+  color: var(--text-muted);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.coding-progress-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.coding-progress-bar {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+  height: 4px;
 }

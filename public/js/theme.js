@@ -44,7 +44,11 @@ export function applyTheme(pref) {
 
 export function setTheme(pref) {
   safeSet(THEME_KEY, pref);
-  return applyTheme(pref);
+  const resolved = applyTheme(pref);
+  // Anything showing the current theme (the Settings control, the sidebar label) listens for
+  // this, so a change made from anywhere — the command palette included — shows up everywhere.
+  window.dispatchEvent(new CustomEvent("h1:theme-changed", { detail: { pref, resolved } }));
+  return resolved;
 }
 
 export function initThemeSync(onChange) {

@@ -137,7 +137,9 @@ export function renderKnowledgeUniverse(container) {
     viewBox: `0 0 ${width} ${height}`,
     width: "100%",
     class: "universe-svg",
-    role: "img",
+    // "group", not "img": an img role hides everything inside it from screen readers, and the
+    // topic nodes in here are real buttons.
+    role: "group",
     "aria-label": `Knowledge map of ${intel.topics.length} topics across ${groups.length} subjects`,
   });
   // Never shrink below its natural size — a scaled-down map is an unreadable one. On a

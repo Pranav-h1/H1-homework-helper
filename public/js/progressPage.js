@@ -9,6 +9,8 @@ import { getActiveMistakes, getResolvedMistakes, getMistakePatterns } from "./mi
 import * as mistakeReplay from "./mistakeReplay.js";
 import { getGrouped as getPlannerGrouped } from "./plannerStore.js";
 import { startQuizWithTopic } from "./quiz.js";
+import { getCodingSummary } from "./codingSummary.js";
+import { openLessonById } from "./codeLab.js";
 
 const container = document.getElementById("progressContent");
 
@@ -222,6 +224,67 @@ function buildWeeklyReview() {
   return wrap;
 }
 
+// Coding progress, from the Code Lab stores. Only shown once there's real coding activity, and
+// only tracks that have actually been started are listed.
+function buildCodingCard() {
+  const s = getCodingSummary();
+  if (!s.hasActivity) return null;
+  const card = document.createElement("div");
+  card.className = "chart-card coding-progress-card";
+  const head = document.createElement("div");
+  head.className = "coding-progress-head";
+  head.innerHTML = '<h3 style="margin:0;font-size:13px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em">💻 Coding</h3>';
+  const open = document.createElement("button");
+  open.type = "button";
+  open.className = "btn btn-ghost brain-btn-sm";
+  open.textContent = s.python.next ? "Continue Python →" : "Open Code Lab →";
+  open.addEventListener("click", () => {
+    switchView("code");
+    if (s.python.next) openLessonById(s.python.next.id);
+  });
+  head.appendChild(open);
+  card.appendChild(head);
+
+  const row = (label, value, pct) => {
+    const r = document.createElement("div");
+    r.className = "coding-progress-row";
+    r.innerHTML = `<span class="coding-progress-label"></span><span class="coding-progress-value"></span>${
+      pct === undefined ? "" : '<div class="code-progress coding-progress-bar"><div class="code-progress-fill"></div></div>'
+    }`;
+    r.querySelector(".coding-progress-label").textContent = label;
+    r.querySelector(".coding-progress-value").textContent = value;
+    if (pct !== undefined) r.querySelector(".code-progress-fill").style.width = `${pct}%`;
+    return r;
+  };
+
+  const section = (title) => {
+    const t = document.createElement("div");
+    t.className = "coding-progress-section";
+    t.textContent = title;
+    return t;
+  };
+
+  if (s.python.started || s.python.done) {
+    card.appendChild(section(`Python course · ${s.python.done} of ${s.python.total} lessons`));
+    s.python.levels.forEach((lv) => {
+      card.appendChild(row(`Level ${lv.id} · ${lv.title}`, `${lv.done}/${lv.total}`, lv.total ? Math.round((lv.done / lv.total) * 100) : 0));
+    });
+  }
+  const web = s.tracks.filter((t) => t.id !== "py" && (t.started || t.done));
+  if (web.length) {
+    card.appendChild(section("Web tracks"));
+    web.forEach((t) => card.appendChild(row(t.label, `${t.done}/${t.total}`, t.pct)));
+  }
+  if (s.challenges.attempts > 0) {
+    card.appendChild(section(`Challenges · ${s.challenges.solved} of ${s.challenges.total} solved`));
+    s.challenges.byDifficulty.forEach((d) => card.appendChild(row(d.label, `${d.solved}/${d.total}`, d.total ? Math.round((d.solved / d.total) * 100) : 0)));
+    const streak = s.challenges.streak;
+    card.appendChild(row("Solve streak", streak ? `${streak} day${streak === 1 ? "" : "s"}` : "—"));
+    card.appendChild(row("Test runs", String(s.challenges.attempts)));
+  }
+  return card;
+}
+
 function renderEmptyState() {
   container.innerHTML = `
     <div class="empty-state">
@@ -288,11 +351,14 @@ export function renderProgressPage() {
         row.className = "weak-topic-row";
         row.innerHTML = `<span></span><span></span>`;
         row.querySelector("span:first-child").textContent = SUBJECT_LABELS[s.subject] || s.subject;
-        row.querySelector("span:last-child").textContent = s.avgScorePct !== null ? `${s.avgScorePct}% avg` : `${s.questions} questions`;
+        row.querySelector("span:last-child").textContent = s.avgScorePct !== null ? `${s.avgScorePct}% avg` : `${s.questions} question${s.questions === 1 ? "" : "s"}`;
         subjectCard.appendChild(row);
       });
     container.appendChild(subjectCard);
   }
+
+  const codingCard = buildCodingCard();
+  if (codingCard) container.appendChild(codingCard);
 
   const chartCard = document.createElement("div");
   chartCard.className = "chart-card";

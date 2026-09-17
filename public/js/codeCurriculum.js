@@ -19,10 +19,10 @@
 import { PY_LESSONS } from "./pythonCurriculum.js";
 
 export const TRACKS = [
+  { id: "py", label: "Python", icon: "🐍", blurb: "Real Python in your browser — from your first print() to complete projects, in six levels.", lang: "python" },
   { id: "html", label: "HTML", icon: "🧱", blurb: "The structure of every web page — headings, lists, links, forms." },
   { id: "css", label: "CSS", icon: "🎨", blurb: "How pages look — colour, spacing, layout, and making it work on phones." },
   { id: "js", label: "JavaScript", icon: "⚡", blurb: "Making pages think and react — logic, data, and responding to clicks." },
-  { id: "py", label: "Python", icon: "🐍", blurb: "Real Python in your browser — from your first print() to complete projects, in six levels.", lang: "python" },
 ];
 
 const HTML_LESSONS = [

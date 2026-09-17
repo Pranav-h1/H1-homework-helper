@@ -528,12 +528,12 @@
           <div data-subtab-panel="tasks">
             <div class="homework-toolbar">
               <input id="homeworkSearch" class="tool-input" type="search" placeholder="Search homework…" aria-label="Search homework" />
-              <select id="homeworkStatusFilter" class="tool-input" style="max-width:130px">
+              <select id="homeworkStatusFilter" class="tool-input" aria-label="Filter by status" style="max-width:130px">
                 <option value="all">All</option>
                 <option value="open" selected>Open</option>
                 <option value="done">Done</option>
               </select>
-              <select id="homeworkSubjectFilter" class="tool-input" style="max-width:150px">
+              <select id="homeworkSubjectFilter" class="tool-input" aria-label="Filter by subject" style="max-width:150px">
                 <option value="all">All subjects</option>
                 <option value="general">General</option>
                 <option value="math">Mathematics</option>
@@ -542,7 +542,7 @@
                 <option value="hindi">Hindi</option>
                 <option value="tamil">Tamil</option>
               </select>
-              <select id="homeworkSortSelect" class="tool-input" style="max-width:150px">
+              <select id="homeworkSortSelect" class="tool-input" aria-label="Sort homework" style="max-width:150px">
                 <option value="deadline">Sort: deadline</option>
                 <option value="priority">Sort: priority</option>
                 <option value="created">Sort: newest</option>
@@ -1640,7 +1640,7 @@
                   <input id="fracN1" class="tool-input" type="number" placeholder="Numerator" />
                   <span>/</span>
                   <input id="fracD1" class="tool-input" type="number" placeholder="Denominator" />
-                  <select id="fracOp" class="tool-input" style="max-width:60px">
+                  <select id="fracOp" class="tool-input" aria-label="Operation" style="max-width:60px">
                     <option value="+">+</option>
                     <option value="-">−</option>
                     <option value="×">×</option>
@@ -1682,7 +1682,7 @@
               <div class="util-panel">
                 <h3>Unit Converter</h3>
                 <div class="util-row">
-                  <select id="unitCategory" class="tool-input">
+                  <select id="unitCategory" class="tool-input" aria-label="Type of unit">
                     <option value="length">Length</option>
                     <option value="mass">Mass</option>
                     <option value="time">Time</option>
@@ -1690,10 +1690,10 @@
                   </select>
                 </div>
                 <div class="util-row">
-                  <input id="unitValue" class="tool-input" type="number" value="1" />
-                  <select id="unitFrom" class="tool-input"></select>
+                  <input id="unitValue" class="tool-input" type="number" aria-label="Value to convert" value="1" />
+                  <select id="unitFrom" class="tool-input" aria-label="Convert from"></select>
                   <span>→</span>
-                  <select id="unitTo" class="tool-input"></select>
+                  <select id="unitTo" class="tool-input" aria-label="Convert to"></select>
                 </div>
                 <div class="util-result" id="unitResult"></div>
               </div>
@@ -1701,7 +1701,7 @@
               <div class="util-panel">
                 <h3>Geometry Helper</h3>
                 <div class="util-row">
-                  <select id="geoShape" class="tool-input">
+                  <select id="geoShape" class="tool-input" aria-label="Shape">
                     <option value="circle">Circle</option>
                     <option value="rectangle">Rectangle</option>
                     <option value="square">Square</option>
@@ -1724,12 +1724,12 @@
               <div class="util-panel">
                 <h3>Timers</h3>
                 <div class="util-row">
-                  <select id="timerModeSelect" class="tool-input">
+                  <select id="timerModeSelect" class="tool-input" aria-label="Timer mode">
                     <option value="pomodoro">Pomodoro (25 min)</option>
                     <option value="stopwatch">Stopwatch</option>
                     <option value="countdown">Countdown</option>
                   </select>
-                  <input id="timerCountdownMinutes" class="tool-input" type="number" min="1" value="5" style="max-width:80px" />
+                  <input id="timerCountdownMinutes" class="tool-input" type="number" aria-label="Countdown length in minutes" min="1" value="5" style="max-width:80px" />
                 </div>
                 <div class="timer-display" id="timerDisplay">00:00</div>
                 <div class="view-actions view-actions-center">

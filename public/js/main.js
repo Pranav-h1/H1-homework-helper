@@ -39,6 +39,7 @@ import { initBoss, renderBoss } from "./boss.js";
 import { initCodeLab, renderCodeLab } from "./codeLab.js";
 import { initWebBuilder, renderWebBuilder, flushBuilder } from "./webBuilder.js";
 import { initChallenges, renderChallenges } from "./challengesView.js";
+import { nameUnlabelledSwitches } from "./a11y.js";
 import { initHomeWidgets, renderHomeWidget, renderUpcomingWidget } from "./homeWidgets.js";
 import { initHomework, refreshHomework } from "./homework.js";
 import { initScan } from "./scan.js";
@@ -161,6 +162,12 @@ function quickToggleTheme() {
 
 quickThemeToggle.addEventListener("click", quickToggleTheme);
 sidebarThemeToggle.addEventListener("click", quickToggleTheme);
+
+window.addEventListener("h1:theme-changed", (e) => {
+  const { pref, resolved } = e.detail || {};
+  syncSegmented(themeSettingGroup, pref);
+  updateSidebarThemeLabel(resolved);
+});
 
 initThemeSync((resolved) => {
   syncSegmented(themeSettingGroup, "system");
@@ -538,6 +545,7 @@ initCalendar();
 initAchievements();
 initToolsHub();
 initSubtabs();
+nameUnlabelledSwitches();
 initNotifications();
 initDock();
 initProfile();

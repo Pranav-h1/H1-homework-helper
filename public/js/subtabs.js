@@ -6,6 +6,7 @@
 export function selectSubtab(scope, name) {
   scope.querySelectorAll("[data-subtab]").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.subtab === name);
+    btn.setAttribute("aria-selected", String(btn.dataset.subtab === name));
   });
   scope.querySelectorAll("[data-subtab-panel]").forEach((panel) => {
     panel.hidden = panel.dataset.subtabPanel !== name;
@@ -20,6 +21,9 @@ export function selectSubtabInView(view, name) {
 export function initSubtabs() {
   document.querySelectorAll("[data-subtab-scope]").forEach((scope) => {
     scope.querySelectorAll("[data-subtab]").forEach((btn) => {
+      // The bar is a tablist, so its buttons are tabs to assistive technology.
+      btn.setAttribute("role", "tab");
+      btn.setAttribute("aria-selected", String(btn.classList.contains("active")));
       btn.addEventListener("click", () => selectSubtab(scope, btn.dataset.subtab));
     });
   });

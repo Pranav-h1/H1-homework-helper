@@ -322,7 +322,7 @@ function topicCard(t) {
   const meta = [];
   meta.push(t.subjectLabel);
   if (t.attempts > 0) meta.push(`${t.attempts} quiz${t.attempts === 1 ? "" : "zes"}`);
-  if (t.total > 0) meta.push(`${t.total} questions`);
+  if (t.total > 0) meta.push(`${t.total} question${t.total === 1 ? "" : "s"}`);
   if (t.daysSinceStudied !== null) meta.push(t.daysSinceStudied === 0 ? "studied today" : `${t.daysSinceStudied}d ago`);
   if (t.cardsDue > 0) meta.push(`${t.cardsDue} cards due`);
   if (t.mistakes > 0) meta.push(`${t.mistakes} mistakes`);

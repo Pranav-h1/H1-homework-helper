@@ -138,6 +138,7 @@ function renderTracks() {
     const p = getTrackProgress(lessons);
     const card = el("button", `code-track-card${isPythonTrack(t.id) ? " is-python" : ""}`);
     card.type = "button";
+    card.dataset.track = t.id;
     card.appendChild(el("div", "code-track-icon", t.icon));
     card.appendChild(el("h3", null, t.label));
     card.appendChild(el("p", "code-track-blurb", t.blurb));

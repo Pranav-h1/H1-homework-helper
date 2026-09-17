@@ -444,7 +444,14 @@ export function createPythonWorkspace(options = {}) {
       outBody.textContent = res.output;
       if (res.truncated) outBody.appendChild(el("span", "pyw-out-empty", "\n… output cut off here — your program printed more than can be shown."));
     } else if (!res.error) {
-      showPlaceholder("Your program ran, but didn't print anything. Use print() to show a value.");
+      // Printing nothing is only a problem sometimes, so the message depends on why.
+      if (withChecks) {
+        showPlaceholder("Nothing was printed — that's fine: the tests check your code directly. Their results are below.");
+      } else if (/^\s*def\s/m.test(source)) {
+        showPlaceholder("Your program ran, but didn't print anything. Defining a function doesn't run it — call the function and print() what it returns to see it work.");
+      } else {
+        showPlaceholder("Your program ran, but didn't print anything. Use print() to show a value.");
+      }
     } else {
       showPlaceholder("Nothing was printed before the error.");
     }

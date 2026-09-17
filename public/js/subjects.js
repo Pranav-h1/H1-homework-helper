@@ -29,7 +29,7 @@ function subjectCard(subject) {
     statsEl.innerHTML = '<span class="subject-card-empty">No activity yet — ask a question to get started.</span>';
   } else {
     const parts = [];
-    if (summary.questions) parts.push(`${summary.questions} questions`);
+    if (summary.questions) parts.push(`${summary.questions} question${summary.questions === 1 ? "" : "s"}`);
     if (summary.quizzes) parts.push(`${summary.quizzes} quizzes${summary.avgScorePct !== null ? ` (${summary.avgScorePct}% avg)` : ""}`);
     if (summary.studyMinutes) parts.push(`${summary.studyMinutes} min studied`);
     if (summary.homeworkOpen || summary.homeworkDone) parts.push(`${summary.homeworkDone}/${summary.homeworkOpen + summary.homeworkDone} homework done`);
