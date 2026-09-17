@@ -19,15 +19,66 @@ function writeAll(state) {
 }
 
 export function getLessonState(lessonId) {
-  const entry = readAll().lessons[lessonId];
-  if (!entry) return { attempts: 0, completedAt: null, code: null, firstResultLogged: false, bestPassed: 0 };
+  const entry = readAll().lessons[lessonId] || {};
   return {
     attempts: Number(entry.attempts) || 0,
     completedAt: entry.completedAt || null,
     code: entry.code || null,
     firstResultLogged: Boolean(entry.firstResultLogged),
     bestPassed: Number(entry.bestPassed) || 0,
+    // Added with the Python course. Older entries simply don't have them yet.
+    hintsShown: Number(entry.hintsShown) || 0,
+    solutionViewedAt: entry.solutionViewedAt || null,
+    exampleRunAt: entry.exampleRunAt || null,
+    quiz: entry.quiz && typeof entry.quiz === "object" ? entry.quiz : {},
   };
+}
+
+// Small facts about how a lesson went: how many hints were opened, whether the solution was
+// looked at, whether the example was tried. Each only ever moves forward — a hint once seen
+// stays seen — so the record can't be tidied into something that didn't happen.
+export function noteLessonProgress(lessonId, { hintsShown, solutionViewed, exampleRun } = {}) {
+  const state = readAll();
+  const entry = state.lessons[lessonId] || {};
+  if (typeof hintsShown === "number") entry.hintsShown = Math.max(Number(entry.hintsShown) || 0, hintsShown);
+  if (solutionViewed && !entry.solutionViewedAt) entry.solutionViewedAt = Date.now();
+  if (exampleRun && !entry.exampleRunAt) entry.exampleRunAt = Date.now();
+  state.lessons[lessonId] = entry;
+  writeAll(state);
+}
+
+// A lesson's mini quiz. The first answer to each question is the one kept — it's the honest
+// measure of whether the idea landed — and once every question has an answer the result is
+// logged once, like any other quiz.
+export function recordQuizAnswer(lesson, index, choice) {
+  const state = readAll();
+  const entry = state.lessons[lesson.id] || {};
+  const quiz = entry.quiz && typeof entry.quiz === "object" ? entry.quiz : {};
+  const questions = lesson.quiz || [];
+  const q = questions[index];
+  if (!q) return null;
+  const already = quiz[index] !== undefined;
+  if (!already) quiz[index] = choice;
+  entry.quiz = quiz;
+
+  const answeredAll = questions.every((_, i) => quiz[i] !== undefined);
+  const score = questions.filter((qq, i) => quiz[i] === qq.answer).length;
+  let justFinished = false;
+  if (answeredAll && !entry.quizLoggedAt) {
+    entry.quizLoggedAt = Date.now();
+    justFinished = true;
+    logEvent("quiz_completed", {
+      topic: lesson.title,
+      score,
+      total: questions.length,
+      difficulty: "easy",
+      subject: "coding",
+      source: "code_lesson_quiz",
+    });
+  }
+  state.lessons[lesson.id] = entry;
+  writeAll(state);
+  return { choice: quiz[index], correct: quiz[index] === q.answer, already, answeredAll, score, total: questions.length, justFinished };
 }
 
 export function isComplete(lessonId) {
@@ -85,7 +136,13 @@ export function recordAttempt(lesson, checkResults) {
   const justCompleted = allPassed && !entry.completedAt;
   if (justCompleted) {
     entry.completedAt = Date.now();
-    logEvent("lesson_completed", { lesson: lesson.id, title: lesson.title, track: lesson.track, subject: "coding" });
+    logEvent("lesson_completed", {
+      lesson: lesson.id,
+      title: lesson.title,
+      track: lesson.track,
+      subject: "coding",
+      withSolution: Boolean(entry.solutionViewedAt),
+    });
   }
 
   state.lessons[lesson.id] = entry;

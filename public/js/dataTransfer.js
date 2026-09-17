@@ -33,6 +33,7 @@ const KNOWN_KEYS = [
   "h1-mission-state",
   "h1-code-progress",
   "h1-code-projects",
+  "h1-code-challenges",
   "h1-achievements-seen",
   "h1-goals",
   "h1-daily-goal-minutes",

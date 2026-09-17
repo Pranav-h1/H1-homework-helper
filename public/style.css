@@ -1001,7 +1001,7 @@ textarea::placeholder {
     "brain brain brain brain"
     "continue continue weak deadline"
     "continue continue note quiz"
-    "focus focus focus focus";
+    "code code focus focus";
 }
 
 .bento-tile {
@@ -1183,6 +1183,26 @@ textarea::placeholder {
 .bento-note { grid-area: note; }
 .bento-quiz { grid-area: quiz; }
 
+.bento-code {
+  grid-area: code;
+  background: linear-gradient(150deg, rgba(55, 118, 171, 0.16), rgba(255, 212, 59, 0.06)), var(--glass-elevated-bg);
+}
+
+.bento-code-bar {
+  height: 5px;
+  margin-top: 10px;
+  border-radius: var(--radius-full);
+  background: var(--surface-hover);
+  overflow: hidden;
+}
+
+.bento-code-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent-grad);
+}
+
 .bento-focus {
   grid-area: focus;
   display: flex;
@@ -1238,7 +1258,7 @@ textarea::placeholder {
       "continue continue"
       "weak deadline"
       "note quiz"
-      "focus focus";
+      "code focus";
   }
 }
 
@@ -1254,6 +1274,7 @@ textarea::placeholder {
       "deadline"
       "note"
       "quiz"
+      "code"
       "focus";
   }
 
@@ -9411,4 +9432,1953 @@ textarea::placeholder {
   .attach-spinner {
     animation-duration: 2s;
   }
+}
+
+/* =========================================================
+   Code editor, syntax highlighting, code blocks
+   ========================================================= */
+:root {
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+  --tok-kw: #c792ea;
+  --tok-str: #c3e88d;
+  --tok-num: #f78c6c;
+  --tok-com: #7a8199;
+  --tok-fn: #82aaff;
+  --tok-def: #ffcb6b;
+  --tok-builtin: #89ddff;
+  --tok-op: #89ddff;
+  --tok-dec: #ffcb6b;
+  --tok-self: #f07178;
+  --tok-tag: #f07178;
+  --tok-attr: #ffcb6b;
+  --tok-prop: #82aaff;
+  --tok-sel: #c3e88d;
+  --tok-val: #f78c6c;
+  --code-bg: #12131b;
+  --code-gutter: rgba(255, 255, 255, 0.03);
+}
+
+:root[data-theme="light"] {
+  --tok-kw: #8839ef;
+  --tok-str: #40862f;
+  --tok-num: #c4541b;
+  --tok-com: #8a8fa3;
+  --tok-fn: #1e66f5;
+  --tok-def: #a05b00;
+  --tok-builtin: #0b7a91;
+  --tok-op: #0b7a91;
+  --tok-dec: #a05b00;
+  --tok-self: #d20f39;
+  --tok-tag: #d20f39;
+  --tok-attr: #a05b00;
+  --tok-prop: #1e66f5;
+  --tok-sel: #40862f;
+  --tok-val: #c4541b;
+  --code-bg: #f7f8fc;
+  --code-gutter: rgba(20, 25, 40, 0.03);
+}
+
+.tok-kw { color: var(--tok-kw); }
+.tok-str { color: var(--tok-str); }
+.tok-num { color: var(--tok-num); }
+.tok-com { color: var(--tok-com); font-style: italic; }
+.tok-fn { color: var(--tok-fn); }
+.tok-def { color: var(--tok-def); }
+.tok-builtin { color: var(--tok-builtin); }
+.tok-op { color: var(--tok-op); }
+.tok-dec { color: var(--tok-dec); }
+.tok-self { color: var(--tok-self); }
+.tok-tag { color: var(--tok-tag); }
+.tok-attr { color: var(--tok-attr); }
+.tok-prop { color: var(--tok-prop); }
+.tok-sel { color: var(--tok-sel); }
+.tok-val { color: var(--tok-val); }
+
+/* --- Editor -------------------------------------------------------- */
+.ce {
+  --ce-height: 300px;
+  position: relative;
+  display: flex;
+  height: var(--ce-height);
+  min-height: 150px;
+  resize: vertical;
+  overflow: hidden;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.65;
+  transition: border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+
+.ce:focus-within {
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 3px rgba(var(--accent-1-rgb), 0.16);
+}
+
+.ce-gutter {
+  flex-shrink: 0;
+  width: 46px;
+  overflow: hidden;
+  padding: 14px 0;
+  background: var(--code-gutter);
+  border-right: 1px solid var(--border);
+  color: var(--text-faint);
+  text-align: right;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.ce-gutter-inner span {
+  display: block;
+  padding-right: 10px;
+  opacity: 0.7;
+}
+
+.ce-body {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.ce-highlight,
+.ce .ce-input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 14px 16px;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: 0;
+  tab-size: 4;
+  white-space: pre;
+  word-wrap: normal;
+}
+
+.ce-highlight {
+  pointer-events: none;
+  color: var(--text);
+  overflow: visible;
+  will-change: transform;
+}
+
+.ce-highlight code {
+  font: inherit;
+  background: none;
+  padding: 0;
+}
+
+/* The textarea shares the class the older editor used (.code-editor), so it's reset here. */
+.ce .ce-input,
+.ce .ce-input.code-editor {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  box-shadow: none;
+  color: transparent;
+  caret-color: var(--text);
+  overflow: auto;
+}
+
+.ce .ce-input::selection {
+  background: rgba(var(--accent-1-rgb), 0.32);
+  color: transparent;
+}
+
+.ce .ce-input:focus {
+  box-shadow: none;
+  border: 0;
+}
+
+/* --- Code blocks in answers --------------------------------------- */
+.code-block {
+  margin: 14px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--code-bg);
+}
+
+.code-block-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 8px 6px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--code-gutter);
+}
+
+.code-block-lang {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+
+.code-block-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.code-block-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.code-block-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.code-block-btn.copied {
+  color: var(--success);
+}
+
+.code-block-run {
+  color: var(--accent-1);
+  border-color: rgba(var(--accent-1-rgb), 0.3);
+}
+
+.code-block .bubble-pre,
+.code-block pre,
+.bubble .code-block pre,
+.code-prose .code-block pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 14px 16px;
+  overflow-x: auto;
+}
+
+.code-block pre code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  background: none;
+  padding: 0;
+}
+
+/* =========================================================
+   Python: workspace, course, lessons, challenges, projects
+   ========================================================= */
+
+/* --- Editor: error line ------------------------------------------------- */
+.ce-line-mark {
+  position: absolute;
+  left: 0;
+  right: -4000px;
+  background: var(--danger-bg);
+  box-shadow: inset 3px 0 0 var(--danger);
+  pointer-events: none;
+}
+
+.ce-gutter-inner span.is-marked {
+  color: var(--danger);
+  font-weight: 700;
+  opacity: 1;
+}
+
+.builder-code .ce {
+  --ce-height: 460px;
+}
+
+/* --- Workspace ---------------------------------------------------------- */
+.pyw {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pyw-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pyw-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.pyw-file-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3776ab, #ffd43b);
+  flex-shrink: 0;
+}
+
+.pyw-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.pyw-saved {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  color: var(--text-faint);
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease);
+}
+
+.pyw-saved.is-on {
+  opacity: 1;
+}
+
+.pyw-tools {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.pyw-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.pyw-tool:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.pyw-tool:focus-visible,
+.pyw-link:focus-visible,
+.pyw-file-chip:focus-visible,
+.pyl-step:focus-visible,
+.pyl-q-opt:focus-visible,
+.ch-card:focus-visible,
+.ch-chip:focus-visible,
+.ch-history-row:focus-visible {
+  outline: 2px solid var(--accent-1);
+  outline-offset: 2px;
+}
+
+.pyw-ico {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.pyw-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pyw-left,
+.pyw-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pyw-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pyw-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.pyw-run .pyw-ico {
+  color: var(--success);
+}
+
+.pyw-stop {
+  color: var(--danger);
+  border-color: var(--danger-border);
+}
+
+.pyw.is-running .pyw-run .pyw-ico {
+  animation: pyw-pulse 1s var(--ease) infinite;
+}
+
+@keyframes pyw-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.pyw-status {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-left: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pyw-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.pyw-status:empty::before {
+  display: none;
+}
+
+.pyw-status[data-state="ready"]::before,
+.pyw-status[data-state="ok"]::before {
+  background: var(--success);
+}
+
+.pyw-status[data-state="busy"]::before {
+  background: var(--warning);
+  animation: pyw-pulse 1s var(--ease) infinite;
+}
+
+.pyw-status[data-state="error"] {
+  color: var(--danger);
+}
+
+.pyw-status[data-state="error"]::before {
+  background: var(--danger);
+}
+
+.pyw-kbd {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.pyw-input {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  padding: 0 12px;
+}
+
+.pyw-input[open] {
+  padding-bottom: 12px;
+}
+
+.pyw-input-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  list-style: none;
+}
+
+.pyw-input-summary::-webkit-details-marker {
+  display: none;
+}
+
+.pyw-input-summary::before {
+  content: "›";
+  display: inline-block;
+  color: var(--text-faint);
+  transition: transform var(--t-fast) var(--ease);
+}
+
+.pyw-input[open] .pyw-input-summary::before {
+  transform: rotate(90deg);
+}
+
+.pyw-input-count {
+  font-weight: 500;
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+.pyw-input-note {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+
+.pyw-stdin {
+  width: 100%;
+  resize: vertical;
+  min-height: 64px;
+  background: var(--code-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.pyw-stdin:focus {
+  outline: none;
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 3px rgba(var(--accent-1-rgb), 0.16);
+}
+
+.pyw-files {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--surface);
+  padding: 10px 12px;
+}
+
+.pyw-files-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.pyw-file-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.pyw-file-chip {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.pyw-file-chip.active {
+  border-color: var(--accent-1);
+  color: var(--text);
+}
+
+.pyw-file-preview {
+  margin: 0 0 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--code-bg);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 180px;
+  overflow: auto;
+}
+
+.pyw-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.pyw-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--code-gutter);
+}
+
+.pyw-panel-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+.pyw-panel-meta {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.pyw-out {
+  margin: 0;
+  padding: 12px 14px;
+  min-height: 72px;
+  max-height: 320px;
+  overflow: auto;
+  background: var(--code-bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.pyw-out-empty {
+  color: var(--text-faint);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+}
+
+.pyw-error {
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+  padding: 14px 16px;
+  animation: pyw-in var(--t-base) var(--ease);
+}
+
+@keyframes pyw-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.pyw-err-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pyw-err-type {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--danger);
+  color: #fff;
+}
+
+.pyw-err-title {
+  font-size: 14px;
+}
+
+.pyw-err-real {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+  min-width: 0;
+}
+
+.pyw-err-msg {
+  display: block;
+  font-family: var(--font-mono);
+  color: var(--danger);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.pyw-err-where {
+  margin-top: 6px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+}
+
+.pyw-err-where code {
+  font-family: var(--font-mono);
+  color: var(--text);
+  word-break: break-word;
+}
+
+.pyw-link {
+  margin-left: 8px;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--accent-1);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.pyw-err-explain {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 14px;
+  margin: 14px 0 0;
+}
+
+.pyw-err-explain dt {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+  padding-top: 3px;
+}
+
+.pyw-err-explain dd {
+  margin: 0;
+  color: var(--text);
+}
+
+.pyw-err-explain dd p:last-child {
+  margin-bottom: 0;
+}
+
+.pyw-err-tb {
+  margin-top: 12px;
+  font-size: 12px;
+}
+
+.pyw-err-tb summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.pyw-err-tb pre {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--code-bg);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-x: auto;
+  color: var(--text);
+}
+
+.pyw-err-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.pyw-err-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pyw-err-ai:not(:empty) {
+  margin-top: 12px;
+}
+
+.pyw-results:empty {
+  display: none;
+}
+
+.pyw-results.pyw-celebrate .code-result-summary {
+  animation: pyw-celebrate 700ms var(--ease-spring);
+}
+
+@keyframes pyw-celebrate {
+  0% {
+    transform: scale(0.97);
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5);
+  }
+  60% {
+    transform: scale(1.01);
+    box-shadow: 0 0 0 10px rgba(52, 211, 153, 0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.code-check-stdin {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.code-check-compare {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+}
+
+.code-check-cmp-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.code-check-cmp-k {
+  flex-shrink: 0;
+  width: 62px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-faint);
+}
+
+.pyw-inline-code {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--success);
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-width: 0;
+}
+
+.code-check-cmp-row.got .pyw-inline-code {
+  color: var(--danger);
+}
+
+.code-check-stdin .pyw-inline-code {
+  color: var(--text-muted);
+  background: var(--code-bg);
+  padding: 0 5px;
+  border-radius: 5px;
+}
+
+/* Fullscreen: editor on the left, what happened on the right. */
+body.pyw-fullscreen-open {
+  overflow: hidden;
+}
+
+.pyw.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  padding: 16px 20px 20px;
+  background: var(--bg);
+  gap: 12px;
+}
+
+.pyw.is-fullscreen .pyw-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.pyw.is-fullscreen .pyw-left,
+.pyw.is-fullscreen .pyw-right {
+  min-height: 0;
+  overflow: auto;
+}
+
+.pyw.is-fullscreen .ce {
+  --ce-height: calc(100vh - 170px);
+  resize: none;
+}
+
+.pyw.is-fullscreen .pyw-out {
+  max-height: none;
+  min-height: 160px;
+}
+
+/* --- Track grid: Python card --------------------------------------------- */
+.code-track-card.is-python {
+  background: linear-gradient(160deg, rgba(55, 118, 171, 0.18), rgba(255, 212, 59, 0.08)), var(--glass-elevated-bg);
+  border-color: rgba(55, 118, 171, 0.35);
+}
+
+/* --- Python course page ------------------------------------------------- */
+.pyc-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr);
+  gap: 18px;
+  align-items: stretch;
+  margin-bottom: 22px;
+}
+
+.pyc-hero-text {
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, rgba(55, 118, 171, 0.16), rgba(255, 212, 59, 0.06)), var(--glass-base-bg);
+  border: 1px solid var(--glass-base-border);
+}
+
+.pyc-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  margin-bottom: 6px;
+}
+
+.pyc-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+
+.pyc-next {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-elevated-bg);
+  border: 1px solid var(--glass-elevated-border);
+  box-shadow: var(--glass-elevated-shadow);
+}
+
+.pyc-next .btn {
+  margin-top: auto;
+}
+
+.pyc-next-k {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-1);
+}
+
+.pyc-next.done .pyc-next-k {
+  color: var(--success);
+}
+
+.pyc-next-meta {
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.pyc-next-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  margin-top: 2px;
+}
+
+.pyc-next-goal {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 2px 0 14px;
+  line-height: 1.55;
+}
+
+.pyc-levels {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pyc-level {
+  border-radius: var(--radius-lg);
+  background: var(--glass-base-bg);
+  border: 1px solid var(--glass-base-border);
+  overflow: hidden;
+}
+
+.pyc-level-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.pyc-level-head::-webkit-details-marker {
+  display: none;
+}
+
+.pyc-level-head:hover {
+  background: var(--surface-hover);
+}
+
+.pyc-level-head:focus-visible {
+  outline: 2px solid var(--accent-1);
+  outline-offset: -2px;
+}
+
+.pyc-level-num {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--accent-grad-soft);
+  border: 1px solid rgba(var(--accent-1-rgb), 0.3);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.pyc-level.complete .pyc-level-num {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.pyc-level-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pyc-level-k {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.pyc-level-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  margin: 1px 0 2px;
+}
+
+.pyc-level-blurb {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.pyc-level-side {
+  flex-shrink: 0;
+  width: 110px;
+  text-align: right;
+}
+
+.pyc-level-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pyc-mini {
+  margin-top: 6px;
+  height: 5px;
+}
+
+.pyc-rows {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+
+.pyc-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pyc-row:last-child {
+  border-bottom: 0;
+}
+
+.pyc-row.next {
+  background: rgba(var(--accent-1-rgb), 0.07);
+  box-shadow: inset 3px 0 0 var(--accent-1);
+}
+
+.pyc-row-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.pyc-row.done .pyc-row-num {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--accent-contrast);
+}
+
+.pyc-row-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.pyc-row-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pyc-row-goal {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.pyc-row-side {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pyc-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: var(--warning-bg);
+  color: var(--warning);
+  white-space: nowrap;
+}
+
+.pyc-tag.ok {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+/* --- Lesson + challenge screen ----------------------------------------- */
+.pyl-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr);
+  grid-template-areas:
+    "top work"
+    "bottom work";
+  grid-template-rows: auto 1fr;
+  gap: 16px 20px;
+  align-items: start;
+}
+
+.pyl-teach-top {
+  grid-area: top;
+}
+
+.pyl-teach-bottom {
+  grid-area: bottom;
+}
+
+.pyl-work {
+  grid-area: work;
+  position: sticky;
+  top: 12px;
+  min-width: 0;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-base-bg);
+  border: 1px solid var(--glass-base-border);
+}
+
+.pyl-teach {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.pyl-head {
+  padding: 4px 2px 0;
+}
+
+.pyl-level-pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(55, 118, 171, 0.18);
+  color: var(--accent-2);
+  margin-bottom: 8px;
+}
+
+.pyl-steps {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pyl-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px 6px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+
+.pyl-step:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.pyl-step-dot {
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.pyl-step.done {
+  color: var(--text);
+}
+
+.pyl-step.done .pyl-step-dot {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--accent-contrast);
+}
+
+.pyl-section {
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-base-bg);
+  border: 1px solid var(--glass-base-border);
+  scroll-margin-top: 16px;
+  min-width: 0;
+}
+
+.pyl-section .code-prose > :last-child {
+  margin-bottom: 0;
+}
+
+.pyl-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-faint);
+  margin-bottom: 10px;
+}
+
+.pyl-row-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pyl-count {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.pyl-challenge {
+  border-color: rgba(var(--accent-1-rgb), 0.35);
+  background: linear-gradient(160deg, rgba(var(--accent-1-rgb), 0.1), transparent 60%), var(--glass-base-bg);
+}
+
+.pyl-example .code-block {
+  margin: 0;
+}
+
+.pyl-example-out {
+  margin: 10px 0 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
+}
+
+.pyl-example-out.error {
+  color: var(--danger);
+}
+
+.pyl-note {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin: 10px 0 0;
+  line-height: 1.55;
+}
+
+.pyl-hint-list {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pyl-hint-list:empty {
+  display: none;
+}
+
+.pyl-hint {
+  color: var(--text);
+  padding-left: 4px;
+}
+
+.pyl-hint::marker {
+  color: var(--accent-1);
+  font-weight: 700;
+}
+
+.pyl-hint.is-new {
+  animation: pyw-in var(--t-base) var(--ease);
+}
+
+.pyl-hint .code-prose p {
+  margin: 0;
+}
+
+.pyl-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.pyl-hints > .btn {
+  margin-top: 12px;
+}
+
+.pyl-confirm {
+  padding: 12px 14px;
+  border-radius: var(--radius-xs);
+  background: var(--warning-bg);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  font-size: 13px;
+}
+
+.pyl-confirm p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.pyl-solution-body .code-block {
+  margin: 0;
+}
+
+.pyl-solution-body > .pyl-note:first-child {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.pyl-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pyl-q-text {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.pyl-q-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 6px;
+}
+
+.pyl-q-opt {
+  text-align: left;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.pyl-q-opt:hover:not(:disabled) {
+  border-color: var(--accent-1);
+  background: var(--surface-hover);
+}
+
+.pyl-q-opt:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.pyl-q-opt:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.pyl-q-opt.correct {
+  opacity: 1;
+  border-color: var(--success);
+  background: var(--success-bg);
+}
+
+.pyl-q-opt.wrong {
+  opacity: 1;
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.pyl-q-why {
+  margin-top: 8px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: var(--danger-bg);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  animation: pyw-in var(--t-base) var(--ease);
+}
+
+.pyl-q-why.ok {
+  background: var(--success-bg);
+}
+
+.pyl-q-why strong {
+  color: var(--text);
+}
+
+.pyl-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pyl-pager .btn {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- Challenges --------------------------------------------------------- */
+.ch-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 18px 0 16px;
+}
+
+.ch-stat {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--glass-base-bg);
+  border: 1px solid var(--glass-base-border);
+}
+
+.ch-stat-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ch-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.ch-stat-sub {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+
+.ch-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.ch-chip-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ch-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ch-chip:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.ch-chip.active {
+  background: var(--glass-active-bg);
+  border-color: var(--accent-1);
+  color: var(--text);
+}
+
+.ch-chip-count {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.ch-status {
+  width: auto;
+  margin-top: 0;
+  min-width: 170px;
+}
+
+.ch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.ch-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--glass-base-bg);
+  border: 1px solid var(--glass-base-border);
+  color: var(--text);
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+
+.ch-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+}
+
+.ch-card.solved {
+  border-color: rgba(52, 211, 153, 0.35);
+}
+
+.ch-card-top,
+.ch-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ch-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.ch-card-status {
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+.ch-card-status.ok {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.ch-card-topic {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.ch-card-xp {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.ch-diff {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+}
+
+.ch-diff-beginner {
+  background: rgba(34, 211, 238, 0.14);
+  color: #22d3ee;
+}
+
+.ch-diff-easy {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.ch-diff-medium {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.ch-diff-hard {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+:root[data-theme="light"] .ch-diff-beginner {
+  color: #0e7490;
+}
+
+:root[data-theme="light"] .ch-diff-medium {
+  color: #a16207;
+}
+
+.ch-empty {
+  padding: 28px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border-strong);
+  color: var(--text-muted);
+}
+
+.ch-empty p {
+  margin: 0 0 12px;
+}
+
+.ch-history {
+  margin-top: 24px;
+}
+
+.ch-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.ch-history-row {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ch-history-row:hover {
+  border-color: var(--border-strong);
+}
+
+.ch-history-mark {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.ch-history-row.ok .ch-history-mark {
+  color: var(--success);
+}
+
+.ch-history-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ch-history-score,
+.ch-history-time {
+  font-size: 12px;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.ch-head-pills {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ch-examples {
+  margin-top: 14px;
+}
+
+.ch-example {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  min-width: 0;
+}
+
+.ch-example code {
+  font-family: inherit;
+  word-break: break-word;
+}
+
+.ch-arrow {
+  color: var(--text-faint);
+}
+
+.ch-explain {
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+/* --- Build: Python projects -------------------------------------------- */
+.builder-template.is-python {
+  border-color: rgba(55, 118, 171, 0.35);
+}
+
+.builder-kind {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  margin-right: 8px;
+  vertical-align: 2px;
+  background: var(--surface-hover);
+  color: var(--text-muted);
+}
+
+.builder-kind.python {
+  background: rgba(55, 118, 171, 0.2);
+  color: var(--accent-2);
+}
+
+.builder-py-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 18px;
+  align-items: start;
+}
+
+.builder-py-layout .builder-ask {
+  margin-top: 0;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-base-bg);
+  border: 1px solid var(--glass-base-border);
+}
+
+.builder-py-layout .builder-ask .code-panel-label {
+  margin-top: 0;
+}
+
+/* --- Responsive --------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .pyl-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "top"
+      "work"
+      "bottom";
+    grid-template-rows: auto;
+  }
+
+  .pyl-work {
+    position: static;
+  }
+
+  .builder-py-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .pyc-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pyc-row {
+    flex-wrap: wrap;
+    padding: 12px 14px;
+  }
+
+  .pyc-row-side {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .pyc-level-head {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .pyc-level-side {
+    width: 64px;
+  }
+
+  .pyl-section,
+  .pyl-work {
+    padding: 14px;
+  }
+
+  .pyw-kbd {
+    display: none;
+  }
+
+  .pyw-tool .pyw-btn-label {
+    display: none;
+  }
+
+  .pyw-tool {
+    padding: 7px;
+  }
+
+  .pyw-err-explain {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .pyw-err-explain dd {
+    margin-bottom: 8px;
+  }
+
+  .pyw.is-fullscreen {
+    padding: 12px;
+  }
+
+  .pyw.is-fullscreen .pyw-grid {
+    display: flex;
+    overflow: auto;
+  }
+
+  .pyw.is-fullscreen .ce {
+    --ce-height: 55vh;
+  }
+
+  .ch-history-row {
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+  }
+
+  .ch-history-time {
+    display: none;
+  }
+
+  .ch-status {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pyw.is-running .pyw-run .pyw-ico,
+  .pyw-status[data-state="busy"]::before,
+  .pyw-error,
+  .pyl-hint.is-new,
+  .pyl-q-why,
+  .pyw-results.pyw-celebrate .code-result-summary {
+    animation: none;
+  }
+
+  .ch-card:hover {
+    transform: none;
+  }
+}
+
+/* Code shows exactly the characters typed: a ">=" drawn as a single "≥" glyph looks like a
+   symbol a beginner should type, and typing it is a SyntaxError. */
+code,
+pre,
+kbd,
+samp,
+.ce,
+.ce textarea,
+.pyw-stdin,
+.pyw-out,
+.pyw-inline-code,
+.code-editor {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+}
+
+.pyl-step.is-plain {
+  padding-left: 12px;
 }

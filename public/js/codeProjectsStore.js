@@ -1,13 +1,14 @@
-// Websites the student builds in the Web Builder.
+// Things the student builds: websites and Python programs.
 //
 // Same shape as every other H1 store: plain records in localStorage, space-tagged, never
-// silently dropped. A project is three files (HTML, CSS, JS) because that's what a real page
-// is, and because it's what the sandboxed preview can actually run.
+// silently dropped. A website is three files (HTML, CSS, JS) because that's what a real page
+// is. A Python program is one file plus the input it reads. Records from before Python
+// projects existed have no `kind`, and are websites.
 import { safeGetJson, safeSetJson } from "./storage.js";
 import { currentSpaceTag, matchesCurrentSpace } from "./spacesStore.js";
 
 const KEY = "h1-code-projects";
-const MAX_PROJECTS = 60;
+const MAX_PROJECTS = 100;
 // Comfortably more than any hand-written page needs, and well short of the point where
 // localStorage starts failing.
 const MAX_FILE_CHARS = 60000;
@@ -95,8 +96,108 @@ export const TEMPLATES = [
   },
 ];
 
+export const PY_TEMPLATES = [
+  {
+    id: "py-blank",
+    name: "Blank program",
+    blurb: "An empty Python file.",
+    py: `# My program
+print("Hello!")
+`,
+    stdin: "",
+  },
+  {
+    id: "py-calculator",
+    name: "Calculator",
+    blurb: "Reads two numbers and an operator, and handles mistakes.",
+    py: `def calculate(a, op, b):
+    if op == "+":
+        return a + b
+    if op == "-":
+        return a - b
+    if op == "*":
+        return a * b
+    if op == "/":
+        if b == 0:
+            return "Can't divide by zero"
+        return a / b
+    return "Unknown operator"
+
+a = float(input("First number: "))
+op = input("Operator (+ - * /): ")
+b = float(input("Second number: "))
+print("Answer:", calculate(a, op, b))
+`,
+    stdin: `12
+*
+4`,
+  },
+  {
+    id: "py-guess",
+    name: "Guessing game",
+    blurb: "Guess the secret number, with higher/lower clues.",
+    py: `import random
+
+secret = random.randint(1, 20)
+print("I'm thinking of a number from 1 to 20.")
+
+for attempt in range(1, 6):
+    guess = int(input("Your guess: "))
+    if guess < secret:
+        print("Higher!")
+    elif guess > secret:
+        print("Lower!")
+    else:
+        print(f"Got it in {attempt}!")
+        break
+else:
+    print(f"Out of guesses — it was {secret}.")
+`,
+    stdin: `10
+5
+15
+12
+8`,
+  },
+  {
+    id: "py-study",
+    name: "Study tracker",
+    blurb: "Log study sessions and see totals per subject.",
+    py: `sessions = [
+    ("Maths", 30),
+    ("Science", 20),
+    ("Maths", 15),
+    ("English", 25),
+]
+
+totals = {}
+for subject, minutes in sessions:
+    totals[subject] = totals.get(subject, 0) + minutes
+
+print("Study time by subject")
+for subject, minutes in sorted(totals.items(), key=lambda item: item[1], reverse=True):
+    bar = "#" * (minutes // 5)
+    print(f"{subject:<10} {minutes:>3} min  {bar}")
+
+print("Total:", sum(totals.values()), "minutes")
+`,
+    stdin: "",
+  },
+];
+
 export function getTemplate(id) {
-  return TEMPLATES.find((t) => t.id === id) || TEMPLATES[0];
+  return TEMPLATES.find((t) => t.id === id) || PY_TEMPLATES.find((t) => t.id === id) || TEMPLATES[0];
+}
+
+export function projectKind(project) {
+  return project && project.kind === "python" ? "python" : "web";
+}
+
+export class ProjectLimitError extends Error {
+  constructor() {
+    super(`You have ${MAX_PROJECTS} projects, which is the most H1 can keep. Delete one you don't need to make room.`);
+    this.name = "ProjectLimitError";
+  }
 }
 
 export function getProjects() {
@@ -107,22 +208,26 @@ export function getProject(id) {
   return readAll().find((p) => p.id === id) || null;
 }
 
-export function createProject({ name, templateId = "blank" } = {}) {
+// At the limit this throws rather than quietly dropping the oldest project to make room — an
+// old project disappearing because a new one was made is exactly the kind of loss nobody
+// notices until they need it.
+export function createProject({ name, templateId = "blank", kind, py, stdin, source } = {}) {
   const tpl = getTemplate(templateId);
+  const isPython = kind === "python" || (kind === undefined && typeof tpl.py === "string");
   const list = readAll();
-  const record = {
+  if (list.length >= MAX_PROJECTS) throw new ProjectLimitError();
+  const base = {
     id: uid(),
-    name: (name || tpl.name || "Untitled site").trim().slice(0, 80),
-    html: clamp(tpl.html),
-    css: clamp(tpl.css),
-    js: clamp(tpl.js),
+    name: (name || tpl.name || (isPython ? "Untitled program" : "Untitled site")).trim().slice(0, 80),
     favorite: false,
     spaceId: currentSpaceTag(),
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
+  const record = isPython
+    ? { ...base, kind: "python", py: clamp(py !== undefined ? py : tpl.py || ""), stdin: clamp(stdin !== undefined ? stdin : tpl.stdin || ""), ...(source ? { source } : {}) }
+    : { ...base, html: clamp(tpl.html), css: clamp(tpl.css), js: clamp(tpl.js) };
   list.unshift(record);
-  if (list.length > MAX_PROJECTS) list.length = MAX_PROJECTS;
   writeAll(list);
   return record;
 }
@@ -135,6 +240,8 @@ export function updateProject(id, patch) {
   if (typeof patch.html === "string") p.html = clamp(patch.html);
   if (typeof patch.css === "string") p.css = clamp(patch.css);
   if (typeof patch.js === "string") p.js = clamp(patch.js);
+  if (typeof patch.py === "string") p.py = clamp(patch.py);
+  if (typeof patch.stdin === "string") p.stdin = clamp(patch.stdin);
   if (typeof patch.favorite === "boolean") p.favorite = patch.favorite;
   p.updatedAt = Date.now();
   writeAll(list);
@@ -149,9 +256,9 @@ export function duplicateProject(id) {
   const src = getProject(id);
   if (!src) return null;
   const list = readAll();
+  if (list.length >= MAX_PROJECTS) throw new ProjectLimitError();
   const copy = { ...src, id: uid(), name: `${src.name} copy`.slice(0, 80), createdAt: Date.now(), updatedAt: Date.now() };
   list.unshift(copy);
-  if (list.length > MAX_PROJECTS) list.length = MAX_PROJECTS;
   writeAll(list);
   return copy;
 }
@@ -185,4 +292,8 @@ ${project.js || ""}
 `;
 }
 
-export { MAX_FILE_CHARS };
+export function projectFileName(project, ext) {
+  return `${(project.name || "project").replace(/[^a-z0-9\-_ ]/gi, "").trim() || "project"}.${ext}`;
+}
+
+export { MAX_FILE_CHARS, MAX_PROJECTS };

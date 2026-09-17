@@ -16,6 +16,12 @@ import { switchToSpace } from "./spacesUI.js";
 import { addMistake } from "./mistakeBookStore.js";
 import { saveQuickNote } from "./notes.js";
 import { appState, setMode } from "./state.js";
+import { openTrack } from "./codeLab.js";
+import { selectSubtabInView } from "./subtabs.js";
+import { prefillStudySession } from "./studyMode.js";
+
+// The backend refuses a message over 4000 characters; a command's own wording has to fit too.
+const MAX_OUTGOING_CHARS = 3990;
 
 function confirmAction(text) {
   showToast(`✓ ${text}`, "success", 3200);
@@ -127,6 +133,11 @@ export const SLASH_COMMANDS = [
   { name: "flashcards", hint: "<topic> — generate a flashcard deck" },
   { name: "practice", hint: "<topic> — generate practice questions" },
   { name: "summarize", hint: "<text> — summarize this text" },
+  { name: "summary", hint: "[text] — a short summary (of the last answer if no text)" },
+  { name: "python", hint: "[question] — learn it in Python, or open the Python course" },
+  { name: "code", hint: "[question] — coding help, or open Code Lab" },
+  { name: "debug", hint: "<code or error> — find the bug and explain the fix" },
+  { name: "study", hint: "[topic] — set up a focus session for this topic" },
   { name: "simplify", hint: "— explain the last answer more simply" },
   { name: "improve", hint: "[your answer] — improve clarity and correctness" },
   { name: "notes", hint: "<text> — save this as a new note" },
@@ -137,6 +148,34 @@ export const SLASH_COMMANDS = [
   { name: "examples", hint: "— another example of the last topic" },
   { name: "mistakes", hint: "— open your Mistake Book" },
 ];
+
+// When a command's text is too long to send as a message, the text goes along as an attached
+// file and this is the message instead. Null for anything that isn't one of these commands.
+const LONG_TEXT_PROMPTS = {
+  debug: "Debug the attached code. Tell me the exact line that's wrong, explain what went wrong and why in simple words, then show only the corrected lines in a code block.",
+  explain: "Explain the attached text clearly, step by step.",
+  summarize: "Summarize the attached text.",
+  summary: "Summarize the attached text.",
+  check: "Check the reasoning in the attached text and tell me if it's correct, explaining any mistakes.",
+  improve: "Improve the attached answer while keeping the original idea — focus on clarity and correctness.",
+  solve: "Solve the attached problem step by step, showing your full working.",
+  code: "Help me with the attached code. Explain clearly for a student, with short examples in code blocks tagged with their language.",
+  python: "Help me with the attached Python. Explain it simply, with short runnable examples in python code blocks.",
+};
+
+export function longCommandPrompt(text) {
+  const parsed = firstWord(text);
+  if (!parsed || !parsed.rest || !LONG_TEXT_PROMPTS[parsed.cmd]) return null;
+  return { prompt: LONG_TEXT_PROMPTS[parsed.cmd], body: parsed.rest };
+}
+
+// "/debug" sent with a file attached means "debug the attached file". Anything typed after the
+// command is kept as extra detail.
+export function commandPromptForAttachments(text) {
+  const parsed = firstWord(text);
+  if (!parsed || !LONG_TEXT_PROMPTS[parsed.cmd]) return null;
+  return parsed.rest ? `${LONG_TEXT_PROMPTS[parsed.cmd]}\n\n${parsed.rest}` : LONG_TEXT_PROMPTS[parsed.cmd];
+}
 
 function firstWord(text) {
   const m = text.trim().match(/^\/(\S+)\s*(.*)$/s);
@@ -179,7 +218,55 @@ export function resolveSlashCommand(text) {
       return { action: "rewrite", text: "Can you give another concrete example?" };
 
     case "summarize":
+    case "summary":
       return { action: "rewrite", text: rest ? `Summarize this:\n\n${rest}` : "Summarize your last answer in a few short bullet points." };
+
+    case "python":
+      if (!rest) {
+        switchView("code");
+        selectSubtabInView("code", "learn");
+        openTrack("py");
+        confirmAction("Opened the Python course");
+        return { action: "handled" };
+      }
+      return {
+        action: "rewrite",
+        text: `Teach me this in Python: ${rest}\n\nExplain it simply, then give a short runnable example in a python code block and say what it prints.`,
+      };
+
+    case "code":
+      if (!rest) {
+        switchView("code");
+        selectSubtabInView("code", "learn");
+        confirmAction("Opened Code Lab");
+        return { action: "handled" };
+      }
+      return {
+        action: "rewrite",
+        text: `Help me with this coding question: ${rest}\n\nExplain clearly for a student, with short examples in code blocks tagged with their language.`,
+      };
+
+    case "debug": {
+      if (!rest) {
+        showToast("Usage: /debug <paste your code or the error message>", "error", 3200);
+        return { action: "handled" };
+      }
+      const text =
+        "Debug this for me. Tell me the exact line that's wrong, explain what went wrong and why in simple words, " +
+        "then show only the corrected lines in a code block:\n\n" +
+        rest;
+      if (text.length > MAX_OUTGOING_CHARS) {
+        showToast("That's too long to paste into one message — attach the file with the + button and ask H1 to debug it.", "error", 4600);
+        return { action: "handled" };
+      }
+      return { action: "rewrite", text };
+    }
+
+    case "study":
+      switchView("study-mode");
+      prefillStudySession(rest || "");
+      confirmAction(rest ? `Focus session ready for "${rest.slice(0, 40)}" — press Start` : "Opened Study Mode");
+      return { action: "handled" };
 
     case "quiz": {
       const topic = rest || appState.subject;

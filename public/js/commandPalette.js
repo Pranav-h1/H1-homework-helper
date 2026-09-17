@@ -8,6 +8,13 @@ import { getDocuments } from "./documentsStore.js";
 import { getDecks } from "./flashcardDecks.js";
 import { getSpaces } from "./spacesStore.js";
 import { switchToSpace } from "./spacesUI.js";
+import { getAllLessons } from "./codeCurriculum.js";
+import { PY_LEVELS } from "./pythonCurriculum.js";
+import { CHALLENGES, difficultyInfo } from "./pythonChallenges.js";
+import { openTrack, openLessonById } from "./codeLab.js";
+import { openChallenge, showChallengeList } from "./challengesView.js";
+import { isComplete } from "./codeProgressStore.js";
+import { getChallengeState } from "./challengeStore.js";
 
 const overlay = document.getElementById("commandOverlay");
 const input = document.getElementById("commandInput");
@@ -90,6 +97,30 @@ const AI_COMMANDS = [
   { title: "Explain a question step by step", icon: "🧠", group: "AI", run: openWithSubtab("homework", "explain") },
 ];
 
+const CODING_COMMANDS = [
+  {
+    title: "Learn Python",
+    icon: "🐍",
+    group: "Coding",
+    run: () => {
+      openWithSubtab("code", "learn")();
+      openTrack("py");
+    },
+  },
+  {
+    title: "Coding challenges",
+    icon: "🏁",
+    group: "Coding",
+    run: () => {
+      switchView("code");
+      showChallengeList();
+    },
+  },
+  { title: "Build a Python program or website", icon: "🛠️", group: "Coding", run: openWithSubtab("code", "build") },
+];
+
+const TRACK_NAMES = { html: "HTML", css: "CSS", js: "JavaScript", py: "Python" };
+
 const ACTION_COMMANDS = [
   { title: "Start focus session", icon: "⏱️", group: "Actions", run: () => switchView("study-mode") },
   { title: "Open today's tasks", icon: "📘", group: "Actions", run: () => switchView("homework") },
@@ -114,7 +145,7 @@ const ACTION_COMMANDS = [
   { title: "Open Settings", icon: "⚙️", group: "Actions", run: () => switchView("settings") },
 ];
 
-const STATIC_COMMANDS = [...AI_COMMANDS, ...ACTION_COMMANDS, ...NAV_COMMANDS];
+const STATIC_COMMANDS = [...AI_COMMANDS, ...CODING_COMMANDS, ...ACTION_COMMANDS, ...NAV_COMMANDS];
 
 // Recently visited sections — surfaced first when the palette opens with no query.
 const RECENT_KEY = "h1-command-recent-views";
@@ -224,7 +255,43 @@ function buildItems(query) {
     .slice(0, 5)
     .map((s) => ({ title: `Open ${s.name} Space`, icon: s.icon, group: "Navigation", run: () => switchToSpace(s.id) }));
 
-  return [...commandMatches, ...spaceMatches, ...convoMatches, ...noteMatches, ...quizMatches, ...homeworkMatches, ...documentMatches, ...deckMatches];
+  const lessonMatches = getAllLessons()
+    // Real substring matches only (score above the loose subsequence fallback): with 61
+    // lessons, "in-order letters" matching would bury the useful results. A title match
+    // outranks a match in the lesson's goal.
+    .map((l) => ({ l, score: Math.max(fuzzyScore(l.title, query), fuzzyScore(l.goal || "", query) > 5 ? 6 : -1) }))
+    .filter((x) => x.score > 5)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6)
+    .map(({ l }) => {
+      const level = l.track === "py" ? PY_LEVELS.find((lv) => lv.id === l.level) : null;
+      const where = level ? `Python · Level ${level.id} lesson` : `${TRACK_NAMES[l.track] || l.track} lesson`;
+      return {
+        title: l.title,
+        icon: isComplete(l.id) ? "✅" : l.track === "py" ? "🐍" : "💻",
+        group: "Search",
+        subtitle: where,
+        run: () => {
+          switchView("code");
+          openLessonById(l.id);
+        },
+      };
+    });
+
+  const challengeMatches = CHALLENGES.filter((c) => fuzzyScore(c.title, query) > 5 || fuzzyScore(c.topic, query) > 5)
+    .slice(0, 5)
+    .map((c) => ({
+      title: c.title,
+      icon: getChallengeState(c.id).solvedAt ? "✅" : "🏁",
+      group: "Search",
+      subtitle: `${difficultyInfo(c.difficulty).label} coding challenge`,
+      run: () => {
+        switchView("code");
+        openChallenge(c.id);
+      },
+    }));
+
+  return [...commandMatches, ...spaceMatches, ...convoMatches, ...noteMatches, ...lessonMatches, ...challengeMatches, ...quizMatches, ...homeworkMatches, ...documentMatches, ...deckMatches];
 }
 
 function render() {

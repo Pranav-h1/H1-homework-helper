@@ -321,6 +321,7 @@
             <div class="bento-tile bento-deadline clickable" id="bentoDeadline"></div>
             <div class="bento-tile bento-note clickable" id="bentoNote"></div>
             <div class="bento-tile bento-quiz clickable" id="bentoQuiz"></div>
+            <div class="bento-tile bento-code clickable" id="bentoCode" role="button" tabindex="0"></div>
             <div class="bento-tile bento-focus clickable" id="bentoFocus"></div>
           </div>
 
@@ -1359,16 +1360,21 @@
           <div class="view-header">
             <div>
               <h1>Code Lab</h1>
-              <p class="view-sub">Learn to code by writing real code H1 actually runs — then build and publish your own web pages.</p>
+              <p class="view-sub">Learn Python and the web by writing real code H1 actually runs — then take on challenges and build your own programs and pages.</p>
             </div>
             <div class="subtabs" role="tablist">
               <button type="button" class="subtab-btn active" data-subtab="learn">Learn</button>
+              <button type="button" class="subtab-btn" data-subtab="challenges">Challenges</button>
               <button type="button" class="subtab-btn" data-subtab="build">Build</button>
             </div>
           </div>
 
           <div data-subtab-panel="learn">
             <div id="codeLearnRoot"></div>
+          </div>
+
+          <div data-subtab-panel="challenges" hidden>
+            <div id="codeChallengesRoot"></div>
           </div>
 
           <div data-subtab-panel="build" hidden>

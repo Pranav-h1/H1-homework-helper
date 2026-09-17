@@ -17,6 +17,9 @@ const XP_RULES = {
   mission_task_done: 5,
   lesson_completed: 12,
 };
+// A solved coding challenge is worth more the harder it is. Solves that came after viewing the
+// solution are logged with usedSolution and earn nothing.
+const CHALLENGE_XP = { beginner: 10, easy: 20, medium: 35, hard: 50 };
 const LEVEL_THRESHOLDS = [0, 50, 120, 220, 350, 520, 750, 1050, 1450, 2000];
 
 export function isEnabled() {
@@ -36,6 +39,8 @@ export function getXP() {
     if (e.xpEligible === false) return;
     if (e.type === "quiz_completed") {
       xp += XP_RULES.quiz_completed + (e.score || 0) * XP_RULES.question;
+    } else if (e.type === "challenge_solved") {
+      if (!e.usedSolution) xp += CHALLENGE_XP[e.difficulty] || 0;
     } else if (XP_RULES[e.type]) {
       xp += XP_RULES[e.type];
     }

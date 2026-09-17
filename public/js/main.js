@@ -38,6 +38,7 @@ import { initBrain, renderBrain } from "./brain.js";
 import { initBoss, renderBoss } from "./boss.js";
 import { initCodeLab, renderCodeLab } from "./codeLab.js";
 import { initWebBuilder, renderWebBuilder, flushBuilder } from "./webBuilder.js";
+import { initChallenges, renderChallenges } from "./challengesView.js";
 import { initHomeWidgets, renderHomeWidget, renderUpcomingWidget } from "./homeWidgets.js";
 import { initHomework, refreshHomework } from "./homework.js";
 import { initScan } from "./scan.js";
@@ -526,6 +527,7 @@ initBrain();
 initBoss();
 initCodeLab();
 initWebBuilder();
+initChallenges();
 initHomeWidgets();
 initHomework();
 initScan();
@@ -573,6 +575,7 @@ onViewChange((view) => {
   if (view === "boss") renderBoss();
   if (view === "code") {
     renderCodeLab();
+    renderChallenges();
     renderWebBuilder();
   } else {
     // Leaving the builder shouldn't lose a change typed a moment ago.

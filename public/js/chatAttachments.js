@@ -143,6 +143,16 @@ function render() {
 // Adding files
 // ---------------------------------------------------------------------------
 
+// A typed message can't be longer than this (the server's limit, less room for anything H1 adds).
+export const LONG_TEXT_CHARS = 3800;
+
+// Long text becomes a file attachment. Code gets a name that says so, so the chip reads right.
+export function attachText(text) {
+  const looksLikeCode = /^\s*(def |class |import |from \S+ import |function |const |let |#include|<\w+|public )/m.test(text);
+  const name = looksLikeCode ? "Pasted code.txt" : "Pasted text.txt";
+  return addFiles([new File([text], name, { type: "text/plain" })]);
+}
+
 export async function addFiles(fileList) {
   const files = [...fileList].filter(Boolean);
   if (files.length === 0) return;
@@ -404,8 +414,9 @@ export function initChatAttachments({ onChange } = {}) {
     });
   });
 
-  // Paste: files on the clipboard (a copied screenshot is one) become attachments; plain text
-  // pastes are left completely alone.
+  // Paste: files on the clipboard (a copied screenshot is one) become attachments. Text is
+  // left alone — unless it's too long to send as a message, in which case it's attached as a
+  // file instead of being cut off or rejected.
   if (els.input) {
     els.input.addEventListener("paste", (e) => {
       const cd = e.clipboardData;
@@ -419,7 +430,15 @@ export function initChatAttachments({ onChange } = {}) {
           }
         });
       }
-      if (files.length === 0) return;
+      if (files.length === 0) {
+        const text = cd.getData("text/plain") || "";
+        const selected = els.input.selectionEnd - els.input.selectionStart;
+        if (els.input.value.length - selected + text.length <= LONG_TEXT_CHARS) return;
+        e.preventDefault();
+        attachText(text);
+        showToast("That paste is long, so it's attached as a file — nothing gets cut off. Add your question and send.", "success", 3800);
+        return;
+      }
       e.preventDefault();
       addFiles(files);
     });

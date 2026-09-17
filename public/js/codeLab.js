@@ -4,8 +4,12 @@
 // from real checks against the real output (see codeCurriculum.js), never from asking a
 // model whether the answer looks right — a green tick that doesn't mean anything is worse
 // than no tick at all.
-import { TRACKS, getTrack, getLesson, getAllLessons } from "./codeCurriculum.js";
+import { TRACKS, getTrack, getLesson, getAllLessons, isPythonTrack } from "./codeCurriculum.js";
 import { createRunner } from "./codeRunner.js";
+import { createCodeEditor } from "./codeEditor.js";
+import { renderPythonCourse, renderPythonLesson, disposePythonLesson } from "./pythonLesson.js";
+import { selectSubtabInView } from "./subtabs.js";
+import { showChallengeList } from "./challengesView.js";
 import {
   getLessonState,
   isComplete,
@@ -66,6 +70,12 @@ function filesFor(lesson) {
   return ["html", "css", "js"].filter((k) => set.has(k));
 }
 
+const FILE_LABEL = { html: "HTML", css: "CSS", js: "JS" };
+
+function trackLabel(trackId) {
+  return (TRACKS.find((t) => t.id === trackId) || {}).label || trackId;
+}
+
 function currentCode() {
   return {
     html: editors.html ? editors.html.value : "",
@@ -74,6 +84,26 @@ function currentCode() {
   };
 }
 
+// The Python course and the web tracks share the track list, but Python has its own screens
+// (pythonLesson.js). These are the ways out of them.
+const pythonNav = {
+  backToTracks: () => {
+    view = { screen: "tracks", trackId: null, lessonId: null };
+    render();
+  },
+  backToCourse: () => {
+    view = { screen: "lessons", trackId: "py", lessonId: null };
+    render();
+  },
+  openLesson: (id) => {
+    view = { screen: "lesson", trackId: "py", lessonId: id };
+    render();
+    const top = document.getElementById("view-code");
+    if (top) top.scrollIntoView({ block: "start" });
+  },
+  openChallenges: () => showChallengeList(),
+};
+
 // ---------------------------------------------------------------------------
 // Track list
 // ---------------------------------------------------------------------------
@@ -81,14 +111,15 @@ function currentCode() {
 function renderTracks() {
   root.innerHTML = "";
 
-  const overall = getOverallProgress(getAllLessons());
+  const all = getAllLessons();
+  const overall = getOverallProgress(all);
   const head = el("div", "code-hero");
   head.appendChild(el("h2", null, "Learn to code"));
   head.appendChild(
     el(
       "p",
       "code-hero-sub",
-      "Three tracks, twenty-four lessons. You write real code, H1 runs it for real, and the ticks come from checking what your code actually did — not from guessing whether it looks right."
+      `${TRACKS.length} tracks — ${TRACKS.map((t) => t.label).join(", ").replace(/, ([^,]*)$/, " and $1")} — and ${all.length} lessons. You write real code, H1 runs it for real, and the ticks come from checking what your code actually did, not from guessing whether it looks right.`
     )
   );
   if (overall.done > 0) {
@@ -105,7 +136,7 @@ function renderTracks() {
   TRACKS.forEach((t) => {
     const lessons = getTrack(t.id);
     const p = getTrackProgress(lessons);
-    const card = el("button", "code-track-card");
+    const card = el("button", `code-track-card${isPythonTrack(t.id) ? " is-python" : ""}`);
     card.type = "button";
     card.appendChild(el("div", "code-track-icon", t.icon));
     card.appendChild(el("h3", null, t.label));
@@ -190,28 +221,18 @@ function renderLessonList() {
 function editorFor(file, value) {
   const wrap = el("div", "code-editor-pane");
   wrap.dataset.file = file;
-  const ta = el("textarea", "code-editor");
-  ta.value = value || "";
-  ta.spellcheck = false;
-  ta.setAttribute("aria-label", `${file.toUpperCase()} editor`);
-  ta.addEventListener("keydown", (e) => {
-    // Tab indents instead of leaving the editor — in a code box that's what it should do.
-    // Shift+Tab still moves focus out, so the editor never becomes a keyboard trap.
-    if (e.key === "Tab" && !e.shiftKey) {
-      e.preventDefault();
-      const start = ta.selectionStart;
-      const end = ta.selectionEnd;
-      ta.value = ta.value.slice(0, start) + "  " + ta.value.slice(end);
-      ta.selectionStart = ta.selectionEnd = start + 2;
-    }
-  });
   let saveTimer = null;
-  ta.addEventListener("input", () => {
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => saveDraft(view.lessonId, currentCode()), 400);
+  const ed = createCodeEditor({
+    value: value || "",
+    language: file === "js" ? "javascript" : file,
+    ariaLabel: `${FILE_LABEL[file] || file.toUpperCase()} editor`,
+    onInput: () => {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => saveDraft(view.lessonId, currentCode()), 400);
+    },
   });
-  wrap.appendChild(ta);
-  editors[file] = ta;
+  wrap.appendChild(ed.root);
+  editors[file] = ed.textarea;
   return wrap;
 }
 
@@ -286,7 +307,7 @@ function renderLesson() {
   const tabsRow = el("div", "code-file-tabs");
   const panes = [];
   files.forEach((f) => {
-    const tab = el("button", "code-file-tab", f.toUpperCase());
+    const tab = el("button", "code-file-tab", FILE_LABEL[f] || f.toUpperCase());
     tab.type = "button";
     tab.dataset.file = f;
     tabsRow.appendChild(tab);
@@ -345,6 +366,7 @@ function renderLesson() {
 
 async function doRun(lesson, resultHost, previewHost, consoleHost, withChecks, quiet) {
   const code = currentCode();
+
   if (!runner) runner = createRunner(previewHost);
 
   if (!withChecks) {
@@ -428,7 +450,7 @@ function renderResults(host, lesson, res, outcome) {
         })
       );
     } else {
-      row.appendChild(el("span", "code-result-note", `That's the whole ${lesson.track.toUpperCase()} track finished.`));
+      row.appendChild(el("span", "code-result-note", `That's the whole ${trackLabel(lesson.track)} track finished.`));
       row.appendChild(
         button("Back to tracks", "btn btn-ghost", () => {
           view = { screen: "tracks", trackId: null, lessonId: null };
@@ -452,7 +474,7 @@ async function askForHint(lesson, host, reexplain) {
   const failing = (lastCheckResults || []).filter((c) => !c.passed).map((c) => c.label);
 
   const message = reexplain
-    ? `I'm learning ${lesson.track.toUpperCase()}. Explain this idea to me in a different way, with a small example:\n\n` +
+    ? `I'm learning ${trackLabel(lesson.track)}. Explain this idea to me in a different way, with a small example:\n\n` +
       `Lesson: ${lesson.title}\n${lesson.goal}\n\n${lesson.concept}`
     : `I'm stuck on a coding exercise. Give me ONE specific hint that points at what to change — do NOT write the ` +
       `solution for me, and do not paste corrected code.\n\n` +
@@ -484,12 +506,20 @@ async function askForHint(lesson, host, reexplain) {
 
 function render() {
   if (!root) return;
+  disposePythonLesson();
   if (view.screen === "tracks") return renderTracks();
+  if (isPythonTrack(view.trackId)) {
+    if (view.screen === "lessons") return renderPythonCourse(root, pythonNav);
+    return renderPythonLesson(root, view.lessonId, pythonNav);
+  }
   if (view.screen === "lessons") return renderLessonList();
   return renderLesson();
 }
 
 export function renderCodeLab() {
+  // Coming back to Code Lab shouldn't restart an open Python lesson (and stop whatever it was
+  // running); the course page is re-rendered so its progress is current.
+  if (view.screen === "lesson" && isPythonTrack(view.trackId) && root.querySelector(".pyw")) return;
   render();
 }
 
@@ -502,4 +532,14 @@ export function initCodeLab() {
 export function openTrack(trackId) {
   view = { screen: "lessons", trackId, lessonId: null };
   render();
+}
+
+// For search and the command palette: straight into one lesson.
+export function openLessonById(lessonId) {
+  const lesson = getLesson(lessonId);
+  if (!lesson) return false;
+  selectSubtabInView("code", "learn");
+  view = { screen: "lesson", trackId: lesson.track, lessonId: lesson.id };
+  render();
+  return true;
 }

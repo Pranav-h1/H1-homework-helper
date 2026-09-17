@@ -327,6 +327,7 @@ export function saveQuickNote(title, body, folder) {
   logEvent("note_created");
   renderFolderChips();
   renderList();
+  return note;
 }
 
 window.addEventListener("h1:note-selected", (e) => {

@@ -65,9 +65,12 @@ export function renderMarkdown(raw) {
   // Pull fenced code blocks out first, on their own guaranteed line, so nothing
   // else in this function reformats their contents.
   const blocks = [];
-  const withBlocksExtracted = text.replace(/```([a-zA-Z0-9]*)\n?([\s\S]*?)```/g, function (_m, _lang, code) {
+  const withBlocksExtracted = text.replace(/```([a-zA-Z0-9+#-]*)\n?([\s\S]*?)```/g, function (_m, lang, code) {
     const idx = blocks.length;
-    blocks.push("<pre><code>" + code.replace(/\n$/, "") + "</code></pre>");
+    // The fence's language survives as a data attribute so code blocks can be highlighted and
+    // labelled after rendering (see codeBlocks.js). Restricted to a safe character set.
+    const safeLang = (lang || "").toLowerCase().replace(/[^a-z0-9+#-]/g, "").slice(0, 20);
+    blocks.push('<pre data-lang="' + safeLang + '"><code>' + code.replace(/\n$/, "") + "</code></pre>");
     return "\n" + BLOCK_TOKEN_PREFIX + idx + "\n";
   });
 

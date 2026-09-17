@@ -4,7 +4,9 @@ import { showToast } from "./toast.js";
 import { sendChat, friendlyErrorMessage } from "./api.js";
 import { appState, AI_MODES, setMode, onModeChange } from "./state.js";
 import { switchView } from "./nav.js";
-import { confirmDanger, promptForText } from "./modal.js";
+import { confirmDanger, promptForText, openListPicker } from "./modal.js";
+import { generatePracticeFromSource } from "./moreTools.js";
+import { getProjects as getStudyProjects, linkNote } from "./projectsStore.js";
 import { logEvent } from "./progress.js";
 import {
   ensureActiveConversation,
@@ -19,7 +21,7 @@ import {
   toggleConversationFavorite,
 } from "./conversations.js";
 import { setChatContextConversation, consumeContextPrefix, consumeBrainPrefix } from "./chatContext.js";
-import { tryHandleAiCommand, resolveSlashCommand, SLASH_COMMANDS } from "./aiCommands.js";
+import { tryHandleAiCommand, resolveSlashCommand, longCommandPrompt, commandPromptForAttachments, SLASH_COMMANDS } from "./aiCommands.js";
 import { isSupported as isSpeechSupported, toggleReadAloud, stopSpeaking } from "./readAloud.js";
 import { saveQuickNote } from "./notes.js";
 import { prefillStudyPlan } from "./planner.js";
@@ -31,9 +33,12 @@ import {
   isReading,
   commitAttachments,
   defaultPromptFor,
+  attachText,
+  LONG_TEXT_CHARS,
 } from "./chatAttachments.js";
 import { getFile, deleteFilesForConversation, clearAllFiles, isPersistent } from "./fileStore.js";
 import { formatBytes } from "./fileReaders.js";
+import { decorateCodeBlocks } from "./codeBlocks.js";
 
 const chatTitle = document.getElementById("chatTitle");
 const chatLog = document.getElementById("chatLog");
@@ -172,6 +177,40 @@ function handleAction(action, index) {
   }
 
   if (action === "simpler") return sendFollowUp("Can you explain your last answer more simply?");
+  if (action === "detailed") return sendFollowUp("Can you go into more detail on that? Cover the underlying idea, why it works, and walk me through a worked example.");
+
+  if (action === "practice") {
+    // The answer itself is the source, so the questions test what was just explained rather
+    // than the topic in general.
+    generatePracticeFromSource(topicFromIndex(index).slice(0, 120), msg.content.slice(0, 3900));
+    showToast("Writing practice questions from this answer…", "success", 2400);
+    return;
+  }
+
+  if (action === "project") {
+    const projects = getStudyProjects();
+    openListPicker(
+      "Add this answer to a project",
+      projects.map((p) => ({
+        id: p.id,
+        icon: "📁",
+        label: p.title,
+        sublabel: [p.deadline ? `Due ${p.deadline}` : "", `${(p.linkedNoteIds || []).length} linked note${(p.linkedNoteIds || []).length === 1 ? "" : "s"}`].filter(Boolean).join(" · "),
+      })),
+      (projectId) => {
+        const project = projects.find((p) => p.id === projectId);
+        const note = saveQuickNote(topicFromIndex(index).slice(0, 60) || "From AI Tutor", msg.content, "Projects");
+        if (!note || !project) {
+          showToast("Couldn't add it to that project.", "error", 2600);
+          return;
+        }
+        linkNote(projectId, note.id);
+        showToast(`Saved as a note and linked to "${project.title}".`, "success", 2800);
+      },
+      "You don't have any projects yet. Create one in Projects, then add answers to it from here."
+    );
+    return;
+  }
   if (action === "shorter") return sendFollowUp("Can you make your last answer shorter and more to the point?");
   if (action === "example") return sendFollowUp("Can you give a concrete example for that?");
   if (action === "harder") return sendFollowUp("Can you give me a harder, more challenging version of this?");
@@ -249,6 +288,7 @@ function buildMessagePopover(msg, index, isLast) {
     [
       ["Regenerate", "regenerate"],
       ["Explain simpler", "simpler"],
+      ["Make more detailed", "detailed"],
       ["Make shorter", "shorter"],
       ["Give example", "example"],
       ["Make harder", "harder"],
@@ -256,7 +296,12 @@ function buildMessagePopover(msg, index, isLast) {
       ["Improve this answer", "improve"],
     ].forEach(([label, action]) => {
       const btn = actionButton(label, action);
-      btn.addEventListener("click", () => handleAction(action, index));
+      btn.addEventListener("click", () => {
+        // The menu closes once something is chosen; the action's own toast or view change is
+        // the feedback.
+        popover.hidden = true;
+        handleAction(action, index);
+      });
       popover.appendChild(btn);
     });
   }
@@ -264,12 +309,19 @@ function buildMessagePopover(msg, index, isLast) {
   [
     ["Add to Notes", "notes"],
     ["💾 Save to Vault", "vault"],
+    ["Add to Project", "project"],
     ["Add to Study Plan", "plan"],
+    ["Create practice questions", "practice"],
     ["Turn into quiz", "quiz"],
     ["Make flashcards", "flashcards"],
   ].forEach(([label, action]) => {
     const btn = actionButton(label, action);
-    btn.addEventListener("click", () => handleAction(action, index));
+    btn.addEventListener("click", () => {
+        // The menu closes once something is chosen; the action's own toast or view change is
+        // the feedback.
+        popover.hidden = true;
+        handleAction(action, index);
+      });
     popover.appendChild(btn);
   });
 
@@ -395,6 +447,7 @@ function renderMessage(msg, index, isLast) {
   bubble.className = "bubble";
   if (msg.role === "assistant") {
     bubble.innerHTML = renderMarkdown(msg.content);
+    decorateCodeBlocks(bubble);
   } else {
     const text = document.createElement("div");
     text.className = "bubble-text";
@@ -632,6 +685,7 @@ export async function sendMessage(text) {
   }
   clearAttachments();
   if (!outgoing) outgoing = defaultPromptFor(refs);
+  else outgoing = commandPromptForAttachments(outgoing) || outgoing;
   if (!isPersistent()) {
     showToast("Your browser isn't letting H1 store files, so these attachments will only last until you reload.", "error", 4200);
   }
@@ -668,6 +722,15 @@ chatForm.addEventListener("submit", (e) => {
   if (!text && !hasAttachments()) return;
   messageInput.value = "";
   autoGrow(messageInput);
+  // Too long for a message (typed, or dropped in some way the paste handler didn't see): send
+  // it as an attached file rather than have the server turn it away.
+  if (text.length > LONG_TEXT_CHARS) {
+    // "/debug <a long program>" keeps its meaning: the program is attached, the command's
+    // instruction is the message.
+    const long = longCommandPrompt(text);
+    attachText(long ? long.body : text).then(() => sendMessage(long ? long.prompt : ""));
+    return;
+  }
   sendMessage(text);
 });
 

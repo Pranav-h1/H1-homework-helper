@@ -12,6 +12,9 @@ import { QUOTES } from "./quotesData.js";
 import { showToast } from "./toast.js";
 import { getBrainState, getMission, invalidateBrain } from "./secondBrain.js";
 import { getCompletedCount } from "./missionStore.js";
+import { getCodingSummary } from "./codingSummary.js";
+import { openTrack, openLessonById } from "./codeLab.js";
+import { showChallengeList } from "./challengesView.js";
 
 const heroStatStrip = document.getElementById("heroStatStrip");
 const bentoBrain = document.getElementById("bentoBrain");
@@ -21,6 +24,7 @@ const bentoDeadline = document.getElementById("bentoDeadline");
 const bentoNote = document.getElementById("bentoNote");
 const bentoQuiz = document.getElementById("bentoQuiz");
 const bentoFocus = document.getElementById("bentoFocus");
+const bentoCode = document.getElementById("bentoCode");
 const dailyInspirationText = document.getElementById("dailyInspirationText");
 const dailyInspirationFavBtn = document.getElementById("dailyInspirationFavBtn");
 const dailyInspirationCopyBtn = document.getElementById("dailyInspirationCopyBtn");
@@ -242,6 +246,39 @@ function renderQuiz(stats) {
   };
 }
 
+// Coding progress from the Code Lab stores. Before any coding activity it's an invitation, and
+// it never shows a number that isn't a real count.
+function renderCode() {
+  if (!bentoCode) return;
+  const s = getCodingSummary();
+  const py = s.python;
+  if (!s.hasActivity) {
+    bentoCode.innerHTML = tileContent(
+      "🐍 Code Lab",
+      "Learn Python from zero",
+      `${py.total} lessons and ${s.challenges.total} challenges — H1 runs your real code and checks it.`,
+      "Start coding"
+    );
+    bentoCode.setAttribute("aria-label", "Code Lab: start the Python course");
+    bentoCode.onclick = () => {
+      switchView("code");
+      openTrack("py");
+    };
+    return;
+  }
+  const title = py.next ? `Next: ${py.next.title}` : "Python course complete";
+  const sub = `Python ${py.done}/${py.total} lessons · ${s.challenges.solved}/${s.challenges.total} challenges solved`;
+  bentoCode.innerHTML =
+    tileContent("🐍 Coding", title, sub, py.next ? "Continue" : "Try a challenge") +
+    `<div class="bento-code-bar" aria-hidden="true"><span style="width:${Math.max(0, Math.min(100, py.pct))}%"></span></div>`;
+  bentoCode.setAttribute("aria-label", `Coding: ${title}. ${sub}`);
+  bentoCode.onclick = () => {
+    switchView("code");
+    if (py.next) openLessonById(py.next.id);
+    else showChallengeList();
+  };
+}
+
 function renderFocus() {
   if (!bentoFocus) return;
   bentoFocus.innerHTML = `
@@ -290,12 +327,26 @@ export function renderHomeWidget() {
   renderDeadline();
   renderNote();
   renderQuiz(stats);
+  renderCode();
   renderFocus();
   renderDailyInspiration();
 }
 
 export function initHomeWidgets() {
   renderHomeWidget();
+  // The tiles are clickable cards; this makes each one reachable and usable from the keyboard
+  // too, the way a button would be.
+  document.querySelectorAll(".bento-tile.clickable").forEach((tile) => {
+    tile.setAttribute("role", "button");
+    tile.tabIndex = 0;
+    tile.addEventListener("keydown", (e) => {
+      if (e.target !== tile) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        tile.click();
+      }
+    });
+  });
 }
 
 // Kept for main.js compatibility — the bento tiles above already fold in the

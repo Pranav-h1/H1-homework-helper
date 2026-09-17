@@ -184,3 +184,12 @@ startBtn.addEventListener("click", startSession);
 export function initStudyMode() {
   renderSuggestions();
 }
+
+// For "/study <topic>": fills in what the session is for, and leaves starting it to the student
+// so the timer never runs without them choosing to begin.
+export function prefillStudySession(task) {
+  if (!taskInput) return;
+  if (runningWrap && !runningWrap.hidden) return;
+  if (task) taskInput.value = String(task).slice(0, 120);
+  requestAnimationFrame(() => (task ? startBtn : taskInput).focus());
+}

@@ -22,6 +22,7 @@ import { loadConversations } from "./conversations.js";
 import { getXP, getLevel } from "./gamification.js";
 import { matchesCurrentSpace } from "./spacesStore.js";
 import { SUBJECT_LABELS } from "./state.js";
+import { codingContextLines, codingSignature } from "./codingSummary.js";
 
 const DAY_MS = 86400000;
 
@@ -1017,6 +1018,8 @@ export function buildAiContext({ maxChars = AI_CONTEXT_MAX_CHARS } = {}) {
   const patterns = getMistakePatterns().slice(0, 4);
   if (patterns.length > 0) lines.push(`Repeated mistakes: ${patterns.map((p) => `${p.topic} (${p.count})`).join("; ")}.`);
 
+  codingContextLines().forEach((line) => lines.push(line));
+
   const top = state.signals.slice(0, 3);
   if (top.length > 0) lines.push(`H1's current priorities for them: ${top.map((x) => x.title).join("; ")}.`);
 
@@ -1056,6 +1059,7 @@ export function getContextSignature() {
     `cards:${Math.floor(state.counts.cardsDue / 10)}`,
     getMistakePatterns().map((p) => `${p.topic}:${p.count}`).join(","),
     state.signals.slice(0, 3).map((s) => s.id).join(","),
+    codingSignature(),
   ];
   return parts.join("|");
 }

@@ -1,20 +1,28 @@
-// The Code Lab curriculum: three tracks, twenty-four lessons, all hand-written.
+// The Code Lab curriculum: the three web tracks, plus the Python course from pythonCurriculum.js.
+// All hand-written.
 //
 // Deliberately not AI-generated. A generated lesson can't come with a check that actually
 // verifies the student did the thing — you'd either have to trust the model's own marking or
 // show a tick that means nothing. Every exercise here has real checks that run against the
 // student's real output, so "passed" means passed.
 //
-// A check's `body` is JavaScript evaluated INSIDE the sandboxed preview frame, with:
+// For the three web tracks, a check's `body` is JavaScript evaluated INSIDE the sandboxed
+// preview frame, with:
 //   document — the page the student's code actually produced
 //   logs     — array of console output lines
 //   output   — the same lines joined with newlines
-// It must return true to pass. `hint` is shown only when it fails.
+// It must return true to pass.
+//
+// The Python track runs on a different engine entirely, so its checks are Python expressions
+// instead — see pythonCurriculum.js. `hint` is shown only when a check fails.
+
+import { PY_LESSONS } from "./pythonCurriculum.js";
 
 export const TRACKS = [
   { id: "html", label: "HTML", icon: "🧱", blurb: "The structure of every web page — headings, lists, links, forms." },
   { id: "css", label: "CSS", icon: "🎨", blurb: "How pages look — colour, spacing, layout, and making it work on phones." },
   { id: "js", label: "JavaScript", icon: "⚡", blurb: "Making pages think and react — logic, data, and responding to clicks." },
+  { id: "py", label: "Python", icon: "🐍", blurb: "Real Python in your browser — from your first print() to complete projects, in six levels.", lang: "python" },
 ];
 
 const HTML_LESSONS = [
@@ -601,7 +609,11 @@ const JS_LESSONS = [
   },
 ];
 
-const BY_TRACK = { html: HTML_LESSONS, css: CSS_LESSONS, js: JS_LESSONS };
+// --- Python -----------------------------------------------------------------
+// The Python course lives in its own file (pythonCurriculum.js): it's six levels long and its
+// checks are Python expressions run on real CPython, not JavaScript run in the preview frame.
+
+const BY_TRACK = { html: HTML_LESSONS, css: CSS_LESSONS, js: JS_LESSONS, py: PY_LESSONS };
 
 // Lesson n is unlocked once lesson n-1 is complete. Not artificial gating: each lesson's
 // exercise assumes the previous one's concept, so letting someone start at Grid before
@@ -623,3 +635,9 @@ export function getAllLessons() {
 }
 
 export const LESSON_XP = 15;
+
+// Python runs on a completely different engine from the web tracks (a CPython worker rather
+// than a preview iframe), and its checks are Python rather than JavaScript. One place to ask.
+export function isPythonTrack(trackId) {
+  return trackId === "py";
+}
