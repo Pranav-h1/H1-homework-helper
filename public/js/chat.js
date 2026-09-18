@@ -179,7 +179,11 @@ function initScrollBehaviour() {
   });
   chatLog.insertAdjacentElement("afterend", jumpBtn);
 
+  // Only scrolling UP means "I've stopped following, I'm reading something earlier". A scroll
+  // that moves down — including H1's own glide to a new message, which passes through
+  // not-quite-at-the-bottom positions on the way — must never switch following off.
   let ticking = false;
+  let lastTop = chatLog.scrollTop;
   chatLog.addEventListener(
     "scroll",
     () => {
@@ -187,8 +191,14 @@ function initScrollBehaviour() {
       ticking = true;
       requestAnimationFrame(() => {
         ticking = false;
-        followOutput = isNearBottom();
-        if (followOutput) unreadReply = false;
+        const top = chatLog.scrollTop;
+        if (isNearBottom()) {
+          followOutput = true;
+          unreadReply = false;
+        } else if (top < lastTop - 2) {
+          followOutput = false;
+        }
+        lastTop = top;
         updateJumpButton();
       });
     },

@@ -11,21 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
-<script>
-  // Applied before first paint to avoid a flash of the wrong theme.
-  (function () {
-    try {
-      var stored = localStorage.getItem("h1-theme") || "dark";
-      var resolved = stored;
-      if (stored === "system") {
-        resolved = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-      }
-      document.documentElement.setAttribute("data-theme", resolved === "light" ? "light" : "dark");
-    } catch (e) {
-      document.documentElement.setAttribute("data-theme", "dark");
-    }
-  })();
-</script>
+<script src="js/theme-init.js"></script>
 </head>
 <body>
   <div class="desktop-atmosphere" aria-hidden="true">
@@ -2289,6 +2275,14 @@
     </div>
   </div>
 
-  <script type="module" src="js/main.js"></script>
+  <div id="bootError" class="boot-error" role="alertdialog" aria-labelledby="bootErrorTitle" aria-describedby="bootErrorText" hidden>
+    <div class="boot-error-card">
+      <div class="boot-error-mark" aria-hidden="true">H1</div>
+      <h2 id="bootErrorTitle">H1 couldn't finish loading</h2>
+      <p id="bootErrorText">Part of the app didn't arrive — usually a brief network hiccup. Your data is safe.</p>
+      <button id="bootErrorRetry" class="btn btn-primary" type="button">Try again</button>
+    </div>
+  </div>
+  <script type="module" src="js/boot.js"></script>
 </body>
 </html>

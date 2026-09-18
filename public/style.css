@@ -12010,3 +12010,54 @@ html.force-reduced-motion .chat-jump {
     padding: 7px;
   }
 }
+
+/* --- Startup failure screen (boot.js) ------------------------------------------------------- */
+.boot-error {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.boot-error[hidden] {
+  display: none;
+}
+
+.boot-error-card {
+  max-width: 380px;
+  padding: 28px 26px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  background: var(--glass-elevated-bg);
+  border: 1px solid var(--glass-elevated-border);
+  box-shadow: var(--glass-floating-shadow);
+}
+
+.boot-error-mark {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--accent-grad);
+  color: var(--accent-contrast);
+  font: 800 18px/1 var(--font-display);
+}
+
+.boot-error-card h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 19px;
+}
+
+.boot-error-card p {
+  margin: 0 0 18px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
