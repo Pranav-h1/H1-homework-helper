@@ -921,7 +921,7 @@ app.post("/api/exam-plan", async (req, res) => {
   }
 });
 
-app.listen(PORT, "0.0.0.0", () => {
+const server = app.listen(PORT, "0.0.0.0", () => {
   console.log(`H1 Homework Helper running on port ${PORT}`);
   const status = getProviderStatus();
   if (status.configured) {
@@ -930,3 +930,12 @@ app.listen(PORT, "0.0.0.0", () => {
     console.log("AI provider: none configured — chat will show a friendly setup message until one is set.");
   }
 });
+
+// Render (and Cloudflare in front of it) keep idle connections to this server open and reuse
+// them. Node's default keep-alive timeout is only 5 seconds, so the proxy would sometimes send a
+// request down a connection Node was in the middle of closing — that request failed with a 520,
+// and since the page loads ~90 separate script modules at once, roughly one page load in eight
+// lost a module and never finished starting. Keeping idle connections open longer than the
+// proxy does removes the race. (headersTimeout must be larger than keepAliveTimeout.)
+server.keepAliveTimeout = 120 * 1000;
+server.headersTimeout = 125 * 1000;
