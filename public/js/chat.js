@@ -84,8 +84,122 @@ function persist() {
   }
 }
 
-function scrollChatToBottom() {
-  if (autoScrollEnabled()) chatLog.scrollTop = chatLog.scrollHeight;
+/* ---------------------------------------------------------
+   Scrolling
+   The log is the one scroll region. It follows new output only while the student is already
+   at the bottom; if they've scrolled up to read, nothing moves and a "New reply" pill appears
+   instead. A long answer is revealed from its first line, not its last.
+   --------------------------------------------------------- */
+const NEAR_BOTTOM_PX = 140;
+let followOutput = true;
+let unreadReply = false;
+let jumpBtn = null;
+
+function prefersReducedMotion() {
+  return document.documentElement.classList.contains("force-reduced-motion") || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function distanceFromBottom() {
+  return chatLog.scrollHeight - chatLog.scrollTop - chatLog.clientHeight;
+}
+
+function isNearBottom() {
+  return distanceFromBottom() < NEAR_BOTTOM_PX;
+}
+
+function scrollLogTo(top, smooth) {
+  chatLog.scrollTo({ top, behavior: smooth && !prefersReducedMotion() ? "smooth" : "auto" });
+}
+
+function scrollChatToBottom(smooth = false) {
+  if (!autoScrollEnabled()) return;
+  scrollLogTo(chatLog.scrollHeight, smooth);
+  followOutput = true;
+  unreadReply = false;
+  updateJumpButton();
+}
+
+// A new answer: show it from the top if it's taller than most of the screen, otherwise just
+// bring it fully into view.
+function revealAnswer(row) {
+  if (!autoScrollEnabled() || !followOutput) {
+    unreadReply = true;
+    updateJumpButton();
+    return;
+  }
+  const tall = row.offsetHeight > chatLog.clientHeight * 0.7;
+  // Reading a long answer from its top means deliberately leaving the bottom — stop following,
+  // or the next size change (maths being typeset) would drag the view back down.
+  if (tall) followOutput = false;
+  scrollLogTo(tall ? row.offsetTop - 12 : chatLog.scrollHeight, true);
+  unreadReply = false;
+  updateJumpButton();
+}
+
+// Messages change height after they're drawn — maths is typeset when KaTeX arrives (often in the
+// very frame a reply is appended), images decode. While following the conversation, stay pinned
+// to the bottom through that growth; landing exactly on the newest line matters more than
+// finishing a smooth-scroll that was aimed at the old, shorter height.
+const rowObserver =
+  typeof ResizeObserver !== "undefined"
+    ? new ResizeObserver(() => {
+        if (followOutput && autoScrollEnabled() && distanceFromBottom() > 1) chatLog.scrollTop = chatLog.scrollHeight;
+      })
+    : null;
+
+function watchRow(row) {
+  if (rowObserver) rowObserver.observe(row);
+}
+
+function updateJumpButton() {
+  if (!jumpBtn) return;
+  const far = distanceFromBottom() > Math.max(240, chatLog.clientHeight * 0.4);
+  const show = far || (unreadReply && !isNearBottom());
+  jumpBtn.hidden = !show;
+  jumpBtn.querySelector("span").textContent = unreadReply ? "New reply" : "Jump to latest";
+  jumpBtn.classList.toggle("has-unread", unreadReply);
+}
+
+function initScrollBehaviour() {
+  chatLog.tabIndex = 0;
+  chatLog.setAttribute("aria-label", "Conversation");
+  jumpBtn = document.createElement("button");
+  jumpBtn.type = "button";
+  jumpBtn.className = "chat-jump";
+  jumpBtn.hidden = true;
+  jumpBtn.innerHTML =
+    '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg><span>Jump to latest</span>';
+  jumpBtn.addEventListener("click", () => {
+    // Animating through thousands of pixels of conversation isn't a jump; only glide when the
+    // latest message is close.
+    scrollLogTo(chatLog.scrollHeight, distanceFromBottom() < chatLog.clientHeight * 3);
+    unreadReply = false;
+    followOutput = true;
+    updateJumpButton();
+  });
+  chatLog.insertAdjacentElement("afterend", jumpBtn);
+
+  let ticking = false;
+  chatLog.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        followOutput = isNearBottom();
+        if (followOutput) unreadReply = false;
+        updateJumpButton();
+      });
+    },
+    { passive: true }
+  );
+
+  // The pill sits just above the composer, whatever height the composer currently is.
+  const chatMain = chatLog.parentElement;
+  if (typeof ResizeObserver !== "undefined" && chatMain) {
+    new ResizeObserver(() => chatMain.style.setProperty("--composer-h", `${chatForm.offsetHeight}px`)).observe(chatForm);
+  }
 }
 
 function updateEmptyState() {
@@ -101,15 +215,13 @@ function formatTime(ts) {
   }
 }
 
+// No avatar column: an answer is a full-width canvas and a question is a right-aligned bubble,
+// which already says who's speaking — the avatar only cost every message 42px of width.
 function buildMessageRow(role) {
   const row = document.createElement("div");
   row.className = `message ${role === "user" ? "user" : "ai"}`;
-  const avatar = document.createElement("div");
-  avatar.className = "avatar";
-  avatar.textContent = role === "user" ? "You" : "H1";
   const body = document.createElement("div");
   body.className = "message-body";
-  row.appendChild(avatar);
   row.appendChild(body);
   return { row, body };
 }
@@ -157,8 +269,7 @@ function topicFromIndex(index) {
 }
 
 function sendFollowUp(text) {
-  messages.push({ role: "user", content: text, ts: Date.now() });
-  persist();
+  addMessage("user", text);
   requestReply();
 }
 
@@ -252,14 +363,41 @@ function handleAction(action, index) {
 
 function closeAllPopovers(except) {
   document.querySelectorAll(".msg-popover").forEach((p) => {
-    if (p !== except) p.hidden = true;
+    if (p === except) return;
+    p.hidden = true;
+    const trigger = p.parentElement && p.parentElement.querySelector(".msg-more-btn[aria-haspopup]");
+    if (trigger) trigger.setAttribute("aria-expanded", "false");
   });
 }
 document.addEventListener("click", () => closeAllPopovers());
 
 // A contextual popover behind a single "•••" trigger, rather than a permanent row of
 // buttons on every AI message — keeps the conversation canvas calm (see H1 material system).
-function buildMessagePopover(msg, index, isLast) {
+const LAST_ANSWER_ACTIONS = [
+  ["Regenerate", "regenerate"],
+  ["Explain simpler", "simpler"],
+  ["Make more detailed", "detailed"],
+  ["Make shorter", "shorter"],
+  ["Give example", "example"],
+  ["Make harder", "harder"],
+  ["Give me a hint instead", "hint"],
+  ["Improve this answer", "improve"],
+];
+
+const ANY_ANSWER_ACTIONS = [
+  ["Add to Notes", "notes"],
+  ["💾 Save to Vault", "vault"],
+  ["Add to Project", "project"],
+  ["Add to Study Plan", "plan"],
+  ["Create practice questions", "practice"],
+  ["Turn into quiz", "quiz"],
+  ["Make flashcards", "flashcards"],
+];
+
+// The menu is built when it's opened, not when the message is drawn: whether this is still the
+// latest answer (which decides if "Regenerate" etc. apply) can change after it was rendered,
+// and a long conversation shouldn't carry a hidden menu of buttons per message.
+function buildMessagePopover(msg, index) {
   const wrap = document.createElement("div");
   wrap.className = "msg-popover-wrap";
 
@@ -267,6 +405,8 @@ function buildMessagePopover(msg, index, isLast) {
   trigger.type = "button";
   trigger.className = "msg-more-btn";
   trigger.setAttribute("aria-label", "Message actions");
+  trigger.setAttribute("aria-haspopup", "menu");
+  trigger.setAttribute("aria-expanded", "false");
   trigger.innerHTML =
     '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.4"></circle><circle cx="12" cy="12" r="1.4"></circle><circle cx="19" cy="12" r="1.4"></circle></svg>';
 
@@ -275,61 +415,41 @@ function buildMessagePopover(msg, index, isLast) {
   popover.hidden = true;
   popover.setAttribute("role", "menu");
 
-  const copyBtn = actionButton("Copy", "copy");
-  copyBtn.addEventListener("click", () => copyText(msg.content, copyBtn));
-  popover.appendChild(copyBtn);
+  const choose = (action) => () => {
+    // The menu closes once something is chosen; the action's own toast or view change is the
+    // feedback.
+    popover.hidden = true;
+    trigger.setAttribute("aria-expanded", "false");
+    handleAction(action, index);
+  };
 
-  const readBtn = actionButton(isSpeechSupported() ? "🔊 Read aloud" : "Read aloud unavailable", "read");
-  readBtn.disabled = !isSpeechSupported();
-  readBtn.addEventListener("click", () => toggleReadAloud(msg.content, readBtn));
-  popover.appendChild(readBtn);
+  function fill() {
+    popover.innerHTML = "";
+    const copyBtn = actionButton("Copy", "copy");
+    copyBtn.addEventListener("click", () => copyText(msg.content, copyBtn));
+    popover.appendChild(copyBtn);
 
-  if (isLast) {
-    [
-      ["Regenerate", "regenerate"],
-      ["Explain simpler", "simpler"],
-      ["Make more detailed", "detailed"],
-      ["Make shorter", "shorter"],
-      ["Give example", "example"],
-      ["Make harder", "harder"],
-      ["Give me a hint instead", "hint"],
-      ["Improve this answer", "improve"],
-    ].forEach(([label, action]) => {
+    const readBtn = actionButton(isSpeechSupported() ? "🔊 Read aloud" : "Read aloud unavailable", "read");
+    readBtn.disabled = !isSpeechSupported();
+    readBtn.addEventListener("click", () => toggleReadAloud(msg.content, readBtn));
+    popover.appendChild(readBtn);
+
+    const isLast = index === messages.length - 1;
+    [...(isLast ? LAST_ANSWER_ACTIONS : []), ...ANY_ANSWER_ACTIONS].forEach(([label, action]) => {
       const btn = actionButton(label, action);
-      btn.addEventListener("click", () => {
-        // The menu closes once something is chosen; the action's own toast or view change is
-        // the feedback.
-        popover.hidden = true;
-        handleAction(action, index);
-      });
+      btn.setAttribute("role", "menuitem");
+      btn.addEventListener("click", choose(action));
       popover.appendChild(btn);
     });
   }
-
-  [
-    ["Add to Notes", "notes"],
-    ["💾 Save to Vault", "vault"],
-    ["Add to Project", "project"],
-    ["Add to Study Plan", "plan"],
-    ["Create practice questions", "practice"],
-    ["Turn into quiz", "quiz"],
-    ["Make flashcards", "flashcards"],
-  ].forEach(([label, action]) => {
-    const btn = actionButton(label, action);
-    btn.addEventListener("click", () => {
-        // The menu closes once something is chosen; the action's own toast or view change is
-        // the feedback.
-        popover.hidden = true;
-        handleAction(action, index);
-      });
-    popover.appendChild(btn);
-  });
 
   trigger.addEventListener("click", (e) => {
     e.stopPropagation();
     const willOpen = popover.hidden;
     closeAllPopovers();
+    if (willOpen) fill();
     popover.hidden = !willOpen;
+    trigger.setAttribute("aria-expanded", String(willOpen));
   });
   popover.addEventListener("click", (e) => e.stopPropagation());
 
@@ -441,11 +561,12 @@ function openLightbox(url, label) {
   lightbox.querySelector(".image-lightbox-close").focus();
 }
 
-function renderMessage(msg, index, isLast) {
+function renderMessage(msg, index) {
   const { row, body } = buildMessageRow(msg.role);
   const bubble = document.createElement("div");
   bubble.className = "bubble";
   if (msg.role === "assistant") {
+    bubble.classList.add("answer");
     bubble.innerHTML = renderMarkdown(msg.content);
     decorateCodeBlocks(bubble);
   } else {
@@ -465,7 +586,26 @@ function renderMessage(msg, index, isLast) {
   footer.style.flexWrap = "wrap";
 
   if (msg.role === "assistant") {
-    footer.appendChild(buildMessagePopover(msg, index, isLast));
+    footer.className = "message-footer";
+    const quickCopy = document.createElement("button");
+    quickCopy.type = "button";
+    quickCopy.className = "msg-more-btn msg-copy-btn";
+    quickCopy.setAttribute("aria-label", "Copy answer");
+    quickCopy.title = "Copy answer";
+    quickCopy.innerHTML =
+      '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+    quickCopy.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(msg.content);
+        quickCopy.classList.add("copied");
+        showToast("Answer copied.", "success", 1600);
+        setTimeout(() => quickCopy.classList.remove("copied"), 1400);
+      } catch {
+        showToast("Couldn't copy to clipboard.", "error");
+      }
+    });
+    footer.appendChild(quickCopy);
+    footer.appendChild(buildMessagePopover(msg, index));
   }
 
   if (msg.ts) {
@@ -477,21 +617,33 @@ function renderMessage(msg, index, isLast) {
   body.appendChild(footer);
 
   chatLog.appendChild(row);
+  watchRow(row);
   return row;
 }
 
+// A full redraw — only for opening a conversation or when earlier messages changed. Everyday
+// sending and replying appends instead (see addMessage).
 function renderAllMessages() {
-  chatLog.querySelectorAll(".message").forEach((el) => el.remove());
-  messages.forEach((msg, i) => renderMessage(msg, i, i === messages.length - 1));
+  chatLog.querySelectorAll(".message").forEach((el) => {
+    if (rowObserver) rowObserver.unobserve(el);
+    el.remove();
+  });
+  // Redrawn messages don't replay the arrival animation — only genuinely new ones do.
+  messages.forEach((msg, i) => renderMessage(msg, i).classList.add("no-enter"));
   updateEmptyState();
+  unreadReply = false;
+  followOutput = true;
   scrollChatToBottom();
 }
 
 function addMessage(role, content, extra) {
   const msg = { role, content, ts: Date.now(), ...extra };
   messages.push(msg);
-  renderAllMessages();
+  const row = renderMessage(msg, messages.length - 1);
+  updateEmptyState();
   persist();
+  if (role === "assistant") revealAnswer(row);
+  else scrollChatToBottom(true);
   return msg;
 }
 
@@ -500,15 +652,19 @@ function showTyping() {
   row.id = "typingIndicator";
   const bubble = document.createElement("div");
   bubble.className = "bubble";
-  bubble.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span>';
+  bubble.innerHTML = '<span class="typing-dots" role="status" aria-label="H1 is writing a reply"><span></span><span></span><span></span></span>';
   body.appendChild(bubble);
   chatLog.appendChild(row);
-  scrollChatToBottom();
+  watchRow(row);
+  if (followOutput) scrollChatToBottom(true);
 }
 
 function hideTyping() {
   const el = document.getElementById("typingIndicator");
-  if (el) el.remove();
+  if (el) {
+    if (rowObserver) rowObserver.unobserve(el);
+    el.remove();
+  }
 }
 
 function showErrorBubble(text) {
@@ -533,7 +689,8 @@ function showErrorBubble(text) {
   body.appendChild(actions);
 
   chatLog.appendChild(row);
-  scrollChatToBottom();
+  watchRow(row);
+  if (followOutput) scrollChatToBottom(true);
 }
 
 function autoGrow(el) {
@@ -1058,6 +1215,7 @@ document.addEventListener("keydown", (e) => {
 window.addEventListener("h1:conversation-selected", loadActiveIntoView);
 
 export function initChat() {
+  initScrollBehaviour();
   initChatAttachments({
     onChange: () => {
       messageInput.placeholder = hasAttachments() || isReading()

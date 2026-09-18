@@ -77,6 +77,23 @@ export function decorateCodeBlocks(container, { runPython, runLabel = "Run in Co
       actions.appendChild(run);
     }
 
+    // Long lines scroll sideways by default (indentation stays exact); wrapping is one click
+    // away for reading on a small screen.
+    const longest = text.split("\n").reduce((m, l) => Math.max(m, l.length), 0);
+    if (longest > 70) {
+      const wrapBtn = document.createElement("button");
+      wrapBtn.type = "button";
+      wrapBtn.className = "code-block-btn";
+      wrapBtn.setAttribute("aria-pressed", "false");
+      wrapBtn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"></line><path d="M3 12h15a3 3 0 1 1 0 6h-4"></path><polyline points="16 16 14 18 16 20"></polyline><line x1="3" y1="18" x2="10" y2="18"></line></svg><span>Wrap</span>';
+      wrapBtn.addEventListener("click", () => {
+        const on = !wrap.classList.contains("is-wrapped");
+        wrap.classList.toggle("is-wrapped", on);
+        wrapBtn.setAttribute("aria-pressed", String(on));
+      });
+      actions.appendChild(wrapBtn);
+    }
+
     const copyBtn = document.createElement("button");
     copyBtn.type = "button";
     copyBtn.className = "code-block-btn";
@@ -86,6 +103,9 @@ export function decorateCodeBlocks(container, { runPython, runLabel = "Run in Co
     actions.appendChild(copyBtn);
 
     bar.appendChild(actions);
+    // Focusable, so a keyboard user can scroll a block that's wider than the screen.
+    pre.tabIndex = 0;
+    pre.setAttribute("aria-label", `${label.textContent} code`);
     pre.parentNode.insertBefore(wrap, pre);
     wrap.appendChild(bar);
     wrap.appendChild(pre);

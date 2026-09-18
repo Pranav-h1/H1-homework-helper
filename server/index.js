@@ -118,8 +118,17 @@ function modeContextLine(mode) {
   return instruction ? `\n\nActive mode — ${instruction}` : "";
 }
 
+// Quizzes, flashcards and the other generators show text as-is, so the base prompt keeps maths
+// in plain symbols. The tutor chat typesets LaTeX (KaTeX on the client), so there — and only
+// there — the model is asked for real LaTeX, which reads far better for fractions, powers,
+// roots and matrices.
+const MATH_PLAIN_RULE = "- For math, show the working clearly using plain symbols (×, ÷, +, −, =, √) instead of LaTeX code like \\times or $...$.";
+const MATH_LATEX_RULE =
+  "- For math, write expressions in LaTeX: inline maths between single dollar signs, like $x^2 + 3x = 10$, and important equations on their own line between double dollar signs, like $$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$. H1 typesets it. Never put prices or plain numbers in dollar signs — write money as words or with a currency code (e.g. 5 USD).";
+
 function buildChatSystemPrompt(subject, mode, language) {
-  return BASE_SYSTEM_PROMPT + subjectContextLine(subject) + modeContextLine(mode) + languageContextLine(language);
+  const base = BASE_SYSTEM_PROMPT.replace(MATH_PLAIN_RULE, MATH_LATEX_RULE);
+  return base + subjectContextLine(subject) + modeContextLine(mode) + languageContextLine(language);
 }
 
 function cleanLanguage(language) {
