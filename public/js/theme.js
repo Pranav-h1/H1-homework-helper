@@ -11,7 +11,19 @@ export function getStoredAccent() {
   return ACCENT_VALUES.includes(v) ? v : "purple";
 }
 
+// The theme and accent last shown on this device, read by early.js to paint the first frame
+// correctly. Written straight to this device's storage (not to an account), since it's only a
+// hint for the moment before an account's own settings have loaded.
+function rememberForFirstPaint(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Only a hint; without it the first frame may briefly show the default theme.
+  }
+}
+
 export function applyAccent(value) {
+  rememberForFirstPaint("h1-last-accent", value);
   // "purple" is the token defaults baked into :root, so it needs no [data-accent] override —
   // removing the attribute rather than setting data-accent="purple" keeps the CSS simpler.
   if (value === "purple") {
@@ -39,6 +51,7 @@ export function resolveTheme(pref) {
 export function applyTheme(pref) {
   const resolved = resolveTheme(pref);
   document.documentElement.setAttribute("data-theme", resolved);
+  rememberForFirstPaint("h1-last-theme", pref);
   return resolved;
 }
 
