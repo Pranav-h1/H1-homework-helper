@@ -31,6 +31,22 @@
     root.className = root.className.replace(/(^|\s)h1-gate(?=\s|$)/, "");
   }, 8000);
 
+  // Ask who's signed in straight away, in parallel with the ~95 script modules the page is
+  // about to load. Boot needs the answer before it can start the app (it decides which data to
+  // open), and starting the request here instead of after the modules arrive means it costs no
+  // extra waiting at all.
+  try {
+    window.__h1SessionProbe = fetch("/api/auth/session", { credentials: "same-origin", headers: { Accept: "application/json" } })
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .catch(function () {
+        return null;
+      });
+  } catch (e) {
+    window.__h1SessionProbe = null;
+  }
+
   var workerReady = null;
   try {
     if ("serviceWorker" in navigator && window.isSecureContext) {

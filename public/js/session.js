@@ -127,7 +127,11 @@ export async function prepareSession() {
   let session = null;
   let reachable = true;
   try {
-    session = await api.getSession();
+    // early.js starts this request before the app's modules are even downloaded; using its
+    // answer keeps start-up as fast as it was before accounts existed.
+    session = (await window.__h1SessionProbe) || null;
+    if (session && session.csrfToken) api.setCsrfToken(session.csrfToken);
+    if (!session) session = await api.getSession();
   } catch {
     reachable = false;
   }

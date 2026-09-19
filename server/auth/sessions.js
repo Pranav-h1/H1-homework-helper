@@ -24,7 +24,10 @@ function config(env = process.env) {
     idleMs: idleDays * DAY,
     maxMs: Math.max(maxDays, idleDays) * DAY,
     rotateMs: DAY,
-    touchMs: 5 * 60 * 1000,
+    // How often using a session pushes its idle deadline back. Every request would mean a write
+    // per request for no benefit; five minutes is plenty against a seven-day idle limit. It's
+    // configurable so the expiry behaviour can be tested without waiting a week.
+    touchMs: Number(env.SESSION_TOUCH_SECONDS) > 0 ? Number(env.SESSION_TOUCH_SECONDS) * 1000 : 5 * 60 * 1000,
     graceMs: 60 * 1000,
     secure,
     // "__Host-" makes the browser enforce Secure, Path=/ and no Domain (host-only). It needs
