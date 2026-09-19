@@ -352,7 +352,7 @@ async function spendAllowance(req, res, kind = "chat") {
 
 // What the browser is told about an allowance: enough to show it honestly, and nothing else.
 function publicUsage(state) {
-  if (!state) return null;
+  if (!state || state.unmetered) return null;
   if (state.unlimited) return { unlimited: true };
   return { unlimited: false, limit: state.limit, used: state.used, remaining: state.remaining, resetsAt: state.resetsAt };
 }

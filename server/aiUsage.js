@@ -64,7 +64,10 @@ function guestKey(req, env = process.env) {
 async function check(db, { userId = null, guest = null, unlimited = false } = {}) {
   const limit = await getLimit(db);
   if (unlimited) return { unlimited: true, limit: null, used: 0, remaining: null, resetsAt: null, allowed: true };
-  if (!db) return { unlimited: false, limit, used: 0, remaining: limit, resetsAt: null, allowed: true };
+  // With no database there is nowhere to count, and a count that resets whenever the server
+  // restarts isn't a limit. H1 says nothing about an allowance rather than showing a number that
+  // would sit at full forever.
+  if (!db) return { unmetered: true, limit: null, used: 0, remaining: null, resetsAt: null, allowed: true };
 
   const since = Date.now() - WINDOW_MS;
   const where = userId ? "user_id = $1" : "guest_key = $1";

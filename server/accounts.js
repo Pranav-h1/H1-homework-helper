@@ -583,9 +583,11 @@ function createAccounts({ getDb, env = process.env }) {
       const unlimited = Boolean(user && user.accountType === "lab");
       const state = await aiUsage.check(db, { userId: user ? user.id : null, guest: user ? null : aiUsage.guestKey(req), unlimited });
       res.json({
-        usage: state.unlimited
-          ? { unlimited: true }
-          : { unlimited: false, limit: state.limit, used: state.used, remaining: state.remaining, resetsAt: state.resetsAt },
+        usage: state.unmetered
+          ? null
+          : state.unlimited
+            ? { unlimited: true }
+            : { unlimited: false, limit: state.limit, used: state.used, remaining: state.remaining, resetsAt: state.resetsAt },
         signedIn: Boolean(user),
       });
     })
