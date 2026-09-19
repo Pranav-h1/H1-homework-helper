@@ -17,11 +17,26 @@ public/                    Static frontend (served as-is, no build step)
     health.js                Resilient backend health polling (retries before reporting down)
     markdown.js               Small safe markdown-ish renderer for AI chat replies
     theme.js                  Dark/Light/System theme + forced device-preview layout
-    storage.js                localStorage helpers that never throw
+    storage.js                Device storage, namespaced per account, that never throws
+    session.js                Which account H1 is running as (or guest), decided before boot
+    authScreen.js             The sign-in / create-account screen
+    accountApi.js             Calls to the account API (CSRF token kept in memory only)
+    cloudSync.js              Keeps an account's work in step across devices
+    accountMenu.js            The account button, its menu, and Settings → Account
+    guestMigration.js         Offers to copy on-device work into an account
     toast.js                  Toast notifications
 server/
-  index.js                  Express app: serves the frontend + /api/chat, /api/explain,
-                             /api/quiz, /api/flashcards, /api/health
+  index.js                  Express app: security headers, the account routes, the frontend,
+                             and /api/chat, /api/explain, /api/quiz, /api/flashcards, /api/health
+  accounts.js               Sign-up, sign-in, sessions, and each account's data and files
+  db.js                     PostgreSQL access (pg in production, PGlite locally)
+  migrations.js             The schema, applied in order and recorded
+  auth/
+    passwords.js             scrypt hashing and verification
+    validation.js            Username and password rules (the server's copy is the real one)
+    sessions.js              Server-side sessions and the cookie
+    guards.js                Same-origin and CSRF checks
+    rateLimit.js             Sign-in and sign-up rate limiting
   providers/
     index.js                 Provider registry (picks a provider from AI_PROVIDER env var)
     gemini.js                 Google Gemini implementation
@@ -90,6 +105,62 @@ the registry, sending a single system prompt + message list and expecting a plai
   (Desktop/iPad-Tablet/Phone layout, independent of your actual window size), an Enter-to-send
   vs. Ctrl+Enter-to-send toggle, live AI provider/connection status, and chat history reset.
 
+## Accounts (optional)
+
+H1 runs in one of two modes, and it always says which one it's in.
+
+**Without a database** — the default, and how H1 has always worked — everything a student does
+is stored in their browser on that device. No sign-in screen, nothing uploaded.
+
+**With a database** — set `DATABASE_URL` to a PostgreSQL connection string — H1 adds accounts:
+a student signs in, and their work follows them to any device they sign in on.
+
+```bash
+# Local development needs no setup at all: H1 uses a PostgreSQL-in-WebAssembly
+# database in ./.data/h1-db automatically.
+npm start
+
+# Production: point it at a real PostgreSQL.
+DATABASE_URL=postgresql://user:password@host:5432/h1 npm start
+```
+
+The schema is created and migrated on start-up. `GET /api/health` reports `accounts` as
+`available`, `not-configured` or `unavailable`, so the mode is never a guess.
+
+### How it works
+
+- **Passwords** are stored as scrypt hashes with a per-password random salt. They are never
+  stored, logged or returned in plain text, and a sign-in that fails does the same work whether
+  or not the account exists, so response timing gives nothing away.
+- **Sessions** live on the server. The browser only ever holds a random token in an HttpOnly
+  cookie (`__Host-h1a` over HTTPS), which JavaScript cannot read. The token is rotated daily,
+  a new one is issued at every sign-in, and sessions end after `SESSION_IDLE_DAYS` unused or
+  `SESSION_MAX_DAYS` absolute.
+- **Every request's identity comes from that session.** No endpoint accepts a username or an id
+  from the browser as proof of who is asking; every query is scoped to the user id the session
+  resolves to.
+- **State-changing requests** must come from H1's own pages: same-origin check plus a per-session
+  CSRF token held only in memory. No CORS headers are sent, so other sites can't read the API.
+- **Syncing** is per store, with a version on each. Two devices editing at once merge by item id
+  rather than overwriting, and anything that can't be uploaded stays on the device and is
+  retried — H1 doesn't lose work to a dropped connection.
+- **Guest work is never uploaded on its own.** Signing in on a device that already has work
+  offers to copy it into the account, once; declining leaves it exactly where it is, and it can
+  still be copied in later from Settings → Data.
+
+### H1's own account
+
+`Pranav-H1` is created on start-up from the server's configuration and is exempt from the usual
+username and password rules. Set one of:
+
+```bash
+node scripts/hash-password.js      # prints H1_MASTER_PASSWORD_HASH=... to put in the environment
+```
+
+or `H1_MASTER_PASSWORD` with the password itself. Neither belongs in the repository. If neither
+is set, the account simply isn't created. Its password can't be changed or its account deleted
+from inside the app — it comes from the server's configuration, so that's where it changes.
+
 ## Deploying to Render
 
 1. Push this project to a GitHub repo.
@@ -99,3 +170,8 @@ the registry, sending a single system prompt + message list and expecting a plai
    in the Render dashboard — never in the repo.
 4. Render runs `npm install` then `node server/index.js`, using the `PORT` it provides
    automatically.
+5. For accounts, add a `DATABASE_URL` pointing at a PostgreSQL database, and
+   `H1_MASTER_PASSWORD_HASH` if you want H1's own account. Without `DATABASE_URL` the deployment
+   runs in on-device mode and says so — H1's free-plan disk is wiped on every restart, so a
+   database on that disk would lose everyone's work, and pretending otherwise would be worse
+   than not offering accounts at all.

@@ -2,6 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const { getProvider, getProviderStatus, getPublicProviderStatus } = require("./providers");
+const { createDatabaseHandle, isProduction } = require("./db");
+const { migrate } = require("./migrations");
+const { createAccounts, seedMasterAccount } = require("./accounts");
+const { purgeExpired } = require("./auth/sessions");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -209,6 +213,92 @@ Respond with ONLY a strict JSON object, no markdown code fences, no commentary b
 {"plan": [{"day": 1, "focus": "short label for what this day covers", "tasks": ["short task", "..."]}]}
 Cover the given chapters/topics across the available days, spending more time on earlier/harder material and using the last day mainly for light review rather than new material. Use 2 to 5 short tasks per day (e.g. "Review chapter 2 notes", "10 practice questions on fractions", "15 flashcards on cell biology", "Take a short mixed quiz"). Produce exactly one plan entry per day for the number of days given. This is a study organization tool, not an authoritative guarantee of exam readiness.`;
 
+// Behind Render's proxy the client's real address arrives in X-Forwarded-For. Trusting exactly
+// one hop lets the sign-in rate limiter count per visitor instead of per proxy, without letting
+// a client forge the header. Locally there is no proxy, so nothing is trusted.
+app.set("trust proxy", process.env.TRUST_PROXY !== undefined ? (Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY) : isProduction() ? 1 : false);
+app.disable("x-powered-by");
+
+// What H1 actually loads from outside its own origin, and nothing else:
+//   • Google Fonts        — the Inter and Lexend stylesheets and font files
+//   • jsDelivr            — Pyodide (the Python runtime) and KaTeX (maths typesetting)
+//   • cdnjs               — PDF.js, for reading a PDF a student uploads
+// 'wasm-unsafe-eval' is what Pyodide needs to compile its WebAssembly; it does not permit
+// eval() of JavaScript. Inline styles are allowed because KaTeX and H1's own layout set style
+// attributes; inline scripts are not allowed anywhere, which is why even the first-paint theme
+// script lives in its own file.
+const CDN = "https://cdn.jsdelivr.net https://cdnjs.cloudflare.com";
+const PAGE_CSP = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'none'",
+  "form-action 'self'",
+  `script-src 'self' 'wasm-unsafe-eval' ${CDN}`,
+  // jsDelivr is here for KaTeX's stylesheet, which ships alongside its script.
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net",
+  // Google Fonts serves H1's typefaces; jsDelivr serves KaTeX's maths fonts.
+  "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:",
+  "img-src 'self' data: blob:",
+  "media-src 'self' data: blob:",
+  `connect-src 'self' ${CDN}`,
+  `worker-src 'self' blob: ${CDN}`,
+  "frame-src 'self'",
+  "manifest-src 'self'",
+].join("; ");
+
+// The Code Lab preview page is the one place that must run whatever a student wrote —
+// inline scripts included — so it gets its own policy instead of H1's. The `sandbox`
+// directive is the important part: it is applied by the browser to the page itself, so the
+// preview has an opaque origin and no access to H1's cookies or storage however it is opened,
+// not only when H1 frames it.
+const SANDBOX_CSP = ["sandbox allow-scripts allow-forms allow-modals", "frame-ancestors 'self'", "base-uri 'none'"].join("; ");
+
+app.use((req, res, next) => {
+  res.set("X-Content-Type-Options", "nosniff");
+  res.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  // H1 itself uses the camera (attach a photo of a question) and the microphone (voice
+  // input); nothing else is allowed, and no third-party frame gets either.
+  res.set("Permissions-Policy", "camera=(self), microphone=(self), geolocation=(), payment=(), usb=(), browsing-topics=()");
+  res.set("Cross-Origin-Opener-Policy", "same-origin");
+  if (isProduction()) res.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+
+  // A policy is only meaningful on a document; sending it with every script and image would
+  // just be noise. Workers are the exception — a worker's own response carries the policy it
+  // runs under, and H1's Python worker loads Pyodide from jsDelivr.
+  const path = req.path;
+  if (path === "/sandbox.html") res.set("Content-Security-Policy", SANDBOX_CSP);
+  else if (path === "/" || path.endsWith(".html") || path.endsWith(".js")) res.set("Content-Security-Policy", PAGE_CSP);
+  next();
+});
+
+// ---------------------------------------------------------------------------------------
+// Accounts
+//
+// The database is optional. Without one — no DATABASE_URL in production — H1 still runs
+// exactly as it always has, with everything kept on the device, and the account routes say
+// plainly that accounts aren't available rather than pretending to sign anyone in.
+// ---------------------------------------------------------------------------------------
+const database = createDatabaseHandle({
+  async setup(db) {
+    await migrate(db);
+    const seed = await seedMasterAccount(db);
+    if (seed.created) console.log("Accounts: the H1 Lab account was created from the server configuration.");
+    else if (seed.updated) console.log("Accounts: the H1 Lab account password was updated from the server configuration.");
+    else if (!seed.seeded && seed.reason !== "not configured") console.warn(`Accounts: the H1 Lab account was not set up (${seed.reason}).`);
+    console.log(`Accounts: ready (${db.kind}).`);
+    // Sessions that ended are cleared out periodically; expiry itself is enforced per request.
+    const sweep = setInterval(() => {
+      purgeExpired(db).catch((err) => console.error("[db] session cleanup failed:", err && (err.code || err.message)));
+    }, 6 * 60 * 60 * 1000);
+    if (sweep.unref) sweep.unref();
+  },
+});
+
+// Mounted before the 32MB JSON parser below so each account route keeps its own, much smaller
+// body limit — a sign-in form has no business sending megabytes.
+createAccounts({ getDb: () => database.get() }).mount(app);
+
 // Room for a handful of downscaled images per message; the client shrinks them first.
 app.use(express.json({ limit: "32mb" }));
 
@@ -233,6 +323,8 @@ app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
     ai: getPublicProviderStatus(),
+    // "not-configured" means this server has no database, so H1 runs in on-device mode only.
+    accounts: database.status(),
     deploy: {
       commit: process.env.RENDER_GIT_COMMIT || null,
       branch: process.env.RENDER_GIT_BRANCH || null,
@@ -929,6 +1021,11 @@ const server = app.listen(PORT, "0.0.0.0", () => {
   } else {
     console.log("AI provider: none configured — chat will show a friendly setup message until one is set.");
   }
+  // Connect and migrate now rather than on the first sign-in, so problems show up in the boot
+  // log. A failure here doesn't stop H1 — accounts simply report themselves unavailable.
+  database.get().then((db) => {
+    if (!db) console.log("Accounts: no database configured — H1 runs in on-device mode and accounts are switched off.");
+  });
 });
 
 // Render (and Cloudflare in front of it) keep idle connections to this server open and reuse
@@ -939,3 +1036,22 @@ const server = app.listen(PORT, "0.0.0.0", () => {
 // proxy does removes the race. (headersTimeout must be larger than keepAliveTimeout.)
 server.keepAliveTimeout = 120 * 1000;
 server.headersTimeout = 125 * 1000;
+
+// Stopping cleanly matters: the local development database is a real PostgreSQL data directory,
+// and killing the process mid-write can leave it unusable. Render sends SIGTERM on every
+// deploy, so this runs in production too.
+let shuttingDown = false;
+["SIGINT", "SIGTERM"].forEach((signal) => {
+  process.on(signal, () => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    server.close();
+    const done = () => process.exit(0);
+    const timer = setTimeout(done, 5000);
+    if (timer.unref) timer.unref();
+    database
+      .close()
+      .then(done)
+      .catch(done);
+  });
+});

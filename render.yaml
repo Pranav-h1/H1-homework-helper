@@ -13,3 +13,11 @@ services:
         sync: false
       - key: GEMINI_MODEL
         value: gemini-flash-lite-latest
+      # Accounts are optional. Without DATABASE_URL, H1 runs in on-device mode and says so —
+      # the free plan's disk is wiped on every restart, so a database kept there would lose
+      # everyone's work. Point this at a PostgreSQL service to turn accounts on.
+      - key: DATABASE_URL
+        sync: false
+      # H1's own account, if wanted. Generate with: node scripts/hash-password.js
+      - key: H1_MASTER_PASSWORD_HASH
+        sync: false

@@ -166,9 +166,18 @@ export function loadPdfJs() {
   return pdfJsReady;
 }
 
+// PDF.js takes ownership of the bytes it's handed: it transfers them to its worker, which
+// leaves the caller's buffer detached and unusable. A scanned PDF needs two passes over the
+// same file — look for text, then render the pages as images — so each pass gets its own copy.
+// Without this, every scanned PDF failed with "detached ArrayBuffer" instead of being read.
+function pdfBytes(input) {
+  const view = input instanceof Uint8Array ? input : new Uint8Array(input);
+  return view.slice();
+}
+
 export async function extractPdfText(arrayBuffer, maxPages = MAX_PDF_PAGES) {
   const pdfjsLib = await loadPdfJs();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pdf = await pdfjsLib.getDocument({ data: pdfBytes(arrayBuffer) }).promise;
   const pageCount = Math.min(pdf.numPages, maxPages);
   const pages = [];
   for (let i = 1; i <= pageCount; i++) {
@@ -187,7 +196,7 @@ export async function extractPdfText(arrayBuffer, maxPages = MAX_PDF_PAGES) {
 // images so the vision model can read them — it's exactly what a student would do by hand.
 export async function renderPdfPages(arrayBuffer, maxPages = 3) {
   const pdfjsLib = await loadPdfJs();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pdf = await pdfjsLib.getDocument({ data: pdfBytes(arrayBuffer) }).promise;
   const count = Math.min(pdf.numPages, maxPages);
   const images = [];
   for (let i = 1; i <= count; i++) {

@@ -1,7 +1,7 @@
 import { switchView, onViewChange } from "./nav.js";
 import { setTheme } from "./theme.js";
 import { loadConversations, setActiveConversationId } from "./conversations.js";
-import { safeGetJson } from "./storage.js";
+import { safeGetJson, safeSetJson } from "./storage.js";
 import { selectSubtabInView } from "./subtabs.js";
 import { getTasks } from "./homeworkStore.js";
 import { getDocuments } from "./documentsStore.js";
@@ -154,11 +154,7 @@ onViewChange((view) => {
   if (!VIEW_LABELS[view]) return;
   const recent = safeGetJson(RECENT_KEY, []).filter((v) => v !== view);
   recent.unshift(view);
-  try {
-    localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, MAX_RECENT)));
-  } catch {
-    // ignored — recent list is a convenience, not critical data
-  }
+  safeSetJson(RECENT_KEY, recent.slice(0, MAX_RECENT));
 });
 
 function recentCommands() {

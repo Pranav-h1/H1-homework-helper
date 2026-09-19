@@ -1,5 +1,5 @@
 import "./nav.js";
-import { switchView, onViewChange } from "./nav.js";
+import { switchView, onViewChange, getCurrentView } from "./nav.js";
 import { appState, setSubject, AI_LANGUAGES, setLanguage } from "./state.js";
 import {
   getStoredTheme,
@@ -18,8 +18,8 @@ import {
 import { showToast } from "./toast.js";
 import { onHealthChange, startHealthPolling } from "./health.js";
 import { confirmDanger } from "./modal.js";
-import { safeGet, safeSet } from "./storage.js";
-import { exportData, importData } from "./dataTransfer.js";
+import { safeGet, safeSet, safeRemove } from "./storage.js";
+import { exportData, importData, clearAllH1Data } from "./dataTransfer.js";
 import { isEnabled as gamificationEnabled, setEnabled as setGamificationEnabled, checkAndNotifyAchievements } from "./gamification.js";
 import { clearAllConversations } from "./conversations.js";
 import { initChat, openChatWithMessage, prefillChat, setEnterMode, clearAllConversationsData } from "./chat.js";
@@ -63,6 +63,10 @@ import { initFavorites, render as renderFavorites } from "./favorites.js";
 import { initShortcuts } from "./shortcuts.js";
 import { initNotifCenter, refreshNotifCenter } from "./notifCenter.js";
 import { clearEvents } from "./progress.js";
+import { initAccountMenu } from "./accountMenu.js";
+import { isAccountMode } from "./session.js";
+import { onRemoteChange } from "./cloudSync.js";
+import { offerGuestDataImport, guestDataSummary, importGuestDataFromSettings } from "./guestMigration.js";
 
 /* ---------------------------------------------------------
    DOM references
@@ -465,11 +469,7 @@ document.getElementById("clearNotesBtn").addEventListener("click", () => {
 document.getElementById("resetProgressBtn").addEventListener("click", () => {
   confirmDanger("Reset progress?", "This clears your XP, streaks and achievement history.", "Reset", () => {
     clearEvents();
-    try {
-      localStorage.removeItem("h1-achievements-seen");
-    } catch {
-      // ignored
-    }
+    safeRemove("h1-achievements-seen");
     showToast("Progress reset. Reloading…", "success");
     setTimeout(() => window.location.reload(), 600);
   });
@@ -494,25 +494,20 @@ const SETTINGS_KEYS = [
 
 document.getElementById("resetSettingsBtn").addEventListener("click", () => {
   confirmDanger("Reset settings?", "Theme, subject and preferences will go back to their defaults.", "Reset", () => {
-    SETTINGS_KEYS.forEach((k) => {
-      try {
-        localStorage.removeItem(k);
-      } catch {
-        // ignored
-      }
-    });
+    SETTINGS_KEYS.forEach((k) => safeRemove(k));
     showToast("Settings reset. Reloading…", "success");
     setTimeout(() => window.location.reload(), 600);
   });
 });
 
 document.getElementById("resetEverythingBtn").addEventListener("click", () => {
-  confirmDanger("Reset everything?", "This clears all H1 data stored on this device, including conversations and notes.", "Reset everything", () => {
-    try {
-      localStorage.clear();
-    } catch {
-      // ignored
-    }
+  const signedIn = isAccountMode();
+  const where = signedIn
+    ? "This clears all H1 data in your account — conversations, notes and everything else — on every device you use."
+    : "This clears all H1 data stored on this device, including conversations and notes.";
+  confirmDanger("Reset everything?", where, "Reset everything", async () => {
+    showToast("Clearing your H1 data…");
+    await clearAllH1Data();
     showToast("Everything reset. Reloading…", "success");
     setTimeout(() => window.location.reload(), 600);
   });
@@ -577,7 +572,7 @@ initMagnetic(".bento-tile", 5);
 
 bindMoreTools({ summarizeText, generatePracticeFromSource });
 
-onViewChange((view) => {
+function renderView(view) {
   if (view === "home") {
     renderHomeWidget();
     renderUpcomingWidget();
@@ -602,6 +597,42 @@ onViewChange((view) => {
   if (view === "projects") refreshProjects();
   if (view === "favorites") renderFavorites();
   refreshNotifCenter();
+}
+
+onViewChange(renderView);
+
+// Work that arrived from another device: redraw what's on screen so it shows up without a
+// reload, and say so once rather than silently changing what someone is looking at.
+onRemoteChange((keys) => {
+  renderView(getCurrentView());
+  refreshNotes();
+  refreshFlashcards();
+  showToast(keys.length === 1 ? "Updated with a change from your other device." : "Updated with changes from your other device.");
 });
 
+initAccountMenu();
+
+// Settings → Data: bringing on-device (guest) work into the account stays available even if
+// the offer at sign-in was declined.
+(() => {
+  const row = document.getElementById("guestImportRow");
+  const btn = document.getElementById("guestImportBtn");
+  const sub = document.getElementById("guestImportSub");
+  if (!row || !btn) return;
+  const refresh = () => {
+    const summary = isAccountMode() ? guestDataSummary() : null;
+    row.hidden = !summary;
+    if (summary && sub) sub.textContent = summary.parts.length ? `${summary.parts.slice(0, 3).join(", ")} saved on this device before you signed in.` : "Work saved on this device before you signed in.";
+  };
+  btn.addEventListener("click", importGuestDataFromSettings);
+  document.addEventListener("h1:view-changed", (event) => {
+    if (event.detail === "settings") refresh();
+  });
+  refresh();
+})();
+
 switchView("home");
+
+// Signing in on a device that already has work saved as a guest: H1 asks, once, and never
+// uploads anything without being told to.
+if (isAccountMode()) offerGuestDataImport();

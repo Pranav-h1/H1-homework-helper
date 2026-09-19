@@ -3,7 +3,7 @@ import { appState, SUBJECT_LABELS } from "./state.js";
 import { showToast } from "./toast.js";
 import { confirmDanger, promptForText } from "./modal.js";
 import { switchView } from "./nav.js";
-import { addDocument, getDocuments, getDocument, deleteDocument, renameDocument, toggleFavorite } from "./documentsStore.js";
+import { addDocument, getDocuments, getDocument, deleteDocument, renameDocument, toggleFavorite, DOCUMENT_LIMIT } from "./documentsStore.js";
 import { startQuizWithTopic } from "./quiz.js";
 import { startFlashcardsWithTopic } from "./flashcards.js";
 import { openChatWithMessage } from "./chat.js";
@@ -79,9 +79,13 @@ fileInput.addEventListener("change", async () => {
       return;
     }
     const type = result.format === "text" ? "txt" : result.format;
-    addDocument({ name: file.name, type, text: result.text, sizeBytes: file.size, subject: appState.subject });
+    const added = addDocument({ name: file.name, type, text: result.text, sizeBytes: file.size, subject: appState.subject });
     renderGrid();
-    showToast("Document added.", "success");
+    if (added.dropped && added.dropped.length) {
+      showToast(`Document added. H1 keeps ${DOCUMENT_LIMIT} documents, so "${added.dropped[0]}" was removed to make room — star a document to keep it.`, "warning", 6000);
+    } else {
+      showToast("Document added.", "success");
+    }
   } catch (err) {
     showToast(err && err.message ? err.message : friendlyErrorMessage(err), "error", 4500);
   }
@@ -139,7 +143,8 @@ function openDetail(id) {
   detailWrap.hidden = false;
   detailName.textContent = doc.name;
   detailMeta.textContent = `${formatSize(doc.sizeBytes)} · ${SUBJECT_LABELS[doc.subject] || doc.subject}${doc.truncated ? " · showing first part of a longer file" : ""}`;
-  detailPreview.textContent = doc.text.slice(0, 1500) + (doc.text.length > 1500 ? "…" : "");
+  const docText = typeof doc.text === "string" ? doc.text : "";
+  detailPreview.textContent = docText.slice(0, 1500) + (docText.length > 1500 ? "…" : "");
   detailResult.innerHTML = "";
 
   document.getElementById("documentSummarizeBtn").onclick = () => runSummarize(doc);

@@ -29,7 +29,7 @@ export function getSpace(id) {
   return readSpaces().find((s) => s.id === id) || null;
 }
 
-export function createSpace({ name, icon, color }) {
+export function createSpace({ name, icon, color, lock = null }) {
   const list = readSpaces();
   const record = {
     id: uid(),
@@ -39,6 +39,8 @@ export function createSpace({ name, icon, color }) {
     favorite: false,
     archived: false,
     createdAt: Date.now(),
+    // A password hash, never the password itself (see spaceLock.js). Null means no lock.
+    lock,
   };
   list.push(record);
   writeSpaces(list);
@@ -50,6 +52,16 @@ export function renameSpace(id, name) {
   const s = list.find((x) => x.id === id);
   if (!s) return;
   s.name = name.trim().slice(0, 40) || s.name;
+  writeSpaces(list);
+}
+
+// Sets, replaces or clears a Space's password. `lock` is the hash record from spaceLock.js.
+export function setSpaceLock(id, lock) {
+  const list = readSpaces();
+  const s = list.find((x) => x.id === id);
+  if (!s) return;
+  s.lock = lock;
+  s.lockedAt = lock ? Date.now() : null;
   writeSpaces(list);
 }
 

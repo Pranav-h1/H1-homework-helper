@@ -41,8 +41,25 @@ function uid() {
   return `n_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
+// Notes are read back from storage that H1 doesn't fully control: an older version of H1 wrote
+// some of them, and with an account they can arrive from another device mid-upgrade. A record
+// missing a field must never be able to stop H1 from starting, so every note is given the shape
+// the rest of this file expects, without changing what's stored.
+function normalizeNote(note) {
+  if (!note || typeof note !== "object") return null;
+  return {
+    ...note,
+    id: typeof note.id === "string" ? note.id : `note_${Math.random().toString(36).slice(2, 10)}`,
+    title: typeof note.title === "string" ? note.title : "",
+    body: typeof note.body === "string" ? note.body : "",
+    checklist: Array.isArray(note.checklist) ? note.checklist : [],
+    tags: Array.isArray(note.tags) ? note.tags : [],
+  };
+}
+
 function loadNotes() {
-  return safeGetJson(NOTES_KEY, []);
+  const raw = safeGetJson(NOTES_KEY, []);
+  return (Array.isArray(raw) ? raw : []).map(normalizeNote).filter(Boolean);
 }
 
 function saveNotes(list) {

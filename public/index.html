@@ -226,7 +226,26 @@
           <span id="sidebarStatusText">Checking AI status…</span>
         </div>
 
-        <div class="sidebar-credit">Developed by - Pranav Ganesh - H1</div>
+        <div class="sidebar-account-wrap">
+          <button id="sidebarAccountBtn" class="sidebar-account" type="button" aria-haspopup="true" aria-expanded="false">
+            <span class="account-avatar" id="sidebarAccountAvatar" aria-hidden="true">G</span>
+            <span class="sidebar-account-text">
+              <span class="sidebar-account-name" id="sidebarAccountName">Guest</span>
+              <span class="sidebar-account-status" id="sidebarAccountStatus">On this device</span>
+            </span>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>
+          </button>
+          <div id="sidebarAccountMenu" class="account-menu" hidden role="menu" aria-labelledby="sidebarAccountBtn">
+            <div class="account-menu-head">
+              <strong id="accountMenuName">Guest</strong>
+              <span id="accountMenuSub">Stored on this device</span>
+            </div>
+            <button class="account-menu-item" id="accountMenuSettings" type="button" role="menuitem">Account settings</button>
+            <button class="account-menu-item" id="accountMenuSync" type="button" role="menuitem" hidden>Sync now</button>
+            <button class="account-menu-item account-menu-danger" id="accountMenuAction" type="button" role="menuitem">Sign in</button>
+          </div>
+        </div>
+        <div class="sidebar-credit">Developed by Pranav Ganesh · H1 Lab</div>
       </nav>
 
       <main id="mainView" class="main-view" tabindex="-1">
@@ -1959,6 +1978,33 @@
             </div>
           </div>
 
+          <div class="settings-section" id="accountSection">
+            <h2>Account</h2>
+            <div class="account-card">
+              <span class="account-avatar" id="accountAvatar" aria-hidden="true">?</span>
+              <div class="account-card-text">
+                <strong id="accountName">Guest</strong>
+                <span id="accountSub" class="settings-hint">Everything is stored on this device only.</span>
+              </div>
+              <button id="accountPrimaryBtn" class="btn btn-ghost" type="button">Sign in</button>
+            </div>
+            <p id="accountUsage" class="settings-hint" hidden></p>
+            <div id="accountActions" hidden>
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Change password</strong><span>You'll stay signed in here; other devices are signed out.</span></div>
+                <button id="accountPasswordBtn" class="btn btn-ghost" type="button">Change</button>
+              </div>
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Sign out everywhere</strong><span>Ends your session on every device, including this one.</span></div>
+                <button id="accountLogoutAllBtn" class="btn btn-ghost" type="button">Sign out all</button>
+              </div>
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Delete account</strong><span>Permanently deletes your account and everything in it.</span></div>
+                <button id="accountDeleteBtn" class="btn btn-danger" type="button">Delete</button>
+              </div>
+            </div>
+          </div>
+
           <div class="settings-section">
             <h2>Appearance</h2>
             <span class="field-label" id="themeSettingLabel">Theme</span>
@@ -2055,7 +2101,7 @@
 
           <div class="settings-section">
             <h2>Privacy</h2>
-            <p class="settings-hint">H1 stores your conversations, notes, homework, documents, flashcards, quiz history and settings in this browser's local storage only. Nothing is uploaded except the text/image you send to the AI Tutor when you ask a question — and only the current message, not your other stored data.</p>
+            <p class="settings-hint" id="privacyText">H1 stores your conversations, notes, homework, documents, flashcards, quiz history and settings in this browser's local storage only. Nothing is uploaded except the text/image you send to the AI Tutor when you ask a question — and only the current message, not your other stored data.</p>
           </div>
 
           <div class="settings-section">
@@ -2068,6 +2114,10 @@
               <div class="danger-row-text"><strong>Import data</strong><span>Restore from a previously exported JSON file.</span></div>
               <button id="importDataBtn" class="btn btn-ghost" type="button">Import</button>
               <input type="file" id="importDataInput" accept="application/json" hidden />
+            </div>
+            <div class="danger-row" id="guestImportRow" hidden>
+              <div class="danger-row-text"><strong>Copy on-device work into your account</strong><span id="guestImportSub">Work saved on this device before you signed in.</span></div>
+              <button id="guestImportBtn" class="btn btn-ghost" type="button">Copy in</button>
             </div>
           </div>
 
@@ -2099,7 +2149,7 @@
             <h2>About</h2>
             <p class="about-line"><strong>H1 — The Student OS</strong></p>
             <p class="settings-hint">Version 4.0 · An AI-powered study companion for Math, Science, English, Hindi, Tamil and general homework.</p>
-            <p class="settings-hint">Developed by - Pranav Ganesh - H1</p>
+            <p class="settings-hint">Developed by Pranav Ganesh · H1 Lab</p>
           </div>
         </section>
       </main>
@@ -2273,6 +2323,81 @@
         <button id="quickCaptureSaveBtn" class="btn btn-primary" type="button">Save</button>
       </div>
     </div>
+  </div>
+
+  <div id="bootSplash" class="boot-splash" hidden>
+    <div class="boot-splash-inner">
+      <span class="brand-mark auth-mark" aria-hidden="true">H1</span>
+      <p id="bootSplashText" class="boot-splash-text" role="status">Loading your work…</p>
+    </div>
+  </div>
+
+  <!-- ===== Sign in / create account ===== -->
+  <div id="authScreen" class="auth-screen" hidden>
+    <div class="auth-atmosphere" aria-hidden="true">
+      <span class="bloom bloom-1"></span>
+      <span class="bloom bloom-2"></span>
+    </div>
+    <main class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <div class="auth-brand">
+        <span class="brand-mark auth-mark">H1</span>
+        <div>
+          <h1 id="authTitle" class="auth-title">H1</h1>
+          <p class="auth-tagline">The Student OS</p>
+        </div>
+      </div>
+
+      <p id="authNotice" class="auth-notice" hidden></p>
+
+      <div class="auth-tabs" role="tablist" aria-label="Sign in or create an account">
+        <button id="authTabSignIn" class="auth-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="authForm">Sign in</button>
+        <button id="authTabSignUp" class="auth-tab" type="button" role="tab" aria-selected="false" aria-controls="authForm">Create account</button>
+      </div>
+
+      <form id="authForm" class="auth-form" novalidate>
+        <label class="auth-field">
+          <span class="auth-label">Username</span>
+          <input id="authUsername" class="auth-input" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="64" required />
+          <span class="auth-field-error" id="authUsernameError" hidden></span>
+        </label>
+
+        <label class="auth-field">
+          <span class="auth-label">Password</span>
+          <span class="auth-password">
+            <input id="authPassword" class="auth-input" type="password" autocomplete="current-password" maxlength="128" required />
+            <button id="authPasswordToggle" class="auth-eye" type="button" aria-label="Show password" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </span>
+          <span class="auth-field-error" id="authPasswordError" hidden></span>
+        </label>
+
+        <label class="auth-field" id="authConfirmField" hidden>
+          <span class="auth-label">Confirm password</span>
+          <span class="auth-password">
+            <input id="authConfirm" class="auth-input" type="password" autocomplete="new-password" maxlength="128" />
+            <button id="authConfirmToggle" class="auth-eye" type="button" aria-label="Show password" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </span>
+          <span class="auth-field-error" id="authConfirmError" hidden></span>
+        </label>
+
+        <p id="authHint" class="auth-hint">Your work is saved to your account, so it's there on any device you sign in on.</p>
+        <p id="authError" class="auth-error" role="alert" hidden></p>
+
+        <button id="authSubmit" class="btn btn-primary auth-submit" type="submit">
+          <span id="authSubmitLabel">Sign in</span>
+        </button>
+      </form>
+
+      <div class="auth-alt">
+        <button id="authGuestBtn" class="auth-link" type="button">Use H1 without an account</button>
+        <p class="auth-alt-note" id="authGuestNote">Everything stays on this device only.</p>
+      </div>
+
+      <p class="auth-credit">Developed by Pranav Ganesh · H1 Lab</p>
+    </main>
   </div>
 
   <div id="bootError" class="boot-error" role="alertdialog" aria-labelledby="bootErrorTitle" aria-describedby="bootErrorText" hidden>

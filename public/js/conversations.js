@@ -1,4 +1,4 @@
-import { safeGet, safeGetJson, safeSetJson } from "./storage.js";
+import { safeGet, safeSet, safeGetJson, safeSetJson } from "./storage.js";
 import { currentSpaceTag } from "./spacesStore.js";
 
 const CONVERSATIONS_KEY = "h1-conversations";
@@ -50,11 +50,7 @@ export function getActiveConversationId() {
 }
 
 export function setActiveConversationId(id) {
-  try {
-    localStorage.setItem(ACTIVE_KEY, id);
-  } catch {
-    // ignored
-  }
+  safeSet(ACTIVE_KEY, id);
 }
 
 export function createConversation(subject) {

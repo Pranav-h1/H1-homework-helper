@@ -6,10 +6,20 @@
 // quietly stopped persisting. Now a message only carries a small reference (name, size, a
 // thumbnail) and the heavy content goes into IndexedDB, which is built for exactly this.
 //
+// With accounts, two things are added:
+//   • Each account gets its own database on the device ("h1-files-<ns>"), so one person's
+//     photos are never served to another person using the same computer. Guest mode keeps the
+//     original name, so anything saved before accounts existed is still there.
+//   • While signed in, attachments are also kept with the account, so opening an old
+//     conversation on another device shows its photos instead of a broken reference. The
+//     device copy stays the fast path; the account is the fallback and the backup.
+//
 // If IndexedDB isn't available (some private-browsing modes), everything still works for the
 // current session from memory; it just won't survive a reload, and chat says so.
+import { getNamespace } from "./storage.js";
+import { isAccountMode, isOffline } from "./session.js";
+import * as api from "./accountApi.js";
 
-const DB_NAME = "h1-files";
 const STORE = "attachments";
 const VERSION = 1;
 
@@ -17,12 +27,17 @@ const memory = new Map();
 let dbPromise = null;
 let persistent = true;
 
-function openDb() {
-  if (dbPromise) return dbPromise;
-  dbPromise = new Promise((resolve) => {
+function dbName() {
+  const ns = getNamespace();
+  return ns ? `h1-files-${ns}` : "h1-files";
+}
+
+function openDb(name = dbName()) {
+  if (dbPromise && dbPromise.name === name) return dbPromise.promise;
+  const promise = new Promise((resolve) => {
     let req;
     try {
-      req = indexedDB.open(DB_NAME, VERSION);
+      req = indexedDB.open(name, VERSION);
     } catch {
       persistent = false;
       resolve(null);
@@ -45,7 +60,8 @@ function openDb() {
       resolve(null);
     };
   });
-  return dbPromise;
+  dbPromise = { name, promise };
+  return promise;
 }
 
 function tx(db, mode, fn) {
@@ -69,6 +85,10 @@ function request(req) {
   });
 }
 
+function syncing() {
+  return isAccountMode() && !isOffline();
+}
+
 export function isPersistent() {
   return persistent;
 }
@@ -77,33 +97,64 @@ export function isPersistent() {
 export async function putFile(record) {
   memory.set(record.id, record);
   const db = await openDb();
-  if (!db) return false;
-  try {
-    await tx(db, "readwrite", (store) => request(store.put(record)));
-    return true;
-  } catch {
-    // Quota or a transient failure: the in-memory copy still serves this session.
-    return false;
+  let stored = false;
+  if (db) {
+    try {
+      await tx(db, "readwrite", (store) => request(store.put(record)));
+      stored = true;
+    } catch {
+      // Quota or a transient failure: the in-memory copy still serves this session.
+    }
   }
+  if (syncing()) {
+    // Not awaited: sending a photo shouldn't make the chat wait on an upload. A failure here
+    // leaves the attachment on this device, which is exactly how H1 behaved before accounts.
+    api.putFileRecord(record).catch(() => {});
+  }
+  return stored;
 }
 
 export async function getFile(id) {
   if (memory.has(id)) return memory.get(id);
   const db = await openDb();
-  if (!db) return null;
-  try {
-    const found = await tx(db, "readonly", (store) => request(store.get(id)));
-    if (found) memory.set(id, found);
-    return found || null;
-  } catch {
-    return null;
+  if (db) {
+    try {
+      const found = await tx(db, "readonly", (store) => request(store.get(id)));
+      if (found) {
+        memory.set(id, found);
+        return found;
+      }
+    } catch {
+      // Fall through to the account copy.
+    }
   }
+  if (syncing()) {
+    // Not on this device — most likely the conversation was started somewhere else.
+    try {
+      const { record } = await api.getFileRecord(id);
+      if (record) {
+        memory.set(id, record);
+        if (db) {
+          try {
+            await tx(db, "readwrite", (store) => request(store.put(record)));
+          } catch {
+            // Caching it locally is a bonus, not a requirement.
+          }
+        }
+        return record;
+      }
+    } catch {
+      // Genuinely gone, or offline.
+    }
+  }
+  return null;
 }
 
 export async function deleteFilesForConversation(conversationId) {
   [...memory.values()].forEach((r) => {
     if (r.conversationId === conversationId) memory.delete(r.id);
   });
+  if (syncing()) api.deleteFiles({ conversationIds: [conversationId] }).catch(() => {});
   const db = await openDb();
   if (!db) return;
   try {
@@ -128,6 +179,13 @@ export async function reassignFiles(ids, conversationId) {
 
 export async function clearAllFiles() {
   memory.clear();
+  if (syncing()) {
+    try {
+      await api.deleteFiles({ all: true });
+    } catch {
+      // The local copy is still cleared below; the account copy is retried on the next clear.
+    }
+  }
   const db = await openDb();
   if (!db) return;
   try {
@@ -135,4 +193,38 @@ export async function clearAllFiles() {
   } catch {
     // Nothing further to do.
   }
+}
+
+// Everything in one device database, used when bringing guest attachments into an account.
+export async function readAllFrom(name) {
+  let db;
+  try {
+    db = await openDb(name);
+  } catch {
+    return [];
+  }
+  if (!db) return [];
+  try {
+    return (await tx(db, "readonly", (store) => request(store.getAll()))) || [];
+  } catch {
+    return [];
+  } finally {
+    // Leave the handle pointing back at the active identity's database.
+    dbPromise = null;
+  }
+}
+
+// Copies attachments saved as a guest into the signed-in account. Nothing is removed from the
+// guest database — the copy is additive, and running it twice is harmless.
+export async function importGuestFiles() {
+  const records = await readAllFrom("h1-files");
+  let copied = 0;
+  for (const record of records) {
+    if (!record || !record.id) continue;
+    const existing = await getFile(record.id);
+    if (existing) continue;
+    await putFile(record);
+    copied++;
+  }
+  return copied;
 }

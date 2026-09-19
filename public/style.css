@@ -4165,7 +4165,8 @@ textarea::placeholder {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-faint);
+  /* Small uppercase text on the raised card only reached 3.7:1 with the faint tone. */
+  color: var(--text-muted);
   margin: 0 0 10px;
 }
 
@@ -4809,7 +4810,10 @@ textarea::placeholder {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 18px 12px;
-  opacity: 0.45;
+  /* An achievement that hasn't been earned is greyscaled, and its icon is dimmed — but its
+     name and description stay at full strength. Dimming the whole card put the title at 2.9:1
+     against the background, well under WCAG AA; the greyscale, the faded icon and the missing
+     accent background carry the "not yet" without making the words hard to read. */
   filter: grayscale(1);
   backdrop-filter: blur(14px);
   transition: transform var(--t-fast) var(--ease), opacity var(--t-fast) var(--ease), filter var(--t-fast) var(--ease);
@@ -4820,7 +4824,6 @@ textarea::placeholder {
 }
 
 .achievement-card.earned {
-  opacity: 1;
   filter: none;
   border-color: rgba(var(--accent-1-rgb), 0.35);
   background: var(--accent-grad-soft);
@@ -4830,11 +4833,17 @@ textarea::placeholder {
 .achievement-icon {
   font-size: 28px;
   margin-bottom: 6px;
+  /* Decorative, so this is the part that fades while an achievement is still locked. */
+  opacity: 0.5;
 }
 
 .achievement-title {
   font-size: 12px;
   font-weight: 700;
+}
+
+.achievement-card.earned .achievement-icon {
+  opacity: 1;
 }
 
 .achievement-desc {
@@ -5883,7 +5892,10 @@ textarea::placeholder {
 }
 
 .calendar-day.other-month {
-  opacity: 0.6;
+  /* Dimmed enough to read as "not this month", not so dimmed that the date fails WCAG AA:
+     at 0.6 the blended day number came out at 3.9:1 against the cell, and at 0.75 it was still
+     4.3:1 in light mode. */
+  opacity: 0.8;
 }
 
 .calendar-day.today {
@@ -6844,7 +6856,8 @@ textarea::placeholder {
 .mission-time {
   font-size: 11.5px;
   font-weight: 700;
-  color: var(--text-faint);
+  /* On the raised mission card, the faint tone only reached 4.2:1 — small text needs 4.5:1. */
+  color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -12060,4 +12073,559 @@ html.force-reduced-motion .chat-jump {
   color: var(--text-muted);
   font-size: 14px;
   line-height: 1.55;
+}
+
+/* ===========================================================
+   Accounts: boot splash and the sign-in screen
+   =========================================================== */
+
+/* Held back by early.js until boot knows whether to show the app or the sign-in screen, so the
+   interface never flashes up behind it. */
+.h1-gate .app {
+  visibility: hidden;
+}
+
+.boot-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 1990;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.boot-splash[hidden] {
+  display: none;
+}
+
+.boot-splash-inner {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.boot-splash-text {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.auth-mark {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--accent-grad);
+  color: var(--accent-contrast);
+  font: 800 20px/1 var(--font-display);
+  box-shadow: 0 10px 30px rgba(var(--accent-1-rgb), 0.35);
+}
+
+.boot-splash .auth-mark {
+  animation: authPulse 1.8s var(--ease) infinite;
+}
+
+@keyframes authPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.94); opacity: 0.72; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-splash .auth-mark {
+    animation: none;
+  }
+}
+
+.auth-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1995;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  overflow-y: auto;
+  background: var(--bg);
+}
+
+.auth-screen[hidden] {
+  display: none;
+}
+
+.auth-atmosphere {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.auth-atmosphere .bloom {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+}
+
+.auth-atmosphere .bloom-1 {
+  width: 420px;
+  height: 420px;
+  top: -120px;
+  left: -80px;
+  background: var(--desk-bloom-1);
+}
+
+.auth-atmosphere .bloom-2 {
+  width: 380px;
+  height: 380px;
+  right: -100px;
+  bottom: -120px;
+  background: var(--desk-bloom-2);
+}
+
+.auth-card {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 30px 28px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--glass-floating-bg);
+  border: 1px solid var(--glass-floating-border);
+  box-shadow: var(--glass-floating-shadow);
+  backdrop-filter: blur(var(--glass-floating-blur));
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.auth-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.auth-tagline {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.auth-notice {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--warning-bg);
+  border: 1px solid color-mix(in srgb, var(--warning) 40%, transparent);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 18px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.auth-tab {
+  padding: 9px 10px;
+  border: none;
+  border-radius: calc(var(--radius-md) - 5px);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s var(--ease), color 0.18s var(--ease);
+}
+
+.auth-tab:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.auth-tab.is-active {
+  background: var(--surface-elevated);
+  color: var(--text);
+  box-shadow: var(--glass-base-shadow);
+}
+
+.auth-tab:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.auth-form {
+  display: grid;
+  gap: 14px;
+}
+
+.auth-field {
+  display: grid;
+  gap: 6px;
+}
+
+.auth-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.auth-input {
+  width: 100%;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14.5px;
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 3px rgba(var(--accent-1-rgb), 0.14);
+}
+
+.auth-input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.auth-password {
+  position: relative;
+  display: block;
+}
+
+.auth-password .auth-input {
+  padding-right: 44px;
+}
+
+.auth-eye {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-faint);
+  cursor: pointer;
+}
+
+.auth-eye:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.auth-eye.is-on {
+  color: var(--accent-text);
+}
+
+.auth-field-error {
+  font-size: 12.5px;
+  color: var(--danger);
+}
+
+.auth-hint {
+  margin: 0;
+  color: var(--text-faint);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.auth-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--danger-bg);
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.auth-submit {
+  width: 100%;
+  justify-content: center;
+  padding: 12px 16px;
+  font-size: 15px;
+}
+
+.auth-submit.is-busy {
+  opacity: 0.75;
+  cursor: progress;
+}
+
+.auth-alt {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.auth-link {
+  border: none;
+  background: none;
+  padding: 4px 6px;
+  color: var(--accent-text);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.auth-link:disabled {
+  opacity: 0.6;
+  cursor: default;
+  text-decoration: none;
+}
+
+.auth-alt-note {
+  margin: 4px 0 0;
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+.auth-credit {
+  margin: 18px 0 0;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 420px) {
+  .auth-card {
+    padding: 24px 20px 20px;
+  }
+  .auth-title {
+    font-size: 21px;
+  }
+}
+
+/* ===========================================================
+   Accounts: the sidebar account button, its menu, and Settings
+   =========================================================== */
+.sidebar-account-wrap {
+  position: relative;
+  margin: 10px 12px 0;
+}
+
+.sidebar-account {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.18s var(--ease), border-color 0.18s var(--ease);
+}
+
+.sidebar-account:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+.sidebar-account svg {
+  flex: none;
+  color: var(--text-faint);
+}
+
+.account-avatar {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--accent-grad);
+  color: var(--accent-contrast);
+  font: 700 13px/1 var(--font-display);
+}
+
+.account-avatar.is-guest {
+  background: var(--surface-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.sidebar-account-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+
+.sidebar-account-name {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-account-status {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 6px);
+  z-index: 60;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  background: var(--glass-floating-bg);
+  border: 1px solid var(--glass-floating-border);
+  box-shadow: var(--glass-floating-shadow);
+  backdrop-filter: blur(var(--glass-floating-blur));
+}
+
+.account-menu[hidden] {
+  display: none;
+}
+
+.account-menu-head {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+
+.account-menu-head strong {
+  font-size: 13.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-menu-head span {
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+.account-menu-item {
+  display: block;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-menu-item:hover {
+  background: var(--surface-hover);
+}
+
+.account-menu-danger {
+  color: var(--accent-text);
+}
+
+/* Collapsed (icon-only) sidebar: the account button becomes just the avatar. */
+.sidebar-collapsed .sidebar-account-text,
+.sidebar-collapsed .sidebar-account svg {
+  display: none;
+}
+
+.sidebar-collapsed .sidebar-account {
+  justify-content: center;
+  padding: 8px;
+}
+
+.sidebar-collapsed .account-menu {
+  left: 0;
+  width: 220px;
+  right: auto;
+}
+
+.account-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  margin-bottom: 12px;
+}
+
+.account-card .account-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.account-card-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.account-card-text strong {
+  font-size: 15px;
+}
+
+.account-card .settings-hint {
+  margin: 0;
+}
+
+/* The multi-field dialog (change password, new Space, guest import) */
+.form-dialog .form-dialog-body {
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px 0;
+  overflow-y: auto;
+}
+
+.form-dialog-message {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.form-dialog .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px 18px;
+}
+
+.form-dialog .btn.is-busy {
+  opacity: 0.75;
+  cursor: progress;
 }

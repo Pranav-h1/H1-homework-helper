@@ -44,6 +44,7 @@ const MOBILE_BOTTOM_VIEWS = new Set(["home", "chat", "homework", "quiz"]);
 const EXTRA_VIEW_LABELS = { profile: "Profile", favorites: "H1 Vault" };
 
 const listeners = [];
+let current = "home";
 
 export function onViewChange(cb) {
   listeners.push(cb);
@@ -108,7 +109,15 @@ export function switchView(view) {
   mainView.scrollTop = 0;
   positionActivePill(view);
   if (isCompactNow()) closeNav();
+  current = view;
   listeners.forEach((cb) => cb(view));
+  // Modules that aren't part of the view-rendering chain (the account menu, for one) listen
+  // for this rather than registering another render callback.
+  document.dispatchEvent(new CustomEvent("h1:view-changed", { detail: view }));
+}
+
+export function getCurrentView() {
+  return current;
 }
 
 navItems.forEach((item) => {

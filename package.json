@@ -11,8 +11,13 @@
     "dev": "node server/index.js"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "pg": "^8.23.0"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@electric-sql/pglite-socket": "^0.2.11"
+  }
 }

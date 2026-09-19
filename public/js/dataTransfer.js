@@ -1,3 +1,5 @@
+import { safeGet, safeSet, safeRemove, listKeys } from "./storage.js";
+
 const EXPORT_VERSION = 2;
 
 // Every H1 localStorage key that represents real user data (not transient UI state).
@@ -46,14 +48,12 @@ const KNOWN_KEYS = [
 export function exportData() {
   const data = {};
   KNOWN_KEYS.forEach((key) => {
-    try {
-      const raw = localStorage.getItem(key);
-      // Stored verbatim as a string — the surrounding JSON.stringify(payload) below escapes
-      // it correctly whether it's a plain value ("dark") or an already-JSON-encoded one.
-      if (raw !== null) data[key] = raw;
-    } catch {
-      // skip keys that fail to read rather than corrupting the whole export
-    }
+    // Stored verbatim as a string — the surrounding JSON.stringify(payload) below escapes
+    // it correctly whether it's a plain value ("dark") or an already-JSON-encoded one.
+    // Reads go through the storage layer, so an export taken while signed in contains that
+    // account's work and never another account's.
+    const raw = safeGet(key, null);
+    if (raw !== null) data[key] = raw;
   });
 
   const payload = { app: "h1-homework-helper", version: EXPORT_VERSION, exportedAt: new Date().toISOString(), data };
@@ -86,16 +86,40 @@ export function importData(jsonText) {
     if (!(key in parsed.data)) continue;
     const value = parsed.data[key];
     if (typeof value !== "string") continue;
-    try {
-      localStorage.setItem(key, value);
-      importedKeys.push(key);
-    } catch {
-      // skip a single bad key rather than failing the whole import
-    }
+    safeSet(key, value);
+    importedKeys.push(key);
   }
 
   if (importedKeys.length === 0) {
     return { ok: false, error: "The file didn't contain any recognizable H1 data." };
   }
   return { ok: true, importedKeys };
+}
+
+// "Reset everything". What that means depends on how H1 is being used, and it says so either
+// way rather than quietly doing something different:
+//   • Guest    — removes this device's H1 data. Another account's cached copy on the same
+//                device is not touched, and neither are device settings like the theme cache.
+//   • Account  — removes the account's data, which means everywhere, because the removals are
+//                synced like any other change. Waiting for that to reach the server before
+//                reloading is the difference between a reset and data that reappears.
+export async function clearAllH1Data() {
+  const keys = listKeys();
+  keys.forEach((key) => safeRemove(key));
+  try {
+    const { clearAllFiles } = await import("./fileStore.js");
+    await clearAllFiles();
+  } catch {
+    // Attachments couldn't be cleared; the rest of the reset still happened.
+  }
+  try {
+    const { isAccountMode } = await import("./session.js");
+    if (isAccountMode()) {
+      const sync = await import("./cloudSync.js");
+      await sync.flush({ timeoutMs: 12000 });
+    }
+  } catch {
+    // Offline: the removals are queued and go up with the next sync.
+  }
+  return keys.length;
 }

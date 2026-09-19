@@ -9,6 +9,11 @@
 // Everything the parent learns about a run therefore comes back over postMessage: console
 // output, errors, and the result of each exercise check. The checks run *inside* the frame
 // for the same reason — the parent has no access to the frame's document and shouldn't.
+//
+// The frame loads /sandbox.html and is handed the document to run over postMessage, rather than
+// being given it directly as `srcdoc`. A srcdoc frame inherits the parent page's
+// Content-Security-Policy, and H1's pages now forbid inline scripts and eval — which is exactly
+// what a student's page is made of. Loading a real page gives the preview its own policy.
 const RUN_TIMEOUT_MS = 4000;
 const MAX_LOGS = 200;
 const MAX_LOG_CHARS = 2000;
@@ -275,6 +280,44 @@ export function buildDocument({ html = "", css = "", js = "", harness = "" }) {
   return `${body}${styleTag}${harnessTag}${scriptTag}`;
 }
 
+const SANDBOX_URL = "/sandbox.html";
+const SANDBOX_READY_TIMEOUT_MS = 8000;
+
+// Creates the sandboxed frame and resolves once the page inside it is ready to be handed a
+// document. Rejects if it never loads, so a preview that can't start says so rather than
+// sitting blank forever.
+function createSandboxFrame(host, title) {
+  const frame = document.createElement("iframe");
+  frame.className = "code-preview-frame";
+  frame.title = title;
+  // No allow-same-origin: see the note at the top of this file.
+  frame.setAttribute("sandbox", "allow-scripts allow-forms allow-modals");
+  frame.src = SANDBOX_URL;
+  host.appendChild(frame);
+
+  const ready = new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      window.removeEventListener("message", onReady);
+      reject(new Error("preview did not start"));
+    }, SANDBOX_READY_TIMEOUT_MS);
+    function onReady(event) {
+      if (event.source !== frame.contentWindow) return;
+      if (!event.data || event.data.__h1sandboxReady !== true) return;
+      clearTimeout(timer);
+      window.removeEventListener("message", onReady);
+      resolve();
+    }
+    window.addEventListener("message", onReady);
+  });
+
+  return {
+    frame,
+    // Hands the document over. The frame's origin is opaque, so "*" is the only target
+    // available; the content is the student's own code going into their own sandbox.
+    send: (doc) => ready.then(() => frame.contentWindow && frame.contentWindow.postMessage({ __h1sandbox: true, doc }, "*")),
+  };
+}
+
 // `host` is the element the sandboxed frame lives in. A fresh frame is created per run so a
 // previous run's timers, listeners and infinite loops are genuinely gone, not just ignored.
 export function createRunner(host) {
@@ -294,19 +337,15 @@ export function createRunner(host) {
     host.innerHTML = "";
 
     const runId = ++runSeq;
-    const frame = document.createElement("iframe");
-    frame.className = "code-preview-frame";
-    frame.title = "Code preview";
-    // No allow-same-origin: see the note at the top of this file.
-    frame.setAttribute("sandbox", "allow-scripts allow-forms allow-modals");
-    host.appendChild(frame);
+    const sandbox = createSandboxFrame(host, "Code preview");
+    const frame = sandbox.frame;
 
     const checkBodies = checks.map((c) => ({ label: c.label, body: c.body, hint: c.hint || "" }));
     const harness = withHarness ? harnessSource(runId, checkBodies) : "";
     // Guarded: an unbounded loop in here would otherwise freeze the whole tab.
     const guardedJs = injectLoopGuard(js);
     const doc = buildDocument({ html, css, js: guardedJs, harness });
-    frame.srcdoc = doc;
+    const delivered = sandbox.send(doc);
 
     // How many lines sit above the student's own first line in the generated document: the
     // wrapper and harness, plus whatever preamble the loop guard added.
@@ -327,6 +366,15 @@ export function createRunner(host) {
     if (!withHarness) return Promise.resolve({ logs: [], errors: [], checks: [], timedOut: false });
 
     return new Promise((resolve) => {
+      delivered.catch(() => {
+        settle({
+          logs: [],
+          errors: [{ message: "H1 couldn't start the preview window. Check your connection and try running it again.", line: null }],
+          checks: checkBodies.map((c) => ({ label: c.label, passed: false, hint: c.hint })),
+          timedOut: false,
+        });
+      });
+
       function settle(result) {
         if (!current || current.runId !== runId) return;
         window.removeEventListener("message", onMessage);
@@ -344,7 +392,7 @@ export function createRunner(host) {
         settle({ logs: d.logs || [], errors: fixLines(d.errors), checks: d.checks || [], timedOut: false });
       }
 
-      const timer = setTimeout(() => {
+      function onTimeout() {
         // Nothing came back: almost always an infinite loop. Destroying the frame is what
         // actually stops it — there's no other way to interrupt a busy script.
         const frameEl = current && current.frame;
@@ -355,7 +403,17 @@ export function createRunner(host) {
           checks: checkBodies.map((c) => ({ label: c.label, passed: false, hint: c.hint })),
           timedOut: true,
         });
-      }, RUN_TIMEOUT_MS);
+      }
+
+      // The four seconds are four seconds of the student's code running, so the clock restarts
+      // once the sandbox page has actually been handed the document — loading it doesn't eat
+      // into the budget on a slow connection.
+      delivered.then(() => {
+        if (!current || current.runId !== runId || !current.timer) return;
+        clearTimeout(current.timer);
+        current.timer = setTimeout(onTimeout, RUN_TIMEOUT_MS);
+      });
+      const timer = setTimeout(onTimeout, RUN_TIMEOUT_MS + SANDBOX_READY_TIMEOUT_MS);
 
       current = { runId, frame, onMessage, timer };
       window.addEventListener("message", onMessage);
@@ -367,13 +425,12 @@ export function createRunner(host) {
   function preview({ html = "", css = "", js = "" } = {}) {
     teardown();
     host.innerHTML = "";
-    const frame = document.createElement("iframe");
-    frame.className = "code-preview-frame";
-    frame.title = "Live preview";
-    frame.setAttribute("sandbox", "allow-scripts allow-forms allow-modals");
-    host.appendChild(frame);
-    frame.srcdoc = buildDocument({ html, css, js: injectLoopGuard(js) });
-    current = { runId: ++runSeq, frame, onMessage: () => {}, timer: null };
+    const sandbox = createSandboxFrame(host, "Live preview");
+    sandbox.send(buildDocument({ html, css, js: injectLoopGuard(js) })).catch(() => {
+      // Nothing to report in a live preview beyond the frame staying blank; the run button
+      // gives a proper message.
+    });
+    current = { runId: ++runSeq, frame: sandbox.frame, onMessage: () => {}, timer: null };
   }
 
   return { run, preview, teardown };

@@ -1,12 +1,18 @@
 // Starts H1.
 //
-// H1's interface is ~90 separate script modules, and if any one of them fails to arrive the
-// whole app fails to start. In production a small share of requests fail transiently at the
-// hosting edge, so starting is made resilient in two layers:
-//   1. a service worker (sw.js) that retries H1's own static files when they fail;
-//   2. here: if the app still didn't start, reload (by then the service worker is in place),
-//      at most twice, and after that show a clear "try again" screen rather than a half-drawn
-//      page with dead buttons.
+// Two jobs, in this order:
+//
+// 1. Work out who H1 is running as — signed in, a guest, or a server with no accounts at all —
+//    and, when signed in, bring that account's work onto the device BEFORE the app loads. Every
+//    feature reads its data synchronously at start-up, so the data has to be there first.
+//
+// 2. Actually start the app, resiliently. H1's interface is ~95 separate script modules, and if
+//    any one of them fails to arrive the whole app fails to start. In production a small share
+//    of requests fail transiently at the hosting edge, so starting is protected in two layers:
+//      • a service worker (sw.js) that retries H1's own static files when they fail;
+//      • here: if the app still didn't start, reload (by then the service worker is in place),
+//        at most twice, and after that show a clear "try again" screen rather than a half-drawn
+//        page with dead buttons.
 const RETRY_KEY = "h1-boot-retries";
 const MAX_AUTO_RELOADS = 2;
 
@@ -36,6 +42,7 @@ function registerServiceWorker() {
 }
 
 function showStartupError() {
+  hideSplash();
   const el = document.getElementById("bootError");
   if (!el) return;
   el.hidden = false;
@@ -49,11 +56,75 @@ function showStartupError() {
   }
 }
 
+function splash(text) {
+  const el = document.getElementById("bootSplash");
+  const label = document.getElementById("bootSplashText");
+  if (label && text) label.textContent = text;
+  if (el) el.hidden = false;
+}
+
+function hideSplash() {
+  const el = document.getElementById("bootSplash");
+  if (el) el.hidden = true;
+}
+
+function revealApp() {
+  document.documentElement.classList.remove("h1-gate");
+  hideSplash();
+}
+
+// Signing in, or picking guest mode, decides which data H1 opens — so this runs before the app
+// itself is imported. It never blocks start-up: any failure falls back to this device's own
+// data, which is exactly how H1 worked before accounts existed.
+async function prepare() {
+  let session;
+  try {
+    session = await import("./session.js");
+  } catch {
+    return; // Can't load the session module: carry on as a guest on this device.
+  }
+  let outcome;
+  try {
+    splash("Checking your session…");
+    outcome = await session.prepareSession();
+  } catch {
+    return;
+  }
+
+  if (outcome.action === "auth") {
+    hideSplash();
+    try {
+      const { showAuthScreen } = await import("./authScreen.js");
+      await showAuthScreen({ expired: outcome.expired });
+    } catch {
+      // The sign-in screen itself couldn't load — don't strand anyone: H1 opens as a guest.
+      session.continueAsGuest();
+    }
+  }
+
+  if (session.isAccountMode() && !session.isOffline()) {
+    splash("Loading your work…");
+    try {
+      const sync = await import("./cloudSync.js");
+      await sync.pullAll({ initial: true });
+    } catch {
+      // Couldn't fetch this time: the device's own copy is used and sync catches up later.
+    }
+  }
+}
+
 export async function startApp() {
   const workerReady = registerServiceWorker();
   try {
+    await prepare();
+  } catch {
+    // Never let account set-up stop H1 from opening.
+  }
+  try {
+    splash("Starting H1…");
     await import("./main.js");
     writeRetries(0);
+    revealApp();
     return true;
   } catch (err) {
     const tries = readRetries();
@@ -66,6 +137,7 @@ export async function startApp() {
     }
     writeRetries(0);
     console.error("H1 couldn't start:", err);
+    revealApp();
     showStartupError();
     return false;
   }

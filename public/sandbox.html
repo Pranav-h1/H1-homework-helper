@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>H1 Code Lab preview</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #fff; color: #111; font: 14px/1.5 system-ui, sans-serif; }
+  .h1-sandbox-idle { padding: 16px; color: #555; }
+</style>
+</head>
+<body>
+<p class="h1-sandbox-idle">This page is where H1's Code Lab runs your code. Open H1 to use it.</p>
+<!--
+  Why this page exists.
+
+  Student code runs in an iframe that deliberately has no access to H1: the frame is sandboxed
+  WITHOUT allow-same-origin, so it gets its own opaque origin and cannot read H1's cookies,
+  storage or DOM. That part hasn't changed.
+
+  What changed is how the code gets in. It used to be written straight into the frame with
+  `srcdoc`, and a srcdoc frame inherits the parent page's Content-Security-Policy. H1's own pages
+  now have a strict policy — no inline scripts, no eval — which is right for H1 and completely
+  wrong for a page whose entire purpose is running a student's <script> tag. Loading this file
+  over the network instead gives the preview its own policy, so H1 can be locked down without
+  breaking the Code Lab.
+
+  The document arrives over postMessage from the parent and is written here. Nothing else is
+  accepted, and the page refuses to do anything at all if it isn't inside a frame.
+-->
+<script>
+(function () {
+  if (window.parent === window) return;
+  var written = false;
+  window.addEventListener("message", function (event) {
+    // Only the page that framed this one may hand it a document.
+    if (event.source !== window.parent || written) return;
+    var data = event.data;
+    if (!data || data.__h1sandbox !== true || typeof data.doc !== "string") return;
+    written = true;
+    document.open();
+    document.write(data.doc);
+    document.close();
+  });
+  // The frame has an opaque origin, so "*" is the only targetOrigin available here. It carries
+  // no information — it's a "ready" ping — and the parent identifies this frame by its window
+  // reference, not by what the message claims.
+  window.parent.postMessage({ __h1sandboxReady: true }, "*");
+})();
+</script>
+</body>
+</html>

@@ -67,7 +67,18 @@ export function initChatLayout() {
 
   onViewChange(schedule);
   window.addEventListener("resize", schedule, { passive: true });
-  if (typeof ResizeObserver !== "undefined") new ResizeObserver(schedule).observe(main);
+  if (typeof ResizeObserver !== "undefined") {
+    const observer = new ResizeObserver(schedule);
+    observer.observe(main);
+    // The dock and the phone's bottom bar change size at breakpoints, and they animate there.
+    // Watching them directly means the clearance is re-measured when they settle, rather than
+    // staying a frame behind and briefly letting the dock sit over the composer after a resize.
+    [document.querySelector(".dock-wrap .dock"), document.querySelector(".mobile-bottom-nav")].forEach((el) => {
+      if (!el) return;
+      observer.observe(el);
+      el.addEventListener("transitionend", schedule);
+    });
+  }
   // The sidebar collapsing, device-preview switching and the dock appearing all change the
   // panel or the floating UI without resizing the window.
   new MutationObserver(schedule).observe(document.getElementById("app") || document.body, { attributes: true, attributeFilter: ["class"] });

@@ -121,6 +121,40 @@ function scrollChatToBottom(smooth = false) {
 
 // A new answer: show it from the top if it's taller than most of the screen, otherwise just
 // bring it fully into view.
+// A reply keeps growing for a moment after it's drawn — maths is typeset, images decode — and
+// anything that grows ABOVE what you're reading pushes it down the page. So for a short while
+// after landing on a long answer, H1 measures how far that answer moved and scrolls by the same
+// amount, which leaves it exactly where it was on screen.
+//
+// It's a relative correction, not a fixed position: it never fights a deliberate scroll, it
+// just cancels out the shift.
+let anchorRow = null;
+let anchorTop = 0;
+let anchorUntil = 0;
+
+function holdRowTop(row) {
+  anchorRow = row;
+  anchorTop = row.offsetTop;
+  anchorUntil = Date.now() + 1500;
+}
+
+function releaseRowTop() {
+  anchorRow = null;
+}
+
+function keepAnchored() {
+  if (!anchorRow) return;
+  if (Date.now() > anchorUntil || !anchorRow.isConnected) {
+    anchorRow = null;
+    return;
+  }
+  const now = anchorRow.offsetTop;
+  if (now !== anchorTop) {
+    chatLog.scrollTop += now - anchorTop;
+    anchorTop = now;
+  }
+}
+
 function revealAnswer(row) {
   if (!autoScrollEnabled() || !followOutput) {
     unreadReply = true;
@@ -132,6 +166,7 @@ function revealAnswer(row) {
   // or the next size change (maths being typeset) would drag the view back down.
   if (tall) followOutput = false;
   scrollLogTo(tall ? row.offsetTop - 12 : chatLog.scrollHeight, true);
+  if (tall) holdRowTop(row);
   unreadReply = false;
   updateJumpButton();
 }
@@ -143,6 +178,7 @@ function revealAnswer(row) {
 const rowObserver =
   typeof ResizeObserver !== "undefined"
     ? new ResizeObserver(() => {
+        keepAnchored();
         if (followOutput && autoScrollEnabled() && distanceFromBottom() > 1) chatLog.scrollTop = chatLog.scrollHeight;
       })
     : null;
@@ -170,6 +206,7 @@ function initScrollBehaviour() {
   jumpBtn.innerHTML =
     '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg><span>Jump to latest</span>';
   jumpBtn.addEventListener("click", () => {
+    releaseRowTop();
     // Animating through thousands of pixels of conversation isn't a jump; only glide when the
     // latest message is close.
     scrollLogTo(chatLog.scrollHeight, distanceFromBottom() < chatLog.clientHeight * 3);

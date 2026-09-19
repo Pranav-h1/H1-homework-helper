@@ -22,6 +22,15 @@
     root.setAttribute("data-theme", "dark");
   }
 
+  // Hold the interface back for a moment while boot.js works out whether this is a signed-in
+  // account or a guest — otherwise the app shell flashes up, then gets covered by the sign-in
+  // screen. The timeout is a safety net: if boot.js never runs (dropped request, a browser
+  // without modules), the interface appears anyway rather than leaving a blank page.
+  root.className += (root.className ? " " : "") + "h1-gate";
+  setTimeout(function () {
+    root.className = root.className.replace(/(^|\s)h1-gate(?=\s|$)/, "");
+  }, 8000);
+
   var workerReady = null;
   try {
     if ("serviceWorker" in navigator && window.isSecureContext) {
