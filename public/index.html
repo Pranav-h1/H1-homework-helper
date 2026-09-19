@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="design.css" />
 <script src="js/early.js"></script>
 </head>
 <body>
@@ -110,11 +111,12 @@
         </div>
 
         <button id="commandHint" class="sidebar-command-hint" type="button" aria-label="Open quick search">
-          <span class="command-hint-icon">🔍</span>
+          <svg class="command-hint-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <span>Quick search</span>
           <span class="command-kbd">Ctrl K</span>
         </button>
 
+        <div class="sidebar-scroll" id="sidebarScroll">
         <div class="nav-group" role="tablist" aria-label="Sections">
           <div class="nav-active-pill" aria-hidden="true"></div>
           <button class="nav-item active" type="button" data-view="home" role="tab" aria-selected="true">
@@ -125,6 +127,7 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
             <span>AI Tutor</span>
           </button>
+          <div class="nav-section-label" aria-hidden="true">Study</div>
           <button class="nav-item" type="button" data-view="homework" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M9 3v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3"></path><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="16" x2="13" y2="16"></line></svg>
             <span>Homework</span>
@@ -165,6 +168,7 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 15.4 6.8 18.1l1-5.8L3.5 8.2l5.9-.9z"></path><path d="M12 15.4V22"></path></svg>
             <span>Boss Battle</span>
           </button>
+          <div class="nav-section-label" aria-hidden="true">Plan</div>
           <button class="nav-item" type="button" data-view="planner" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><polyline points="9 16 11 18 15 13"></polyline></svg>
             <span>Study Planner</span>
@@ -181,6 +185,7 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
             <span>Focus</span>
           </button>
+          <div class="nav-section-label" aria-hidden="true">Grow</div>
           <button class="nav-item" type="button" data-view="brain" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44A2.5 2.5 0 0 1 4 17.5a2.5 2.5 0 0 1-.94-4.32A2.5 2.5 0 0 1 3.5 8.5a2.5 2.5 0 0 1 1.6-2.33A2.5 2.5 0 0 1 9.5 2z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44A2.5 2.5 0 0 0 20 17.5a2.5 2.5 0 0 0 .94-4.32A2.5 2.5 0 0 0 20.5 8.5a2.5 2.5 0 0 0-1.6-2.33A2.5 2.5 0 0 0 14.5 2z"></path></svg>
             <span>Learning Brain</span>
@@ -193,6 +198,7 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"></circle><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"></path></svg>
             <span>Achievements</span>
           </button>
+          <div class="nav-section-label" aria-hidden="true">More</div>
           <button class="nav-item" type="button" data-view="tools" role="tab" aria-selected="false">
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
             <span>Tools</span>
@@ -225,7 +231,9 @@
           <span id="sidebarStatusDot" class="status-dot status-dot-pending"></span>
           <span id="sidebarStatusText">Checking AI status…</span>
         </div>
+        </div>
 
+        <div class="sidebar-footer">
         <div class="sidebar-account-wrap">
           <button id="sidebarAccountBtn" class="sidebar-account" type="button" aria-haspopup="true" aria-expanded="false">
             <span class="account-avatar" id="sidebarAccountAvatar" aria-hidden="true">G</span>
@@ -246,6 +254,7 @@
           </div>
         </div>
         <div class="sidebar-credit">Developed by Pranav Ganesh · H1 Lab</div>
+        </div>
       </nav>
 
       <main id="mainView" class="main-view" tabindex="-1">
@@ -291,8 +300,8 @@
 
             <div class="bento-tile bento-superbar">
               <form id="heroAskForm" class="superbar">
-                <span class="superbar-icon" aria-hidden="true">✨</span>
-                <input id="heroAskInput" class="superbar-input" type="text" placeholder="What are you studying today?" maxlength="4000" aria-label="Ask H1 anything" />
+                <span class="superbar-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18.5 9.5l-4.7 1.9L12 16l-1.8-4.6L5.5 9.5l4.7-1.9z"></path><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"></path></svg></span>
+                <input id="heroAskInput" class="superbar-input" type="text" placeholder="Ask H1 anything…" maxlength="4000" aria-label="Ask H1 anything" />
                 <div class="superbar-actions">
                   <button type="button" class="icon-btn" id="superbarAttachBtn" title="Attach a file" aria-label="Attach a file">
                     <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
@@ -396,27 +405,29 @@
               <h1 id="chatTitle">AI Tutor</h1>
               <p class="view-sub">H1 remembers this conversation while you chat.</p>
             </div>
-            <div class="view-actions">
+            <div class="view-actions chat-toolbar">
               <select id="chatModeSelect" class="mode-select" aria-label="AI tutor mode"></select>
-              <button id="chatContextToggleBtn" class="btn btn-ghost" type="button" title="Context" aria-label="Context" aria-expanded="false">
+              <div class="chat-toolbar-group" role="group" aria-label="View">
+                <button id="chatContextToggleBtn" class="btn btn-ghost btn-icon" data-tip="Context" type="button" aria-label="Context" aria-expanded="false">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
                 <span>Context</span>
               </button>
-              <button id="historyBtn" class="btn btn-ghost" type="button" title="Conversation history" aria-label="History">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
-                <span>History</span>
-              </button>
-              <button id="newChatBtn" class="btn btn-ghost" type="button" title="New conversation" aria-label="New conversation">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                <span>New</span>
-              </button>
-              <button id="readingWidthBtn" class="btn btn-ghost" type="button" aria-pressed="false" aria-label="Full-width answers">
+                <button id="readingWidthBtn" class="btn btn-ghost btn-icon" data-tip="Wide answers" type="button" aria-pressed="false" aria-label="Full-width answers">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="7 8 3 12 7 16"></polyline><polyline points="17 8 21 12 17 16"></polyline><line x1="3" y1="12" x2="21" y2="12"></line></svg>
                 <span>Wide</span>
               </button>
-              <button id="clearChatBtn" class="btn btn-ghost" type="button" title="Clear conversation" aria-label="Clear conversation">
+                <button id="clearChatBtn" class="btn btn-ghost btn-icon btn-icon-danger" data-tip="Clear conversation" type="button" aria-label="Clear conversation">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                 <span>Clear</span>
+              </button>
+              </div>
+              <button id="historyBtn" class="btn btn-ghost" type="button" aria-label="History">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15.5 14"></polyline></svg>
+                <span>History</span>
+              </button>
+              <button id="newChatBtn" class="btn btn-ghost btn-new-chat" type="button" aria-label="New conversation">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>New</span>
               </button>
             </div>
           </div>
@@ -445,7 +456,7 @@
                 <textarea
                   id="messageInput"
                   class="composer-input"
-                  placeholder="Ask H1 anything — or attach a file, photo or screenshot"
+                  placeholder="Ask H1 anything — or attach a file"
                   rows="1"
                   maxlength="4000"
                   autocomplete="off"
@@ -616,6 +627,7 @@
               <div class="empty-emoji">📘</div>
               <h2>No homework yet</h2>
               <p>Add your first task to start tracking deadlines and priorities.</p>
+              <button class="btn btn-primary" type="button" data-empty-action="homeworkAddBtn">Add a task</button>
             </div>
             <div id="homeworkList" class="homework-list"></div>
           </div>
@@ -714,7 +726,7 @@
           <div class="view-header">
             <div>
               <h1>Notes</h1>
-              <p class="view-sub">Your private study notes, saved on this device.</p>
+              <p class="view-sub">Your private study notes.</p>
             </div>
             <div class="view-actions">
               <button id="newNoteBtn" class="btn btn-primary" type="button">
@@ -735,6 +747,7 @@
                 <div class="empty-emoji">📝</div>
                 <h2>No notes yet</h2>
                 <p>Create your first note to start collecting what you've learned.</p>
+                <button class="btn btn-primary" type="button" data-empty-action="newNoteBtn">New note</button>
               </div>
               <div class="note-editor" id="noteEditor" hidden>
                 <div class="note-editor-top">
@@ -793,6 +806,7 @@
             <div class="empty-emoji">📁</div>
             <h2>No documents yet</h2>
             <p>Upload a PDF, Word, PowerPoint, Excel or text file to start your document library.</p>
+            <button class="btn btn-primary" type="button" data-empty-action="documentUploadBtn">Upload a document</button>
           </div>
           <div id="documentGrid" class="document-grid" hidden></div>
 
@@ -1227,6 +1241,7 @@
             <div class="empty-emoji">🗓️</div>
             <h2>Nothing planned yet</h2>
             <p>Add an item manually, or let H1 generate a study or exam plan for you.</p>
+            <button class="btn btn-ghost" type="button" data-empty-action="plannerAddItemBtn">Add an item</button>
           </div>
           <div id="plannerLists"></div>
         </section>
@@ -2082,7 +2097,7 @@
               <span class="toggle" id="autoScrollToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
             <label class="toggle-row">
-              <span>Save conversations on this device</span>
+              <span>Save conversations</span>
               <span class="toggle" id="saveConversationsToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
             <label class="toggle-row toggle-row-stacked">
@@ -2176,7 +2191,7 @@
               <button id="resetSettingsBtn" class="btn btn-danger" type="button">Reset</button>
             </div>
             <div class="danger-row">
-              <div class="danger-row-text"><strong>Reset everything</strong><span>Clears all H1 data stored on this device.</span></div>
+              <div class="danger-row-text"><strong>Reset everything</strong><span>Clears all of your H1 data — conversations, notes and everything else.</span></div>
               <button id="resetEverythingBtn" class="btn btn-danger" type="button">Reset all</button>
             </div>
           </div>
@@ -2277,7 +2292,7 @@
     </nav>
   </div>
 
-  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
   <!-- Generic modal (confirm / rename / prompt) -->
   <div id="modalOverlay" class="modal-overlay" hidden>

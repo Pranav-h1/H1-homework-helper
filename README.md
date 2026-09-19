@@ -10,7 +10,10 @@ Flashcards — all powered by a pluggable AI provider (Gemini, Anthropic, or Ope
 ```
 public/                    Static frontend (served as-is, no build step)
   index.html                Dashboard shell: sidebar nav, subject selector, all tool views
-  style.css                 Design system (themeable, responsive, animated)
+  style.css                 Every feature's layout (themeable, responsive)
+  design.css                H1's design system: tokens (type, spacing, radii, surfaces, motion) and
+                             the shared primitives built from them — buttons, fields, chips, cards,
+                             menus, dialogs, toasts, tooltips, empty states, skeletons, focus
   js/
     main.js                  App wiring: navigation, chat, explain, quiz, flashcards, settings
     api.js                   fetch() wrappers for /api/*
@@ -23,6 +26,8 @@ public/                    Static frontend (served as-is, no build step)
     accountApi.js             Calls to the account API (CSRF token kept in memory only)
     cloudSync.js              Keeps an account's work in step across devices
     accountMenu.js            The account button, its menu, and Settings → Account
+    icons.js                  H1's line-icon set, one drawing style everywhere
+    settingsNav.js            The section index down the side of Settings
     guestMigration.js         Offers to copy on-device work into an account
     toast.js                  Toast notifications
 server/

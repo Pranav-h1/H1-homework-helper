@@ -65,7 +65,8 @@ import { initNotifCenter, refreshNotifCenter } from "./notifCenter.js";
 import { clearEvents } from "./progress.js";
 import { initAccountMenu } from "./accountMenu.js";
 import { initCreatorPanel } from "./creatorPanel.js";
-import { isAccountMode } from "./session.js";
+import { initSettingsNav } from "./settingsNav.js";
+import { isAccountMode, currentUser } from "./session.js";
 import { onRemoteChange } from "./cloudSync.js";
 import { offerGuestDataImport, guestDataSummary, importGuestDataFromSettings } from "./guestMigration.js";
 
@@ -365,12 +366,25 @@ window.addEventListener("h1:activity-logged", () => {
 /* ===========================================================
    Home: hero greeting, ask bar, quick actions
    =========================================================== */
+// Greets the person by name when H1 knows one — the display name they chose, or their account's
+// username — and plainly otherwise.
+function greetingName() {
+  const chosen = (safeGet("h1-display-name", "") || "").trim();
+  if (chosen && chosen !== "Student") return chosen;
+  const user = currentUser();
+  return user && user.username && user.accountType !== "lab" ? user.username : user && user.accountType === "lab" ? "Creator" : "";
+}
+
 function updateGreeting() {
   const hour = new Date().getHours();
   const part = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
-  heroGreeting.textContent = `Good ${part} 👋`;
+  const name = greetingName();
+  heroGreeting.textContent = name ? `Good ${part}, ${name} 👋` : `Good ${part} 👋`;
 }
 updateGreeting();
+document.addEventListener("h1:view-changed", (event) => {
+  if (event.detail === "home") updateGreeting();
+});
 
 heroAskForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -452,8 +466,14 @@ importDataInput.addEventListener("change", async () => {
   }
 });
 
+// Where deleting something actually deletes it from — said plainly, because for someone signed in
+// it's every device, not just this one.
+function whereItLives() {
+  return isAccountMode() ? "in your account, on every device you use" : "on this device";
+}
+
 document.getElementById("clearConversationsBtn").addEventListener("click", () => {
-  confirmDanger("Clear all conversations?", "This deletes every saved Ask H1 conversation on this device.", "Clear all", () => {
+  confirmDanger("Clear all conversations?", `This deletes every saved AI Tutor conversation ${whereItLives()}.`, "Clear all", () => {
     clearAllConversations();
     clearAllConversationsData();
     showToast("All conversations cleared.", "success");
@@ -461,7 +481,7 @@ document.getElementById("clearConversationsBtn").addEventListener("click", () =>
 });
 
 document.getElementById("clearNotesBtn").addEventListener("click", () => {
-  confirmDanger("Clear all notes?", "This deletes every saved note on this device.", "Clear all", () => {
+  confirmDanger("Clear all notes?", `This deletes every saved note ${whereItLives()}.`, "Clear all", () => {
     clearAllNotesData();
     showToast("All notes cleared.", "success");
   });
@@ -613,6 +633,16 @@ onRemoteChange((keys) => {
 
 initAccountMenu();
 initCreatorPanel();
+initSettingsNav();
+
+// Empty states carry the one action that fills them. The button just presses the page's own
+// primary control, so there's a single code path for "add a task", "new note" and so on.
+document.addEventListener("click", (event) => {
+  const trigger = event.target.closest("[data-empty-action]");
+  if (!trigger) return;
+  const target = document.getElementById(trigger.dataset.emptyAction);
+  if (target) target.click();
+});
 
 // Settings → Data: bringing on-device (guest) work into the account stays available even if
 // the offer at sign-in was declined.

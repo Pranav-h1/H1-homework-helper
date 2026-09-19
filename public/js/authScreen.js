@@ -135,6 +135,8 @@ async function submit(event) {
     const user = session.currentUser();
     if (user && user.accountType === "lab") {
       await welcomeCreator(user.username);
+    } else {
+      await confirmSuccess(mode === "signup" ? "Account created" : "Signed in");
     }
     finish("account");
   } catch (err) {
@@ -149,6 +151,18 @@ async function submit(event) {
     }
     showError((err && err.message) || "Something went wrong. Please try again.", err && err.field);
   }
+}
+
+// A beat of confirmation before the app appears, so a successful sign-in feels like one rather
+// than the screen simply vanishing.
+function confirmSuccess(label) {
+  return new Promise((resolve) => {
+    el.submit.classList.remove("is-busy");
+    el.submit.classList.add("is-success");
+    el.submitLabel.textContent = label;
+    const reduce = document.documentElement.classList.contains("force-reduced-motion") || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(resolve, reduce ? 0 : 420);
+  });
 }
 
 // H1's own account gets a moment of acknowledgement on the way in, rather than landing in the

@@ -29,13 +29,20 @@ function measure() {
   if (!main || !chatView) return;
   const active = !chatView.hidden;
   main.classList.toggle("is-chat", active);
+  // In the tutor the dock tucks itself away, the way an auto-hiding macOS dock does, and
+  // slides back when the pointer reaches the bottom edge or a key moves focus into it. The
+  // answer gets the height the dock used to take.
+  const dockWrap = document.querySelector(".dock-wrap");
+  if (dockWrap) dockWrap.classList.toggle("dock-autohide", active);
   if (!active) return;
 
   const panel = main.getBoundingClientRect();
   let clearance = 0;
   // The dock's wrapper is the stable box: the dock icons magnify on hover with a transform,
-  // which would make a measurement taken mid-hover jump around.
-  [document.querySelector(".dock-wrap .dock"), document.querySelector(".mobile-bottom-nav")].forEach((el) => {
+  // which would make a measurement taken mid-hover jump around. An auto-hidden dock only ever
+  // floats over the chat for a moment, so it isn't measured — otherwise revealing it would
+  // shove the composer up and down.
+  [dockWrap && dockWrap.classList.contains("dock-autohide") ? null : document.querySelector(".dock-wrap .dock"), document.querySelector(".mobile-bottom-nav")].forEach((el) => {
     if (!isVisible(el)) return;
     const r = el.getBoundingClientRect();
     const overlapsSideways = r.right > panel.left && r.left < panel.right;
@@ -54,9 +61,9 @@ function applyReadingWidth(value, button) {
   chatView.classList.toggle("reading-full", full);
   if (button) {
     button.setAttribute("aria-pressed", String(full));
-    button.title = full
-      ? "Wide answers are on — text uses the full width. Click for a comfortable reading width."
-      : "Let answer text use the full width (tables, code and equations always do)";
+    // A short tooltip; the pressed state carries whether it's on.
+    button.dataset.tip = full ? "Comfortable width" : "Wide answers";
+    button.removeAttribute("title");
   }
 }
 

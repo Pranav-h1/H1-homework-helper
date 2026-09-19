@@ -256,14 +256,24 @@ export async function pullAll({ initial = false } = {}) {
 }
 
 // --- pushing -----------------------------------------------------------------------------
+// Each change restarts a short wait so a burst of edits goes up as one request — but the wait
+// can't be restarted forever. Someone clicking steadily through H1 writes something every
+// second or so, and without a ceiling their changes would never be uploaded at all.
+const PUSH_MAX_WAIT_MS = 5000;
+let waitingSince = 0;
+
 function schedulePush(delay = PUSH_DELAY_MS) {
   if (!active) return;
   clearTimeout(pushTimer);
+  const now = Date.now();
+  if (!waitingSince) waitingSince = now;
+  const wait = Math.max(0, Math.min(delay, waitingSince + PUSH_MAX_WAIT_MS - now));
   pushTimer = setTimeout(() => {
+    waitingSince = 0;
     push().catch(() => {
       /* push() records its own errors */
     });
-  }, delay);
+  }, wait);
 }
 
 export async function push() {

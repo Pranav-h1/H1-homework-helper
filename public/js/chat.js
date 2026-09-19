@@ -750,6 +750,9 @@ function setSending(state) {
   isSending = state;
   sendBtn.disabled = state;
   messageInput.disabled = state;
+  // Lets the send button show that it's working, rather than just looking switched off.
+  chatForm.classList.toggle("is-sending", state);
+  sendBtn.setAttribute("aria-busy", String(state));
 }
 
 // How much document text the client sends in one request. The server enforces its own budget
@@ -915,6 +918,7 @@ export function openChatWithMessage(text) {
 export function prefillChat(text) {
   switchView("chat");
   messageInput.value = text;
+  syncComposerFill();
   autoGrow(messageInput);
   messageInput.focus();
 }
@@ -929,6 +933,7 @@ chatForm.addEventListener("submit", (e) => {
   const text = messageInput.value.trim();
   if (!text && !hasAttachments()) return;
   messageInput.value = "";
+  syncComposerFill();
   autoGrow(messageInput);
   // Too long for a message (typed, or dropped in some way the paste handler didn't see): send
   // it as an attached file rather than have the server turn it away.
@@ -953,6 +958,7 @@ let slashMenuActiveIndex = -1;
 
 function insertSlashCommand(name) {
   messageInput.value = `/${name} `;
+  syncComposerFill();
   autoGrow(messageInput);
   closeSlashMenu();
   messageInput.focus();
@@ -1036,9 +1042,16 @@ messageInput.addEventListener("keydown", (e) => {
   }
 });
 
+// The send button reads as ready only when there's something to send. It isn't disabled — an
+// empty submit is already a no-op — it just stops looking like an invitation to press it.
+function syncComposerFill() {
+  chatForm.classList.toggle("is-empty", !messageInput.value.trim() && !hasAttachments());
+}
+
 messageInput.addEventListener("input", () => {
   autoGrow(messageInput);
   syncSlashMenu();
+  syncComposerFill();
 });
 
 chatForm.addEventListener("submit", () => closeSlashMenu());
@@ -1109,6 +1122,7 @@ if (SpeechRecognitionCtor) {
   recognition.addEventListener("result", (e) => {
     const transcript = e.results[0][0].transcript;
     messageInput.value = messageInput.value ? `${messageInput.value} ${transcript}` : transcript;
+    syncComposerFill();
     autoGrow(messageInput);
   });
   recognition.addEventListener("end", () => {
@@ -1290,12 +1304,14 @@ export function initChat() {
   initScrollBehaviour();
   initChatAttachments({
     onChange: () => {
+      syncComposerFill();
       messageInput.placeholder = hasAttachments() || isReading()
         ? "Ask about what you attached — or just press send"
-        : "Ask H1 anything — or attach a file, photo or screenshot";
+        : "Ask H1 anything — or attach a file";
     },
   });
   loadActiveIntoView();
+  syncComposerFill();
 }
 
 export function clearAllConversationsData() {

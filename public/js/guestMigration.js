@@ -16,6 +16,9 @@ import { showToast } from "./toast.js";
 // What each store is called when we tell someone what's about to be copied.
 const LABELS = [
   ["h1-conversations", "conversation", "conversations"],
+  ["h1-custom-subjects", "subject", "subjects"],
+  ["h1-goals", "goal", "goals"],
+  ["h1-progress-events", "study activity", "study activities"],
   ["h1-notes", "note", "notes"],
   ["h1-homework-tasks", "homework task", "homework tasks"],
   ["h1-documents", "document", "documents"],
@@ -48,10 +51,14 @@ function markHandled(how) {
   }
 }
 
-function countItems(raw) {
+function countItems(raw, key) {
   try {
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed.length;
+    if (Array.isArray(parsed)) {
+      // H1 opens a blank conversation for everyone; an empty one isn't work anyone did.
+      if (key === "h1-conversations") return parsed.filter((c) => c && Array.isArray(c.messages) && c.messages.length > 0).length;
+      return parsed.length;
+    }
     if (parsed && typeof parsed === "object") return Object.keys(parsed).length;
   } catch {
     // A plain setting.
@@ -67,7 +74,7 @@ export function guestDataSummary() {
   let total = 0;
   for (const [key, one, many] of LABELS) {
     if (!keys.includes(key)) continue;
-    const n = countItems(readGuestValue(key));
+    const n = countItems(readGuestValue(key), key);
     if (!n) continue;
     total += n;
     parts.push(`${n} ${n === 1 ? one : many}`);
@@ -108,7 +115,9 @@ function describe(summary) {
 export async function offerGuestDataImport() {
   if (!isAccountMode() || alreadyHandled()) return;
   const summary = guestDataSummary();
-  if (!summary || (!summary.total && !summary.otherCount)) {
+  // Only actual work is worth interrupting someone about. A theme or a subject choice left on the
+  // device isn't "earlier work", and asking to "bring it with you" would just be confusing.
+  if (!summary || !summary.total) {
     markHandled("nothing");
     return;
   }

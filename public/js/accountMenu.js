@@ -15,6 +15,7 @@ import { checkPasswords } from "./authRules.js";
 import { onUsageChange, refreshUsage, currentUsage, describeUsage, shortUsage, isLow } from "./aiUsage.js";
 
 const el = {};
+const GUEST_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg>';
 let usage = null;
 let sessionEndedShown = false;
 
@@ -36,15 +37,15 @@ function formatBytes(n) {
 
 function statusLine() {
   const left = shortUsage();
-  if (!session.isAccountMode()) return left ? `On this device · ${left}` : "On this device";
+  if (!session.isAccountMode()) return left ? `Not signed in · ${left}` : "Not signed in";
   if (session.isOffline()) return "Offline · saved here";
   const s = sync.syncStatus();
+  // Only a problem is worth a word here. A change waiting its few seconds to upload is normal,
+  // and counting it out ("1 to save") while someone clicks around was just flicker.
   if (s.error === "offline") return "Offline · will sync";
   if (s.error) return "Couldn't save";
-  if (s.syncing) return "Saving…";
-  if (s.pending) return `${s.pending} to save`;
-  // Once everything is saved, the number people actually care about is how many questions they
-  // have left.
+  if (s.syncing) return left ? `Saving… · ${left}` : "Saving…";
+  // What people actually care about once their work is safe: how many questions they have left.
   return left ? `Synced · ${left}` : "Synced";
 }
 
@@ -57,17 +58,23 @@ function render() {
 
   el.sidebarName.textContent = name;
   el.sidebarStatus.textContent = status;
-  el.sidebarAvatar.textContent = initials(name);
-  el.sidebarBtn.setAttribute("aria-label", account ? `Account: ${name}, ${status}` : "Not signed in");
+  // A guest gets a person outline rather than a letter "G" — it reads as "nobody signed in",
+  // not as someone called G.
+  if (account) el.sidebarAvatar.textContent = initials(name);
+  else el.sidebarAvatar.innerHTML = GUEST_ICON;
+  el.sidebarBtn.setAttribute("aria-label", account ? `Account: ${name}, ${status}` : "Using H1 as a guest — open to sign in");
   el.sidebarAvatar.classList.toggle("is-guest", !account);
+  el.sidebarBtn.classList.toggle("is-creator", Boolean(account && user && user.accountType === "lab"));
 
-  el.menuName.textContent = name;
+  el.menuName.textContent = account ? name : "Using H1 as a guest";
   el.menuSub.textContent = account
     ? user && user.accountType === "lab"
-      ? "H1 Lab account"
+      ? "Creator account · no message limit"
       : "Signed in · synced to your account"
-    : "Stored on this device";
-  el.menuAction.textContent = account ? "Sign out" : "Sign in";
+    : "Your work stays in this browser";
+  el.menuAction.textContent = account ? "Sign out" : "Sign in or create an account";
+  el.menuAction.classList.toggle("is-signin", !account);
+  el.menuSettings.textContent = account ? "Account settings" : "Settings";
   el.menuSync.hidden = !account;
 
   // Settings → Account
@@ -85,7 +92,11 @@ function render() {
     } else if (session.isOffline()) {
       el.accountSub.textContent = "Signed in. H1 can't reach the server right now, so changes are saved here and will sync when it's back.";
     } else {
-      el.accountSub.textContent = `Signed in. Your work syncs to every device you use. ${status === "Synced" ? "Everything is saved." : status}`;
+      // The allowance has its own panel right below, so this line only speaks up about saving
+      // when something is actually wrong with it.
+      const s = sync.syncStatus();
+      const problem = s.error === "offline" ? " H1 is offline — changes are saved here and will sync." : s.error ? " Some changes couldn't be saved to your account yet." : "";
+      el.accountSub.textContent = `Signed in. Your work syncs to every device you use.${problem}`;
     }
     if (usage) {
       el.accountUsage.hidden = false;

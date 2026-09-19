@@ -125,11 +125,14 @@ function renderList() {
 
   notesList.innerHTML = "";
   if (notes.length === 0) {
-    const msg = document.createElement("p");
-    msg.className = "settings-hint";
-    msg.style.padding = "8px 2px";
-    msg.textContent = query ? "No notes match your search." : "No notes yet.";
-    notesList.appendChild(msg);
+    // With no notes at all the editor side already says so, with a way to start — saying it a
+    // second time in the list only added noise. A search with no results is different news.
+    if (query) {
+      const msg = document.createElement("p");
+      msg.className = "notes-list-empty";
+      msg.textContent = "No notes match your search.";
+      notesList.appendChild(msg);
+    }
     return;
   }
 

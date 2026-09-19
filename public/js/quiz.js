@@ -438,6 +438,7 @@ async function startQuiz(sourceText) {
     return;
   }
   quizStartBtn.disabled = true;
+  quizStartBtn.classList.add("is-busy");
   quizStartBtn.querySelector("span").textContent = "Generating…";
   try {
     quizState.topic = topic;
@@ -469,6 +470,7 @@ async function startQuiz(sourceText) {
     showToast(friendlyErrorMessage(err), "error", 4500);
   } finally {
     quizStartBtn.disabled = false;
+    quizStartBtn.classList.remove("is-busy");
     quizStartBtn.querySelector("span").textContent = "Start Quiz";
   }
 }

@@ -213,6 +213,7 @@ async function startFlashcards(topicOverride, sourceText) {
     return;
   }
   flashStartBtn.disabled = true;
+  flashStartBtn.classList.add("is-busy");
   flashStartBtn.querySelector("span").textContent = "Generating…";
   try {
     const cards = await fetchFlashcards(topic, appState.subject, sourceText);
@@ -232,6 +233,7 @@ async function startFlashcards(topicOverride, sourceText) {
     showToast(friendlyErrorMessage(err), "error", 4500);
   } finally {
     flashStartBtn.disabled = false;
+    flashStartBtn.classList.remove("is-busy");
     flashStartBtn.querySelector("span").textContent = "Generate Flashcards";
   }
 }

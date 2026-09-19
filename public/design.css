@@ -1,0 +1,2627 @@
+/* =====================================================================================
+   H1 design system
+   -------------------------------------------------------------------------------------
+   Loaded after style.css. style.css holds every feature's layout; this file holds the
+   visual language they all share — tokens first, then the primitives built from them —
+   so a button, a card or a menu looks and behaves the same everywhere in H1.
+
+   The direction, in one line: calm surfaces, one clear level of depth at a time, type
+   doing the work that borders used to do, and motion that confirms rather than performs.
+
+   Rules this file follows:
+     • Every value comes from a token. No one-off colours, radii or durations.
+     • One elevation per region: the content panel is raised; things inside it are not
+       cards floating on cards.
+     • Borders are hairlines and only where grouping needs them.
+     • Dark and light are designed separately, not inverted.
+     • Motion is 120–260ms, eases out, and disappears entirely for reduced motion.
+   ===================================================================================== */
+
+/* =====================================================================================
+   1. Tokens
+   ===================================================================================== */
+:root {
+  /* Type scale — a small, fixed set. Nothing in H1 should need a size outside it. */
+  --fs-2xs: 11px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 14px;
+  --fs-md: 15px;
+  --fs-lg: 17px;
+  --fs-xl: 20px;
+  --fs-2xl: 24px;
+  --fs-3xl: 30px;
+  --lh-tight: 1.2;
+  --lh-snug: 1.4;
+  --lh-body: 1.6;
+  --tracking-tight: -0.018em;
+  --tracking-caps: 0.07em;
+
+  /* Spacing — a 4px rhythm. */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-7: 28px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+
+  /* Radii — rounded, not bubbly. The old scale ran to 36px, which made every panel read as
+     a pill. Controls sit at 10, cards at 14, panels at 18, the window at 22. */
+  --r-window: 22px;
+  --r-panel: 18px;
+  --radius-xs: 7px;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-full: 999px;
+
+  /* Heights for interactive controls, so rows of mixed controls line up. */
+  --h-control-sm: 30px;
+  --h-control: 36px;
+  --h-control-lg: 42px;
+
+  /* Motion. Fast in, faster out; nothing bounces except on purpose. */
+  --dur-1: 120ms;
+  --dur-2: 180ms;
+  --dur-3: 260ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.25, 1);
+  --t-fast: var(--dur-1);
+  --t-base: var(--dur-2);
+  --t-slow: var(--dur-3);
+
+  --sidebar-w: 236px;
+
+  /* Surfaces — dark. The window is the deepest layer, the content panel sits one step up,
+     and floating things (menus, dialogs, toasts) one more. */
+  --bg: #0e0f15;
+  --panel: #15161e;
+  --panel-border: rgba(255, 255, 255, 0.06);
+  --card: rgba(255, 255, 255, 0.028);
+  --card-hover: rgba(255, 255, 255, 0.045);
+  --raised: #1c1d27;
+  --raised-border: rgba(255, 255, 255, 0.09);
+  --hairline: rgba(255, 255, 255, 0.07);
+  --hairline-strong: rgba(255, 255, 255, 0.13);
+  --fill-subtle: rgba(255, 255, 255, 0.045);
+  --fill-hover: rgba(255, 255, 255, 0.07);
+  --fill-press: rgba(255, 255, 255, 0.1);
+  --field: rgba(255, 255, 255, 0.035);
+  --scrim: rgba(5, 6, 10, 0.55);
+
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --elev-2: 0 8px 24px rgba(0, 0, 0, 0.32), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --elev-3: 0 24px 64px rgba(0, 0, 0, 0.5), 0 4px 14px rgba(0, 0, 0, 0.35);
+
+  --focus-ring-color: rgba(var(--accent-1-rgb), 0.65);
+  --selection: rgba(var(--accent-1-rgb), 0.32);
+
+  /* The old tokens, pointed at the new surfaces so everything that already uses them moves
+     with the system. */
+  --surface: var(--fill-subtle);
+  --surface-hover: var(--fill-hover);
+  --surface-solid: #181922;
+  --surface-elevated: var(--raised);
+  --border: var(--hairline);
+  --border-strong: var(--hairline-strong);
+  --glass-base-bg: var(--panel);
+  --glass-base-border: var(--panel-border);
+  --glass-base-shadow: var(--elev-1);
+  --glass-elevated-bg: var(--card);
+  --glass-elevated-border: var(--hairline);
+  --glass-elevated-shadow: none;
+  --glass-floating-bg: var(--raised);
+  --glass-floating-border: var(--raised-border);
+  --glass-floating-shadow: var(--elev-3);
+  --shadow-sm: var(--elev-1);
+  --shadow-md: var(--elev-2);
+  --shadow-lg: var(--elev-3);
+  --shadow-glow: 0 4px 14px rgba(var(--accent-1-rgb), 0.22);
+}
+
+:root[data-theme="light"] {
+  --bg: #eef0f5;
+  --panel: #ffffff;
+  --panel-border: rgba(15, 23, 42, 0.07);
+  --card: #f8f9fb;
+  --card-hover: #f3f4f8;
+  --raised: #ffffff;
+  --raised-border: rgba(15, 23, 42, 0.09);
+  --hairline: rgba(15, 23, 42, 0.08);
+  --hairline-strong: rgba(15, 23, 42, 0.15);
+  --fill-subtle: rgba(15, 23, 42, 0.035);
+  --fill-hover: rgba(15, 23, 42, 0.06);
+  --fill-press: rgba(15, 23, 42, 0.09);
+  --field: #ffffff;
+  --scrim: rgba(15, 23, 42, 0.28);
+
+  --elev-1: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --elev-2: 0 8px 24px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --elev-3: 0 24px 60px rgba(15, 23, 42, 0.14), 0 4px 14px rgba(15, 23, 42, 0.07);
+
+  --focus-ring-color: rgba(var(--accent-1-rgb), 0.55);
+  --selection: rgba(var(--accent-1-rgb), 0.2);
+
+  --surface: var(--fill-subtle);
+  --surface-hover: var(--fill-hover);
+  --surface-solid: #ffffff;
+  --surface-elevated: var(--raised);
+  --border: var(--hairline);
+  --border-strong: var(--hairline-strong);
+  --glass-base-bg: var(--panel);
+  --glass-base-border: var(--panel-border);
+  --glass-base-shadow: var(--elev-1);
+  --glass-elevated-bg: var(--card);
+  --glass-elevated-border: var(--hairline);
+  --glass-elevated-shadow: none;
+  --glass-floating-bg: var(--raised);
+  --glass-floating-border: var(--raised-border);
+  --glass-floating-shadow: var(--elev-3);
+  --shadow-sm: var(--elev-1);
+  --shadow-md: var(--elev-2);
+  --shadow-lg: var(--elev-3);
+  --shadow-glow: 0 4px 14px rgba(var(--accent-1-rgb), 0.18);
+}
+
+::selection {
+  background: var(--selection);
+}
+
+/* =====================================================================================
+   2. Base typography
+   ===================================================================================== */
+body {
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv11", "ss01";
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: var(--tracking-tight);
+}
+
+.view-header h1 {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.022em;
+}
+
+.view-sub {
+  margin-top: 6px;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  color: var(--text-muted);
+  max-width: 68ch;
+}
+
+/* Section headings inside a view: one consistent treatment. */
+.settings-section h2,
+.section-title {
+  font-size: var(--fs-md);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+/* Small uppercase labels ("THEME", "ACCENT COLOR", tile eyebrows) — one style everywhere. */
+.field-label,
+.creator-subhead,
+.tile-eyebrow,
+.bento-label {
+  font-size: var(--fs-2xs);
+  font-weight: 650;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+kbd,
+.command-kbd {
+  font-family: var(--font-body);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--hairline-strong);
+  border-bottom-width: 2px;
+  background: var(--fill-subtle);
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* =====================================================================================
+   3. The shell: window, sidebar, content panel
+   ===================================================================================== */
+.app {
+  border-radius: var(--r-window);
+  border-color: var(--hairline);
+  box-shadow: var(--elev-3);
+  background: var(--bg);
+}
+
+.shell {
+  gap: 8px;
+  padding: 0 10px 10px;
+}
+
+/* The content panel is the one raised surface — the stage everything happens on. */
+.main-view {
+  background: var(--panel);
+  backdrop-filter: none;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--r-panel);
+  box-shadow: var(--elev-1);
+  padding: var(--sp-6) var(--sp-7);
+  gap: var(--sp-5);
+}
+
+.view {
+  gap: var(--sp-5);
+  animation: viewIn var(--dur-3) var(--ease-out);
+}
+
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Sidebar ---------------------------------------------------------------------- */
+/* Part of the window rather than a block beside it: it sits on the window's own
+   background, with no card, border or shadow of its own. */
+.sidebar {
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 6px 4px 4px;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.brand {
+  padding: 4px 8px 12px;
+  gap: 10px;
+}
+
+/* The pinned parts of the sidebar keep their size; only the scrolling list gives way. */
+.sidebar > .brand,
+.sidebar > .sidebar-command-hint,
+.sidebar > .sidebar-footer {
+  flex-shrink: 0;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(var(--accent-1-rgb), 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.brand-name {
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+
+.brand-tagline {
+  font-size: var(--fs-2xs);
+  color: var(--text-faint);
+}
+
+/* Search reads as a field, not a button. */
+.sidebar-command-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  margin: 0 4px 8px;
+  padding: 0 8px 0 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline);
+  background: var(--field);
+  color: var(--text-faint);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+.sidebar-command-hint:hover {
+  border-color: var(--hairline-strong);
+  color: var(--text-muted);
+}
+
+.sidebar-command-hint > span:not(.command-kbd) {
+  flex: 1;
+  text-align: left;
+}
+
+.command-hint-icon {
+  flex: none;
+  opacity: 0.8;
+}
+
+/* Only the list of sections scrolls; the brand stays at the top and the account at the
+   bottom, so "who am I signed in as" is never below the fold. */
+.sidebar-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 4px 8px;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  /* A soft edge where the list meets the pinned header and footer. */
+  mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 calc(100% - 14px), transparent 100%);
+}
+
+.sidebar-scroll:hover {
+  scrollbar-color: var(--hairline-strong) transparent;
+}
+
+.sidebar-footer {
+  flex: none;
+  display: grid;
+  gap: 6px;
+  padding: 8px 4px 2px;
+  border-top: 1px solid var(--hairline);
+}
+
+.nav-group {
+  gap: 1px;
+}
+
+.nav-group-bottom {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hairline);
+}
+
+.nav-section-label {
+  padding: 14px 10px 5px;
+  font-size: var(--fs-2xs);
+  font-weight: 650;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  user-select: none;
+}
+
+.nav-item {
+  gap: 10px;
+  height: 34px;
+  padding: 0 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  color: var(--text-muted);
+  transition: color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
+}
+
+.nav-item svg {
+  width: 17px;
+  height: 17px;
+  opacity: 0.85;
+  transition: opacity var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+.nav-item:hover {
+  color: var(--text);
+  background: var(--fill-subtle);
+}
+
+.nav-item:hover svg {
+  transform: none;
+  opacity: 1;
+}
+
+.nav-item:active {
+  transform: none;
+  background: var(--fill-hover);
+}
+
+.nav-item.active {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.nav-item.active svg {
+  opacity: 1;
+  color: var(--accent-text);
+}
+
+/* The active marker: a soft fill with a short accent bar, gliding between items. Obvious
+   at a glance, never loud. */
+.nav-active-pill {
+  height: 34px;
+  background: rgba(var(--accent-1-rgb), 0.12);
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  transition: transform var(--dur-3) var(--ease-out), height var(--dur-2) var(--ease-out), opacity var(--dur-1) var(--ease-out);
+}
+
+.nav-active-pill::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 16px;
+  margin-top: -8px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent-1);
+}
+
+:root[data-theme="light"] .nav-active-pill {
+  background: rgba(var(--accent-1-rgb), 0.1);
+}
+
+.sidebar-theme-toggle {
+  height: 34px;
+  margin-top: 6px;
+  padding: 0 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  color: var(--text-muted);
+}
+
+.sidebar-theme-toggle:hover {
+  background: var(--fill-subtle);
+  color: var(--text);
+  border: none;
+}
+
+.sidebar-status {
+  padding: 6px 10px;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.sidebar-credit {
+  padding: 2px 8px 0;
+  font-size: 10.5px;
+  color: var(--text-faint);
+  letter-spacing: 0.01em;
+  text-align: left;
+}
+
+/* The close button only means something when the sidebar is a drawer on a small screen. */
+@media (min-width: 900px) {
+  .sidebar .sidebar-close {
+    display: none;
+  }
+}
+
+/* Collapsed rail */
+.app.sidebar-collapsed .sidebar {
+  width: 64px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.app.sidebar-collapsed .nav-section-label {
+  height: 1px;
+  padding: 0;
+  margin: 10px 12px;
+  background: var(--hairline);
+  font-size: 0;
+}
+
+.app.sidebar-collapsed .sidebar-command-hint {
+  justify-content: center;
+  padding: 0;
+}
+
+.app.sidebar-collapsed .command-kbd,
+.app.sidebar-collapsed .sidebar-credit {
+  display: none;
+}
+
+.app.sidebar-collapsed .nav-active-pill::before {
+  display: none;
+}
+
+/* ---- Account area --------------------------------------------------------------- */
+.sidebar-account-wrap {
+  margin: 0;
+}
+
+.sidebar-account {
+  gap: 10px;
+  height: 46px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+
+.sidebar-account:hover,
+.sidebar-account[aria-expanded="true"] {
+  background: var(--fill-subtle);
+  border-color: var(--hairline);
+}
+
+.sidebar-account .account-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: var(--fs-sm);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.account-avatar.is-guest {
+  background: var(--fill-hover);
+  color: var(--text-muted);
+  border: 1px dashed var(--hairline-strong);
+  box-shadow: none;
+}
+
+.sidebar-account-name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.sidebar-account-status {
+  font-size: var(--fs-2xs);
+  line-height: 1.3;
+  color: var(--text-faint);
+}
+
+/* The menu is solid. It used to be translucent, and the sidebar underneath read straight
+   through it. */
+.account-menu {
+  bottom: calc(100% + 8px);
+  padding: 6px;
+  border-radius: var(--radius-lg);
+  background: var(--raised);
+  backdrop-filter: none;
+  border: 1px solid var(--raised-border);
+  box-shadow: var(--elev-3);
+  transform-origin: 50% 100%;
+  animation: popIn var(--dur-2) var(--ease-out);
+}
+
+.account-menu-head {
+  padding: 8px 10px 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.account-menu-head strong {
+  font-size: var(--fs-sm);
+}
+
+.account-menu-head span {
+  font-size: var(--fs-xs);
+}
+
+.account-menu-item {
+  display: flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  transition: background var(--dur-1) var(--ease-out);
+}
+
+.account-menu-item:hover,
+.account-menu-item:focus-visible {
+  background: var(--fill-hover);
+}
+
+.account-menu-danger {
+  color: var(--text);
+}
+
+.account-menu-item.is-signin {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Top bar --------------------------------------------------------------------- */
+.desktop-topbar {
+  padding: 10px 14px 8px 18px;
+  gap: 12px;
+}
+
+.desktop-topbar::after {
+  display: none;
+}
+
+.traffic-light {
+  width: 11px;
+  height: 11px;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+}
+
+.topbar-title {
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 650;
+  letter-spacing: -0.005em;
+}
+
+.topbar-status {
+  height: 28px;
+  padding: 0 10px;
+  background: transparent;
+  backdrop-filter: none;
+  border: 1px solid var(--hairline);
+  font-size: var(--fs-xs);
+  font-weight: 550;
+}
+
+.space-switcher-btn {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+
+.space-switcher-btn:hover {
+  background: var(--fill-subtle);
+  border-color: var(--hairline-strong);
+}
+
+/* =====================================================================================
+   4. Buttons
+   ===================================================================================== */
+.btn {
+  height: var(--h-control);
+  padding: 0 14px;
+  gap: 7px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), transform var(--dur-1) var(--ease-out), opacity var(--dur-1) var(--ease-out);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+}
+
+/* Secondary: a quiet filled control. It no longer jumps up or lights an accent border on
+   hover — only the primary action gets to be the loud one. */
+.btn-ghost {
+  background: var(--fill-subtle);
+  border: 1px solid var(--hairline-strong);
+  color: var(--text);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--fill-hover);
+  border-color: var(--hairline-strong);
+  color: var(--text);
+  transform: none;
+}
+
+.btn-primary {
+  background: var(--accent-grad);
+  color: var(--accent-contrast);
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 14px rgba(var(--accent-1-rgb), 0.22);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: none;
+  filter: brightness(1.06);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 6px 20px rgba(var(--accent-1-rgb), 0.32);
+}
+
+.btn-danger {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+  box-shadow: none;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--danger) 18%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 55%, transparent);
+  transform: none;
+}
+
+.btn-block {
+  height: var(--h-control-lg);
+}
+
+/* A busy button keeps its size and says it's working with a spinner. */
+.btn.is-busy {
+  position: relative;
+  cursor: progress;
+  opacity: 0.85;
+}
+
+.btn.is-busy::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: spin 0.7s linear infinite;
+  flex: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Icon buttons: rounded squares, not circles — they line up with everything else. */
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
+}
+
+.icon-btn:hover {
+  background: var(--fill-hover);
+  color: var(--text);
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+  background: var(--fill-press);
+}
+
+.icon-btn-sm {
+  height: 26px;
+  padding: 0 8px;
+  border-radius: var(--radius-xs);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.icon-btn-sm:hover {
+  background: var(--fill-hover);
+  color: var(--text);
+}
+
+/* =====================================================================================
+   5. Fields
+   ===================================================================================== */
+.auth-input,
+.tool-input,
+.tool-textarea,
+.history-search-input,
+.note-title-input,
+.qc-input,
+select.tool-select,
+.form-select,
+input[type="date"],
+input[type="time"],
+input[type="number"]:not(.creator-limit-input) {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline-strong);
+  background: var(--field);
+  color: var(--text);
+  font-size: var(--fs-base);
+  transition: border-color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), background var(--dur-1) var(--ease-out);
+}
+
+.auth-input:hover,
+.tool-input:hover,
+.tool-textarea:hover,
+.history-search-input:hover {
+  border-color: color-mix(in srgb, var(--text) 22%, transparent);
+}
+
+.auth-input:focus,
+.tool-input:focus,
+.tool-textarea:focus,
+.history-search-input:focus,
+.qc-input:focus {
+  outline: none;
+  border-color: rgba(var(--accent-1-rgb), 0.8);
+  box-shadow: 0 0 0 3px rgba(var(--accent-1-rgb), 0.16);
+}
+
+.auth-input[aria-invalid="true"] {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 14%, transparent);
+}
+
+::placeholder {
+  color: var(--text-faint);
+  opacity: 1;
+}
+
+/* Toggles: a crisper switch with a smooth thumb. */
+.toggle {
+  transition: background var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+
+.toggle-thumb {
+  transition: transform var(--dur-2) var(--ease-out);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* =====================================================================================
+   6. Chips, segmented controls, tabs
+   ===================================================================================== */
+.chip {
+  height: 32px;
+  padding: 0 12px;
+  gap: 6px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--hairline);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+.chip:hover {
+  background: var(--fill-subtle);
+  border-color: var(--hairline-strong);
+  color: var(--text);
+  transform: none;
+}
+
+.chip.active {
+  background: rgba(var(--accent-1-rgb), 0.12);
+  border-color: rgba(var(--accent-1-rgb), 0.38);
+  color: var(--text);
+}
+
+.chip-icon {
+  font-size: 13px;
+}
+
+.segmented {
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline);
+  background: var(--fill-subtle);
+}
+
+.segmented-btn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  transition: background var(--dur-2) var(--ease-out), color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+
+.segmented-btn.active {
+  background: var(--raised);
+  color: var(--text);
+  box-shadow: var(--elev-1), inset 0 0 0 1px var(--hairline);
+}
+
+:root[data-theme="dark"] .segmented-btn.active,
+:root:not([data-theme]) .segmented-btn.active {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* Sub-tabs inside a view (Learn / Challenges / Build, and friends) */
+.subtabs,
+.subtab-bar {
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline);
+  background: var(--fill-subtle);
+}
+
+.subtab {
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  transition: background var(--dur-2) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+/* =====================================================================================
+   7. Cards and sections
+   ===================================================================================== */
+/* Everything that groups content inside the panel shares one flat treatment: a faint fill
+   and a hairline. No blur, no floating shadow — depth belongs to the panel itself. */
+.bento-tile,
+.settings-section,
+.tool-panel,
+.result-card,
+.stat-card,
+.progress-card,
+.doc-card,
+.deck-card,
+.project-card,
+.subject-card,
+.planner-card,
+.quiz-setup-card,
+.boss-card,
+.brain-card {
+  background: var(--card);
+  backdrop-filter: none;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  box-shadow: none;
+}
+
+.bento-tile {
+  padding: var(--sp-5);
+  will-change: auto;
+}
+
+.bento-tile:hover {
+  box-shadow: none;
+  border-color: var(--hairline-strong);
+}
+
+.bento-tile.clickable:hover {
+  background: var(--card-hover);
+}
+
+.settings-section {
+  padding: var(--sp-6);
+}
+
+.settings-section h2 {
+  margin: 0 0 var(--sp-4);
+}
+
+/* A card inside a card is one card too many: inner groups become plain rows. */
+.settings-section .account-card,
+.settings-section .allowance,
+.settings-section .creator-model,
+.settings-section .creator-account {
+  background: var(--fill-subtle);
+  border-color: transparent;
+}
+
+/* =====================================================================================
+   8. Menus and popovers
+   ===================================================================================== */
+.space-switcher-popover,
+.notif-center-popover,
+.popover,
+.answer-actions-menu,
+.slash-menu {
+  background: var(--raised);
+  backdrop-filter: none;
+  border: 1px solid var(--raised-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elev-3);
+  animation: popIn var(--dur-2) var(--ease-out);
+}
+
+/* =====================================================================================
+   9. Dialogs
+   ===================================================================================== */
+.modal-overlay {
+  background: var(--scrim);
+  backdrop-filter: blur(4px);
+  animation: overlayIn var(--dur-2) var(--ease-out);
+}
+
+.modal {
+  background: var(--raised);
+  border: 1px solid var(--raised-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--elev-3);
+  animation: modalIn var(--dur-3) var(--ease-out);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+.modal-header {
+  padding: 18px 20px 6px;
+}
+
+.modal-header h2 {
+  font-size: var(--fs-lg);
+  font-weight: 650;
+}
+
+.modal-footer {
+  gap: 8px;
+}
+
+/* =====================================================================================
+   10. Toasts
+   ===================================================================================== */
+/* Bottom-right on desktop — clear of the dock and the composer. */
+.toast-container {
+  left: auto;
+  right: 20px;
+  bottom: 20px;
+  transform: none;
+  width: auto;
+  max-width: min(380px, calc(100vw - 40px));
+  align-items: flex-end;
+  gap: 8px;
+  z-index: 1200;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px 11px 12px;
+  border-radius: var(--radius-md);
+  background: var(--raised);
+  border: 1px solid var(--raised-border);
+  box-shadow: var(--elev-3);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: 1.45;
+  cursor: default;
+  animation: toastIn var(--dur-3) var(--ease-out);
+}
+
+.toast.toast-error,
+.toast.toast-success {
+  color: var(--text);
+  border-color: var(--raised-border);
+}
+
+.toast-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-top: -1px;
+  border-radius: 50%;
+}
+
+.toast-success .toast-icon {
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.toast-error .toast-icon {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.toast-warning .toast-icon {
+  color: var(--warning);
+  background: var(--warning-bg);
+}
+
+.toast-info .toast-icon {
+  color: var(--accent-text);
+  background: rgba(var(--accent-1-rgb), 0.12);
+}
+
+.toast-text {
+  padding-top: 1px;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes toastOut {
+  to { opacity: 0; transform: translateX(8px); }
+}
+
+/* On a phone, from the top — the keyboard, the composer and the bottom bar live below. */
+@media (max-width: 899px) {
+  .toast-container {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    bottom: auto;
+    left: 12px;
+    right: 12px;
+    max-width: none;
+    align-items: stretch;
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* =====================================================================================
+   11. Tooltips — for icon-only buttons: data-tip="Label"
+   ===================================================================================== */
+[data-tip] {
+  position: relative;
+}
+
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);
+  transform: translateX(-50%) translateY(-2px);
+  padding: 5px 8px;
+  border-radius: var(--radius-xs);
+  background: var(--raised);
+  border: 1px solid var(--raised-border);
+  box-shadow: var(--elev-2);
+  color: var(--text);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 60;
+  transition: opacity var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
+}
+
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%);
+  transition-delay: 350ms;
+}
+
+[data-tip][data-tip-up]::after {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+/* =====================================================================================
+   12. Empty states
+   ===================================================================================== */
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: var(--sp-10) var(--sp-6);
+  text-align: center;
+}
+
+.empty-state h3,
+.empty-state .empty-title {
+  margin: 6px 0 0;
+  font-size: var(--fs-md);
+  font-weight: 650;
+  color: var(--text);
+}
+
+.empty-state p {
+  margin: 0;
+  max-width: 44ch;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  color: var(--text-muted);
+}
+
+.empty-state .btn {
+  margin-top: 10px;
+}
+
+/* =====================================================================================
+   13. Loading
+   ===================================================================================== */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--fill-subtle);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--fill-hover), transparent);
+  animation: shimmer 1.3s var(--ease-in-out) infinite;
+}
+
+@keyframes shimmer {
+  to { transform: translateX(100%); }
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--hairline-strong);
+  border-top-color: var(--accent-1);
+  animation: spin 0.7s linear infinite;
+}
+
+/* =====================================================================================
+   14. Dock — lighter, and a little smaller, so it takes less from the content
+   ===================================================================================== */
+.dock-wrap {
+  bottom: 14px;
+}
+
+.dock {
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--raised) 88%, transparent);
+  backdrop-filter: blur(20px) saturate(1.3);
+  border: 1px solid var(--raised-border);
+  box-shadow: var(--elev-2);
+}
+
+.dock-item {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+}
+
+.dock-item svg {
+  width: 18px;
+  height: 18px;
+}
+
+.dock-item:hover {
+  background: var(--fill-hover);
+}
+
+.dock-item.active {
+  background: rgba(var(--accent-1-rgb), 0.14);
+  border-color: transparent;
+}
+
+.dock-item-dot {
+  bottom: -4px;
+  width: 3px;
+  height: 3px;
+}
+
+.dock-tooltip {
+  background: var(--raised);
+  backdrop-filter: none;
+  border: 1px solid var(--raised-border);
+  border-radius: var(--radius-xs);
+  box-shadow: var(--elev-2);
+  font-size: var(--fs-2xs);
+}
+
+/* Auto-hide in the tutor: tucked below the window, back on a pointer at the bottom edge or on
+   keyboard focus. The wrapper keeps a thin strip at the bottom that catches the pointer. */
+.dock-wrap .dock {
+  transition: transform var(--dur-3) var(--ease-out), opacity var(--dur-2) var(--ease-out);
+}
+
+.dock-wrap.dock-autohide {
+  bottom: 0;
+  height: 16px;
+  pointer-events: auto;
+}
+
+.dock-wrap.dock-autohide .dock {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translate(-50%, calc(100% + 30px));
+  opacity: 0;
+  /* The dock's entrance animation would briefly put it back in place whenever it reappears
+     (after a resize from phone width, say) — a hidden dock has nothing to animate in. */
+  animation: none;
+}
+
+.dock-wrap.dock-autohide:hover .dock,
+.dock-wrap.dock-autohide:focus-within .dock {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+/* The space pages reserve for the dock, now that it's smaller. */
+.view::after {
+  height: 88px;
+}
+
+.app.device-desktop .view::after {
+  height: 88px;
+}
+
+/* =====================================================================================
+   15. Focus — one visible, consistent ring for keyboard users, and nothing for clicks.
+   ===================================================================================== */
+:where(button, [role="button"], [role="tab"], [role="switch"], a, summary, .chip, .nav-item, .dock-item, .segmented-btn, .toggle):focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+:where(input, textarea, select):focus-visible {
+  outline: none;
+}
+
+/* =====================================================================================
+   16. Scrollbars — present when needed, quiet otherwise
+   ===================================================================================== */
+.main-view,
+.chat-log,
+.sidebar-scroll,
+.modal,
+.command-list {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline-strong) transparent;
+}
+
+.main-view::-webkit-scrollbar,
+.chat-log::-webkit-scrollbar {
+  width: 10px;
+}
+
+.main-view::-webkit-scrollbar-thumb,
+.chat-log::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: 99px;
+}
+
+/* =====================================================================================
+   17. Reduced motion — everything above becomes instant.
+   ===================================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .view,
+  .modal,
+  .modal-overlay,
+  .toast,
+  .account-menu,
+  .space-switcher-popover,
+  .notif-center-popover,
+  .popover {
+    animation: none !important;
+  }
+
+  .nav-active-pill {
+    transition: none;
+  }
+}
+
+html.force-reduced-motion .view,
+html.force-reduced-motion .toast,
+html.force-reduced-motion .account-menu,
+html.force-reduced-motion .modal {
+  animation: none !important;
+}
+
+/* =====================================================================================
+   18. Home — a command centre with one clear order of reading:
+       greeting → ask → what's going on → everything else
+   ===================================================================================== */
+.bento {
+  gap: 12px;
+  grid-template-areas:
+    "hero hero hero hero"
+    "super super super super"
+    "continue continue brain brain"
+    "weak deadline note quiz"
+    "code code focus focus";
+}
+
+/* The greeting is the page's title, not a card. */
+.bento-hero,
+.bento-hero:hover {
+  background: none;
+  border: none;
+  padding: 4px 2px 0;
+  align-items: flex-end;
+}
+
+.hero-greeting {
+  font-size: var(--fs-3xl);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.hero-sub {
+  margin-top: 6px;
+  font-size: var(--fs-md);
+  color: var(--text-muted);
+}
+
+.hero-stat-strip {
+  gap: 0;
+}
+
+.hero-stat-pill {
+  align-items: flex-start;
+  min-width: 0;
+  padding: 2px 0 2px 18px;
+  margin-left: 18px;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--hairline);
+  border-radius: 0;
+}
+
+.hero-stat-pill:first-child {
+  margin-left: 0;
+  padding-left: 0;
+  border-left: none;
+}
+
+.hero-stat-pill strong {
+  font-family: var(--font-body);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.hero-stat-pill span {
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* The ask bar is the hero: a raised field that lights up when it has focus. */
+.bento-superbar,
+.bento-superbar:hover {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.superbar {
+  min-height: 56px;
+  padding: 6px 6px 6px 16px;
+  gap: 8px;
+  border-radius: 16px;
+  background: var(--raised);
+  backdrop-filter: none;
+  border: 1px solid var(--hairline-strong);
+  box-shadow: var(--elev-2);
+  transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+
+.superbar:focus-within {
+  border-color: rgba(var(--accent-1-rgb), 0.6);
+  box-shadow: 0 0 0 4px rgba(var(--accent-1-rgb), 0.12), var(--elev-2);
+}
+
+.superbar-icon {
+  display: grid;
+  place-items: center;
+  color: var(--accent-text);
+}
+
+.superbar-input {
+  font-size: var(--fs-md);
+}
+
+.superbar-actions .icon-btn {
+  width: 34px;
+  height: 34px;
+}
+
+.superbar-send {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 4px 12px rgba(var(--accent-1-rgb), 0.28);
+  transition: transform var(--dur-1) var(--ease-out), filter var(--dur-1) var(--ease-out);
+}
+
+.superbar-send:hover {
+  transform: none;
+  filter: brightness(1.08);
+}
+
+.superbar-send:active {
+  transform: scale(0.94);
+}
+
+.superbar-suggestions {
+  gap: 6px;
+  margin-top: 12px;
+  padding: 0 2px;
+}
+
+.suggestion-chip {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--hairline);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 550;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+.suggestion-chip:hover {
+  background: var(--fill-subtle);
+  border-color: var(--hairline-strong);
+  color: var(--text);
+  transform: none;
+}
+
+/* Tiles: content from the top, the action pinned to the bottom so a row of tiles lines up. */
+.bento-tile.clickable {
+  display: flex;
+  flex-direction: column;
+  min-height: 152px;
+}
+
+.bento-tile.bento-focus {
+  flex-direction: row;
+  align-items: center;
+  min-height: 0;
+}
+
+.bento-tile-eyebrow {
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: var(--fs-2xs);
+  font-weight: 650;
+  letter-spacing: var(--tracking-caps);
+}
+
+.bento-tile-eyebrow .h1-icon {
+  flex: none;
+  color: var(--accent-text);
+}
+
+.bento-tile-title {
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.bento-tile-sub {
+  margin-top: 4px;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.bento-tile-action {
+  margin-top: auto;
+  padding-top: 14px;
+  gap: 4px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.bento-tile.bento-focus .bento-tile-action {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.bento-tile-arrow {
+  display: inline-block;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.bento-tile.clickable:hover .bento-tile-arrow,
+.bento-tile.clickable:focus-visible .bento-tile-arrow {
+  transform: translateX(3px);
+}
+
+.bento-continue {
+  justify-content: flex-start;
+  background: linear-gradient(135deg, rgba(var(--accent-1-rgb), 0.1), rgba(var(--accent-2-rgb), 0.03) 70%), var(--card);
+  border-color: rgba(var(--accent-1-rgb), 0.22);
+}
+
+.bento-code {
+  background: var(--card);
+}
+
+.daily-inspiration {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--hairline);
+  background: var(--card);
+}
+
+.section-heading h2 {
+  font-size: var(--fs-md);
+  font-weight: 650;
+}
+
+.tool-card-sm {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--hairline);
+  background: var(--card);
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+
+.tool-card-sm:hover {
+  background: var(--card-hover);
+  border-color: var(--hairline-strong);
+  transform: none;
+}
+
+@media (max-width: 1180px) {
+  .bento {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "hero hero"
+      "super super"
+      "continue continue"
+      "brain brain"
+      "weak deadline"
+      "note quiz"
+      "code focus";
+  }
+}
+
+@media (max-width: 560px) {
+  .bento {
+    grid-template-columns: 1fr;
+    grid-template-areas: "hero" "super" "continue" "brain" "weak" "deadline" "note" "quiz" "code" "focus";
+  }
+
+  .hero-greeting {
+    font-size: var(--fs-2xl);
+  }
+
+  .bento-tile.clickable {
+    min-height: 0;
+  }
+
+  /* On a phone the ask bar keeps its room for typing; the command centre lives in the menu. */
+  #superbarCommandBtn {
+    display: none;
+  }
+
+  .superbar {
+    padding-left: 12px;
+  }
+
+  /* Suggestions: one row that scrolls sideways instead of four rows of pills. */
+  .superbar-suggestions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-right: -12px;
+    padding-right: 12px;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, #000 85%, transparent);
+  }
+
+  .superbar-suggestions::-webkit-scrollbar {
+    display: none;
+  }
+
+  .suggestion-chip {
+    flex: none;
+  }
+}
+
+/* =====================================================================================
+   19. Page headers, subject bar, empty states
+   ===================================================================================== */
+.view-header {
+  align-items: flex-end;
+  gap: var(--sp-4);
+}
+
+.view-header .view-actions {
+  gap: 8px;
+}
+
+.subject-bar {
+  gap: 6px;
+}
+
+/* Emoji in an empty state sit on a soft tile, so they read as a deliberate mark rather than a
+   loose character. */
+.empty-emoji {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 4px;
+  border-radius: 14px;
+  background: var(--fill-subtle);
+  border: 1px solid var(--hairline);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.empty-state h2 {
+  margin: 8px 0 0;
+  font-size: var(--fs-lg);
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+/* =====================================================================================
+   20. AI Tutor — toolbar and composer
+   ===================================================================================== */
+.chat-toolbar {
+  align-items: center;
+  gap: 6px;
+}
+
+.chat-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 6px;
+  margin-right: 2px;
+  border-right: 1px solid var(--hairline);
+}
+
+.view-chat .view-actions .btn {
+  height: 34px;
+  padding: 0 12px;
+}
+
+/* Secondary tools are icon-only everywhere; their names are still their accessible labels and
+   appear as tooltips. */
+.view-chat .view-actions .btn.btn-icon {
+  width: 34px;
+  padding: 0;
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+}
+
+.view-chat .view-actions .btn.btn-icon span {
+  display: none;
+}
+
+.view-chat .view-actions .btn.btn-icon:hover:not(:disabled) {
+  background: var(--fill-hover);
+  color: var(--text);
+}
+
+.view-chat .view-actions .btn.btn-icon-danger:hover:not(:disabled) {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.view-chat .view-actions .btn-new-chat {
+  background: rgba(var(--accent-1-rgb), 0.12);
+  border-color: rgba(var(--accent-1-rgb), 0.3);
+  color: var(--accent-text);
+}
+
+.view-chat .view-actions .btn-new-chat:hover:not(:disabled) {
+  background: rgba(var(--accent-1-rgb), 0.18);
+  border-color: rgba(var(--accent-1-rgb), 0.45);
+  color: var(--accent-text);
+}
+
+#readingWidthBtn[aria-pressed="true"] {
+  background: rgba(var(--accent-1-rgb), 0.12);
+  color: var(--accent-text);
+  border-color: transparent;
+}
+
+.mode-select {
+  height: 34px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline-strong);
+  background-color: var(--field);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+
+.mode-select:hover {
+  border-color: color-mix(in srgb, var(--text) 24%, transparent);
+}
+
+/* The composer: a raised, tactile surface. */
+.composer-form.composer-v2 {
+  border-radius: 18px;
+  padding: 10px 10px 8px 14px;
+  background: var(--raised);
+  border: 1px solid var(--hairline-strong);
+  box-shadow: var(--elev-2);
+  transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+
+.composer-form.composer-v2:focus-within {
+  border-color: rgba(var(--accent-1-rgb), 0.6);
+  box-shadow: 0 0 0 4px rgba(var(--accent-1-rgb), 0.12), var(--elev-2);
+}
+
+.composer-v2 .composer-input {
+  font-size: var(--fs-md);
+  line-height: 1.55;
+}
+
+.composer-tool {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+
+.composer-tool:hover {
+  background: var(--fill-hover);
+  color: var(--text);
+}
+
+.composer-tool[aria-expanded="true"] {
+  background: rgba(var(--accent-1-rgb), 0.14);
+  color: var(--accent-text);
+  border: none;
+}
+
+.composer-v2 .btn-send {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 3px 10px rgba(var(--accent-1-rgb), 0.3);
+  transition: transform var(--dur-1) var(--ease-out), filter var(--dur-1) var(--ease-out), background var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+
+.composer-v2 .btn-send:hover:not(:disabled) {
+  transform: none;
+  filter: brightness(1.08);
+}
+
+.composer-v2 .btn-send:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.btn.btn-send {
+  padding: 0;
+}
+
+/* Nothing to send yet: a calm neutral button, not a faded copy of the bright one. */
+.composer-v2.is-empty:not(.is-sending) .btn-send,
+.composer-v2 .btn-send:disabled {
+  opacity: 1;
+  background: var(--fill-hover);
+  color: var(--text-faint);
+  box-shadow: none;
+}
+
+/* Sending: the button becomes a spinner, so it's clear H1 is working. */
+.composer-v2.is-sending .btn-send {
+  position: relative;
+  background: rgba(var(--accent-1-rgb), 0.16);
+  color: transparent;
+}
+
+.composer-v2.is-sending .btn-send::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-text);
+  border-right-color: transparent;
+  animation: spin 0.7s linear infinite;
+}
+
+.composer-toolbar .composer-hint {
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.attach-menu {
+  background: var(--raised);
+  backdrop-filter: none;
+  border: 1px solid var(--raised-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elev-3);
+  animation: popIn var(--dur-2) var(--ease-out);
+}
+
+/* =====================================================================================
+   21. Settings — an index down the side, the settings beside it
+   ===================================================================================== */
+.settings-nav {
+  display: none;
+}
+
+.settings-nav ul {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.settings-nav a {
+  display: block;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  line-height: 32px;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+
+.settings-nav a:hover {
+  background: var(--fill-subtle);
+  color: var(--text);
+}
+
+.settings-nav a.is-current {
+  background: rgba(var(--accent-1-rgb), 0.1);
+  color: var(--text);
+  box-shadow: inset 2px 0 0 var(--accent-1);
+}
+
+.settings-nav a.is-danger {
+  color: var(--danger);
+}
+
+.settings-nav a.is-creator::after {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  vertical-align: middle;
+}
+
+@media (min-width: 1180px) {
+  #view-settings:not([hidden]) {
+    display: grid;
+    grid-template-columns: 176px minmax(0, 760px);
+    column-gap: 40px;
+    row-gap: var(--sp-4);
+    align-content: start;
+  }
+
+  #view-settings > * {
+    grid-column: 2;
+  }
+
+  #view-settings > .view-header,
+  #view-settings::after {
+    grid-column: 1 / -1;
+  }
+
+  #view-settings > .settings-nav {
+    display: block;
+    grid-column: 1;
+    grid-row: 2 / span 40;
+    position: sticky;
+    top: 0;
+    align-self: start;
+  }
+}
+
+.settings-section {
+  scroll-margin-top: 12px;
+}
+
+.settings-section.danger-zone {
+  border-color: color-mix(in srgb, var(--danger) 22%, transparent);
+}
+
+.danger-row {
+  gap: var(--sp-4);
+  padding: 12px 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.danger-row:first-of-type {
+  border-top: none;
+}
+
+.danger-row-text strong {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.danger-row-text span {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.toggle-row {
+  font-size: var(--fs-sm);
+}
+
+.account-card,
+.allowance {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+}
+
+.allowance-bar {
+  height: 6px;
+  background: var(--fill-hover);
+}
+
+/* =====================================================================================
+   22. Phone — laid out for touch, not just stacked
+   ===================================================================================== */
+@media (max-width: 899px) {
+  .main-view {
+    padding: var(--sp-4);
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+
+  /* As a drawer the sidebar is a sheet over the app, so it gets a real surface again. */
+  .sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--hairline);
+    box-shadow: var(--elev-3);
+    padding: 12px 8px 10px;
+  }
+
+  .sidebar .sidebar-close {
+    display: inline-flex;
+    margin-left: auto;
+  }
+
+  .nav-item {
+    height: 40px;
+  }
+
+  .nav-active-pill {
+    height: 40px;
+  }
+
+  .mobile-bottom-nav {
+    background: color-mix(in srgb, var(--raised) 92%, transparent);
+    backdrop-filter: blur(20px) saturate(1.3);
+    border: 1px solid var(--raised-border);
+    border-radius: 18px;
+    box-shadow: var(--elev-2);
+  }
+
+  .mobile-nav-item.active {
+    background: rgba(var(--accent-1-rgb), 0.12);
+  }
+
+  .view::after {
+    height: 96px;
+  }
+}
+
+@container tutor (max-width: 480px) {
+  /* A phone has room for the tools or the title, not both on one line. The tools win: the
+     conversation's name is in History, and squeezed to "New …" it said nothing anyway. */
+  .view-chat .view-header > div:first-child {
+    display: none;
+  }
+
+  .view-chat .view-actions.chat-toolbar {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .view-chat .mode-select {
+    margin-right: auto;
+    max-width: 150px;
+  }
+
+  .chat-toolbar-group {
+    padding-right: 4px;
+  }
+}
+
+/* =====================================================================================
+   23. The front door — sign in, create an account, or carry on as a guest
+   ===================================================================================== */
+.auth-screen {
+  background:
+    radial-gradient(1200px 600px at 12% -10%, rgba(var(--accent-1-rgb), 0.16), transparent 60%),
+    radial-gradient(900px 500px at 105% 110%, rgba(var(--accent-2-rgb), 0.1), transparent 60%),
+    var(--bg);
+}
+
+.auth-atmosphere .bloom {
+  opacity: 0.7;
+}
+
+.auth-layout {
+  animation: authIn var(--dur-3) var(--ease-out) both;
+}
+
+@keyframes authIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.auth-pitch-line {
+  letter-spacing: -0.025em;
+}
+
+.auth-points li > span {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--fill-subtle);
+  border-color: var(--hairline);
+}
+
+.auth-card {
+  padding: 28px 28px 22px;
+  border-radius: var(--radius-xl);
+  background: var(--raised);
+  backdrop-filter: none;
+  border: 1px solid var(--raised-border);
+  box-shadow: var(--elev-3);
+}
+
+.auth-tabs {
+  padding: 3px;
+  margin-bottom: 20px;
+  border-radius: var(--radius-md);
+  background: var(--fill-subtle);
+  border: 1px solid var(--hairline);
+}
+
+.auth-tab {
+  height: 34px;
+  border-radius: 9px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  transition: background var(--dur-2) var(--ease-out), color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+
+.auth-tab.is-active {
+  background: var(--panel);
+  box-shadow: var(--elev-1), inset 0 0 0 1px var(--hairline);
+}
+
+:root[data-theme="dark"] .auth-tab.is-active {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.auth-form {
+  gap: 16px;
+}
+
+.auth-label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0;
+}
+
+.auth-input {
+  height: 44px;
+  padding: 0 14px;
+  font-size: var(--fs-md);
+}
+
+.auth-password .auth-input {
+  padding-right: 46px;
+}
+
+.auth-eye {
+  width: 34px;
+  height: 34px;
+  right: 5px;
+  border-radius: 8px;
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+.auth-field-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  animation: fieldErrorIn var(--dur-2) var(--ease-out);
+}
+
+.auth-field-error::before {
+  content: "";
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+@keyframes fieldErrorIn {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 1; transform: none; }
+}
+
+.auth-error {
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  animation: fieldErrorIn var(--dur-2) var(--ease-out);
+}
+
+.auth-notice {
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+}
+
+.auth-hint {
+  font-size: var(--fs-xs);
+}
+
+.auth-submit {
+  height: 46px;
+  font-size: var(--fs-md);
+  border-radius: var(--radius-md);
+}
+
+/* Working, then done: the button itself says what's happening. */
+.auth-submit.is-busy {
+  opacity: 0.9;
+}
+
+.auth-submit.is-success {
+  background: var(--success);
+  color: var(--on-success);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--success) 35%, transparent);
+  transition: background var(--dur-2) var(--ease-out);
+}
+
+.auth-submit.is-success::before {
+  content: "";
+  width: 14px;
+  height: 8px;
+  margin-top: -3px;
+  border-left: 2.5px solid currentColor;
+  border-bottom: 2.5px solid currentColor;
+  transform: rotate(-45deg);
+  animation: checkIn var(--dur-2) var(--ease-out);
+}
+
+@keyframes checkIn {
+  from { opacity: 0; transform: rotate(-45deg) scale(0.6); }
+  to { opacity: 1; transform: rotate(-45deg) scale(1); }
+}
+
+.auth-alt {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top-color: var(--hairline);
+}
+
+.auth-link {
+  height: 32px;
+  padding: 0 10px;
+  font-size: var(--fs-sm);
+  transition: background var(--dur-1) var(--ease-out);
+}
+
+.auth-link:hover {
+  text-decoration: none;
+  background: rgba(var(--accent-1-rgb), 0.1);
+}
+
+.auth-alt-note {
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+}
+
+.auth-credit {
+  font-size: var(--fs-2xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-layout,
+  .auth-field-error,
+  .auth-error {
+    animation: none;
+  }
+}
+
+html.force-reduced-motion .auth-layout {
+  animation: none;
+}
+
+/* =====================================================================================
+   24. Creator controls and the allowance
+   ===================================================================================== */
+.creator-section {
+  border-color: color-mix(in srgb, var(--accent-1) 28%, transparent);
+  background: linear-gradient(180deg, rgba(var(--accent-1-rgb), 0.06), transparent 240px), var(--card);
+}
+
+.creator-badge {
+  padding: 2px 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+}
+
+.creator-subhead {
+  margin: 24px 0 10px;
+}
+
+.creator-models {
+  gap: 6px;
+}
+
+.creator-model {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+
+.creator-model:hover {
+  border-color: var(--hairline);
+}
+
+.creator-model.is-active {
+  background: rgba(var(--accent-1-rgb), 0.1);
+  border-color: rgba(var(--accent-1-rgb), 0.35);
+}
+
+.creator-model-text strong {
+  font-size: var(--fs-sm);
+  font-weight: 650;
+}
+
+.creator-model-text span {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+}
+
+.creator-model-warn {
+  font-family: var(--font-body);
+}
+
+.creator-active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  font-size: var(--fs-xs);
+}
+
+.creator-active-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 22%, transparent);
+}
+
+.creator-add {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--hairline-strong);
+}
+
+.creator-input {
+  height: 36px;
+  font-size: var(--fs-sm);
+}
+
+.creator-account {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.creator-account span {
+  text-align: right;
+}
+
+.allowance-head strong {
+  font-size: var(--fs-sm);
+  font-weight: 650;
+}
+
+.allowance-head span {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.allowance-bar > span {
+  transition: width var(--dur-3) var(--ease-out), background var(--dur-2) var(--ease-out);
+}
+
+.allowance .settings-hint {
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+}
+
+/* Low is a heads-up, not an alarm: amber text, not a red block. */
+.allowance.is-low .allowance-head span {
+  color: var(--warning);
+}
+
+.allowance.is-out .allowance-head span {
+  color: var(--danger);
+}
+
+.composer-toolbar .composer-hint.is-warning {
+  color: var(--warning);
+  font-weight: 600;
+}
+
+/* =====================================================================================
+   25. Code Lab and Python
+   ===================================================================================== */
+.code-track-card,
+.pyc-row,
+.ch-card {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--hairline);
+  background: var(--card);
+  box-shadow: none;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+
+.code-track-card:hover,
+.ch-card:hover {
+  background: var(--card-hover);
+  border-color: var(--hairline-strong);
+  transform: none;
+}
+
+.pyw {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--hairline);
+}
+
+.pyw-bar {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.pyw-out {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+}
+
+/* =====================================================================================
+   26. Answers — the reading surface
+   ===================================================================================== */
+/* The answer is not a speech bubble. It sits directly on the panel like an article, keeping
+   the reading-column grid from the tutor workspace; the student's own message is the only
+   bubble in the conversation, which is what makes the two easy to tell apart. */
+.chat-log .message.ai .bubble.answer {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 4px clamp(4px, 1.4vw, 24px) 2px;
+}
+
+.chat-log .message + .message.ai {
+  margin-top: 6px;
+}
+
+.message.ai .bubble h3,
+.message.ai .bubble h4 {
+  letter-spacing: -0.012em;
+}
+
+.message.ai .bubble :not(pre) > code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--fill-hover);
+  border: 1px solid var(--hairline);
+  font-size: 0.88em;
+}
+
+.message.ai .bubble blockquote {
+  border-left: 3px solid rgba(var(--accent-1-rgb), 0.55);
+  background: var(--fill-subtle);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.message.ai .bubble hr {
+  border: none;
+  height: 1px;
+  background: var(--hairline-strong);
+  margin: 1.4em 0;
+}
+
+.message.ai .bubble table {
+  font-size: var(--fs-sm);
+}
+
+.message.ai .bubble th {
+  background: var(--fill-subtle);
+  font-weight: 650;
+}
+
+.message.ai .bubble th,
+.message.ai .bubble td {
+  border-color: var(--hairline);
+}
+
+.message.user .bubble {
+  border-radius: 16px 16px 4px 16px;
+  font-size: var(--fs-md);
+}
+
+.code-block,
+.message.ai .bubble pre {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--hairline);
+}
+
+.code-block-bar {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.code-block-lang {
+  font-size: var(--fs-xs);
+}
+
+.code-block-btn {
+  border-radius: var(--radius-xs);
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+
+/* Copy confirmation: a quick check, then back. */
+.icon-btn-sm.copied,
+.code-block-btn.copied {
+  color: var(--success);
+}
+
+.chat-jump {
+  background: var(--raised);
+  border: 1px solid var(--raised-border);
+  box-shadow: var(--elev-2);
+  backdrop-filter: none;
+}
+
+.notes-list-empty {
+  margin: 0;
+  padding: 10px 4px;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.hero-greeting {
+  overflow-wrap: anywhere;
+}

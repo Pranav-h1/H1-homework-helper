@@ -15,6 +15,7 @@ import { getCompletedCount } from "./missionStore.js";
 import { getCodingSummary } from "./codingSummary.js";
 import { openTrack, openLessonById } from "./codeLab.js";
 import { showChallengeList } from "./challengesView.js";
+import { labelWithIcon, icon } from "./icons.js";
 
 const heroStatStrip = document.getElementById("heroStatStrip");
 const bentoBrain = document.getElementById("bentoBrain");
@@ -61,11 +62,12 @@ function escapeHtml(value) {
 }
 
 function tileContent(eyebrow, title, sub, actionLabel) {
+  const label = labelWithIcon(eyebrow);
   return `
-    <div class="bento-tile-eyebrow">${escapeHtml(eyebrow)}</div>
+    <div class="bento-tile-eyebrow">${label.icon}<span>${escapeHtml(label.text)}</span></div>
     <div class="bento-tile-title">${escapeHtml(title)}</div>
     ${sub ? `<div class="bento-tile-sub">${escapeHtml(sub)}</div>` : ""}
-    ${actionLabel ? `<div class="bento-tile-action">${escapeHtml(actionLabel)} →</div>` : ""}`;
+    ${actionLabel ? `<div class="bento-tile-action">${escapeHtml(actionLabel)}<span class="bento-tile-arrow" aria-hidden="true">→</span></div>` : ""}`;
 }
 
 function renderHeroStrip(stats) {
@@ -129,7 +131,9 @@ function renderBrainTile() {
 
 function renderContinue() {
   if (!bentoContinue) return;
-  const conversations = loadConversations();
+  // Only a conversation with something in it can be "continued" — H1 opens a blank one for
+  // everyone, and offering to resume that would be offering nothing.
+  const conversations = loadConversations().filter((c) => c && Array.isArray(c.messages) && c.messages.length > 0);
   bentoContinue.onclick = null;
   if (conversations.length > 0) {
     const conv = conversations[0];
@@ -283,10 +287,10 @@ function renderFocus() {
   if (!bentoFocus) return;
   bentoFocus.innerHTML = `
     <div>
-      <div class="bento-tile-eyebrow">⏱️ Focus</div>
+      <div class="bento-tile-eyebrow">${icon("timer", 13)}<span>Focus</span></div>
       <div class="bento-tile-title">Start a distraction-free session</div>
     </div>
-    <div class="bento-tile-action">Start focus →</div>`;
+    <div class="bento-tile-action">Start focus<span class="bento-tile-arrow" aria-hidden="true">→</span></div>`;
   bentoFocus.onclick = () => switchView("study-mode");
 }
 

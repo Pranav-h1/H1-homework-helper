@@ -3,6 +3,7 @@ import { isEnabled, getXP, getLevel, getAchievements } from "./gamification.js";
 import { SUBJECT_LABELS } from "./state.js";
 import { safeGet, safeSet } from "./storage.js";
 import { showToast } from "./toast.js";
+import { currentUser } from "./session.js";
 import { confirmDanger } from "./modal.js";
 import {
   getGoals,
@@ -45,16 +46,24 @@ function statCard(value, label) {
   return el;
 }
 
+// Someone signed in already has a name — their username — so that's what the profile shows
+// until they choose a display name of their own. A guest is "Student".
+function fallbackName() {
+  const user = currentUser();
+  return user && user.username ? user.username : "Student";
+}
+
 function renderIdentity() {
-  const name = safeGet(NAME_KEY, "Student");
+  const chosen = safeGet(NAME_KEY, "");
+  const name = chosen && chosen !== "Student" ? chosen : fallbackName();
   if (nameEl) nameEl.textContent = name;
-  if (nameInput) nameInput.value = name === "Student" ? "" : name;
+  if (nameInput) nameInput.value = chosen && chosen !== "Student" ? chosen : "";
   if (avatarEl) avatarEl.textContent = name.trim().slice(0, 1).toUpperCase() || "S";
 }
 
 if (nameInput) {
   nameInput.addEventListener("change", () => {
-    const value = nameInput.value.trim() || "Student";
+    const value = nameInput.value.trim();
     safeSet(NAME_KEY, value);
     renderIdentity();
   });
