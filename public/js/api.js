@@ -18,6 +18,9 @@ async function postJson(url, body) {
     const message = (data && data.error) || `Something went wrong (HTTP ${res.status}). Please try again.`;
     const err = new Error(message);
     err.status = res.status;
+    err.code = data && data.code;
+    // A refusal can carry the allowance that caused it, so the UI can show where things stand.
+    if (data && data.usage) err.usage = data.usage;
     throw err;
   }
   if (!data) {
@@ -38,6 +41,11 @@ export async function sendChat(messages, subject, options) {
   const data = await postJson("/api/chat", { messages, subject, mode: opts.mode, language: opts.language, image: opts.image });
   if (typeof data.reply !== "string") {
     throw new Error("The server sent back an unexpected response. Please try again.");
+  }
+  // Every answer comes back with what's left of the allowance, so the figure on screen is the
+  // server's, not a guess kept in the browser.
+  if (data.usage) {
+    import("./aiUsage.js").then((m) => m.applyUsage(data.usage)).catch(() => {});
   }
   return data.reply;
 }

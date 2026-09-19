@@ -64,6 +64,7 @@ import { initShortcuts } from "./shortcuts.js";
 import { initNotifCenter, refreshNotifCenter } from "./notifCenter.js";
 import { clearEvents } from "./progress.js";
 import { initAccountMenu } from "./accountMenu.js";
+import { initCreatorPanel } from "./creatorPanel.js";
 import { isAccountMode } from "./session.js";
 import { onRemoteChange } from "./cloudSync.js";
 import { offerGuestDataImport, guestDataSummary, importGuestDataFromSettings } from "./guestMigration.js";
@@ -611,6 +612,7 @@ onRemoteChange((keys) => {
 });
 
 initAccountMenu();
+initCreatorPanel();
 
 // Settings → Data: bringing on-device (guest) work into the account stays available even if
 // the offer at sign-in was declined.

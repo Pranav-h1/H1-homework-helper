@@ -12629,3 +12629,388 @@ html.force-reduced-motion .chat-jump {
   opacity: 0.75;
   cursor: progress;
 }
+
+/* ===========================================================
+   AI allowance, and H1's own creator controls
+   =========================================================== */
+.allowance {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.allowance-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.allowance-head strong {
+  font-size: 13.5px;
+}
+
+.allowance-head span {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.allowance-bar {
+  height: 6px;
+  border-radius: 99px;
+  background: var(--surface-elevated);
+  overflow: hidden;
+}
+
+.allowance-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--accent-grad);
+  transition: width 0.35s var(--ease);
+}
+
+.allowance-bar > span.is-unlimited {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-1));
+}
+
+.allowance.is-low .allowance-bar > span {
+  background: var(--warning);
+}
+
+.allowance.is-out .allowance-bar > span {
+  background: var(--danger);
+}
+
+.allowance .settings-hint {
+  margin: 8px 0 0;
+}
+
+.creator-section {
+  border: 1px solid color-mix(in srgb, var(--accent-1) 35%, transparent);
+  background: linear-gradient(180deg, rgba(var(--accent-1-rgb), 0.07), transparent 60%);
+}
+
+.creator-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: rgba(var(--accent-1-rgb), 0.16);
+  border: 1px solid color-mix(in srgb, var(--accent-1) 45%, transparent);
+  color: var(--accent-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+}
+
+.creator-subhead {
+  margin: 20px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.creator-models {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.creator-model {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.creator-model.is-active {
+  border-color: color-mix(in srgb, var(--accent-1) 55%, transparent);
+  background: rgba(var(--accent-1-rgb), 0.1);
+}
+
+.creator-model-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.creator-model-text strong {
+  font-size: 14px;
+}
+
+.creator-model-text span {
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.creator-model-warn {
+  color: var(--warning);
+}
+
+.creator-model-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.creator-active-badge {
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(var(--accent-1-rgb), 0.18);
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.creator-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.creator-input {
+  width: auto;
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 9px 12px;
+  font-size: 13.5px;
+}
+
+.creator-limit-edit {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.creator-limit-input {
+  flex: none;
+  width: 110px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.creator-accounts {
+  display: grid;
+  gap: 6px;
+}
+
+.creator-account {
+  display: grid;
+  gap: 2px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.creator-account strong {
+  font-size: 13.5px;
+}
+
+.creator-account span {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The creator's welcome on the sign-in screen */
+.auth-creator {
+  text-align: center;
+  padding: 10px 0 4px;
+  animation: creatorIn 0.5s var(--ease);
+}
+
+.auth-creator[hidden] {
+  display: none;
+}
+
+.auth-creator-mark {
+  display: block;
+  font-size: 30px;
+  line-height: 1;
+  margin-bottom: 10px;
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.auth-creator h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 21px;
+}
+
+.auth-creator p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+@keyframes creatorIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-creator { animation: none; }
+}
+
+@media (max-width: 620px) {
+  .creator-limit-edit {
+    width: 100%;
+  }
+  .creator-limit-input {
+    flex: 1;
+    width: auto;
+  }
+}
+
+/* The composer hint turns into the allowance warning when messages are nearly gone. */
+.composer-hint.is-warning {
+  color: var(--warning);
+  font-weight: 600;
+}
+
+/* ===========================================================
+   The sign-in screen as a front door, not just a form
+   =========================================================== */
+.auth-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  align-items: center;
+  gap: clamp(32px, 6vw, 80px);
+  width: min(100%, 1020px);
+}
+
+.auth-pitch {
+  display: grid;
+  gap: 22px;
+  max-width: 460px;
+}
+
+.auth-brand-lg .auth-mark {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  font-size: 23px;
+}
+
+.auth-pitch-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.auth-brand-lg .auth-tagline {
+  font-size: 14px;
+}
+
+.auth-pitch-line {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 33px);
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  background: linear-gradient(120deg, var(--text), color-mix(in srgb, var(--accent-1) 62%, var(--text)));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.auth-points {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.auth-points li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.auth-points li > span {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 16px;
+}
+
+.auth-points li > div {
+  display: grid;
+  gap: 2px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.auth-points li strong {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 650;
+}
+
+.auth-credit-aside {
+  margin: 4px 0 0;
+  text-align: left;
+}
+
+.auth-credit-card {
+  display: none;
+}
+
+.auth-brand-compact {
+  display: none;
+}
+
+.auth-atmosphere .bloom-3 {
+  width: 320px;
+  height: 320px;
+  top: 30%;
+  left: 38%;
+  background: var(--desk-bloom-3);
+}
+
+/* Below the two-column width, the card carries the branding on its own again. */
+@media (max-width: 900px) {
+  .auth-layout {
+    grid-template-columns: minmax(0, 420px);
+    justify-content: center;
+  }
+  .auth-pitch {
+    display: none;
+  }
+  .auth-brand-compact {
+    display: flex;
+  }
+  .auth-credit-card {
+    display: block;
+  }
+}

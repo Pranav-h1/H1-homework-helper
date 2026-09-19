@@ -12,6 +12,7 @@ import { confirmDanger } from "./modal.js";
 import { openFormDialog } from "./formDialog.js";
 import { switchView } from "./nav.js";
 import { checkPasswords } from "./authRules.js";
+import { onUsageChange, refreshUsage, currentUsage, describeUsage, shortUsage, isLow } from "./aiUsage.js";
 
 const el = {};
 let usage = null;
@@ -34,14 +35,17 @@ function formatBytes(n) {
 }
 
 function statusLine() {
-  if (!session.isAccountMode()) return "On this device";
+  const left = shortUsage();
+  if (!session.isAccountMode()) return left ? `On this device · ${left}` : "On this device";
   if (session.isOffline()) return "Offline · saved here";
   const s = sync.syncStatus();
   if (s.error === "offline") return "Offline · will sync";
   if (s.error) return "Couldn't save";
   if (s.syncing) return "Saving…";
   if (s.pending) return `${s.pending} to save`;
-  return "Synced";
+  // Once everything is saved, the number people actually care about is how many questions they
+  // have left.
+  return left ? `Synced · ${left}` : "Synced";
 }
 
 function render() {
@@ -91,11 +95,43 @@ function render() {
     }
   }
 
+
   if (el.privacyText) {
     el.privacyText.textContent = account
       ? "While you're signed in, H1 keeps your conversations, notes, homework, documents, flashcards, quiz history and settings in your account so they're on every device you use. They're stored on H1's server, sent only over an encrypted connection, and are only readable by your account. Nothing is shared with anyone else, and the only thing sent to the AI is the message you ask it."
       : "H1 stores your conversations, notes, homework, documents, flashcards, quiz history and settings in this browser's local storage only. Nothing is uploaded except the text/image you send to the AI Tutor when you ask a question — and only the current message, not your other stored data.";
   }
+
+  renderAllowance();
+}
+
+// How many AI messages are left. Shown to everyone, including people using H1 without an
+// account, because the limit applies to them too and finding out by being refused is no way to
+// learn it.
+function renderAllowance() {
+  if (!el.allowance) return;
+  const state = currentUsage();
+  if (!state) {
+    el.allowance.hidden = true;
+    return;
+  }
+  el.allowance.hidden = false;
+  if (state.unlimited) {
+    el.allowanceCount.textContent = "no limit";
+    el.allowanceFill.style.width = "100%";
+    el.allowance.classList.remove("is-low", "is-out");
+    el.allowanceFill.classList.add("is-unlimited");
+    el.allowanceNote.textContent = "This is H1's own account, so its messages aren't counted.";
+    return;
+  }
+  el.allowanceFill.classList.remove("is-unlimited");
+  const pct = state.limit ? Math.max(0, Math.min(100, Math.round((state.remaining / state.limit) * 100))) : 0;
+  el.allowanceCount.textContent = `${state.remaining} of ${state.limit} left`;
+  el.allowanceFill.style.width = `${pct}%`;
+  el.allowance.classList.toggle("is-low", isLow(state) && state.remaining > 0);
+  el.allowance.classList.toggle("is-out", state.remaining <= 0);
+  el.allowanceNote.textContent = describeUsage(state);
+
 }
 
 function closeMenu() {
@@ -137,14 +173,9 @@ async function doSignOut() {
 }
 
 function goToSignIn() {
-  // The sign-in screen is what boot shows when this device hasn't chosen to stay a guest, so
-  // clearing that choice and reloading is the way back to it.
-  try {
-    localStorage.removeItem("h1-device-mode");
-  } catch {
-    // It still appears if this can't be written — the screen is shown whenever there's no
-    // session and no explicit guest choice.
-  }
+  // The sign-in screen is what boot shows unless this browser session chose to carry on without
+  // an account, so dropping that choice and reloading is the way back to it.
+  session.leaveGuestMode();
   window.location.reload();
 }
 
@@ -205,7 +236,7 @@ async function deleteAccount() {
   });
 }
 
-async function refreshUsage() {
+async function refreshStorageUse() {
   if (!session.isAccountMode() || session.isOffline()) {
     usage = null;
     return;
@@ -251,6 +282,10 @@ export function initAccountMenu() {
   el.accountPrimaryBtn = $("accountPrimaryBtn");
   el.accountActions = $("accountActions");
   el.accountUsage = $("accountUsage");
+  el.allowance = $("accountAllowance");
+  el.allowanceCount = $("allowanceCount");
+  el.allowanceFill = $("allowanceFill");
+  el.allowanceNote = $("allowanceNote");
   el.privacyText = $("privacyText");
   if (!el.sidebarBtn) return;
 
@@ -279,6 +314,7 @@ export function initAccountMenu() {
     showToast("Syncing…");
     await sync.push();
     await sync.checkRemote();
+    await refreshStorageUse();
     await refreshUsage();
     showToast(sync.syncStatus().pending ? "Some changes are still waiting to sync." : "Everything is saved to your account.", sync.syncStatus().pending ? "warning" : "success");
   });
@@ -297,11 +333,15 @@ export function initAccountMenu() {
 
   session.onSessionChange(render);
   sync.onSyncState(render);
+  onUsageChange(render);
+  refreshUsage();
   window.addEventListener("h1:session-lost", onSessionLost);
   render();
-  refreshUsage();
-  // The figure is only interesting when the person is looking at it.
+  refreshStorageUse();
+  // The figures are only interesting when the person is looking at them.
   document.addEventListener("h1:view-changed", (event) => {
-    if (event.detail === "settings") refreshUsage();
+    if (event.detail !== "settings") return;
+    refreshStorageUse();
+    refreshUsage();
   });
 }

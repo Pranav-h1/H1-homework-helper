@@ -14,7 +14,10 @@ import * as api from "./accountApi.js";
 import { setNamespace } from "./storage.js";
 import * as sync from "./cloudSync.js";
 
-const MODE_KEY = "h1-device-mode";
+// Choosing to use H1 without an account lasts for this browser session only. H1 opens on the
+// sign-in screen every time otherwise — that's the front door, not a thing you get past once and
+// never see again.
+const GUEST_KEY = "h1-guest-session";
 const LAST_ACCOUNT_KEY = "h1-device-account";
 
 const state = {
@@ -23,6 +26,7 @@ const state = {
   namespace: null,
   accountsAvailable: false,
   offline: false,
+  creator: false,
 };
 
 const listeners = new Set();
@@ -39,7 +43,25 @@ function deviceSet(key, value) {
     if (value === null) localStorage.removeItem(key);
     else localStorage.setItem(key, value);
   } catch {
-    // A device that can't remember the mode simply asks again next time.
+    // A device that can't remember simply asks again next time.
+  }
+}
+
+function guestChosen() {
+  try {
+    return sessionStorage.getItem(GUEST_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function setGuestChosen(on) {
+  try {
+    if (on) sessionStorage.setItem(GUEST_KEY, "1");
+    else sessionStorage.removeItem(GUEST_KEY);
+  } catch {
+    // Without sessionStorage the sign-in screen simply appears again, which is the safe way to
+    // fail.
   }
 }
 
@@ -99,9 +121,10 @@ function enterAccount(session, { offline = false } = {}) {
   state.user = session.user;
   state.namespace = session.clientNs;
   state.offline = offline;
+  state.creator = session.user && session.user.accountType === "lab";
   setNamespace(session.clientNs);
   if (session.csrfToken) api.setCsrfToken(session.csrfToken);
-  deviceSet(MODE_KEY, "account");
+  setGuestChosen(false);
   rememberAccount(session.user, session.clientNs);
   sync.start(session.clientNs);
   announce();
@@ -111,6 +134,7 @@ function enterGuest() {
   state.mode = "guest";
   state.user = null;
   state.namespace = null;
+  state.creator = false;
   setNamespace(null);
   api.setCsrfToken(null);
   announce();
@@ -123,7 +147,7 @@ function enterGuest() {
 //   { action: "start" }          — go ahead and start the app (guest or signed in)
 //   { action: "auth" }           — show the sign-in screen first
 export async function prepareSession() {
-  const chosenMode = deviceGet(MODE_KEY);
+  const chosenMode = guestChosen() ? "guest" : deviceGet(LAST_ACCOUNT_KEY) ? "account" : null;
   let session = null;
   let reachable = true;
   try {
@@ -156,17 +180,17 @@ export async function prepareSession() {
     return { action: "start" };
   }
 
-  // This server has no accounts at all: H1 is a device-only app here, exactly as before.
-  if (!session.accountsAvailable) {
-    enterGuest();
-    deviceSet(MODE_KEY, null);
-    return { action: "start" };
-  }
-
   enterGuest();
-  // Signed out (or the session ran out): ask, unless this device chose to stay a guest.
+  // Already chose to carry on without an account in this browser session: don't ask again until
+  // H1 is opened afresh.
   if (chosenMode === "guest") return { action: "start" };
-  return { action: "auth", expired: Boolean(session.expired) && chosenMode === "account" };
+  // Otherwise the sign-in screen is the front door. If this server has no accounts at all, the
+  // screen says so plainly instead of offering a sign-in that can't work.
+  return {
+    action: "auth",
+    expired: Boolean(session.expired) && chosenMode === "account",
+    accountsAvailable: Boolean(session.accountsAvailable),
+  };
 }
 
 // The sign-in screen calls these. They throw ApiError with a message fit to show.
@@ -197,8 +221,17 @@ async function confirmCookieStuck() {
 }
 
 export function continueAsGuest() {
-  deviceSet(MODE_KEY, "guest");
+  setGuestChosen(true);
   enterGuest();
+}
+
+// Leaving guest mode: the sign-in screen is shown again on the next load.
+export function leaveGuestMode() {
+  setGuestChosen(false);
+}
+
+export function isCreator() {
+  return Boolean(state.creator);
 }
 
 // Signing out: everything waiting is uploaded first, then this account's copy is taken off the
@@ -217,9 +250,9 @@ export async function signOut({ force = false } = {}) {
   }
   sync.stop();
   if (flushed) clearLocalAccountData();
-  // Forgetting the choice means the sign-in screen is shown next time. Signing out is not the
-  // same as choosing to use H1 without an account — that's a separate, deliberate button.
-  deviceSet(MODE_KEY, null);
+  // Signing out is not the same as choosing to use H1 without an account, so the next load
+  // shows the sign-in screen rather than dropping into guest mode.
+  setGuestChosen(false);
   state.user = null;
   state.namespace = null;
   state.mode = "guest";
@@ -257,7 +290,7 @@ function clearLocalAccountData() {
 export function forgetAfterDelete() {
   sync.stop();
   clearLocalAccountData();
-  deviceSet(MODE_KEY, null);
+  setGuestChosen(false);
   deviceSet(LAST_ACCOUNT_KEY, null);
   state.user = null;
   state.namespace = null;

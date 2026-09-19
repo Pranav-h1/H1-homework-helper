@@ -1,5 +1,7 @@
-const MODEL = process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+// The model is chosen per call now: H1's creator can switch the active model from inside the
+// app, and this falls back to the environment's when nothing has been chosen.
+const DEFAULT_MODEL = process.env.GEMINI_MODEL || "gemini-flash-lite-latest";
+const apiUrl = (model) => `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model || DEFAULT_MODEL)}:generateContent`;
 
 // Gemini's multimodal models accept inline image data alongside text, which powers the
 // homework scanner / image attachment feature. Anthropic and OpenAI providers don't expose this.
@@ -27,8 +29,8 @@ function toGeminiContents(messages) {
   });
 }
 
-async function chat(messages, systemPrompt) {
-  const res = await fetch(`${API_URL}?key=${process.env.GEMINI_API_KEY}`, {
+async function chat(messages, systemPrompt, { model } = {}) {
+  const res = await fetch(`${apiUrl(model)}?key=${process.env.GEMINI_API_KEY}`, {
     method: "POST",
     headers: {
       "content-type": "application/json",

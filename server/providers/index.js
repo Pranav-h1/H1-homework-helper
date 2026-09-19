@@ -23,6 +23,24 @@ function getProvider() {
   return provider;
 }
 
+const PROVIDER_NAMES = Object.keys(PROVIDERS);
+
+function isProviderConfigured(name) {
+  const provider = PROVIDERS[String(name || "").trim().toLowerCase()];
+  return Boolean(provider && provider.isConfigured());
+}
+
+// The provider for a model H1's creator picked from inside the app, falling back to the one the
+// environment configured. `model` is the id to run; null means "that provider's default".
+function getProviderFor(active) {
+  if (active) {
+    const provider = PROVIDERS[active.provider];
+    if (provider && provider.isConfigured()) return { provider, model: active.modelId };
+  }
+  const provider = getProvider();
+  return provider ? { provider, model: null } : null;
+}
+
 // Status info for health checks / diagnostics (never includes secrets).
 // Full status — includes the vendor name. Server-side only (boot logs, diagnostics).
 // Never send this straight to a browser: see getPublicProviderStatus below.
@@ -46,4 +64,4 @@ function getPublicProviderStatus() {
   return { known, configured, supportsImages };
 }
 
-module.exports = { getProvider, getProviderStatus, getPublicProviderStatus };
+module.exports = { getProvider, getProviderFor, getProviderStatus, getPublicProviderStatus, isProviderConfigured, PROVIDER_NAMES };

@@ -1988,6 +1988,14 @@
               </div>
               <button id="accountPrimaryBtn" class="btn btn-ghost" type="button">Sign in</button>
             </div>
+            <div id="accountAllowance" class="allowance" hidden>
+              <div class="allowance-head">
+                <strong id="allowanceTitle">AI messages</strong>
+                <span id="allowanceCount"></span>
+              </div>
+              <div class="allowance-bar" role="img" aria-labelledby="allowanceTitle"><span id="allowanceFill"></span></div>
+              <p id="allowanceNote" class="settings-hint"></p>
+            </div>
             <p id="accountUsage" class="settings-hint" hidden></p>
             <div id="accountActions" hidden>
               <div class="danger-row">
@@ -2003,6 +2011,34 @@
                 <button id="accountDeleteBtn" class="btn btn-danger" type="button">Delete</button>
               </div>
             </div>
+          </div>
+
+          <div class="settings-section creator-section" id="creatorSection" hidden>
+            <h2>Creator controls <span class="creator-badge">H1 Lab</span></h2>
+            <p class="settings-hint">Only H1's own account sees this. The server checks that on every request — it isn't a hidden switch in the page.</p>
+
+            <h3 class="creator-subhead">The model H1 answers with</h3>
+            <p class="settings-hint" id="creatorActiveNote">H1 is using the model set in the server's configuration.</p>
+            <div id="creatorModelList" class="creator-models"></div>
+            <div class="creator-add">
+              <select id="creatorModelProvider" class="auth-input creator-input" aria-label="Provider"></select>
+              <input id="creatorModelId" class="auth-input creator-input" type="text" placeholder="model id, e.g. gemini-2.0-flash" maxlength="120" aria-label="Model id" />
+              <input id="creatorModelLabel" class="auth-input creator-input" type="text" placeholder="name (optional)" maxlength="60" aria-label="Name" />
+              <button id="creatorAddModel" class="btn btn-ghost" type="button">Add model</button>
+            </div>
+            <p id="creatorModelError" class="auth-error" hidden></p>
+
+            <h3 class="creator-subhead">Message allowance</h3>
+            <div class="danger-row">
+              <div class="danger-row-text"><strong>AI messages per 24 hours</strong><span id="creatorLimitNote">Applies to every account except this one, and to anyone using H1 without an account.</span></div>
+              <span class="creator-limit-edit">
+                <input id="creatorLimitInput" class="auth-input creator-input creator-limit-input" type="number" min="0" max="100000" step="1" aria-label="Messages per 24 hours" />
+                <button id="creatorSaveLimit" class="btn btn-ghost" type="button">Save</button>
+              </span>
+            </div>
+
+            <h3 class="creator-subhead">Who's using H1</h3>
+            <div id="creatorAccounts" class="creator-accounts"></div>
           </div>
 
           <div class="settings-section">
@@ -2337,9 +2373,30 @@
     <div class="auth-atmosphere" aria-hidden="true">
       <span class="bloom bloom-1"></span>
       <span class="bloom bloom-2"></span>
+      <span class="bloom bloom-3"></span>
     </div>
+
+    <div class="auth-layout">
+      <aside class="auth-pitch">
+        <div class="auth-brand auth-brand-lg">
+          <span class="brand-mark auth-mark">H1</span>
+          <div>
+            <p class="auth-pitch-name">H1</p>
+            <p class="auth-tagline">The Student OS</p>
+          </div>
+        </div>
+        <h2 class="auth-pitch-line">Everything you need to get the homework done — in one place.</h2>
+        <ul class="auth-points">
+          <li><span aria-hidden="true">💬</span><div><strong>An AI tutor that teaches</strong>Step-by-step working, in Maths, Science, English, Hindi and Tamil.</div></li>
+          <li><span aria-hidden="true">📚</span><div><strong>Notes, flashcards, quizzes, planner</strong>Your whole study setup, not just a chat box.</div></li>
+          <li><span aria-hidden="true">🐍</span><div><strong>A real Code Lab</strong>Python and web projects that actually run in your browser.</div></li>
+          <li><span aria-hidden="true">☁️</span><div><strong>On every device</strong>Sign in anywhere and your work is already there.</div></li>
+        </ul>
+        <p class="auth-credit auth-credit-aside">Developed by Pranav Ganesh · H1 Lab</p>
+      </aside>
+
     <main class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-      <div class="auth-brand">
+      <div class="auth-brand auth-brand-compact">
         <span class="brand-mark auth-mark">H1</span>
         <div>
           <h1 id="authTitle" class="auth-title">H1</h1>
@@ -2391,13 +2448,20 @@
         </button>
       </form>
 
-      <div class="auth-alt">
-        <button id="authGuestBtn" class="auth-link" type="button">Use H1 without an account</button>
-        <p class="auth-alt-note" id="authGuestNote">Everything stays on this device only.</p>
+      <div id="authCreatorWelcome" class="auth-creator" hidden>
+        <span class="auth-creator-mark" aria-hidden="true">✦</span>
+        <h2>Welcome, Creator</h2>
+        <p>Signed in as <strong id="authCreatorName">Pranav-H1</strong> — no message limits, and the model controls are in Settings.</p>
       </div>
 
-      <p class="auth-credit">Developed by Pranav Ganesh · H1 Lab</p>
+      <div class="auth-alt">
+        <button id="authGuestBtn" class="auth-link" type="button">Use H1 without an account</button>
+        <p class="auth-alt-note" id="authGuestNote">Everything stays on this device, just for this visit. H1 will ask again next time you open it.</p>
+      </div>
+
+      <p class="auth-credit auth-credit-card">Developed by Pranav Ganesh · H1 Lab</p>
     </main>
+    </div>
   </div>
 
   <div id="bootError" class="boot-error" role="alertdialog" aria-labelledby="bootErrorTitle" aria-describedby="bootErrorText" hidden>

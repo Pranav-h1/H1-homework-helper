@@ -148,6 +148,29 @@ The schema is created and migrated on start-up. `GET /api/health` reports `accou
   offers to copy it into the account, once; declining leaves it exactly where it is, and it can
   still be copied in later from Settings → Data.
 
+### Signing in, and using H1 without an account
+
+The sign-in screen is the front door: H1 opens on it unless there's a session already. "Use H1
+without an account" is a deliberate choice that lasts for that browser session — everything stays
+on the device, and H1 asks again next time it's opened. Switching either way is one click from
+the account menu at the bottom of the sidebar.
+
+On a server with no database there is nothing to sign in to, so the same screen says exactly that
+and offers the on-device route instead of a form that would fail.
+
+### The AI allowance
+
+Every AI Tutor message costs real money on H1's API key, so each account gets an allowance:
+**68 messages in a rolling 24 hours** by default (`AI_MESSAGE_LIMIT`, or changed from inside H1 by
+the creator). Rolling rather than "resets at midnight", so a student working late doesn't get a
+fresh allowance an hour later and nothing the next evening.
+
+- Quizzes, flashcards, summaries and the rest don't count — only tutor messages.
+- A device with no account is counted by device, because those messages cost the same.
+- H1's own account has no allowance at all.
+- The server enforces it and tells the browser what's left; the figure on screen is never
+  worked out in the page. A message is only counted once it has actually been answered.
+
 ### H1's own account
 
 `Pranav-H1` is created on start-up from the server's configuration and is exempt from the usual
@@ -160,6 +183,19 @@ node scripts/hash-password.js      # prints H1_MASTER_PASSWORD_HASH=... to put i
 or `H1_MASTER_PASSWORD` with the password itself. Neither belongs in the repository. If neither
 is set, the account simply isn't created. Its password can't be changed or its account deleted
 from inside the app — it comes from the server's configuration, so that's where it changes.
+
+Signing in with it shows a short "Welcome, Creator" and unlocks a Creator controls section in
+Settings:
+
+- **The model H1 answers with.** Keep a list of models (provider + model id) and mark one active;
+  every AI request in H1 then uses it. A model whose provider has no API key on this server can
+  be listed but not switched to, because switching would stop H1 answering.
+- **The message allowance** everyone else gets.
+- **Who's using H1** — each account's messages in the last 24 hours, and how many devices are
+  using it without an account.
+
+The section is hidden for other accounts, but that's a courtesy, not the control: every one of
+these requests is refused by the server unless the session belongs to that account.
 
 ## Deploying to Render
 

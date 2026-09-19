@@ -1,7 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
-const { getProvider, getProviderStatus, getPublicProviderStatus } = require("./providers");
+const { getProvider, getProviderFor, getProviderStatus, getPublicProviderStatus } = require("./providers");
+const aiUsage = require("./aiUsage");
+const models = require("./models");
 const { createDatabaseHandle, isProduction } = require("./db");
 const { migrate } = require("./migrations");
 const { createAccounts, seedMasterAccount } = require("./accounts");
@@ -297,7 +299,63 @@ const database = createDatabaseHandle({
 
 // Mounted before the 32MB JSON parser below so each account route keeps its own, much smaller
 // body limit — a sign-in form has no business sending megabytes.
-createAccounts({ getDb: () => database.get() }).mount(app);
+const accounts = createAccounts({ getDb: () => database.get() });
+accounts.mount(app);
+
+// How much of the AI someone may use, and the bookkeeping for spending it.
+//
+// The answer comes from the session, never from anything the browser sends. Someone signed in is
+// counted against their account; someone using H1 without one is counted by device, because the
+// message costs the same either way. H1's own account is exempt — it's the account that pays for
+// the key.
+//
+// Returns null and answers the request when there's nothing left, or an object whose `spend()`
+// records the message once it has actually been answered.
+async function spendAllowance(req, res, kind = "chat") {
+  const db = await database.get().catch(() => null);
+  const user = await accounts.identify(req).catch(() => null);
+  const unlimited = Boolean(user && user.accountType === "lab");
+  const target = { userId: user ? user.id : null, guest: user ? null : aiUsage.guestKey(req), unlimited };
+
+  let state;
+  try {
+    state = await aiUsage.check(db, target);
+  } catch (err) {
+    // If the allowance can't be read, don't stand between a student and their homework.
+    console.error("[usage] couldn't read the allowance:", err && (err.code || err.message));
+    return { spend: async () => null };
+  }
+
+  if (!state.allowed) {
+    const when = aiUsage.describeReset(state.resetsAt);
+    res.status(429).json({
+      error: user
+        ? `You've used all ${state.limit} AI messages for now. More become available ${when || "shortly"}.`
+        : `This device has used all ${state.limit} AI messages for now. Sign in to H1 for your own allowance, or try again ${when || "shortly"}.`,
+      code: "LIMIT_REACHED",
+      usage: publicUsage(state),
+    });
+    return null;
+  }
+
+  return {
+    async spend() {
+      try {
+        await aiUsage.record(db, { ...target, kind });
+        return publicUsage(await aiUsage.check(db, target));
+      } catch {
+        return publicUsage(state);
+      }
+    },
+  };
+}
+
+// What the browser is told about an allowance: enough to show it honestly, and nothing else.
+function publicUsage(state) {
+  if (!state) return null;
+  if (state.unlimited) return { unlimited: true };
+  return { unlimited: false, limit: state.limit, used: state.used, remaining: state.remaining, resetsAt: state.resetsAt };
+}
 
 // Room for a handful of downscaled images per message; the client shrinks them first.
 app.use(express.json({ limit: "32mb" }));
@@ -350,16 +408,25 @@ function withSource(instruction, sourceText) {
   return sourceText ? `Using this material:\n\n${sourceText}\n\n${instruction}` : instruction;
 }
 
-function requireProvider(res) {
-  const provider = getProvider();
-  if (!provider) {
+// Resolves the AI H1 should answer with: the model H1's creator picked in the app if there is
+// one, otherwise whatever the environment configured. Callers get the same small interface
+// either way, with the chosen model already baked in.
+async function requireProvider(res) {
+  const db = await database.get().catch(() => null);
+  const active = await models.getActive(db).catch(() => null);
+  const resolved = getProviderFor(active);
+  if (!resolved) {
     res.status(503).json({
       error:
         "The AI backend isn't configured yet. Set AI_PROVIDER and the matching API key (e.g. ANTHROPIC_API_KEY, OPENAI_API_KEY, or GEMINI_API_KEY) on the server, then restart it.",
     });
     return null;
   }
-  return provider;
+  const { provider, model } = resolved;
+  return {
+    supportsImages: provider.supportsImages,
+    chat: (messages, systemPrompt) => provider.chat(messages, systemPrompt, { model }),
+  };
 }
 
 // Models sometimes wrap JSON in prose or code fences despite instructions; pull out the
@@ -528,7 +595,12 @@ app.post("/api/chat", async (req, res) => {
     cleaned.push({ role: m.role, content, images: m.images, documents: m.documents });
   }
 
-  const provider = requireProvider(res);
+  // Every tutor message costs real money on H1's API key, so it counts against the sender's
+  // allowance. The creator's account is exempt; a device with no account is counted by device.
+  const allowance = await spendAllowance(req, res);
+  if (!allowance) return;
+
+  const provider = await requireProvider(res);
   if (!provider) return;
 
   try {
@@ -544,7 +616,9 @@ app.post("/api/chat", async (req, res) => {
       trimmedHistory,
       buildChatSystemPrompt(cleanSubject(subject), cleanMode(mode), cleanLanguage(language))
     );
-    res.json({ reply });
+    // Recorded only once there's an answer: a failed request shouldn't cost anyone a message.
+    const usage = await allowance.spend();
+    res.json({ reply, usage });
   } catch (err) {
     if (err.status === 400) {
       return res.status(400).json({ error: err.message });
@@ -565,7 +639,7 @@ app.post("/api/explain", async (req, res) => {
     return res.status(400).json({ error: `Question is too long (max ${MAX_MESSAGE_LENGTH} characters).` });
   }
 
-  const provider = requireProvider(res);
+  const provider = await requireProvider(res);
   if (!provider) return;
 
   try {
@@ -622,7 +696,7 @@ app.post("/api/quiz", async (req, res) => {
   questionType = QUIZ_TYPES.includes(questionType) ? questionType : "mcq";
   const cleanedSource = cleanSourceText(sourceText);
 
-  const provider = requireProvider(res);
+  const provider = await requireProvider(res);
   if (!provider) return;
 
   try {
@@ -696,7 +770,7 @@ app.post("/api/flashcards", async (req, res) => {
   }
   const cleanedSource = cleanSourceText(sourceText);
 
-  const provider = requireProvider(res);
+  const provider = await requireProvider(res);
   if (!provider) return;
 
   try {
@@ -743,7 +817,7 @@ app.post("/api/practice", async (req, res) => {
   difficulty = QUIZ_DIFFICULTIES.includes(difficulty) ? difficulty : "medium";
   const cleanedSource = cleanSourceText(sourceText);
 
-  const provider = requireProvider(res);
+  const provider = await requireProvider(res);
   if (!provider) return;
 
   try {
@@ -801,7 +875,7 @@ app.post("/api/summarize", async (req, res) => {
   length = SUMMARY_LENGTHS.includes(length) ? length : "normal";
   const lengthInstruction = { short: "Keep the summary to 1-2 sentences.", normal: "Keep the summary to 2-4 sentences.", detailed: "Write a fuller summary of 5-8 sentences." }[length];
 
-  const provider = requireProvider(res);
+  const provider = await requireProvider(res);
   if (!provider) return;
 
   try {
@@ -860,7 +934,7 @@ app.post("/api/vocabulary", async (req, res) => {
   language = VOCAB_LANGUAGES.includes(language) ? language : "english";
   translateTo = VOCAB_LANGUAGES.includes(translateTo) && translateTo !== language ? translateTo : null;
 
-  const provider = requireProvider(res);
+  const provider = await requireProvider(res);
   if (!provider) return;
 
   try {
@@ -909,7 +983,7 @@ app.post("/api/study-plan", async (req, res) => {
   }
   minutes = STUDY_PLAN_MINUTES.includes(Number(minutes)) ? Number(minutes) : 30;
 
-  const provider = requireProvider(res);
+  const provider = await requireProvider(res);
   if (!provider) return;
 
   try {
@@ -968,7 +1042,7 @@ app.post("/api/exam-plan", async (req, res) => {
   days = Number.isInteger(Number(days)) ? Number(days) : 7;
   days = Math.min(EXAM_DAYS_MAX, Math.max(EXAM_DAYS_MIN, days));
 
-  const provider = requireProvider(res);
+  const provider = await requireProvider(res);
   if (!provider) return;
 
   try {

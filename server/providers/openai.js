@@ -1,11 +1,11 @@
-const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const API_URL = "https://api.openai.com/v1/chat/completions";
 
 function isConfigured() {
   return Boolean(process.env.OPENAI_API_KEY);
 }
 
-async function chat(messages, systemPrompt) {
+async function chat(messages, systemPrompt, { model } = {}) {
   const res = await fetch(API_URL, {
     method: "POST",
     headers: {
@@ -13,7 +13,7 @@ async function chat(messages, systemPrompt) {
       authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: model || DEFAULT_MODEL,
       messages: [
         { role: "system", content: systemPrompt },
         ...messages.map((m) => ({ role: m.role, content: m.content })),

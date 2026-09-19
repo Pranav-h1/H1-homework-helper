@@ -61,6 +61,43 @@ const MIGRATIONS = [
       CREATE INDEX h1_user_files_conversation_idx ON h1_user_files (user_id, conversation_id);
     `,
   },
+  {
+    version: 2,
+    name: "AI usage allowance, model list, server settings",
+    sql: `
+      -- One row per AI request that counts towards someone's allowance. Rows older than the
+      -- window are swept away; the allowance is always counted from what's actually here, so
+      -- the number shown is the real one rather than a guess from a running total.
+      CREATE TABLE h1_ai_usage (
+        id         BIGSERIAL PRIMARY KEY,
+        user_id    TEXT REFERENCES h1_users(id) ON DELETE CASCADE,
+        guest_key  TEXT,
+        kind       TEXT NOT NULL,
+        created_at BIGINT NOT NULL
+      );
+      CREATE INDEX h1_ai_usage_user_idx ON h1_ai_usage (user_id, created_at);
+      CREATE INDEX h1_ai_usage_guest_idx ON h1_ai_usage (guest_key, created_at);
+
+      -- The models H1 may use. Exactly one is active at a time; the creator maintains the list.
+      CREATE TABLE h1_models (
+        id         TEXT PRIMARY KEY,
+        provider   TEXT NOT NULL,
+        model_id   TEXT NOT NULL,
+        label      TEXT NOT NULL,
+        is_active  BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at BIGINT NOT NULL,
+        CONSTRAINT h1_models_unique UNIQUE (provider, model_id)
+      );
+      CREATE UNIQUE INDEX h1_models_one_active ON h1_models (is_active) WHERE is_active;
+
+      -- Small server-wide settings the creator can change without a redeploy.
+      CREATE TABLE h1_settings (
+        key        TEXT PRIMARY KEY,
+        value      TEXT NOT NULL,
+        updated_at BIGINT NOT NULL
+      );
+    `,
+  },
 ];
 
 async function migrate(db) {

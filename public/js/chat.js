@@ -2,6 +2,7 @@ import { renderMarkdown } from "./markdown.js";
 import { safeGet, safeSet } from "./storage.js";
 import { showToast } from "./toast.js";
 import { sendChat, friendlyErrorMessage } from "./api.js";
+import { applyUsage, onUsageChange, currentUsage, describeUsage, isLow } from "./aiUsage.js";
 import { appState, AI_MODES, setMode, onModeChange } from "./state.js";
 import { switchView } from "./nav.js";
 import { confirmDanger, promptForText, openListPicker } from "./modal.js";
@@ -846,6 +847,9 @@ async function requestReply() {
     }
   } catch (err) {
     hideTyping();
+    // Running out of AI messages isn't a failure — it's a limit, and it says exactly where the
+    // person stands and when they can carry on.
+    if (err && err.usage) applyUsage(err.usage);
     if (activeConversation && activeConversation.id === requestConversationId) {
       showErrorBubble(friendlyErrorMessage(err));
     }
@@ -1041,9 +1045,30 @@ chatForm.addEventListener("submit", () => closeSlashMenu());
 
 export function setEnterMode(mode) {
   enterMode = mode;
-  composerHint.textContent =
-    mode === "ctrlenter" ? "Ctrl + Enter to send · Enter for a new line" : "Enter to send · Shift + Enter for a new line";
+  updateComposerHint();
 }
+
+// The hint line doubles as the place the allowance is mentioned — but only when it's nearly
+// gone. Counting down from 68 over someone's shoulder while they work would be worse than
+// useless; being told at 5 left, and told clearly at zero, is what actually helps.
+function updateComposerHint() {
+  const keys = enterMode === "ctrlenter" ? "Ctrl + Enter to send · Enter for a new line" : "Enter to send · Shift + Enter for a new line";
+  const usage = currentUsage();
+  if (usage && !usage.unlimited && usage.remaining <= 0) {
+    composerHint.textContent = describeUsage(usage);
+    composerHint.classList.add("is-warning");
+    return;
+  }
+  if (usage && isLow(usage)) {
+    composerHint.textContent = `${usage.remaining} AI message${usage.remaining === 1 ? "" : "s"} left · ${keys}`;
+    composerHint.classList.add("is-warning");
+    return;
+  }
+  composerHint.textContent = keys;
+  composerHint.classList.remove("is-warning");
+}
+
+onUsageChange(updateComposerHint);
 setEnterMode(enterMode);
 
 /* ---------------------------------------------------------

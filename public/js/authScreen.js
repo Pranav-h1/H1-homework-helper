@@ -31,6 +31,12 @@ function cache() {
   el.hint = $("authHint");
   el.guest = $("authGuestBtn");
   el.usernameError = $("authUsernameError");
+  el.card = document.querySelector(".auth-card");
+  el.tabs = document.querySelector(".auth-tabs");
+  el.alt = document.querySelector(".auth-alt");
+  el.creatorWelcome = $("authCreatorWelcome");
+  el.creatorName = $("authCreatorName");
+  el.guestNote = $("authGuestNote");
   el.passwordError = $("authPasswordError");
   el.confirmError = $("authConfirmError");
 }
@@ -126,6 +132,10 @@ async function submit(event) {
   try {
     if (mode === "signup") await session.signUp(username, password, confirm);
     else await session.signIn(username, password);
+    const user = session.currentUser();
+    if (user && user.accountType === "lab") {
+      await welcomeCreator(user.username);
+    }
     finish("account");
   } catch (err) {
     setBusy(false);
@@ -139,6 +149,21 @@ async function submit(event) {
     }
     showError((err && err.message) || "Something went wrong. Please try again.", err && err.field);
   }
+}
+
+// H1's own account gets a moment of acknowledgement on the way in, rather than landing in the
+// same dashboard as everyone else with no sign that anything is different.
+function welcomeCreator(username) {
+  return new Promise((resolve) => {
+    el.card.classList.add("is-creator");
+    el.form.hidden = true;
+    el.tabs.hidden = true;
+    el.alt.hidden = true;
+    setNotice("");
+    el.creatorWelcome.hidden = false;
+    el.creatorName.textContent = username;
+    setTimeout(resolve, 1400);
+  });
 }
 
 function finish(result) {
@@ -203,7 +228,7 @@ function wire() {
 
 // Shows the screen and resolves once the person is signed in, has created an account, or has
 // chosen to carry on without one.
-export function showAuthScreen({ expired = false, startMode = "signin" } = {}) {
+export function showAuthScreen({ expired = false, startMode = "signin", accountsAvailable = true } = {}) {
   cache();
   wire();
   document.documentElement.classList.add("auth-open");
@@ -213,6 +238,24 @@ export function showAuthScreen({ expired = false, startMode = "signin" } = {}) {
     app.inert = true;
   }
   el.screen.hidden = false;
+  el.creatorWelcome.hidden = true;
+
+  if (!accountsAvailable) {
+    // No database on this server, so there is nothing to sign in to. Say that, rather than
+    // showing a form that would fail, and leave the one route that does work.
+    el.form.hidden = true;
+    el.tabs.hidden = true;
+    setNotice("Accounts aren't set up on this H1 server yet, so there's nothing to sign in to. You can use H1 on this device — everything stays here.");
+    el.guestNote.textContent = "Your work is saved in this browser.";
+    el.guest.textContent = "Use H1 on this device";
+    el.guest.focus();
+    return new Promise((resolve) => {
+      resolveDone = resolve;
+    });
+  }
+
+  el.form.hidden = false;
+  el.tabs.hidden = false;
   setNotice(expired ? "Your session has expired. Please sign in again." : "");
   if (navigator.cookieEnabled === false) {
     setNotice("Cookies are required to keep you signed in. Please allow cookies for H1 and try again.");

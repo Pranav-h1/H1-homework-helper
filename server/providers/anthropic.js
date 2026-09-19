@@ -1,11 +1,11 @@
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5";
+const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5";
 const API_URL = "https://api.anthropic.com/v1/messages";
 
 function isConfigured() {
   return Boolean(process.env.ANTHROPIC_API_KEY);
 }
 
-async function chat(messages, systemPrompt) {
+async function chat(messages, systemPrompt, { model } = {}) {
   const res = await fetch(API_URL, {
     method: "POST",
     headers: {
@@ -14,7 +14,7 @@ async function chat(messages, systemPrompt) {
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: model || DEFAULT_MODEL,
       max_tokens: 1024,
       system: systemPrompt,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),

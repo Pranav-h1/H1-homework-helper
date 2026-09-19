@@ -95,7 +95,7 @@ async function prepare() {
     hideSplash();
     try {
       const { showAuthScreen } = await import("./authScreen.js");
-      await showAuthScreen({ expired: outcome.expired });
+      await showAuthScreen({ expired: outcome.expired, accountsAvailable: outcome.accountsAvailable });
     } catch {
       // The sign-in screen itself couldn't load — don't strand anyone: H1 opens as a guest.
       session.continueAsGuest();

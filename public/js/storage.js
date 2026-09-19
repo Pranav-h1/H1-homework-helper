@@ -30,7 +30,6 @@ const DEVICE_ONLY = new Set([
   "h1-last-theme",
   "h1-last-accent",
   "h1-boot-retries",
-  "h1-device-mode",
   "h1-device-account",
   "h1-sidebar-collapsed",
   "h1-device",

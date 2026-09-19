@@ -11,6 +11,9 @@ const V = require("./auth/validation");
 const S = require("./auth/sessions");
 const { requireSameSite, checkCsrf } = require("./auth/guards");
 const { createLimiter, clientIp } = require("./auth/rateLimit");
+const aiUsage = require("./aiUsage");
+const modelRegistry = require("./models");
+const { PROVIDER_NAMES, isProviderConfigured } = require("./providers");
 
 const DATA_KEY_PATTERN = /^h1-[a-z0-9-]{1,64}$/;
 const FILE_ID_PATTERN = /^[A-Za-z0-9_-]{1,100}$/;
@@ -91,6 +94,11 @@ function createAccounts({ getDb, env = process.env }) {
         res.status(500).json({ error: "Something went wrong on H1's side. Please try again.", code: "SERVER_ERROR" });
       }
     );
+  }
+
+  // Applies a guard to everything except plain reads.
+  function writesOnly(guard) {
+    return (req, res, next) => (req.method === "GET" || req.method === "HEAD" ? next() : guard(req, res, next));
   }
 
   function csrf(req, res, next) {
@@ -243,10 +251,10 @@ function createAccounts({ getDb, env = process.env }) {
   const account = express.Router();
   account.use(noStore);
   account.use(express.json({ limit: "16kb" }));
-  account.use(requireSameSite, withDb, authed);
-  // Reading your own account details changes nothing, so it needs no CSRF token — the token is
-  // what proves a *state-changing* request came from H1's own page.
-  account.use((req, res, next) => (req.method === "GET" ? next() : csrf(req, res, next)));
+  // Reading your own details changes nothing, so a GET needs neither the origin check nor a
+  // CSRF token: browsers don't attach an Origin header to same-origin GETs, and they refuse to
+  // let another site read the response at all. Both guards apply to everything that writes.
+  account.use(writesOnly(requireSameSite), withDb, authed, writesOnly(csrf));
 
   async function confirmOwnPassword(req, password, field = "password") {
     const limitKey = `pw:${req.auth.user.id}`;
@@ -544,14 +552,146 @@ function createAccounts({ getDb, env = process.env }) {
     })
   );
 
+  // Who a request is from, for code outside these routes (the AI allowance). Returns null for
+  // anyone not signed in — it never guesses, and it never reads anything the browser claims.
+  async function identify(req) {
+    const db = await getDb();
+    if (!db) return null;
+    try {
+      const found = await S.loadSession(db, req, cfg);
+      return found.user || null;
+    } catch {
+      return null;
+    }
+  }
+
+  // ---------------------------------------------------------------------------------------
+  // /api/ai — what the person in front of H1 has left
+  // ---------------------------------------------------------------------------------------
+  const ai = express.Router();
+  ai.use(noStore);
+
+  ai.get(
+    "/usage",
+    route(async (req, res) => {
+      const db = await getDb();
+      let user = null;
+      if (db) {
+        const found = await S.loadSession(db, req, cfg).catch(() => ({ user: null }));
+        user = found.user || null;
+      }
+      const unlimited = Boolean(user && user.accountType === "lab");
+      const state = await aiUsage.check(db, { userId: user ? user.id : null, guest: user ? null : aiUsage.guestKey(req), unlimited });
+      res.json({
+        usage: state.unlimited
+          ? { unlimited: true }
+          : { unlimited: false, limit: state.limit, used: state.used, remaining: state.remaining, resetsAt: state.resetsAt },
+        signedIn: Boolean(user),
+      });
+    })
+  );
+
+  // ---------------------------------------------------------------------------------------
+  // /api/creator — H1's own account only
+  //
+  // Everything here is gated on the account's type as stored in the database, which comes from
+  // the session. There is no "creator" flag the browser can send, and no password check in the
+  // frontend: an ordinary account calling these gets the same 403 whatever it claims to be.
+  // ---------------------------------------------------------------------------------------
+  const creator = express.Router();
+  creator.use(noStore);
+  creator.use(express.json({ limit: "16kb" }));
+  creator.use(writesOnly(requireSameSite), withDb, authed);
+  creator.use((req, res, next) => {
+    if (req.auth.user.accountType !== "lab") {
+      return res.status(403).json({ error: "That's not available on this account.", code: "NOT_CREATOR" });
+    }
+    next();
+  });
+  creator.use(writesOnly(csrf));
+
+  creator.get(
+    "/overview",
+    route(async (req, res) => {
+      const since = Date.now() - aiUsage.WINDOW_MS;
+      const [limit, list, people] = await Promise.all([
+        aiUsage.getLimit(req.db),
+        modelRegistry.list(req.db),
+        req.db.query(
+          `SELECT u.username, u.account_type, u.created_at,
+                  (SELECT COUNT(*)::int FROM h1_ai_usage a WHERE a.user_id = u.id AND a.created_at > $1) AS used
+             FROM h1_users u ORDER BY u.created_at`,
+          [since]
+        ),
+      ]);
+      const guests = await req.db.query("SELECT COUNT(DISTINCT guest_key)::int AS devices, COUNT(*)::int AS used FROM h1_ai_usage WHERE guest_key IS NOT NULL AND created_at > $1", [since]);
+      res.json({
+        limit,
+        windowHours: Math.round(aiUsage.WINDOW_MS / 3600000),
+        providers: PROVIDER_NAMES.map((name) => ({ name, configured: isProviderConfigured(name) })),
+        models: list,
+        accounts: people.rows.map((r) => ({
+          username: r.username,
+          accountType: r.account_type,
+          createdAt: Number(r.created_at),
+          used: Number(r.used),
+        })),
+        guests: { devices: Number(guests.rows[0].devices), used: Number(guests.rows[0].used) },
+      });
+    })
+  );
+
+  creator.post(
+    "/limit",
+    route(async (req, res) => {
+      const { limit } = req.body || {};
+      if (!Number.isFinite(Number(limit)) || Number(limit) < 0) throw httpError(400, "That isn't a number of messages.", { field: "limit", code: "INVALID" });
+      const value = await aiUsage.setLimit(req.db, limit);
+      res.json({ limit: value });
+    })
+  );
+
+  creator.post(
+    "/models",
+    route(async (req, res) => {
+      const { provider, modelId, label } = req.body || {};
+      const result = await modelRegistry.add(req.db, { provider, modelId, label });
+      if (result.error) throw httpError(400, result.error, { code: "INVALID" });
+      res.status(201).json({ id: result.id, models: await modelRegistry.list(req.db) });
+    })
+  );
+
+  creator.post(
+    "/models/active",
+    route(async (req, res) => {
+      const { id } = req.body || {};
+      const result = await modelRegistry.setActive(req.db, id || null);
+      if (result.error) throw httpError(400, result.error, { code: "INVALID" });
+      res.json({ active: result.active, models: await modelRegistry.list(req.db) });
+    })
+  );
+
+  creator.post(
+    "/models/remove",
+    route(async (req, res) => {
+      const { id } = req.body || {};
+      if (typeof id !== "string" || !id) throw httpError(400, "Which model?", { code: "INVALID" });
+      const result = await modelRegistry.remove(req.db, id);
+      if (!result.removed) throw httpError(404, "That model isn't on the list.", { code: "NOT_FOUND" });
+      res.json({ wasActive: result.wasActive, models: await modelRegistry.list(req.db) });
+    })
+  );
+
   function mount(app) {
     app.use("/api/auth", auth);
     app.use("/api/account", account);
     app.use("/api/data", data);
     app.use("/api/files", files);
+    app.use("/api/ai", ai);
+    app.use("/api/creator", creator);
   }
 
-  return { mount, config: cfg };
+  return { mount, identify, config: cfg };
 }
 
 // H1's own account ("Pranav-H1"). It's created on the server from configuration — never from
