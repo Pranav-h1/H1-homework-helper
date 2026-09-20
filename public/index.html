@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="design.css" />
+<link rel="stylesheet" href="os-styles.css" />
 <script src="js/early.js"></script>
 </head>
 <body>
@@ -68,6 +69,10 @@
         <button class="icon-btn" id="topbarSearchBtn" type="button" aria-label="Quick search" title="Quick search (Ctrl K)">
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </button>
+        <div class="topbar-clock" id="topbarClock" data-clock role="img">
+          <span class="clock-time" data-clock-time>--:--</span>
+          <span class="clock-date" data-clock-date="long"></span>
+        </div>
         <span class="topbar-status" id="topbarStatus">
           <span id="topbarStatusDot" class="status-dot status-dot-pending"></span>
           <span id="topbarStatusText">Connecting…</span>
@@ -89,6 +94,7 @@
         <span class="brand-mark">H1</span>
         <span class="brand-name-sm">The Student OS</span>
       </div>
+      <span class="mobile-clock" id="mobileClock" data-clock role="img"><span data-clock-time>--:--</span></span>
       <button id="quickThemeToggle" class="icon-btn" type="button" aria-label="Toggle dark or light mode">
         <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
         <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -2058,6 +2064,15 @@
 
           <div class="settings-section">
             <h2>Appearance</h2>
+            <span class="field-label" id="osSettingLabel">Interface style</span>
+            <p class="settings-hint">How H1 draws itself — its windows, controls, menus and motion.</p>
+            <div class="segmented segmented-wrap" id="osSetting" role="radiogroup" aria-labelledby="osSettingLabel">
+              <button type="button" class="segmented-btn" data-value="apple" role="radio" aria-checked="true">Apple / macOS</button>
+              <button type="button" class="segmented-btn" data-value="classic" role="radio" aria-checked="false">Classic H1</button>
+              <button type="button" class="segmented-btn" data-value="material" role="radio" aria-checked="false">Android / Material</button>
+            </div>
+            <p class="settings-hint" id="osSettingHint"></p>
+
             <span class="field-label" id="themeSettingLabel">Theme</span>
             <div class="segmented" id="themeSetting" role="radiogroup" aria-labelledby="themeSettingLabel">
               <button type="button" class="segmented-btn" data-value="dark" role="radio" aria-checked="false">🌙 Dark</button>
@@ -2083,6 +2098,14 @@
               <button type="button" class="segmented-btn" data-value="tablet" role="radio" aria-checked="false">📱 iPad / Tablet</button>
               <button type="button" class="segmented-btn" data-value="phone" role="radio" aria-checked="false">📱 Phone</button>
             </div>
+          </div>
+
+          <div class="settings-section">
+            <h2>Time &amp; region</h2>
+            <p class="settings-hint">The clock in the title bar, and how H1 writes dates.</p>
+            <label class="field-label" for="regionSetting">Country or region</label>
+            <select id="regionSetting" class="tool-input region-select"></select>
+            <p class="settings-hint" id="regionPreview"></p>
           </div>
 
           <div class="settings-section">

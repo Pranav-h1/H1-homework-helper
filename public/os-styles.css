@@ -1,0 +1,690 @@
+/* =====================================================================================
+   H1 interface styles
+   -------------------------------------------------------------------------------------
+   design.css defines H1's tokens and primitives. This file renders them in one of three
+   dialects, chosen in Settings → Appearance → Interface style and set as data-os on <html>:
+
+     apple     the default — a macOS-style desktop application
+     classic   H1's own flat look (design.css as written; almost nothing to override)
+     material  Android / Material
+
+   Nothing here invents new components. Every rule re-dresses something the design system
+   already defines, so a button is the same button in all three.
+   ===================================================================================== */
+
+/* =====================================================================================
+   APPLE / macOS
+   -------------------------------------------------------------------------------------
+   What actually makes an interface read as Mac rather than Android: compact controls on a
+   tight grid, hairline separators instead of boxes, real translucency on the chrome (and
+   only the chrome), shadows you notice only when you look for them, grouped inset lists,
+   and the system typeface.
+   ===================================================================================== */
+:root[data-os="apple"] {
+  /* The system face first — SF on Apple hardware, Segoe UI on Windows — with H1's own
+     typefaces behind it. */
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Lexend, system-ui, sans-serif;
+
+  /* Mac chrome is smaller than the web average: 13px is the standard control size. */
+  --fs-2xs: 10.5px;
+  --fs-xs: 11.5px;
+  --fs-sm: 12.5px;
+  --fs-base: 13px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 19px;
+  --fs-2xl: 22px;
+  --fs-3xl: 27px;
+  --tracking-caps: 0.02em;
+
+  /* Softly rounded, not pill-shaped. */
+  --r-window: 14px;
+  --r-panel: 12px;
+  --radius-xs: 5px;
+  --radius-sm: 7px;
+  --radius-md: 9px;
+  --radius-lg: 11px;
+  --radius-xl: 13px;
+
+  --h-control-sm: 24px;
+  --h-control: 28px;
+  --h-control-lg: 34px;
+
+  --sidebar-w: 220px;
+
+  /* Dark: the Mac's graphite, with the chrome translucent over it. */
+  --bg: #17171a;
+  --panel: #1d1d20;
+  --panel-border: rgba(255, 255, 255, 0.07);
+  --card: rgba(255, 255, 255, 0.035);
+  --card-hover: rgba(255, 255, 255, 0.055);
+  --raised: rgba(44, 44, 48, 0.82);
+  --raised-solid: #2c2c30;
+  --raised-border: rgba(255, 255, 255, 0.11);
+  --hairline: rgba(255, 255, 255, 0.08);
+  --hairline-strong: rgba(255, 255, 255, 0.14);
+  --fill-subtle: rgba(255, 255, 255, 0.05);
+  --fill-hover: rgba(255, 255, 255, 0.08);
+  --fill-press: rgba(255, 255, 255, 0.12);
+  --field: rgba(0, 0, 0, 0.22);
+  --sidebar-material: rgba(30, 30, 34, 0.62);
+  --vibrancy: saturate(180%) blur(30px);
+
+  --elev-1: 0 0.5px 1px rgba(0, 0, 0, 0.3);
+  --elev-2: 0 2px 8px rgba(0, 0, 0, 0.28), 0 0.5px 1px rgba(0, 0, 0, 0.3);
+  --elev-3: 0 16px 48px rgba(0, 0, 0, 0.46), 0 1px 3px rgba(0, 0, 0, 0.32);
+
+  --surface: var(--fill-subtle);
+  --surface-hover: var(--fill-hover);
+  --surface-solid: #26262a;
+  --surface-elevated: var(--raised-solid);
+  --border: var(--hairline);
+  --border-strong: var(--hairline-strong);
+  --glass-base-bg: var(--panel);
+  --glass-floating-bg: var(--raised);
+  --glass-floating-border: var(--raised-border);
+  --shadow-sm: var(--elev-1);
+  --shadow-md: var(--elev-2);
+  --shadow-lg: var(--elev-3);
+}
+
+:root[data-os="apple"][data-theme="light"] {
+  --bg: #e9e9ec;
+  --panel: #ffffff;
+  --panel-border: rgba(0, 0, 0, 0.08);
+  --card: #f5f5f7;
+  --card-hover: #eeeef1;
+  --raised: rgba(250, 250, 252, 0.84);
+  --raised-solid: #ffffff;
+  --raised-border: rgba(0, 0, 0, 0.1);
+  --hairline: rgba(0, 0, 0, 0.09);
+  --hairline-strong: rgba(0, 0, 0, 0.16);
+  --fill-subtle: rgba(0, 0, 0, 0.04);
+  --fill-hover: rgba(0, 0, 0, 0.07);
+  --fill-press: rgba(0, 0, 0, 0.1);
+  --field: #ffffff;
+  --sidebar-material: rgba(246, 246, 248, 0.72);
+
+  --elev-1: 0 0.5px 1px rgba(0, 0, 0, 0.07);
+  --elev-2: 0 2px 8px rgba(0, 0, 0, 0.08), 0 0.5px 1px rgba(0, 0, 0, 0.06);
+  --elev-3: 0 16px 44px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  --surface-solid: #ffffff;
+  --surface-elevated: #ffffff;
+}
+
+/* ---- Window ------------------------------------------------------------------------ */
+:root[data-os="apple"] .app {
+  border-color: rgba(255, 255, 255, 0.11);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(0, 0, 0, 0.45);
+}
+
+:root[data-os="apple"][data-theme="light"] .app {
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.18), 0 0 0 0.5px rgba(0, 0, 0, 0.09);
+}
+
+:root[data-os="apple"] .shell {
+  gap: 0;
+  padding: 0;
+}
+
+/* The sidebar is the window's translucent left pane, edge to edge, as in Finder and Mail. */
+:root[data-os="apple"] .sidebar {
+  background: var(--sidebar-material);
+  backdrop-filter: var(--vibrancy);
+  -webkit-backdrop-filter: var(--vibrancy);
+  border-right: 0.5px solid var(--hairline);
+  border-radius: 0;
+  padding: 4px 8px 8px;
+}
+
+:root[data-os="apple"] .main-view {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  background: var(--panel);
+  padding: 20px 26px;
+}
+
+:root[data-os="apple"] .desktop-topbar {
+  padding: 9px 12px 9px 16px;
+  border-bottom: 0.5px solid var(--hairline);
+  background: var(--sidebar-material);
+  backdrop-filter: var(--vibrancy);
+  -webkit-backdrop-filter: var(--vibrancy);
+}
+
+:root[data-os="apple"] .traffic-light {
+  width: 12px;
+  height: 12px;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+:root[data-os="apple"] .topbar-title {
+  font-weight: 600;
+  font-size: var(--fs-base);
+}
+
+/* ---- Sidebar rows ------------------------------------------------------------------ */
+:root[data-os="apple"] .nav-item {
+  height: 28px;
+  gap: 8px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: var(--fs-base);
+  font-weight: 500;
+}
+
+:root[data-os="apple"] .nav-item svg {
+  width: 15px;
+  height: 15px;
+  color: var(--accent-text);
+  opacity: 0.95;
+}
+
+:root[data-os="apple"] .nav-item.active {
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+
+:root[data-os="apple"] .nav-item.active svg {
+  color: var(--accent-contrast);
+}
+
+/* Finder's selection: a filled accent row, not a tinted one. */
+:root[data-os="apple"] .nav-active-pill {
+  height: 28px;
+  border-radius: 6px;
+  background: var(--accent-grad);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+:root[data-os="apple"] .nav-active-pill::before {
+  display: none;
+}
+
+/* Mac group headers are sentence case and quiet, not shouty capitals. */
+:root[data-os="apple"] .nav-section-label {
+  padding: 12px 8px 3px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+:root[data-os="apple"] .sidebar-command-hint {
+  height: 26px;
+  margin: 0 2px 6px;
+  border-radius: 6px;
+  font-size: var(--fs-sm);
+  background: var(--field);
+}
+
+:root[data-os="apple"] .brand {
+  padding: 2px 6px 10px;
+}
+
+:root[data-os="apple"] .brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  font-size: 12px;
+}
+
+:root[data-os="apple"] .brand-name {
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+:root[data-os="apple"] .sidebar-account {
+  height: 40px;
+  border-radius: 7px;
+}
+
+:root[data-os="apple"] .sidebar-account .account-avatar {
+  width: 26px;
+  height: 26px;
+}
+
+/* ---- Controls ---------------------------------------------------------------------- */
+:root[data-os="apple"] .btn {
+  height: var(--h-control);
+  padding: 0 12px;
+  border-radius: 6px;
+  font-size: var(--fs-base);
+  font-weight: 500;
+}
+
+/* A Mac push button: a faint vertical bezel, a hairline, and the smallest shadow there is. */
+:root[data-os="apple"] .btn-ghost {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.045));
+  border: 0.5px solid var(--hairline-strong);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.22);
+}
+
+:root[data-os="apple"][data-theme="light"] .btn-ghost {
+  background: linear-gradient(180deg, #ffffff, #f7f7f9);
+  border-color: rgba(0, 0, 0, 0.14);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.06);
+}
+
+:root[data-os="apple"] .btn-ghost:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.07));
+}
+
+:root[data-os="apple"][data-theme="light"] .btn-ghost:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffffff, #f0f0f3);
+}
+
+:root[data-os="apple"] .btn-primary {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-1) 88%, white), var(--accent-1));
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.22), inset 0 0.5px 0 rgba(255, 255, 255, 0.35);
+}
+
+:root[data-os="apple"] .btn-primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 0.5px 0 rgba(255, 255, 255, 0.4);
+}
+
+:root[data-os="apple"] .icon-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+}
+
+:root[data-os="apple"] .chip,
+:root[data-os="apple"] .suggestion-chip {
+  height: 26px;
+  border-radius: 7px;
+  font-size: var(--fs-sm);
+}
+
+:root[data-os="apple"] .segmented,
+:root[data-os="apple"] .subtabs,
+:root[data-os="apple"] .subtab-bar,
+:root[data-os="apple"] .auth-tabs {
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--field);
+}
+
+:root[data-os="apple"] .segmented-btn,
+:root[data-os="apple"] .subtab,
+:root[data-os="apple"] .auth-tab {
+  height: 24px;
+  border-radius: 6px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+:root[data-os="apple"] .segmented-btn.active,
+:root[data-os="apple"] .auth-tab.is-active {
+  background: var(--raised-solid);
+  box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.22);
+  font-weight: 600;
+}
+
+:root[data-os="apple"] .auth-input,
+:root[data-os="apple"] .tool-input,
+:root[data-os="apple"] .tool-textarea,
+:root[data-os="apple"] .mode-select,
+:root[data-os="apple"] .creator-input,
+:root[data-os="apple"] .history-search-input {
+  border-radius: 6px;
+  border: 0.5px solid var(--hairline-strong);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+  font-size: var(--fs-base);
+}
+
+:root[data-os="apple"][data-theme="light"] .auth-input,
+:root[data-os="apple"][data-theme="light"] .tool-input,
+:root[data-os="apple"][data-theme="light"] .tool-textarea {
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Mac settings label their fields in sentence case. Shouting in small capitals is a web habit. */
+:root[data-os="apple"] .field-label {
+  margin-bottom: 5px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-muted);
+}
+
+/* Mac text fields sit on the same 28px grid as the buttons beside them. Textareas keep their
+   own height — a place to write is not a control. */
+:root[data-os="apple"] input.tool-input,
+:root[data-os="apple"] select.tool-input,
+:root[data-os="apple"] .notes-search,
+:root[data-os="apple"] .history-search-input,
+:root[data-os="apple"] .mode-select {
+  height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+:root[data-os="apple"] .auth-input {
+  height: 32px;
+}
+
+/* ---- Surfaces: hairlines and inset groups, not stacks of cards --------------------- */
+:root[data-os="apple"] .bento-tile,
+:root[data-os="apple"] .tool-panel,
+:root[data-os="apple"] .result-card,
+:root[data-os="apple"] .doc-card,
+:root[data-os="apple"] .deck-card,
+:root[data-os="apple"] .project-card,
+:root[data-os="apple"] .subject-card,
+:root[data-os="apple"] .code-track-card,
+:root[data-os="apple"] .ch-card,
+:root[data-os="apple"] .daily-inspiration,
+:root[data-os="apple"] .tool-card-sm {
+  border-radius: 10px;
+  border: 0.5px solid var(--hairline);
+  background: var(--card);
+}
+
+/* System Settings keeps each group in one inset panel with hairline-separated rows,
+   and a quiet header rather than a heavy card title. */
+:root[data-os="apple"] .settings-section {
+  padding: 14px 16px 16px;
+  border-radius: 10px;
+  border: 0.5px solid var(--hairline);
+  background: var(--card);
+}
+
+:root[data-os="apple"] .settings-section h2 {
+  margin: 0 0 12px;
+  padding-bottom: 9px;
+  border-bottom: 0.5px solid var(--hairline);
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+:root[data-os="apple"] .toggle-row,
+:root[data-os="apple"] .danger-row {
+  padding: 9px 0;
+  border-top: 0.5px solid var(--hairline);
+}
+
+:root[data-os="apple"] .toggle-row:first-of-type,
+:root[data-os="apple"] .danger-row:first-of-type {
+  border-top: none;
+}
+
+:root[data-os="apple"] .settings-section.danger-zone {
+  border-color: color-mix(in srgb, var(--danger) 28%, transparent);
+}
+
+:root[data-os="apple"] .settings-nav a {
+  height: 26px;
+  border-radius: 6px;
+  font-size: var(--fs-sm);
+}
+
+/* ---- Menus, popovers, dialogs: vibrancy ------------------------------------------- */
+:root[data-os="apple"] .account-menu,
+:root[data-os="apple"] .space-switcher-popover,
+:root[data-os="apple"] .notif-center-popover,
+:root[data-os="apple"] .attach-menu,
+:root[data-os="apple"] .slash-menu,
+:root[data-os="apple"] .dock {
+  background: var(--raised);
+  backdrop-filter: var(--vibrancy);
+  -webkit-backdrop-filter: var(--vibrancy);
+  border: 0.5px solid var(--raised-border);
+  border-radius: 10px;
+}
+
+:root[data-os="apple"] .account-menu-item {
+  height: 26px;
+  border-radius: 5px;
+  font-size: var(--fs-base);
+}
+
+:root[data-os="apple"] .account-menu-item:hover {
+  background: var(--accent-grad);
+  color: var(--accent-contrast);
+}
+
+:root[data-os="apple"] .modal {
+  border-radius: 12px;
+  border: 0.5px solid var(--raised-border);
+  background: var(--raised-solid);
+}
+
+:root[data-os="apple"] .modal-overlay {
+  backdrop-filter: blur(2px);
+}
+
+:root[data-os="apple"] .toast {
+  border-radius: 10px;
+  background: var(--raised);
+  backdrop-filter: var(--vibrancy);
+  -webkit-backdrop-filter: var(--vibrancy);
+  border: 0.5px solid var(--raised-border);
+  font-size: var(--fs-base);
+}
+
+:root[data-os="apple"] .dock {
+  padding: 5px 7px;
+  border-radius: 16px;
+}
+
+:root[data-os="apple"] .dock-item {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+
+/* ---- The clock --------------------------------------------------------------------- */
+/* Menu-bar typography: small, tight, and it sits in the bar rather than on top of it. */
+:root[data-os="apple"] .topbar-clock {
+  gap: 0;
+  padding-right: 8px;
+}
+
+:root[data-os="apple"] .topbar-clock .clock-time {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+:root[data-os="apple"] .topbar-clock .clock-date {
+  font-size: var(--fs-2xs);
+  font-weight: 400;
+}
+
+/* ---- The tutor --------------------------------------------------------------------- */
+:root[data-os="apple"] .composer-form.composer-v2,
+:root[data-os="apple"] .superbar {
+  border-radius: 12px;
+  border: 0.5px solid var(--hairline-strong);
+  box-shadow: var(--elev-2);
+}
+
+:root[data-os="apple"] .composer-v2 .btn-send,
+:root[data-os="apple"] .superbar-send {
+  border-radius: 8px;
+}
+
+:root[data-os="apple"] .message.user .bubble {
+  border-radius: 12px 12px 3px 12px;
+}
+
+/* =====================================================================================
+   ANDROID / MATERIAL
+   -------------------------------------------------------------------------------------
+   The other end of the scale: elevation instead of hairlines, fully rounded buttons,
+   bigger touch targets, and Material's own type.
+   ===================================================================================== */
+:root[data-os="material"] {
+  --font-body: Roboto, "Segoe UI", system-ui, -apple-system, Inter, sans-serif;
+  --font-display: Roboto, "Segoe UI", system-ui, Lexend, sans-serif;
+
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --r-panel: 20px;
+  --r-window: 20px;
+
+  --h-control-sm: 34px;
+  --h-control: 40px;
+  --h-control-lg: 48px;
+
+  --hairline: rgba(255, 255, 255, 0.06);
+  --hairline-strong: rgba(255, 255, 255, 0.1);
+  --fill-subtle: rgba(255, 255, 255, 0.06);
+  --fill-hover: rgba(255, 255, 255, 0.11);
+
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --elev-2: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --elev-3: 0 8px 12px 6px rgba(0, 0, 0, 0.15), 0 4px 4px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-os="material"][data-theme="light"] {
+  --hairline: rgba(0, 0, 0, 0.07);
+  --hairline-strong: rgba(0, 0, 0, 0.12);
+  --fill-subtle: rgba(0, 0, 0, 0.05);
+  --fill-hover: rgba(0, 0, 0, 0.08);
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --elev-2: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --elev-3: 0 8px 12px 6px rgba(0, 0, 0, 0.15), 0 4px 4px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-os="material"] .btn {
+  height: var(--h-control);
+  padding: 0 24px;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+:root[data-os="material"] .btn-ghost {
+  background: var(--fill-subtle);
+  border: none;
+}
+
+/* Shape and elevation make this button Material; the fill stays H1s tuned accent pairing,
+   which is the one that keeps its label above 4.5:1 on every accent. */
+:root[data-os="material"] .btn-primary {
+  box-shadow: var(--elev-1);
+}
+
+:root[data-os="material"] .btn-primary:hover:not(:disabled) {
+  box-shadow: var(--elev-2);
+  filter: brightness(1.08);
+}
+
+:root[data-os="material"] .icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+:root[data-os="material"] .nav-item {
+  height: 44px;
+  border-radius: var(--radius-full);
+  padding: 0 16px;
+  font-size: var(--fs-base);
+}
+
+:root[data-os="material"] .nav-active-pill {
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: rgba(var(--accent-1-rgb), 0.18);
+}
+
+:root[data-os="material"] .nav-active-pill::before {
+  display: none;
+}
+
+:root[data-os="material"] .bento-tile,
+:root[data-os="material"] .settings-section,
+:root[data-os="material"] .tool-panel,
+:root[data-os="material"] .result-card,
+:root[data-os="material"] .code-track-card,
+:root[data-os="material"] .ch-card,
+:root[data-os="material"] .tool-card-sm {
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  box-shadow: var(--elev-1);
+}
+
+:root[data-os="material"] .modal,
+:root[data-os="material"] .account-menu,
+:root[data-os="material"] .attach-menu,
+:root[data-os="material"] .space-switcher-popover {
+  border-radius: 24px;
+  border: none;
+  background: var(--raised);
+  backdrop-filter: none;
+  box-shadow: var(--elev-3);
+}
+
+:root[data-os="material"] .toast {
+  border-radius: var(--radius-full);
+  padding: 12px 20px;
+}
+
+:root[data-os="material"] .composer-v2 .btn-send,
+:root[data-os="material"] .superbar-send {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: var(--elev-2);
+}
+
+:root[data-os="material"] .auth-input,
+:root[data-os="material"] .tool-input,
+:root[data-os="material"] .tool-textarea {
+  height: 48px;
+  border-radius: var(--radius-xs);
+  border-width: 1px;
+}
+
+:root[data-os="material"] .chip,
+:root[data-os="material"] .suggestion-chip {
+  height: 36px;
+  border-radius: 10px;
+}
+
+:root[data-os="material"] .segmented,
+:root[data-os="material"] .subtabs {
+  border-radius: var(--radius-full);
+  padding: 4px;
+}
+
+:root[data-os="material"] .segmented-btn,
+:root[data-os="material"] .subtab {
+  height: 36px;
+  border-radius: var(--radius-full);
+}
+
+:root[data-os="material"] .topbar-clock {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+}
+
+:root[data-os="material"] .topbar-clock .clock-time {
+  font-size: var(--fs-base);
+  font-weight: 500;
+}
+
+/* =====================================================================================
+   Reduced motion applies whichever style is on.
+   ===================================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-os] * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

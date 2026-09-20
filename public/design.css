@@ -665,6 +665,54 @@ kbd,
   letter-spacing: -0.005em;
 }
 
+/* The clock. Two lines on a wide window, time only when there is no room for the date, and
+   tabular figures so the digits do not jitter as the minute changes. */
+.topbar-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1px;
+  padding: 0 10px 0 4px;
+  line-height: 1.15;
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+}
+
+.topbar-clock .clock-time {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.topbar-clock .clock-date {
+  font-size: var(--fs-2xs);
+  color: var(--text-muted);
+}
+
+.mobile-clock {
+  margin-left: auto;
+  padding: 0 6px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Tablet-width windows keep the time but drop the date rather than crowd the title bar. */
+@media (max-width: 1100px) {
+  .topbar-clock .clock-date {
+    display: none;
+  }
+}
+
+.region-select {
+  max-width: 380px;
+}
 .topbar-status {
   height: 28px;
   padding: 0 10px;

@@ -66,6 +66,8 @@ import { clearEvents } from "./progress.js";
 import { initAccountMenu } from "./accountMenu.js";
 import { initCreatorPanel } from "./creatorPanel.js";
 import { initSettingsNav } from "./settingsNav.js";
+import { OS_STYLES, getStoredOsStyle, setOsStyle, initOsStyle } from "./osStyle.js";
+import { REGIONS, getStoredRegion, setRegion, initClock, render as renderClock, describeZone, formatTime, resolveZone } from "./clock.js";
 import { isAccountMode, currentUser } from "./session.js";
 import { onRemoteChange } from "./cloudSync.js";
 import { offerGuestDataImport, guestDataSummary, importGuestDataFromSettings } from "./guestMigration.js";
@@ -129,6 +131,30 @@ subjectChips.forEach((chip) => {
 });
 
 applySubjectUI();
+
+/* ===========================================================
+   Interface style (Apple / Classic / Material)
+   =========================================================== */
+const osSettingGroup = document.getElementById("osSetting");
+const osSettingHint = document.getElementById("osSettingHint");
+
+function syncOsStyleUI(value) {
+  osSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
+    const active = btn.dataset.value === value;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-checked", String(active));
+  });
+  const chosen = OS_STYLES.find((s) => s.value === value);
+  osSettingHint.textContent = chosen ? chosen.hint : "";
+}
+
+osSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    syncOsStyleUI(setOsStyle(btn.dataset.value));
+  });
+});
+
+syncOsStyleUI(initOsStyle());
 
 /* ===========================================================
    Theme + device preview + quick toggle
@@ -198,6 +224,37 @@ deviceSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
 });
 
 refreshDeviceUI();
+
+/* ===========================================================
+   Time and region: the title-bar clock
+   =========================================================== */
+const regionSelect = document.getElementById("regionSetting");
+const regionPreview = document.getElementById("regionPreview");
+
+REGIONS.forEach((region) => {
+  const option = document.createElement("option");
+  option.value = region.value;
+  option.textContent = region.zone ? `${region.label} — ${region.zone}` : region.label;
+  regionSelect.appendChild(option);
+});
+
+// The preview is written from the same clock the title bar uses, so what Settings promises and
+// what the window shows can never disagree.
+function syncRegionUI(value) {
+  regionSelect.value = value;
+  regionPreview.textContent = `${formatTime()} · ${describeZone()}${value === "auto" ? " (this device)" : ""}`;
+}
+
+regionSelect.addEventListener("change", () => {
+  syncRegionUI(setRegion(regionSelect.value));
+});
+
+initClock();
+syncRegionUI(getStoredRegion());
+// Keep the preview honest while Settings is open, and after a change from another device.
+setInterval(() => {
+  if (getCurrentView() === "settings") syncRegionUI(getStoredRegion());
+}, 15000);
 
 /* ===========================================================
    Accent color
@@ -625,6 +682,9 @@ onViewChange(renderView);
 // Work that arrived from another device: redraw what's on screen so it shows up without a
 // reload, and say so once rather than silently changing what someone is looking at.
 onRemoteChange((keys) => {
+  syncOsStyleUI(initOsStyle());
+  syncRegionUI(getStoredRegion());
+  renderClock();
   renderView(getCurrentView());
   refreshNotes();
   refreshFlashcards();

@@ -14,6 +14,9 @@ public/                    Static frontend (served as-is, no build step)
   design.css                H1's design system: tokens (type, spacing, radii, surfaces, motion) and
                              the shared primitives built from them — buttons, fields, chips, cards,
                              menus, dialogs, toasts, tooltips, empty states, skeletons, focus
+  os-styles.css             The same design system spoken in three dialects, chosen in Settings →
+                             Appearance → Interface style: Apple/macOS (the default), Classic H1,
+                             Android/Material. Set as data-os on <html>.
   js/
     main.js                  App wiring: navigation, chat, explain, quiz, flashcards, settings
     api.js                   fetch() wrappers for /api/*
@@ -28,6 +31,8 @@ public/                    Static frontend (served as-is, no build step)
     accountMenu.js            The account button, its menu, and Settings → Account
     icons.js                  H1's line-icon set, one drawing style everywhere
     settingsNav.js            The section index down the side of Settings
+    osStyle.js                Which interface style is on, saved per account and synced
+    clock.js                  The title-bar clock and the country/region (IANA) it keeps time in
     guestMigration.js         Offers to copy on-device work into an account
     toast.js                  Toast notifications
 server/
