@@ -66,7 +66,9 @@ import { clearEvents } from "./progress.js";
 import { initAccountMenu } from "./accountMenu.js";
 import { initCreatorPanel } from "./creatorPanel.js";
 import { initSettingsNav } from "./settingsNav.js";
+import { initDockInset } from "./dockInset.js";
 import { OS_STYLES, getStoredOsStyle, setOsStyle, initOsStyle } from "./osStyle.js";
+import { DEFAULT_OPACITY, getStoredOpacity, setOpacity, initOpacity } from "./opacity.js";
 import { REGIONS, getStoredRegion, setRegion, initClock, render as renderClock, describeZone, formatTime, resolveZone } from "./clock.js";
 import { isAccountMode, currentUser } from "./session.js";
 import { onRemoteChange } from "./cloudSync.js";
@@ -155,6 +157,41 @@ osSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
 });
 
 syncOsStyleUI(initOsStyle());
+
+/* ===========================================================
+   Interface opacity
+   =========================================================== */
+const opacitySlider = document.getElementById("opacitySetting");
+const opacityValue = document.getElementById("opacityValue");
+const opacityHint = document.getElementById("opacityHint");
+const opacityResetBtn = document.getElementById("opacityReset");
+
+function describeOpacity(pct) {
+  if (pct >= 100) return "Solid surfaces.";
+  if (pct >= 60) return "A little of what is behind each surface shows through.";
+  if (pct >= 25) return "Clearly translucent. Text and controls stay solid.";
+  return "As sheer as this interface style allows while staying readable.";
+}
+
+function syncOpacityUI(pct) {
+  opacitySlider.value = String(pct);
+  opacityValue.textContent = pct + "%";
+  opacityHint.textContent = describeOpacity(pct);
+  opacityResetBtn.disabled = pct === DEFAULT_OPACITY;
+}
+
+// `input` rather than `change`, so the interface follows the thumb as it is dragged.
+opacitySlider.addEventListener("input", () => {
+  syncOpacityUI(setOpacity(opacitySlider.value));
+});
+
+opacityResetBtn.addEventListener("click", () => {
+  syncOpacityUI(setOpacity(DEFAULT_OPACITY));
+  opacitySlider.focus();
+});
+
+syncOpacityUI(initOpacity());
+
 
 /* ===========================================================
    Theme + device preview + quick toggle
@@ -683,6 +720,7 @@ onViewChange(renderView);
 // reload, and say so once rather than silently changing what someone is looking at.
 onRemoteChange((keys) => {
   syncOsStyleUI(initOsStyle());
+  syncOpacityUI(initOpacity());
   syncRegionUI(getStoredRegion());
   renderClock();
   renderView(getCurrentView());
@@ -694,6 +732,7 @@ onRemoteChange((keys) => {
 initAccountMenu();
 initCreatorPanel();
 initSettingsNav();
+initDockInset();
 
 // Empty states carry the one action that fills them. The button just presses the page's own
 // primary control, so there's a single code path for "add a task", "new note" and so on.

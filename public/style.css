@@ -5,6 +5,16 @@
    re-skins from this one block (radii, materials, atmosphere).
    ========================================================= */
 :root {
+  /* --- Interface opacity (Settings → Appearance) ---------------------------------------
+     One control, one mechanism: every surface below is mixed with transparency by the same
+     two multipliers. Content never fades — only the material behind it. The floors are what
+     keeps the interface readable at the bottom of the slider, and each interface style sets
+     its own (Material stays close to solid; the glassier styles can go further). */
+  --ui-opacity: 1;
+  --alpha-surface-floor: 0.12;
+  --alpha-overlay-floor: 0.55;
+  --alpha-surface: calc(var(--alpha-surface-floor) + (1 - var(--alpha-surface-floor)) * var(--ui-opacity));
+  --alpha-overlay: calc(var(--alpha-overlay-floor) + (1 - var(--alpha-overlay-floor)) * var(--ui-opacity));
   /* --- Desktop atmosphere (the backdrop behind the floating OS window) --- */
   --desk-bg: #08080b;
   --desk-bloom-1: rgba(var(--accent-1-rgb), 0.22);
@@ -32,17 +42,20 @@
   --on-danger: #2a0508;
 
   /* --- H1 material system: four glass "elevations" every surface picks from --- */
-  --glass-base-bg: rgba(255, 255, 255, 0.045);
+  --glass-base-material: rgba(255, 255, 255, 0.045);
+  --glass-base-bg: color-mix(in srgb, var(--glass-base-material) calc(var(--alpha-surface) * 100%), transparent);
   --glass-base-blur: 20px;
   --glass-base-border: rgba(255, 255, 255, 0.08);
   --glass-base-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 
-  --glass-elevated-bg: rgba(255, 255, 255, 0.065);
+  --glass-elevated-material: rgba(255, 255, 255, 0.065);
+  --glass-elevated-bg: color-mix(in srgb, var(--glass-elevated-material) calc(var(--alpha-surface) * 100%), transparent);
   --glass-elevated-blur: 28px;
   --glass-elevated-border: rgba(255, 255, 255, 0.11);
   --glass-elevated-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 
-  --glass-floating-bg: rgba(28, 28, 38, 0.72);
+  --glass-floating-material: rgba(28, 28, 38, 0.72);
+  --glass-floating-bg: color-mix(in srgb, var(--glass-floating-material) calc(var(--alpha-overlay) * 100%), transparent);
   --glass-floating-blur: 36px;
   --glass-floating-border: rgba(255, 255, 255, 0.14);
   --glass-floating-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 4px 16px rgba(0, 0, 0, 0.35);
@@ -134,15 +147,18 @@
   --on-success: #ffffff;
   --on-danger: #ffffff;
 
-  --glass-base-bg: rgba(255, 255, 255, 0.55);
+  --glass-base-material: rgba(255, 255, 255, 0.55);
+  --glass-base-bg: color-mix(in srgb, var(--glass-base-material) calc(var(--alpha-surface) * 100%), transparent);
   --glass-base-border: rgba(20, 25, 40, 0.07);
   --glass-base-shadow: 0 1px 2px rgba(20, 25, 40, 0.06);
 
-  --glass-elevated-bg: rgba(255, 255, 255, 0.75);
+  --glass-elevated-material: rgba(255, 255, 255, 0.75);
+  --glass-elevated-bg: color-mix(in srgb, var(--glass-elevated-material) calc(var(--alpha-surface) * 100%), transparent);
   --glass-elevated-border: rgba(20, 25, 40, 0.08);
   --glass-elevated-shadow: 0 16px 40px rgba(20, 25, 40, 0.1);
 
-  --glass-floating-bg: rgba(255, 255, 255, 0.86);
+  --glass-floating-material: rgba(255, 255, 255, 0.86);
+  --glass-floating-bg: color-mix(in srgb, var(--glass-floating-material) calc(var(--alpha-overlay) * 100%), transparent);
   --glass-floating-border: rgba(20, 25, 40, 0.1);
   --glass-floating-shadow: 0 30px 70px rgba(20, 25, 40, 0.16), 0 4px 14px rgba(20, 25, 40, 0.08);
 
@@ -658,24 +674,26 @@ textarea::placeholder {
   content: "";
   display: block;
   flex-shrink: 0;
-  height: 132px; /* default (real desktop viewport, or no device-preview override): floating dock */
+  /* Measured from the dock itself (see js/dockInset.js). The fallback covers the moment
+     before the first measurement, and any browser where the script has not run. */
+  height: var(--dock-inset, 132px);
 }
 
 @media (max-width: 899px) {
   .view::after {
-    height: 100px; /* real narrow viewport: mobile-bottom-nav is shorter than the dock */
+    height: var(--dock-inset, 100px);
   }
 }
 
 /* Settings > Preview layout forces one of these regardless of the real viewport width, so it
    must win over both rules above (matched by 3 class selectors vs. 1). */
 .app.device-desktop .view::after {
-  height: 132px;
+  height: var(--dock-inset, 132px);
 }
 
 .app.device-tablet .view::after,
 .app.device-phone .view::after {
-  height: 100px;
+  height: var(--dock-inset, 100px);
 }
 
 .view {

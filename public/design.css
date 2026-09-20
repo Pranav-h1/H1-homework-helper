@@ -79,11 +79,14 @@
   /* Surfaces — dark. The window is the deepest layer, the content panel sits one step up,
      and floating things (menus, dialogs, toasts) one more. */
   --bg: #0e0f15;
-  --panel: #15161e;
+  --panel-material: #15161e;
+  --panel: color-mix(in srgb, var(--panel-material) calc(var(--alpha-surface) * 100%), transparent);
   --panel-border: rgba(255, 255, 255, 0.06);
-  --card: rgba(255, 255, 255, 0.028);
+  --card-material: rgba(255, 255, 255, 0.028);
+  --card: color-mix(in srgb, var(--card-material) calc(var(--alpha-surface) * 100%), transparent);
   --card-hover: rgba(255, 255, 255, 0.045);
-  --raised: #1c1d27;
+  --raised-material: #1c1d27;
+  --raised: color-mix(in srgb, var(--raised-material) calc(var(--alpha-overlay) * 100%), transparent);
   --raised-border: rgba(255, 255, 255, 0.09);
   --hairline: rgba(255, 255, 255, 0.07);
   --hairline-strong: rgba(255, 255, 255, 0.13);
@@ -125,11 +128,14 @@
 
 :root[data-theme="light"] {
   --bg: #eef0f5;
-  --panel: #ffffff;
+  --panel-material: #ffffff;
+  --panel: color-mix(in srgb, var(--panel-material) calc(var(--alpha-surface) * 100%), transparent);
   --panel-border: rgba(15, 23, 42, 0.07);
-  --card: #f8f9fb;
+  --card-material: #f8f9fb;
+  --card: color-mix(in srgb, var(--card-material) calc(var(--alpha-surface) * 100%), transparent);
   --card-hover: #f3f4f8;
-  --raised: #ffffff;
+  --raised-material: #ffffff;
+  --raised: color-mix(in srgb, var(--raised-material) calc(var(--alpha-overlay) * 100%), transparent);
   --raised-border: rgba(15, 23, 42, 0.09);
   --hairline: rgba(15, 23, 42, 0.08);
   --hairline-strong: rgba(15, 23, 42, 0.15);
@@ -710,6 +716,109 @@ kbd,
   }
 }
 
+/* Interface opacity: a real range input, so dragging, arrow keys, Home/End and screen
+   readers all work without any of it being re-implemented. */
+/* Nothing rests under the dock.
+   A page that scrolls as a whole reserves the dock's height at its end (.view::after, in
+   style.css). That does nothing for a region with its own scrollbar, or for a list that keeps
+   loading as you approach its end — so those pad their own end by the same measured amount,
+   and set scroll-padding, so scrolling to something (a search hit, a focused row, an anchor)
+   stops above the dock rather than behind it. */
+#mainView,
+#notesList,
+#chatLog,
+#view-settings,
+#periodicTableGrid,
+#scanResult,
+.quotes-wall,
+.notes-list,
+.history-list,
+.doc-list,
+.deck-list {
+  scroll-padding-bottom: calc(var(--dock-inset, 88px) + 8px);
+}
+
+#notesList,
+#periodicTableGrid,
+#scanResult,
+.quotes-wall {
+  padding-bottom: var(--dock-inset, 88px);
+}
+
+/* The settings column scrolls on its own, so its last row needs the same room. */
+#view-settings {
+  padding-bottom: var(--dock-inset, 88px);
+}
+
+.opacity-control {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  max-width: 460px;
+}
+
+.opacity-slider {
+  flex: 1;
+  height: 22px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.opacity-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--fill-press), var(--accent-1));
+}
+
+.opacity-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--fill-press), var(--accent-1));
+}
+
+.opacity-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.5px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform var(--dur-1) var(--ease-out);
+}
+
+.opacity-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.5px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.opacity-slider:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+
+.opacity-slider:focus-visible {
+  outline: none;
+}
+
+.opacity-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px var(--focus-ring-color);
+}
+
+.opacity-value {
+  min-width: 44px;
+  text-align: right;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
 .region-select {
   max-width: 380px;
 }
