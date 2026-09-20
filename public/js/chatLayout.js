@@ -17,6 +17,7 @@ const GAP_ABOVE_FLOATING_UI = 10;
 let main = null;
 let chatView = null;
 let frame = 0;
+const widthListeners = new Set();
 
 function isVisible(el) {
   if (!el) return false;
@@ -67,6 +68,29 @@ function applyReadingWidth(value, button) {
   }
 }
 
+export function getReadingWidth() {
+  return safeGet(READING_KEY, "comfortable") === "full" ? "full" : "comfortable";
+}
+
+export function setReadingWidth(value) {
+  const next = value === "full" ? "full" : "comfortable";
+  safeSet(READING_KEY, next);
+  applyReadingWidth(next, document.getElementById("readingWidthBtn"));
+  widthListeners.forEach((cb) => {
+    try {
+      cb(next);
+    } catch {
+      // One listener failing must not stop the rest.
+    }
+  });
+  return next;
+}
+
+export function onReadingWidthChange(cb) {
+  widthListeners.add(cb);
+  return () => widthListeners.delete(cb);
+}
+
 export function initChatLayout() {
   main = document.getElementById("mainView");
   chatView = document.getElementById("view-chat");
@@ -95,9 +119,7 @@ export function initChatLayout() {
   applyReadingWidth(safeGet(READING_KEY, "comfortable"), button);
   if (button) {
     button.addEventListener("click", () => {
-      const next = chatView.classList.contains("reading-full") ? "comfortable" : "full";
-      safeSet(READING_KEY, next);
-      applyReadingWidth(next, button);
+      setReadingWidth(chatView.classList.contains("reading-full") ? "comfortable" : "full");
     });
   }
 }

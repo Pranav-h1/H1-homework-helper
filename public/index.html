@@ -12,7 +12,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="design.css" />
-<link rel="stylesheet" href="os-styles.css" />
 <script src="js/early.js"></script>
 </head>
 <body>
@@ -2064,23 +2063,6 @@
 
           <div class="settings-section">
             <h2>Appearance</h2>
-            <span class="field-label" id="osSettingLabel">Interface style</span>
-            <p class="settings-hint">How H1 draws itself — its windows, controls, menus and motion.</p>
-            <div class="segmented segmented-wrap" id="osSetting" role="radiogroup" aria-labelledby="osSettingLabel">
-              <button type="button" class="segmented-btn active" data-value="apple" role="radio" aria-checked="true">Apple / macOS</button>
-              <button type="button" class="segmented-btn" data-value="classic" role="radio" aria-checked="false">Classic H1</button>
-              <button type="button" class="segmented-btn" data-value="material" role="radio" aria-checked="false">Android / Material</button>
-            </div>
-            <p class="settings-hint" id="osSettingHint"></p>
-
-            <span class="field-label" id="opacityLabel">Interface opacity</span>
-            <p class="settings-hint">How solid H1’s panels, menus and chrome are. Text, icons and controls stay fully opaque.</p>
-            <div class="opacity-control">
-              <input id="opacitySetting" class="opacity-slider" type="range" min="0" max="100" step="5" value="100" aria-labelledby="opacityLabel" aria-describedby="opacityHint" />
-              <output id="opacityValue" class="opacity-value" for="opacitySetting">100%</output>
-              <button id="opacityReset" class="btn btn-ghost" type="button">Reset</button>
-            </div>
-            <p class="settings-hint" id="opacityHint"></p>
 
             <span class="field-label" id="themeSettingLabel">Theme</span>
             <div class="segmented" id="themeSetting" role="radiogroup" aria-labelledby="themeSettingLabel">
@@ -2099,6 +2081,53 @@
               <button type="button" class="accent-swatch" data-value="pink" role="radio" aria-checked="false" title="Pink" style="--swatch-1:#ec4899;--swatch-2:#f97316"></button>
             </div>
 
+            <span class="field-label" id="opacityLabel">Interface opacity</span>
+            <p class="settings-hint">How solid H1’s panels, menus and chrome are. Text, icons and controls stay fully opaque.</p>
+            <div class="opacity-control">
+              <input id="opacitySetting" class="opacity-slider" type="range" min="0" max="100" step="5" value="100" aria-labelledby="opacityLabel" aria-describedby="opacityHint" />
+              <output id="opacityValue" class="opacity-value" for="opacitySetting">100%</output>
+              <button id="opacityReset" class="btn btn-ghost" type="button">Reset</button>
+            </div>
+            <p class="settings-hint" id="opacityHint"></p>
+
+            <span class="field-label" id="densityLabel">Density</span>
+            <p class="settings-hint">Comfortable leaves more air between things; compact fits more on screen. Text size is unaffected.</p>
+            <div class="segmented" id="densitySetting" role="radiogroup" aria-labelledby="densityLabel">
+              <button type="button" class="segmented-btn" data-value="comfortable" role="radio" aria-checked="true">Comfortable</button>
+              <button type="button" class="segmented-btn" data-value="compact" role="radio" aria-checked="false">Compact</button>
+            </div>
+
+            <label class="toggle-row">
+              <span>Reduce motion</span>
+              <span class="toggle" id="reduceMotionToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
+            </label>
+            <p class="settings-hint">H1 also follows your system’s own reduced-motion setting.</p>
+
+          </div>
+
+<div class="settings-section">
+            <h2>Interface</h2>
+            <span class="field-label" id="textSizeLabel">Text size</span>
+            <div class="segmented" id="textSizeSetting" role="radiogroup" aria-labelledby="textSizeLabel">
+              <button type="button" class="segmented-btn" data-value="small" role="radio" aria-checked="false">Small</button>
+              <button type="button" class="segmented-btn" data-value="default" role="radio" aria-checked="true">Default</button>
+              <button type="button" class="segmented-btn" data-value="large" role="radio" aria-checked="false">Large</button>
+            </div>
+
+            <span class="field-label" id="responseWidthLabel">Response width</span>
+            <p class="settings-hint">How wide an answer runs. Comfortable keeps prose at an easy reading length; wide tables, code and equations always use the full width.</p>
+            <div class="segmented" id="responseWidthSetting" role="radiogroup" aria-labelledby="responseWidthLabel">
+              <button type="button" class="segmented-btn" data-value="comfortable" role="radio" aria-checked="true">Comfortable</button>
+              <button type="button" class="segmented-btn" data-value="full" role="radio" aria-checked="false">Full width</button>
+            </div>
+
+            <span class="field-label" id="sidebarSettingLabel">Sidebar</span>
+            <div class="segmented" id="sidebarSetting" role="radiogroup" aria-labelledby="sidebarSettingLabel">
+              <button type="button" class="segmented-btn" data-value="expanded" role="radio" aria-checked="true">Expanded</button>
+              <button type="button" class="segmented-btn" data-value="collapsed" role="radio" aria-checked="false">Icons only</button>
+            </div>
+            <p class="settings-hint">This one is per device, so a phone and a laptop can differ.</p>
+
             <span class="field-label" id="deviceSettingLabel">Preview layout</span>
             <p class="settings-hint">See how H1 looks on another device size, regardless of your current screen.</p>
             <div class="segmented segmented-wrap" id="deviceSetting" role="radiogroup" aria-labelledby="deviceSettingLabel">
@@ -2108,7 +2137,6 @@
               <button type="button" class="segmented-btn" data-value="phone" role="radio" aria-checked="false">📱 Phone</button>
             </div>
           </div>
-
           <div class="settings-section">
             <h2>Time &amp; region</h2>
             <p class="settings-hint">The clock in the title bar, and how H1 writes dates.</p>
@@ -2171,11 +2199,6 @@
 
           <div class="settings-section">
             <h2>Accessibility</h2>
-            <label class="toggle-row">
-              <span>Reduce motion</span>
-              <span class="toggle" id="reduceMotionToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
-            </label>
-            <p class="settings-hint">H1 also automatically respects your system's reduced-motion setting.</p>
             <label class="toggle-row">
               <span>Gamification (XP, levels, achievements)</span>
               <span class="toggle" id="gamificationToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>

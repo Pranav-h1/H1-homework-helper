@@ -66,8 +66,9 @@ import { clearEvents } from "./progress.js";
 import { initAccountMenu } from "./accountMenu.js";
 import { initCreatorPanel } from "./creatorPanel.js";
 import { initSettingsNav } from "./settingsNav.js";
+import { TEXT_SIZES, DENSITIES, getTextSize, setTextSize, getDensity, setDensity, initInterfacePrefs } from "./interfacePrefs.js";
+import { getReadingWidth, setReadingWidth, onReadingWidthChange } from "./chatLayout.js";
 import { initDockInset } from "./dockInset.js";
-import { OS_STYLES, getStoredOsStyle, setOsStyle, initOsStyle } from "./osStyle.js";
 import { DEFAULT_OPACITY, getStoredOpacity, setOpacity, initOpacity } from "./opacity.js";
 import { REGIONS, getStoredRegion, setRegion, initClock, render as renderClock, describeZone, formatTime, resolveZone } from "./clock.js";
 import { isAccountMode, currentUser } from "./session.js";
@@ -135,28 +136,57 @@ subjectChips.forEach((chip) => {
 applySubjectUI();
 
 /* ===========================================================
-   Interface style (Apple / Classic / Material)
+   Interface: text size, response width, sidebar
    =========================================================== */
-const osSettingGroup = document.getElementById("osSetting");
-const osSettingHint = document.getElementById("osSettingHint");
+const textSizeGroup = document.getElementById("textSizeSetting");
+const densityGroup = document.getElementById("densitySetting");
+const responseWidthGroup = document.getElementById("responseWidthSetting");
+const sidebarSettingGroup = document.getElementById("sidebarSetting");
 
-function syncOsStyleUI(value) {
-  osSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
-    const active = btn.dataset.value === value;
-    btn.classList.toggle("active", active);
-    btn.setAttribute("aria-checked", String(active));
-  });
-  const chosen = OS_STYLES.find((s) => s.value === value);
-  osSettingHint.textContent = chosen ? chosen.hint : "";
-}
-
-osSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
+textSizeGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
-    syncOsStyleUI(setOsStyle(btn.dataset.value));
+    syncSegmented(textSizeGroup, setTextSize(btn.dataset.value));
   });
 });
 
-syncOsStyleUI(initOsStyle());
+densityGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    syncSegmented(densityGroup, setDensity(btn.dataset.value));
+  });
+});
+
+responseWidthGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    syncSegmented(responseWidthGroup, setReadingWidth(btn.dataset.value));
+  });
+});
+
+// The tutor has the same control in its toolbar; whichever is used, both follow.
+onReadingWidthChange((value) => syncSegmented(responseWidthGroup, value));
+
+sidebarSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const collapsed = btn.dataset.value === "collapsed";
+    if (document.getElementById("app").classList.contains("sidebar-collapsed") !== collapsed) {
+      document.getElementById("sidebarCollapseToggle").click();
+    }
+    syncSegmented(sidebarSettingGroup, btn.dataset.value);
+  });
+});
+
+function syncInterfaceUI() {
+  syncSegmented(textSizeGroup, getTextSize());
+  syncSegmented(densityGroup, getDensity());
+  syncSegmented(responseWidthGroup, getReadingWidth());
+  syncSegmented(sidebarSettingGroup, document.getElementById("app").classList.contains("sidebar-collapsed") ? "collapsed" : "expanded");
+}
+
+initInterfacePrefs();
+syncInterfaceUI();
+// The sidebar can also be collapsed from the title bar, so Settings re-reads it when opened.
+document.addEventListener("h1:view-changed", (event) => {
+  if (event.detail === "settings") syncInterfaceUI();
+});
 
 /* ===========================================================
    Interface opacity
@@ -719,8 +749,9 @@ onViewChange(renderView);
 // Work that arrived from another device: redraw what's on screen so it shows up without a
 // reload, and say so once rather than silently changing what someone is looking at.
 onRemoteChange((keys) => {
-  syncOsStyleUI(initOsStyle());
   syncOpacityUI(initOpacity());
+  initInterfacePrefs();
+  syncInterfaceUI();
   syncRegionUI(getStoredRegion());
   renderClock();
   renderView(getCurrentView());

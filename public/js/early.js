@@ -47,14 +47,6 @@
     window.__h1SessionProbe = null;
   }
 
-  // The interface style (Apple / Classic / Material), painted before anything draws.
-  try {
-    var os = localStorage.getItem("h1-last-os") || localStorage.getItem("h1-os-style") || "apple";
-    root.setAttribute("data-os", /^(apple|classic|material)$/.test(os) ? os : "apple");
-  } catch (e) {
-    root.setAttribute("data-os", "apple");
-  }
-
   var workerReady = null;
   try {
     if ("serviceWorker" in navigator && window.isSecureContext) {

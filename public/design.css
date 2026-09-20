@@ -21,22 +21,7 @@
    1. Tokens
    ===================================================================================== */
 :root {
-  /* Type scale — a small, fixed set. Nothing in H1 should need a size outside it. */
-  --fs-2xs: 11px;
-  --fs-xs: 12px;
-  --fs-sm: 13px;
-  --fs-base: 14px;
-  --fs-md: 15px;
-  --fs-lg: 17px;
-  --fs-xl: 20px;
-  --fs-2xl: 24px;
-  --fs-3xl: 30px;
   --lh-tight: 1.2;
-  --lh-snug: 1.4;
-  --lh-body: 1.6;
-  --tracking-tight: -0.018em;
-  --tracking-caps: 0.07em;
-
   /* Spacing — a 4px rhythm. */
   --sp-1: 4px;
   --sp-2: 8px;
@@ -47,114 +32,44 @@
   --sp-7: 28px;
   --sp-8: 32px;
   --sp-10: 40px;
-
-  /* Radii — rounded, not bubbly. The old scale ran to 36px, which made every panel read as
-     a pill. Controls sit at 10, cards at 14, panels at 18, the window at 22. */
-  --r-window: 22px;
-  --r-panel: 18px;
-  --radius-xs: 7px;
-  --radius-sm: 10px;
-  --radius-md: 12px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
   --radius-full: 999px;
-
-  /* Heights for interactive controls, so rows of mixed controls line up. */
-  --h-control-sm: 30px;
-  --h-control: 36px;
-  --h-control-lg: 42px;
-
   /* Motion. Fast in, faster out; nothing bounces except on purpose. */
   --dur-1: 120ms;
-  --dur-2: 180ms;
-  --dur-3: 260ms;
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.45, 0, 0.25, 1);
   --t-fast: var(--dur-1);
   --t-base: var(--dur-2);
   --t-slow: var(--dur-3);
-
   --sidebar-w: 236px;
-
-  /* Surfaces — dark. The window is the deepest layer, the content panel sits one step up,
-     and floating things (menus, dialogs, toasts) one more. */
-  --bg: #0e0f15;
-  --panel-material: #15161e;
   --panel: color-mix(in srgb, var(--panel-material) calc(var(--alpha-surface) * 100%), transparent);
-  --panel-border: rgba(255, 255, 255, 0.06);
-  --card-material: rgba(255, 255, 255, 0.028);
   --card: color-mix(in srgb, var(--card-material) calc(var(--alpha-surface) * 100%), transparent);
-  --card-hover: rgba(255, 255, 255, 0.045);
-  --raised-material: #1c1d27;
   --raised: color-mix(in srgb, var(--raised-material) calc(var(--alpha-overlay) * 100%), transparent);
-  --raised-border: rgba(255, 255, 255, 0.09);
-  --hairline: rgba(255, 255, 255, 0.07);
-  --hairline-strong: rgba(255, 255, 255, 0.13);
-  --fill-subtle: rgba(255, 255, 255, 0.045);
-  --fill-hover: rgba(255, 255, 255, 0.07);
-  --fill-press: rgba(255, 255, 255, 0.1);
-  --field: rgba(255, 255, 255, 0.035);
-  --scrim: rgba(5, 6, 10, 0.55);
-
-  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --elev-2: 0 8px 24px rgba(0, 0, 0, 0.32), 0 1px 3px rgba(0, 0, 0, 0.3);
-  --elev-3: 0 24px 64px rgba(0, 0, 0, 0.5), 0 4px 14px rgba(0, 0, 0, 0.35);
-
-  --focus-ring-color: rgba(var(--accent-1-rgb), 0.65);
   --selection: rgba(var(--accent-1-rgb), 0.32);
-
   /* The old tokens, pointed at the new surfaces so everything that already uses them moves
      with the system. */
   --surface: var(--fill-subtle);
   --surface-hover: var(--fill-hover);
-  --surface-solid: #181922;
   --surface-elevated: var(--raised);
   --border: var(--hairline);
   --border-strong: var(--hairline-strong);
   --glass-base-bg: var(--panel);
   --glass-base-border: var(--panel-border);
-  --glass-base-shadow: var(--elev-1);
   --glass-elevated-bg: var(--card);
   --glass-elevated-border: var(--hairline);
-  --glass-elevated-shadow: none;
   --glass-floating-bg: var(--raised);
   --glass-floating-border: var(--raised-border);
-  --glass-floating-shadow: var(--elev-3);
   --shadow-sm: var(--elev-1);
   --shadow-md: var(--elev-2);
   --shadow-lg: var(--elev-3);
-  --shadow-glow: 0 4px 14px rgba(var(--accent-1-rgb), 0.22);
 }
 
 :root[data-theme="light"] {
-  --bg: #eef0f5;
-  --panel-material: #ffffff;
   --panel: color-mix(in srgb, var(--panel-material) calc(var(--alpha-surface) * 100%), transparent);
-  --panel-border: rgba(15, 23, 42, 0.07);
-  --card-material: #f8f9fb;
   --card: color-mix(in srgb, var(--card-material) calc(var(--alpha-surface) * 100%), transparent);
-  --card-hover: #f3f4f8;
-  --raised-material: #ffffff;
   --raised: color-mix(in srgb, var(--raised-material) calc(var(--alpha-overlay) * 100%), transparent);
-  --raised-border: rgba(15, 23, 42, 0.09);
-  --hairline: rgba(15, 23, 42, 0.08);
-  --hairline-strong: rgba(15, 23, 42, 0.15);
-  --fill-subtle: rgba(15, 23, 42, 0.035);
-  --fill-hover: rgba(15, 23, 42, 0.06);
-  --fill-press: rgba(15, 23, 42, 0.09);
-  --field: #ffffff;
-  --scrim: rgba(15, 23, 42, 0.28);
-
-  --elev-1: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --elev-2: 0 8px 24px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06);
-  --elev-3: 0 24px 60px rgba(15, 23, 42, 0.14), 0 4px 14px rgba(15, 23, 42, 0.07);
-
   --focus-ring-color: rgba(var(--accent-1-rgb), 0.55);
   --selection: rgba(var(--accent-1-rgb), 0.2);
-
   --surface: var(--fill-subtle);
   --surface-hover: var(--fill-hover);
-  --surface-solid: #ffffff;
   --surface-elevated: var(--raised);
   --border: var(--hairline);
   --border-strong: var(--hairline-strong);
@@ -250,28 +165,16 @@ kbd,
 .app {
   border-radius: var(--r-window);
   border-color: var(--hairline);
-  box-shadow: var(--elev-3);
   background: var(--bg);
-}
-
-.shell {
-  gap: 8px;
-  padding: 0 10px 10px;
 }
 
 /* The content panel is the one raised surface — the stage everything happens on. */
 .main-view {
-  background: var(--panel);
   backdrop-filter: none;
-  border: 1px solid var(--panel-border);
-  border-radius: var(--r-panel);
-  box-shadow: var(--elev-1);
-  padding: var(--sp-6) var(--sp-7);
   gap: var(--sp-5);
 }
 
 .view {
-  gap: var(--sp-5);
   animation: viewIn var(--dur-3) var(--ease-out);
 }
 
@@ -284,18 +187,11 @@ kbd,
 /* Part of the window rather than a block beside it: it sits on the window's own
    background, with no card, border or shadow of its own. */
 .sidebar {
-  background: transparent;
-  backdrop-filter: none;
-  border: none;
-  box-shadow: none;
-  border-radius: 0;
-  padding: 6px 4px 4px;
   gap: 2px;
   overflow: hidden;
 }
 
 .brand {
-  padding: 4px 8px 12px;
   gap: 10px;
 }
 
@@ -306,37 +202,13 @@ kbd,
   flex-shrink: 0;
 }
 
-.brand-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  font-size: 14px;
-  box-shadow: 0 2px 8px rgba(var(--accent-1-rgb), 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.22);
-}
-
-.brand-name {
-  font-size: var(--fs-md);
-  font-weight: 700;
-}
-
-.brand-tagline {
-  font-size: var(--fs-2xs);
-  color: var(--text-faint);
-}
-
 /* Search reads as a field, not a button. */
 .sidebar-command-hint {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 34px;
-  margin: 0 4px 8px;
   padding: 0 8px 0 10px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--hairline);
-  background: var(--field);
   color: var(--text-faint);
-  font-size: var(--fs-sm);
   font-weight: 500;
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
@@ -394,37 +266,16 @@ kbd,
 }
 
 .nav-section-label {
-  padding: 14px 10px 5px;
-  font-size: var(--fs-2xs);
-  font-weight: 650;
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--text-faint);
   user-select: none;
 }
 
 .nav-item {
-  gap: 10px;
-  height: 34px;
-  padding: 0 10px;
   border: none;
-  border-radius: var(--radius-sm);
-  font-size: var(--fs-sm);
-  font-weight: 550;
-  color: var(--text-muted);
   transition: color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
 
 .nav-item svg {
-  width: 17px;
-  height: 17px;
-  opacity: 0.85;
   transition: opacity var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-
-.nav-item:hover {
-  color: var(--text);
-  background: var(--fill-subtle);
 }
 
 .nav-item:hover svg {
@@ -433,28 +284,13 @@ kbd,
 }
 
 .nav-item:active {
-  transform: none;
   background: var(--fill-hover);
-}
-
-.nav-item.active {
-  color: var(--text);
-  font-weight: 600;
-}
-
-.nav-item.active svg {
-  opacity: 1;
-  color: var(--accent-text);
 }
 
 /* The active marker: a soft fill with a short accent bar, gliding between items. Obvious
    at a glance, never loud. */
 .nav-active-pill {
-  height: 34px;
-  background: rgba(var(--accent-1-rgb), 0.12);
   border: none;
-  border-radius: var(--radius-sm);
-  box-shadow: none;
   transition: transform var(--dur-3) var(--ease-out), height var(--dur-2) var(--ease-out), opacity var(--dur-1) var(--ease-out);
 }
 
@@ -564,10 +400,7 @@ kbd,
 }
 
 .sidebar-account .account-avatar {
-  width: 30px;
-  height: 30px;
   border-radius: 50%;
-  font-size: var(--fs-sm);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
 }
 
@@ -621,10 +454,7 @@ kbd,
 .account-menu-item {
   display: flex;
   align-items: center;
-  height: 34px;
   padding: 0 10px;
-  border-radius: var(--radius-sm);
-  font-size: var(--fs-sm);
   font-weight: 500;
   transition: background var(--dur-1) var(--ease-out);
 }
@@ -649,26 +479,12 @@ kbd,
 }
 
 /* ---- Top bar --------------------------------------------------------------------- */
-.desktop-topbar {
-  padding: 10px 14px 8px 18px;
-  gap: 12px;
-}
-
 .desktop-topbar::after {
   display: none;
 }
 
-.traffic-light {
-  width: 11px;
-  height: 11px;
-  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
-}
-
 .topbar-title {
   font-family: var(--font-body);
-  font-size: var(--fs-sm);
-  font-weight: 650;
-  letter-spacing: -0.005em;
 }
 
 /* The clock. Two lines on a wide window, time only when there is no room for the date, and
@@ -852,19 +668,9 @@ kbd,
    4. Buttons
    ===================================================================================== */
 .btn {
-  height: var(--h-control);
-  padding: 0 14px;
   gap: 7px;
-  border-radius: var(--radius-sm);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  letter-spacing: -0.005em;
   line-height: 1;
   transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), transform var(--dur-1) var(--ease-out), opacity var(--dur-1) var(--ease-out);
-}
-
-.btn:active:not(:disabled) {
-  transform: scale(0.97);
 }
 
 .btn:disabled {
@@ -873,30 +679,18 @@ kbd,
 
 /* Secondary: a quiet filled control. It no longer jumps up or lights an accent border on
    hover — only the primary action gets to be the loud one. */
-.btn-ghost {
-  background: var(--fill-subtle);
-  border: 1px solid var(--hairline-strong);
-  color: var(--text);
-}
-
 .btn-ghost:hover:not(:disabled) {
-  background: var(--fill-hover);
   border-color: var(--hairline-strong);
   color: var(--text);
   transform: none;
 }
 
 .btn-primary {
-  background: var(--accent-grad);
   color: var(--accent-contrast);
-  border: 1px solid transparent;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 14px rgba(var(--accent-1-rgb), 0.22);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: none;
-  filter: brightness(1.06);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 6px 20px rgba(var(--accent-1-rgb), 0.32);
 }
 
 .btn-danger {
@@ -940,15 +734,7 @@ kbd,
 
 /* Icon buttons: rounded squares, not circles — they line up with everything else. */
 .icon-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
   transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
-}
-
-.icon-btn:hover {
-  background: var(--fill-hover);
-  color: var(--text);
 }
 
 .icon-btn:active {
@@ -1032,15 +818,9 @@ input[type="number"]:not(.creator-limit-input) {
    6. Chips, segmented controls, tabs
    ===================================================================================== */
 .chip {
-  height: 32px;
   padding: 0 12px;
   gap: 6px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--hairline);
-  background: transparent;
   color: var(--text-muted);
-  font-size: var(--fs-sm);
-  font-weight: 550;
   transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 
@@ -1148,14 +928,6 @@ input[type="number"]:not(.creator-limit-input) {
   background: var(--card-hover);
 }
 
-.settings-section {
-  padding: var(--sp-6);
-}
-
-.settings-section h2 {
-  margin: 0 0 var(--sp-4);
-}
-
 /* A card inside a card is one card too many: inner groups become plain rows. */
 .settings-section .account-card,
 .settings-section .allowance,
@@ -1184,20 +956,6 @@ input[type="number"]:not(.creator-limit-input) {
 /* =====================================================================================
    9. Dialogs
    ===================================================================================== */
-.modal-overlay {
-  background: var(--scrim);
-  backdrop-filter: blur(4px);
-  animation: overlayIn var(--dur-2) var(--ease-out);
-}
-
-.modal {
-  background: var(--raised);
-  border: 1px solid var(--raised-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--elev-3);
-  animation: modalIn var(--dur-3) var(--ease-out);
-}
-
 @keyframes modalIn {
   from { opacity: 0; transform: translateY(6px) scale(0.985); }
   to { opacity: 1; transform: none; }
@@ -1393,8 +1151,6 @@ input[type="number"]:not(.creator-limit-input) {
 .skeleton {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-sm);
-  background: var(--fill-subtle);
 }
 
 .skeleton::after {
@@ -1427,41 +1183,12 @@ input[type="number"]:not(.creator-limit-input) {
   bottom: 14px;
 }
 
-.dock {
-  gap: 4px;
-  padding: 6px 8px;
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--raised) 88%, transparent);
-  backdrop-filter: blur(20px) saturate(1.3);
-  border: 1px solid var(--raised-border);
-  box-shadow: var(--elev-2);
-}
-
 .dock-item {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
   background: transparent;
 }
 
-.dock-item svg {
-  width: 18px;
-  height: 18px;
-}
-
-.dock-item:hover {
-  background: var(--fill-hover);
-}
-
 .dock-item.active {
-  background: rgba(var(--accent-1-rgb), 0.14);
   border-color: transparent;
-}
-
-.dock-item-dot {
-  bottom: -4px;
-  width: 3px;
-  height: 3px;
 }
 
 .dock-tooltip {
@@ -1599,20 +1326,13 @@ html.force-reduced-motion .modal {
 }
 
 .hero-greeting {
-  font-size: var(--fs-3xl);
-  font-weight: 700;
   line-height: 1.1;
-  letter-spacing: -0.03em;
 }
 
 .hero-sub {
   margin-top: 6px;
   font-size: var(--fs-md);
   color: var(--text-muted);
-}
-
-.hero-stat-strip {
-  gap: 0;
 }
 
 .hero-stat-pill {
@@ -1634,17 +1354,10 @@ html.force-reduced-motion .modal {
 
 .hero-stat-pill strong {
   font-family: var(--font-body);
-  font-size: var(--fs-xl);
-  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
 }
 
 .hero-stat-pill span {
-  font-size: var(--fs-2xs);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--text-faint);
 }
 
@@ -1712,22 +1425,11 @@ html.force-reduced-motion .modal {
 }
 
 .suggestion-chip {
-  height: 30px;
-  padding: 0 12px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--hairline);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 12.5px;
-  font-weight: 550;
   transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 
 .suggestion-chip:hover {
-  background: var(--fill-subtle);
   border-color: var(--hairline-strong);
-  color: var(--text);
-  transform: none;
 }
 
 /* Tiles: content from the top, the action pinned to the bottom so a row of tiles lines up. */
@@ -2005,25 +1707,6 @@ html.force-reduced-motion .modal {
 }
 
 /* The composer: a raised, tactile surface. */
-.composer-form.composer-v2 {
-  border-radius: 18px;
-  padding: 10px 10px 8px 14px;
-  background: var(--raised);
-  border: 1px solid var(--hairline-strong);
-  box-shadow: var(--elev-2);
-  transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
-}
-
-.composer-form.composer-v2:focus-within {
-  border-color: rgba(var(--accent-1-rgb), 0.6);
-  box-shadow: 0 0 0 4px rgba(var(--accent-1-rgb), 0.12), var(--elev-2);
-}
-
-.composer-v2 .composer-input {
-  font-size: var(--fs-md);
-  line-height: 1.55;
-}
-
 .composer-tool {
   width: 32px;
   height: 32px;
@@ -2046,18 +1729,12 @@ html.force-reduced-motion .modal {
 .composer-v2 .btn-send {
   width: 36px;
   height: 36px;
-  border-radius: 11px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 3px 10px rgba(var(--accent-1-rgb), 0.3);
-  transition: transform var(--dur-1) var(--ease-out), filter var(--dur-1) var(--ease-out), background var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
 }
 
 .composer-v2 .btn-send:hover:not(:disabled) {
   transform: none;
   filter: brightness(1.08);
-}
-
-.composer-v2 .btn-send:active:not(:disabled) {
-  transform: scale(0.92);
 }
 
 .btn.btn-send {
@@ -2124,11 +1801,8 @@ html.force-reduced-motion .modal {
 
 .settings-nav a {
   display: block;
-  height: 32px;
   padding: 0 10px;
-  border-radius: 8px;
   color: var(--text-muted);
-  font-size: var(--fs-sm);
   font-weight: 550;
   line-height: 32px;
   text-decoration: none;
@@ -2144,8 +1818,6 @@ html.force-reduced-motion .modal {
 }
 
 .settings-nav a.is-current {
-  background: rgba(var(--accent-1-rgb), 0.1);
-  color: var(--text);
   box-shadow: inset 2px 0 0 var(--accent-1);
 }
 
@@ -2688,7 +2360,6 @@ html.force-reduced-motion .auth-layout {
   border: none;
   box-shadow: none;
   border-radius: 0;
-  padding: 4px clamp(4px, 1.4vw, 24px) 2px;
 }
 
 .chat-log .message + .message.ai {
@@ -2706,12 +2377,6 @@ html.force-reduced-motion .auth-layout {
   background: var(--fill-hover);
   border: 1px solid var(--hairline);
   font-size: 0.88em;
-}
-
-.message.ai .bubble blockquote {
-  border-left: 3px solid rgba(var(--accent-1-rgb), 0.55);
-  background: var(--fill-subtle);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 .message.ai .bubble hr {
@@ -2733,25 +2398,6 @@ html.force-reduced-motion .auth-layout {
 .message.ai .bubble th,
 .message.ai .bubble td {
   border-color: var(--hairline);
-}
-
-.message.user .bubble {
-  border-radius: 16px 16px 4px 16px;
-  font-size: var(--fs-md);
-}
-
-.code-block,
-.message.ai .bubble pre {
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--hairline);
-}
-
-.code-block-bar {
-  border-bottom: 1px solid var(--hairline);
-}
-
-.code-block-lang {
-  font-size: var(--fs-xs);
 }
 
 .code-block-btn {
@@ -2781,4 +2427,1285 @@ html.force-reduced-motion .auth-layout {
 
 .hero-greeting {
   overflow-wrap: anywhere;
+}
+
+/* =====================================================================================
+   16. H1's visual identity
+   -------------------------------------------------------------------------------------
+   One design language, Apple-OS-inspired rather than Apple-copying: a quiet neutral
+   backdrop, content sitting on the window instead of inside boxes, hairlines where other
+   designs use borders, translucency on the chrome and nowhere else, shadows you notice only
+   when you look for them, an accent that appears on the selected thing and little else, and
+   the system typeface.
+
+   This used to be one of three interchangeable skins (data-os=apple|classic|material). The
+   switcher is gone: H1 has one identity, stated here, and every component reads it from the
+   tokens above rather than carrying its own idea of how H1 should look.
+   ===================================================================================== */
+:root {
+  /* -- Type: the system face, compact, with room to breathe -----------------------------
+     Every size is this one scale multiplied by --fs-scale, which Settings → Interface → Text
+     size sets (0.92 / 1 / 1.1). Nothing else in H1 needs to know the setting exists. */
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Lexend, system-ui, sans-serif;
+  --fs-scale: 1;
+  --fs-2xs: calc(10.5px * var(--fs-scale));
+  --fs-xs: calc(11.5px * var(--fs-scale));
+  --fs-sm: calc(12.5px * var(--fs-scale));
+  --fs-base: calc(13px * var(--fs-scale));
+  --fs-md: calc(14px * var(--fs-scale));
+  --fs-lg: calc(16px * var(--fs-scale));
+  --fs-xl: calc(19px * var(--fs-scale));
+  --fs-2xl: calc(22px * var(--fs-scale));
+  --fs-3xl: calc(26px * var(--fs-scale));
+  --lh-body: 1.65;
+  --lh-snug: 1.45;
+  --tracking-tight: -0.01em;
+  --tracking-caps: 0.01em;
+  /* -- Geometry: softly rounded, never bubbly -------------------------------------------- */
+  --r-window: 12px;
+  --r-panel: 10px;
+  --radius-xs: 5px;
+  --radius-sm: 7px;
+  --radius-md: 9px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --h-control-sm: 24px;
+  --h-control: 28px;
+  --h-control-lg: 34px;
+  --dock-h: 56px;
+
+  /* -- Motion: short and flat, and nothing bounces -------------------------------------- */
+  --dur-1: 110ms;
+  --dur-2: 160ms;
+  --dur-3: 220ms;
+  --ease-out: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-spring: cubic-bezier(0.25, 0.1, 0.25, 1);
+  /* -- Opacity: glass is Apple's medium, so the slider may go a long way down ------------- */
+  --alpha-surface-floor: 0.1;
+  --alpha-overlay-floor: 0.58;
+  /* -- Backdrop: graphite, not an aurora -------------------------------------------------- */
+  --desk-bg: #141416;
+  --desk-bloom-1: rgba(255, 255, 255, 0.035);
+  --desk-bloom-2: rgba(255, 255, 255, 0.02);
+  --desk-bloom-3: transparent;
+  /* -- Surfaces ---------------------------------------------------------------------------- */
+  --bg: #191a1c;
+  --panel-material: #1e1f22;
+  --card-material: rgba(255, 255, 255, 0.032);
+  --raised-material: #2a2b2f;
+  --raised-solid: #2a2b2f;
+  --panel-border: rgba(255, 255, 255, 0.075);
+  --card-hover: rgba(255, 255, 255, 0.055);
+  --raised-border: rgba(255, 255, 255, 0.1);
+  --hairline: rgba(255, 255, 255, 0.075);
+  --hairline-strong: rgba(255, 255, 255, 0.13);
+  --fill-subtle: rgba(255, 255, 255, 0.05);
+  --fill-hover: rgba(255, 255, 255, 0.08);
+  --fill-press: rgba(255, 255, 255, 0.12);
+  --field: rgba(0, 0, 0, 0.2);
+  --surface-solid: #26272b;
+  --scrim: rgba(0, 0, 0, 0.32);
+  --text: #f2f2f4;
+  --text-muted: #a9a9b1;
+  --text-faint: #9a9aa1;
+  /* Translucency belongs to the window chrome — sidebar, title bar, menus, dock — and nowhere
+     else. Blurring content panels was the expensive part of the old design. */
+  /* The chrome is a surface like any other, so the opacity slider reaches it too: 0.68 is
+     its own translucency, thinned further as the slider comes down. */
+  --chrome-tint: rgba(38, 38, 42, 0.68);
+  --chrome-material: color-mix(in srgb, var(--chrome-tint) calc(var(--alpha-surface) * 100%), transparent);
+  --vibrancy: saturate(180%) blur(28px);
+  --glass-base-blur: 0px;
+  --glass-elevated-blur: 0px;
+  --glass-floating-blur: 28px;
+  /* -- Depth: barely there ----------------------------------------------------------------- */
+  --elev-1: 0 0.5px 1px rgba(0, 0, 0, 0.26);
+  --elev-2: 0 2px 8px rgba(0, 0, 0, 0.26), 0 0.5px 1px rgba(0, 0, 0, 0.28);
+  --elev-3: 0 16px 48px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --glass-base-shadow: none;
+  --glass-elevated-shadow: none;
+  --glass-floating-shadow: var(--elev-3);
+  --shadow-glow: none;
+  /* -- Accent: one flat colour, on the selected thing and little else --------------------- */
+  --accent-fill: color-mix(in srgb, var(--accent-1) 86%, #ffffff);
+  --accent-grad: var(--accent-fill);
+  --accent-grad-soft: rgba(var(--accent-1-rgb), 0.12);
+  --glass-active-bg: rgba(var(--accent-1-rgb), 0.16);
+  --glass-active-border: transparent;
+  --focus-ring-color: rgba(var(--accent-1-rgb), 0.6);
+  --user-bubble: rgba(var(--accent-1-rgb), 0.16);
+  --ai-bubble: transparent;
+}
+
+:root[data-theme="light"] {
+  --desk-bg: #dedee1;
+  --desk-bloom-1: rgba(255, 255, 255, 0.5);
+  --desk-bloom-2: rgba(255, 255, 255, 0.3);
+  --desk-bloom-3: transparent;
+
+  --bg: #ececee;
+  --panel-material: #ffffff;
+  --card-material: rgba(0, 0, 0, 0.026);
+  --raised-material: #ffffff;
+  --raised-solid: #ffffff;
+  --panel-border: rgba(0, 0, 0, 0.09);
+  --card-hover: rgba(0, 0, 0, 0.045);
+  --raised-border: rgba(0, 0, 0, 0.1);
+  --hairline: rgba(0, 0, 0, 0.085);
+  --hairline-strong: rgba(0, 0, 0, 0.16);
+  --fill-subtle: rgba(0, 0, 0, 0.04);
+  --fill-hover: rgba(0, 0, 0, 0.07);
+  --fill-press: rgba(0, 0, 0, 0.1);
+  --field: #ffffff;
+  --surface-solid: #ffffff;
+  --scrim: rgba(0, 0, 0, 0.18);
+  --text: #1d1d1f;
+  --text-muted: #5f5f66;
+  --text-faint: #6b6b70;
+
+  --accent-fill: color-mix(in srgb, var(--accent-1) 66%, #000000);
+  --chrome-tint: rgba(246, 246, 248, 0.72);
+  --elev-1: 0 0.5px 1px rgba(0, 0, 0, 0.06);
+  --elev-2: 0 2px 8px rgba(0, 0, 0, 0.07), 0 0.5px 1px rgba(0, 0, 0, 0.05);
+  --elev-3: 0 16px 44px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.07);
+  --user-bubble: rgba(var(--accent-1-rgb), 0.12);
+}
+
+/* ---- Window and chrome ----------------------------------------------------------------- */
+.app {
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.44), 0 0 0 0.5px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="light"] .app {
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.16), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
+}
+
+.shell {
+  gap: 0;
+  padding: 0;
+}
+
+.desktop-topbar {
+  height: 40px;
+  padding: 0 10px 0 14px;
+  gap: 8px;
+  background: var(--chrome-material);
+  backdrop-filter: var(--vibrancy);
+  -webkit-backdrop-filter: var(--vibrancy);
+  border-bottom: 0.5px solid var(--hairline);
+}
+
+.topbar-title {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.topbar-divider {
+  display: none;
+}
+
+/* Real window buttons: 12px, flat, with the faintest inner definition. */
+.traffic-lights {
+  gap: 8px;
+  margin-right: 6px;
+}
+
+.traffic-light {
+  width: 12px;
+  height: 12px;
+  border: none;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+}
+
+.traffic-light.red { background: #ff5f57; }
+.traffic-light.yellow { background: #febc2e; }
+.traffic-light.green { background: #28c840; }
+
+/* In a Mac title bar the status and the space switcher are items, not outlined buttons. */
+.topbar-status,
+.space-switcher-btn {
+  height: 24px;
+  padding: 0 8px;
+  border: none;
+  background: transparent;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.space-switcher-btn:hover,
+.topbar-status:hover {
+  background: var(--fill-subtle);
+}
+
+.topbar-actions {
+  gap: 2px;
+}
+
+/* ---- Sidebar: a native source list ------------------------------------------------------ */
+.sidebar {
+  background: var(--chrome-material);
+  backdrop-filter: var(--vibrancy);
+  -webkit-backdrop-filter: var(--vibrancy);
+  border: none;
+  border-right: 0.5px solid var(--hairline);
+  border-radius: 0;
+  padding: 6px 8px 8px;
+  box-shadow: none;
+}
+
+.brand {
+  padding: 4px 6px 12px;
+  border: none;
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  font-size: 11px;
+  background: var(--accent-1);
+  box-shadow: none;
+}
+
+.brand-name {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background: none;
+  -webkit-text-fill-color: var(--text);
+  color: var(--text);
+}
+
+.brand-tagline {
+  font-size: var(--fs-2xs);
+  color: var(--text-faint);
+}
+
+.nav-item {
+  height: 28px;
+  gap: 8px;
+  padding: 0 8px;
+  margin: 1px 0;
+  border-radius: 6px;
+  font-size: var(--fs-base);
+  font-weight: 450;
+  color: var(--text-muted);
+}
+
+.nav-item svg {
+  width: 15px;
+  height: 15px;
+  color: currentColor;
+  opacity: 0.85;
+}
+
+.nav-item:hover {
+  background: var(--fill-subtle);
+  color: var(--text);
+}
+
+/* The selected row: a soft translucent accent behind ordinary text. Not a filled bar, and
+   nothing glows. */
+.nav-item.active {
+  color: var(--text);
+  font-weight: 550;
+}
+
+.nav-item.active svg {
+  color: var(--accent-text);
+  opacity: 1;
+}
+
+.nav-active-pill {
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(var(--accent-1-rgb), 0.16);
+  box-shadow: none;
+}
+
+.nav-active-pill::before {
+  display: none;
+}
+
+/* Sentence case, quiet, with real space above each group. */
+.nav-section-label {
+  padding: 14px 8px 2px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+.sidebar-command-hint {
+  height: 24px;
+  margin: 0 2px 8px;
+  border-radius: 6px;
+  background: var(--field);
+  border: 0.5px solid var(--hairline);
+  font-size: var(--fs-xs);
+}
+
+.sidebar-footer,
+.sidebar-account {
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+}
+
+.sidebar-account:hover {
+  background: var(--fill-subtle);
+}
+
+.sidebar-account .account-avatar {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+
+/* ---- Content: sections on the window, not a wall of cards ------------------------------- */
+.main-view {
+  background: var(--panel);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  /* +15px each side: the shell gap and padding this style removes, given back to the content
+     so the workspace is the same width as in Classic. */
+  padding: var(--sp-6) calc(var(--sp-7) + 15px);
+}
+
+.view {
+  gap: 26px;
+}
+
+/* A tile is a group of content, marked by a faint wash and nothing else: no border, no shadow,
+   no card inside a card. */
+.bento-tile,
+.tool-card-sm,
+.result-card,
+.ch-card,
+.daily-inspiration {
+  background: var(--card);
+  border: none;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.bento-tile:hover {
+  background: var(--card-hover);
+}
+
+.tile-label {
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+/* Cards that carry a real object — a note, a deck, a document — keep a hairline so the object
+   has an edge. Everything else does without. */
+.doc-card,
+.deck-card,
+.project-card,
+.subject-card,
+.note-card,
+.code-track-card {
+  border: 0.5px solid var(--hairline);
+  border-radius: 10px;
+  box-shadow: none;
+  background: var(--card);
+}
+
+.view-header,
+.page-header {
+  border-bottom: 0.5px solid var(--hairline);
+  padding-bottom: 12px;
+}
+
+.view-header h1,
+.page-header h1 {
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+/* Home: an elegant greeting, and counters that stop shouting. */
+.hero {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 4px 0 0;
+}
+
+.hero-greeting {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  background: none;
+  -webkit-text-fill-color: var(--text);
+  color: var(--text);
+}
+
+.hero-sub,
+.hero-desc {
+  font-size: var(--fs-md);
+  color: var(--text-muted);
+}
+
+.hero-stat-strip {
+  gap: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.stat-value {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--text);
+  background: none;
+  -webkit-text-fill-color: var(--text);
+}
+
+.stat-label {
+  font-size: var(--fs-2xs);
+  font-weight: 450;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+/* The counters read as quiet facts, not a score line. */
+.hero-stat-pill strong {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.hero-stat-pill span {
+  font-size: var(--fs-2xs);
+  font-weight: 450;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Small capitals are a web habit: a Mac labels a group in sentence case and lets the weight
+   and colour do the work. This is the one rule that quiets every eyebrow in the app at once. */
+.bento-tile-eyebrow,
+.bento-tile-eyebrow span,
+.tile-eyebrow,
+.bento-label,
+.creator-subhead,
+.section-eyebrow {
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+/* The heading, the line under it and the description share one left edge. */
+.quotes-hero-sub,
+.quotes-hero-desc {
+  text-align: left;
+  margin-left: 0;
+}
+
+/* A quieter Quotes Factory. The workspace keeps every dimension it had — same grid, same
+   card sizes, same reading width — but the tinted hero panel becomes a plain heading and the
+   featured quote sits on the page instead of inside a coloured block. */
+.quotes-hero {
+  padding: 4px 0 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  text-align: left;
+  align-items: flex-start;
+}
+
+.quotes-hero-icon {
+  display: none;
+}
+
+.quotes-hero h1 {
+  font-size: var(--fs-2xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  background: none;
+  -webkit-text-fill-color: var(--text);
+  color: var(--text);
+}
+
+.quotes-hero-sub {
+  color: var(--text-muted);
+  background: none;
+  -webkit-text-fill-color: var(--text-muted);
+  font-weight: 450;
+}
+
+.quotes-hero-desc {
+  color: var(--text-faint);
+  max-width: 62ch;
+}
+
+.quotes-featured {
+  background: var(--card);
+  border: 0.5px solid var(--hairline);
+  border-radius: 10px;
+  box-shadow: none;
+  color: var(--text);
+}
+
+.quotes-featured-eyebrow {
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+.quotes-featured-mark {
+  color: var(--text-faint);
+  opacity: 0.5;
+}
+
+.quotes-featured-text {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.quotes-featured-category,
+.quotes-chip-row .chip,
+.quote-card-category {
+  border-radius: 5px;
+  font-size: var(--fs-2xs);
+  font-weight: 450;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.quote-card {
+  background: var(--card);
+  border: 0.5px solid var(--hairline);
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+/* Full-width coloured CTAs are a web pattern. On a Mac a primary action is a button its own
+   size, at the end of the form it belongs to. */
+.tool-panel .btn-primary,
+#flashGenerateBtn,
+#quizGenerateBtn {
+  width: auto;
+  align-self: flex-start;
+  padding: 0 16px;
+}
+
+/* ---- Controls ---------------------------------------------------------------------------- */
+.btn {
+  height: var(--h-control);
+  padding: 0 12px;
+  border-radius: 6px;
+  font-size: var(--fs-base);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.btn-ghost {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.04));
+  border: 0.5px solid var(--hairline-strong);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.2);
+  color: var(--text);
+}
+
+:root[data-theme="light"] .btn-ghost {
+  background: linear-gradient(180deg, #ffffff, #f6f6f8);
+  border-color: rgba(0, 0, 0, 0.14);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.05);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.065));
+}
+
+:root[data-theme="light"] .btn-ghost:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffffff, #eff0f2);
+}
+
+.btn-primary {
+  background: var(--accent-fill);
+  border: none;
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.2), inset 0 0.5px 0 rgba(255, 255, 255, 0.28);
+}
+
+.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22), inset 0 0.5px 0 rgba(255, 255, 255, 0.32);
+}
+
+.btn:active:not(:disabled) {
+  filter: brightness(0.94);
+  transform: none;
+}
+
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.icon-btn:hover {
+  background: var(--fill-subtle);
+  color: var(--text);
+}
+
+/* Contextual actions read as light text actions, not eight web buttons in a row. */
+.suggestion-chip {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: none;
+  background: var(--fill-subtle);
+  font-size: var(--fs-sm);
+  font-weight: 450;
+  color: var(--text-muted);
+}
+
+.suggestion-chip:hover {
+  background: var(--fill-hover);
+  color: var(--text);
+  transform: none;
+}
+
+/* Subject chips keep an outline, because choosing one is a real state. */
+.chip {
+  height: 26px;
+  border-radius: 6px;
+  border: 0.5px solid var(--hairline);
+  background: transparent;
+  font-size: var(--fs-sm);
+  font-weight: 450;
+}
+
+.chip.active,
+.chip[aria-checked="true"] {
+  background: rgba(var(--accent-1-rgb), 0.16);
+  border-color: transparent;
+  color: var(--text);
+}
+
+.segmented,
+.subtabs,
+.subtab-bar,
+.auth-tabs {
+  padding: 2px;
+  border-radius: 7px;
+  background: var(--field);
+  border: 0.5px solid var(--hairline);
+}
+
+.segmented-btn,
+.subtab,
+.auth-tab {
+  height: 23px;
+  border-radius: 5px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+.segmented-btn.active,
+.subtab.active,
+.auth-tab.is-active {
+  background: var(--raised-solid);
+  color: var(--text);
+  box-shadow: 0 0.5px 2px rgba(0, 0, 0, 0.2);
+}
+
+input.tool-input,
+select.tool-input,
+.notes-search,
+.history-search-input,
+.mode-select,
+.auth-input,
+.creator-input {
+  height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-radius: 6px;
+  border: 0.5px solid var(--hairline-strong);
+  background: var(--field);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: var(--fs-base);
+}
+
+.tool-textarea {
+  border-radius: 6px;
+  border: 0.5px solid var(--hairline-strong);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+:is(input, textarea, select):focus-visible {
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 3px rgba(var(--accent-1-rgb), 0.28);
+}
+
+/* ---- Menus, dialogs, toasts: translucent, like the chrome -------------------------------- */
+.account-menu,
+.space-switcher-popover,
+.notif-center-popover,
+.attach-menu,
+.slash-menu,
+.toast {
+  border-radius: 10px;
+  border: 0.5px solid var(--raised-border);
+  background: var(--raised);
+  backdrop-filter: var(--vibrancy);
+  -webkit-backdrop-filter: var(--vibrancy);
+  box-shadow: var(--elev-3);
+}
+
+.account-menu-item {
+  height: 26px;
+  border-radius: 5px;
+  font-size: var(--fs-base);
+}
+
+.account-menu-item:hover {
+  background: color-mix(in srgb, var(--accent-1) 66%, #000000);
+  color: #fff;
+}
+
+.modal {
+  border-radius: 12px;
+  border: 0.5px solid var(--raised-border);
+  background: var(--raised-solid);
+  box-shadow: var(--elev-3);
+}
+
+.modal-overlay {
+  background: var(--scrim);
+  backdrop-filter: blur(2px);
+}
+
+/* ---- Dock: small, translucent, out of the way -------------------------------------------- */
+.dock {
+  gap: 2px;
+  padding: 4px 6px;
+  border-radius: 14px;
+  background: var(--raised);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 0.5px solid var(--raised-border);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+.dock-item {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  color: var(--text-muted);
+}
+
+.dock-item svg {
+  width: 17px;
+  height: 17px;
+}
+
+.dock-item:hover {
+  background: var(--fill-hover);
+  color: var(--text);
+}
+
+/* Open-app marker: a dot under the icon, the way the Mac marks a running app. */
+.dock-item.active {
+  background: var(--fill-subtle);
+  color: var(--text);
+}
+
+.dock-item-dot {
+  width: 3px;
+  height: 3px;
+  bottom: -3px;
+  background: var(--text-muted);
+}
+
+/* ---- Settings: categories → sections → rows ---------------------------------------------- */
+.settings-section {
+  padding: 0 0 22px;
+  border: none;
+  border-bottom: 0.5px solid var(--hairline);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.settings-section:last-of-type {
+  border-bottom: none;
+}
+
+.settings-section h2 {
+  margin: 0 0 4px;
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+.settings-hint {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.field-label {
+  margin: 14px 0 5px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-muted);
+}
+
+.toggle-row,
+.danger-row {
+  padding: 9px 0;
+  border-top: 0.5px solid var(--hairline);
+  font-size: var(--fs-base);
+}
+
+.toggle-row:first-of-type,
+.danger-row:first-of-type {
+  border-top: none;
+}
+
+.settings-nav a {
+  height: 26px;
+  border-radius: 6px;
+  font-size: var(--fs-sm);
+}
+
+.settings-nav a.is-current {
+  background: rgba(var(--accent-1-rgb), 0.16);
+  color: var(--text);
+}
+
+.account-card,
+.allowance,
+.creator-model,
+.creator-account {
+  border-radius: 8px;
+  border: 0.5px solid var(--hairline);
+  background: var(--card);
+  box-shadow: none;
+}
+
+.calendar-day.other-month {
+  opacity: 1;
+}
+
+.calendar-day.other-month .calendar-day-num {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* ---- The tutor ---------------------------------------------------------------------------- */
+.composer-form.composer-v2,
+.superbar {
+  border-radius: 10px;
+  border: 0.5px solid var(--hairline-strong);
+  background: var(--field);
+  box-shadow: var(--elev-2);
+}
+
+.composer-v2 .btn-send,
+.superbar-send {
+  border-radius: 7px;
+  box-shadow: none;
+}
+
+.message.user .bubble {
+  background: var(--user-bubble);
+  border: none;
+  color: var(--text);
+}
+
+.message.ai .bubble,
+.message.assistant .bubble {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* The answer area is the same width in every style: the tutor sets its own padding on the
+   panel, so the compensation the rest of the app gets is repeated here. */
+#mainView.is-chat:where(*) {
+  padding-left: 31px;
+  padding-right: 31px;
+}
+
+.chat-toolbar {
+  border-bottom: 0.5px solid var(--hairline);
+  background: transparent;
+}
+
+/* Compact mode (Settings → Interface → Density). Spacing and control heights tighten by one
+   step; type is untouched, so the interface gets denser without getting harder to read. */
+:root[data-density="compact"] {
+  --sp-4: 12px;
+  --sp-5: 14px;
+  --sp-6: 16px;
+  --sp-7: 20px;
+  --sp-8: 24px;
+  --sp-10: 30px;
+  --h-control-sm: 22px;
+  --h-control: 26px;
+  --h-control-lg: 30px;
+  --view-gap: 18px;
+}
+
+:root[data-density="compact"] .view {
+  gap: var(--view-gap);
+}
+
+:root[data-density="compact"] .nav-item {
+  height: 26px;
+}
+
+:root[data-density="compact"] .nav-active-pill {
+  height: 26px;
+}
+
+:root[data-density="compact"] .nav-section-label {
+  padding-top: 10px;
+}
+
+:root[data-density="compact"] .main-view {
+  padding-top: var(--sp-5);
+  padding-bottom: var(--sp-5);
+}
+
+/* =====================================================================================
+   17. The answer is the workspace
+   -------------------------------------------------------------------------------------
+   An answer is the reason H1 exists, so it is given the treatment of a page rather than of a
+   message: an article measure, real paragraph rhythm, a heading hierarchy you can navigate by
+   eye, and code and mathematics that look typeset rather than pasted. Nothing frames it — no
+   card, no bubble, no border — because a frame would make it look like a widget on a page
+   instead of the page itself.
+   ===================================================================================== */
+.chat-log .message.ai .bubble.answer {
+  padding: 6px clamp(4px, 1.4vw, 28px) 4px;
+  font-size: calc(var(--fs-md) + 0.5px);
+  line-height: 1.72;
+  letter-spacing: 0.002em;
+  color: var(--text);
+}
+
+/* Paragraph rhythm: enough space that the eye resets between thoughts, not so much that a
+   three-paragraph answer needs scrolling. */
+.message.ai .bubble.answer > p {
+  margin: 0 0 1.05em;
+}
+
+.message.ai .bubble.answer > p:last-child {
+  margin-bottom: 0;
+}
+
+/* Headings step down in size and in weight, and carry more air above than below, so each one
+   belongs to the text beneath it. */
+/* Sized in em against the answer's own text, so the hierarchy holds at any text-size setting.
+   Note the levels: the renderer starts at h3 (a single # in an answer), so h3 and h4 are the
+   headings a student actually sees, and both have to outrank the body they sit above. */
+.message.ai .bubble.answer h3 {
+  margin: 1.6em 0 0.5em;
+  font-size: 1.24em;
+  font-weight: 620;
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+}
+
+.message.ai .bubble.answer h4 {
+  margin: 1.4em 0 0.45em;
+  font-size: 1.1em;
+  font-weight: 620;
+  line-height: 1.38;
+  letter-spacing: -0.012em;
+}
+
+.message.ai .bubble.answer h5 {
+  margin: 1.25em 0 0.4em;
+  font-size: 1em;
+  font-weight: 620;
+}
+
+.message.ai .bubble.answer h6 {
+  margin: 1.2em 0 0.35em;
+  font-size: 0.95em;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-muted);
+}
+
+.message.ai .bubble.answer > :first-child {
+  margin-top: 0;
+}
+
+.message.ai .bubble.answer ul,
+.message.ai .bubble.answer ol {
+  margin: 0 0 1.05em;
+  padding-left: 1.4em;
+}
+
+.message.ai .bubble.answer li {
+  margin-bottom: 0.4em;
+  padding-left: 0.15em;
+}
+
+.message.ai .bubble.answer li::marker {
+  color: var(--text-faint);
+}
+
+.message.ai .bubble.answer strong {
+  font-weight: 620;
+}
+
+/* Code: a quiet slab, not a neon block. */
+.code-block,
+.message.ai .bubble pre {
+  margin: 1.1em 0;
+  border-radius: 8px;
+  border: 0.5px solid var(--hairline);
+  background: var(--field);
+  box-shadow: none;
+}
+
+.message.ai .bubble pre code {
+  font-size: calc(var(--fs-sm) + 0.5px);
+  line-height: 1.6;
+}
+
+.code-block-bar {
+  padding: 5px 10px;
+  border-bottom: 0.5px solid var(--hairline);
+  background: transparent;
+}
+
+.code-block-lang {
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-faint);
+}
+
+/* Mathematics sits on the baseline of the sentence around it, and display equations get their
+   own air rather than being crammed between paragraphs. */
+.message.ai .bubble .katex {
+  font-size: 1.04em;
+}
+
+.message.ai .bubble .katex-display {
+  margin: 1.25em 0;
+  padding: 2px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.message.ai .bubble blockquote {
+  margin: 1.1em 0;
+  padding: 2px 0 2px 14px;
+  border-left: 2px solid rgba(var(--accent-1-rgb), 0.45);
+  background: transparent;
+  border-radius: 0;
+  color: var(--text-muted);
+}
+
+.message.ai .bubble table {
+  margin: 1.1em 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* The line under an answer — copy, regenerate, the model's name — is information about the
+   answer, not part of it, so it stays quiet until the answer is hovered or focused. */
+.answer-meta,
+.answer-actions {
+  opacity: 0.55;
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+
+.message.ai:hover .answer-meta,
+.message.ai:hover .answer-actions,
+.message.ai:focus-within .answer-meta,
+.message.ai:focus-within .answer-actions {
+  opacity: 1;
+}
+
+/* The question. One bubble in the conversation, so there is never any doubt who said what. */
+.message.user .bubble {
+  padding: 9px 14px;
+  border-radius: 12px 12px 4px 12px;
+  font-size: var(--fs-md);
+  line-height: 1.55;
+}
+
+/* =====================================================================================
+   18. The composer
+   -------------------------------------------------------------------------------------
+   Typing into H1 should feel like typing into the workspace, not filling in a form: one calm
+   field that lifts very slightly when it has focus, and a send button that only becomes solid
+   once there is something to send.
+   ===================================================================================== */
+.composer-form.composer-v2 {
+  padding: 8px 8px 8px 14px;
+  border-radius: 12px;
+  border: 0.5px solid var(--hairline-strong);
+  background: var(--field);
+  box-shadow: var(--elev-1);
+  transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out);
+}
+
+.composer-form.composer-v2:focus-within {
+  border-color: color-mix(in srgb, var(--accent-1) 55%, transparent);
+  box-shadow: var(--elev-2), 0 0 0 3px rgba(var(--accent-1-rgb), 0.16);
+}
+
+.composer-v2 .composer-input {
+  font-size: var(--fs-md);
+  line-height: 1.55;
+}
+
+.composer-v2 .btn-send {
+  border-radius: 8px;
+  transition: transform var(--dur-1) var(--ease-out), opacity var(--dur-2) var(--ease-out), filter var(--dur-1) var(--ease-out);
+}
+
+.composer-form.is-empty .btn-send {
+  opacity: 0.45;
+}
+
+.composer-v2 .btn-send:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.composer-hint {
+  font-size: var(--fs-2xs);
+  color: var(--text-faint);
+}
+
+/* =====================================================================================
+   19. Micro-interactions
+   -------------------------------------------------------------------------------------
+   Fast, small and consistent: 110–220ms, one easing curve, nothing bounces. Every one of these
+   is a state the person caused, answered immediately enough that the interface feels attached
+   to the pointer.
+   ===================================================================================== */
+.btn,
+.icon-btn,
+.chip,
+.suggestion-chip,
+.nav-item,
+.dock-item,
+.segmented-btn,
+.account-menu-item,
+.settings-nav a,
+.toggle {
+  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out), filter var(--dur-1) var(--ease-out);
+}
+
+.btn:active:not(:disabled),
+.chip:active,
+.suggestion-chip:active,
+.dock-item:active {
+  transform: scale(0.98);
+}
+
+.nav-item:active {
+  transform: scale(0.995);
+}
+
+/* Focus is one ring everywhere, drawn outside the control so it never changes a layout. */
+:where(button, a, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+/* Menus and popovers come from the edge they are anchored to, over about a sixth of a second. */
+.account-menu,
+.attach-menu,
+.slash-menu,
+.space-switcher-popover,
+.notif-center-popover {
+  animation: popIn var(--dur-2) var(--ease-out);
+  transform-origin: top center;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+.modal {
+  animation: sheetIn var(--dur-3) var(--ease-out);
+}
+
+@keyframes sheetIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+
+.modal-overlay {
+  animation: fadeIn var(--dur-2) var(--ease-out);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Loading: a slow sweep across a neutral block, not a pulsing coloured shape. */
+.skeleton {
+  background: linear-gradient(100deg, var(--fill-subtle) 30%, var(--fill-hover) 50%, var(--fill-subtle) 70%);
+  background-size: 220% 100%;
+  animation: sweep 1.3s var(--ease-in-out) infinite;
+  border-radius: 6px;
+}
+
+@keyframes sweep {
+  from { background-position: 140% 0; }
+  to { background-position: -40% 0; }
+}
+
+/* While an answer is streaming, a soft caret keeps pace with it. */
+.message.ai.is-streaming .bubble.answer::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.16em;
+  border-radius: 1px;
+  background: var(--accent-1);
+  animation: caret 1s steps(2, start) infinite;
+}
+
+@keyframes caret {
+  to { opacity: 0; }
+}
+
+/* Whichever of the above is on, a person who asked for less motion gets none of it. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .message.ai.is-streaming .bubble.answer::after {
+    animation: none;
+  }
 }

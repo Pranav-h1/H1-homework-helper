@@ -108,6 +108,24 @@ function renderFolderChips() {
   });
 }
 
+// The editor side has two different nothings to report: no notes at all, and notes but none
+// open. Saying the first when the second is true made H1 look like it had lost the notes.
+function updateEmptyState() {
+  const total = loadNotes().filter((n) => matchesCurrentSpace(n.spaceId)).length;
+  const heading = noteEmptyState.querySelector("h2");
+  const body = noteEmptyState.querySelector("p");
+  const cta = noteEmptyState.querySelector("button");
+  if (total === 0) {
+    heading.textContent = "No notes yet";
+    body.textContent = "Create your first note to start collecting what you've learned.";
+    if (cta) cta.hidden = false;
+  } else {
+    heading.textContent = "Nothing open";
+    body.textContent = total === 1 ? "Open your note from the list, or start another one." : `Open one of your ${total} notes from the list, or start another one.`;
+    if (cta) cta.hidden = false;
+  }
+}
+
 function renderList() {
   const query = notesSearch.value.trim().toLowerCase();
   const notes = loadNotes()
@@ -124,6 +142,7 @@ function renderList() {
     .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.updatedAt - a.updatedAt);
 
   notesList.innerHTML = "";
+  if (noteEditor.hidden) updateEmptyState();
   if (notes.length === 0) {
     // With no notes at all the editor side already says so, with a way to start — saying it a
     // second time in the list only added noise. A search with no results is different news.
@@ -272,11 +291,8 @@ deleteNoteBtn.addEventListener("click", () => {
     saveNotes(list);
     activeId = null;
     noteEditor.hidden = true;
-    noteEmptyState.hidden = list.length !== 0;
-    if (!noteEmptyState.hidden) {
-      noteEmptyState.querySelector("h2").textContent = "No notes yet";
-      noteEmptyState.querySelector("p").textContent = "Create your first note to start collecting what you've learned.";
-    }
+    noteEmptyState.hidden = false;
+    updateEmptyState();
     renderFolderChips();
     renderList();
     showToast("Note deleted.", "success");
