@@ -67,7 +67,6 @@
   --h-control-sm: 24px;
   --h-control: 28px;
   --h-control-lg: 34px;
-  --sidebar-w: 218px;
   --dock-h: 56px;
 
   /* -- Motion: short and flat; nothing bounces ------------------------------------------- */
@@ -375,7 +374,9 @@
   border: none;
   border-radius: 0;
   box-shadow: none;
-  padding: 22px 28px;
+  /* +15px each side: the shell gap and padding this style removes, given back to the content
+     so the workspace is the same width as in Classic. */
+  padding: var(--sp-6) calc(var(--sp-7) + 15px);
 }
 
 :root[data-os="apple"] .view {
@@ -942,6 +943,13 @@
   box-shadow: none;
 }
 
+/* The answer area is the same width in every style: the tutor sets its own padding on the
+   panel, so the compensation the rest of the app gets is repeated here. */
+#mainView.is-chat:where(:root[data-os="apple"] *) {
+  padding-left: 31px;
+  padding-right: 31px;
+}
+
 :root[data-os="apple"] .chat-toolbar {
   border-bottom: 0.5px solid var(--hairline);
   background: transparent;
@@ -1060,7 +1068,6 @@
   --h-control-sm: 34px;
   --h-control: 40px;
   --h-control-lg: 48px;
-  --sidebar-w: 248px;
 
   --dur-1: 100ms;
   --dur-2: 200ms;
@@ -1215,6 +1222,8 @@
   border: none;
   border-radius: 0;
   box-shadow: none;
+  /* +2px each side, replacing the panel border this style does without. */
+  padding: var(--sp-6) calc(var(--sp-7) + 2px);
 }
 
 /* Filled and tonal buttons, fully rounded, with a visible press. */
@@ -1434,6 +1443,11 @@
   height: 44px;
   border-radius: 16px;
   box-shadow: var(--elev-2);
+}
+
+#mainView.is-chat:where(:root[data-os="material"] *) {
+  padding-left: 18px;
+  padding-right: 18px;
 }
 
 :root[data-os="material"] .composer-form.composer-v2,
