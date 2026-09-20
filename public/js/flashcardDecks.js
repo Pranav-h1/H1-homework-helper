@@ -8,8 +8,25 @@ function uid() {
   return `deck_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
+// Decks come back from storage that H1 doesn't fully control: older versions of H1 wrote some
+// of them, and with an account they arrive from other devices. A deck missing its card list or
+// its review states used to throw while the home screen counted what was due — which meant H1
+// wouldn't start at all. Every deck is given the shape the rest of this file expects.
+function normalizeDeck(deck) {
+  if (!deck || typeof deck !== "object") return null;
+  return {
+    ...deck,
+    id: typeof deck.id === "string" ? deck.id : uid(),
+    topic: typeof deck.topic === "string" ? deck.topic : "Untitled deck",
+    subject: typeof deck.subject === "string" ? deck.subject : "general",
+    cards: Array.isArray(deck.cards) ? deck.cards.filter((c) => c && typeof c === "object") : [],
+    cardStates: deck.cardStates && typeof deck.cardStates === "object" ? deck.cardStates : {},
+  };
+}
+
 function readDecks() {
-  return safeGetJson(DECKS_KEY, []);
+  const raw = safeGetJson(DECKS_KEY, []);
+  return (Array.isArray(raw) ? raw : []).map(normalizeDeck).filter(Boolean);
 }
 
 function writeDecks(decks) {

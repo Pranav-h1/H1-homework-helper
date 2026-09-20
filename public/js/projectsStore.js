@@ -8,8 +8,26 @@ function uid() {
   return `proj_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
+// A project written by an older version of H1, or arriving from another device mid-upgrade, may
+// be missing its lists. Giving every record its expected shape here keeps one short record from
+// taking the whole app down while the home screen counts progress.
+function normalizeProject(project) {
+  if (!project || typeof project !== "object") return null;
+  return {
+    ...project,
+    id: typeof project.id === "string" ? project.id : uid(),
+    title: typeof project.title === "string" ? project.title : "Untitled project",
+    type: typeof project.type === "string" ? project.type : "assignment",
+    subject: typeof project.subject === "string" ? project.subject : "general",
+    tasks: Array.isArray(project.tasks) ? project.tasks.filter((t) => t && typeof t === "object") : [],
+    linkedDocIds: Array.isArray(project.linkedDocIds) ? project.linkedDocIds : [],
+    linkedNoteIds: Array.isArray(project.linkedNoteIds) ? project.linkedNoteIds : [],
+  };
+}
+
 function readAll() {
-  return safeGetJson(KEY, []);
+  const raw = safeGetJson(KEY, []);
+  return (Array.isArray(raw) ? raw : []).map(normalizeProject).filter(Boolean);
 }
 
 function writeAll(list) {
@@ -149,6 +167,7 @@ export function unlinkNote(projectId, noteId) {
 }
 
 export function getProjectProgress(project) {
-  if (project.tasks.length === 0) return 0;
-  return Math.round((project.tasks.filter((t) => t.done).length / project.tasks.length) * 100);
+  const tasks = project && Array.isArray(project.tasks) ? project.tasks : [];
+  if (tasks.length === 0) return 0;
+  return Math.round((tasks.filter((t) => t.done).length / tasks.length) * 100);
 }

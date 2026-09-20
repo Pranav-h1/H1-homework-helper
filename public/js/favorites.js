@@ -48,18 +48,21 @@ function row(icon, title, subtitle, onOpen, onRemove, removeIcon = "★", remove
 
 export function render() {
   container.innerHTML = "";
+  const list = (value) => (Array.isArray(value) ? value : []);
   const sections = [
-    { label: "📄 Documents", items: getDocuments().filter((d) => d.favorite), build: (d) => row("📄", d.name, "Document", () => switchView("documents"), () => toggleDocFavorite(d.id)) },
-    { label: "🗂️ Flashcard decks", items: getDecks().filter((d) => d.favorite), build: (d) => row("🗂️", d.topic, "Flashcard deck", () => switchView("flashcards"), () => toggleDeckFavorite(d.id)) },
-    { label: "🧩 Projects", items: getProjects().filter((p) => p.favorite), build: (p) => row("🧩", p.title, "Project", () => switchView("projects"), () => toggleFavoriteProject(p.id)) },
+    { label: "📄 Documents", items: list(getDocuments()).filter((d) => d.favorite), build: (d) => row("📄", d.name, "Document", () => switchView("documents"), () => toggleDocFavorite(d.id)) },
+    { label: "🗂️ Flashcard decks", items: list(getDecks()).filter((d) => d.favorite), build: (d) => row("🗂️", d.topic, "Flashcard deck", () => switchView("flashcards"), () => toggleDeckFavorite(d.id)) },
+    { label: "🧩 Projects", items: list(getProjects()).filter((p) => p.favorite), build: (p) => row("🧩", p.title, "Project", () => switchView("projects"), () => toggleFavoriteProject(p.id)) },
     {
       label: "📝 Notes",
-      items: safeGetJson("h1-notes", []).filter((n) => n.favorite),
+      // Read defensively: this is the raw store, not the notes view's normalised copy, so it
+      // may not even be a list.
+      items: list(safeGetJson("h1-notes", [])).filter((n) => n && typeof n === "object" && n.favorite),
       build: (n) => row("📝", n.title || "Untitled note", "Note", () => switchView("notes"), () => toggleNoteFavorite(n.id)),
     },
     {
       label: "💬 Pinned chats",
-      items: loadConversations().filter((c) => c.favorite),
+      items: list(loadConversations()).filter((c) => c.favorite),
       build: (c) =>
         row(
           "💬",
