@@ -2463,16 +2463,24 @@ html.force-reduced-motion .auth-layout {
   --tracking-tight: -0.01em;
   --tracking-caps: 0.01em;
   /* -- Geometry: softly rounded, never bubbly -------------------------------------------- */
-  --r-window: 12px;
-  --r-panel: 10px;
-  --radius-xs: 5px;
-  --radius-sm: 7px;
-  --radius-md: 9px;
-  --radius-lg: 10px;
-  --radius-xl: 12px;
-  --h-control-sm: 24px;
-  --h-control: 28px;
-  --h-control-lg: 34px;
+  /* -- Corners, on one scale ------------------------------------------------------------
+     Softer than a Mac's, deliberately: H1 should feel rounded and calm rather than crisp and
+     clerical. Each step has a job, and a component picks the step for what it IS, not for how
+     big it happens to be. Fully round is reserved for chips, tags and status dots — a control
+     that is round on both ends reads as a label, not as something you press. */
+  --r-window: 34px;   /* the application window */
+  --r-panel: 28px;    /* panels: the content stage, the sidebar, large surfaces */
+  --radius-xs: 10px;  /* the smallest things: dots, tiny tags, inner details */
+  --radius-sm: 14px;  /* controls: buttons, icon buttons, segmented items */
+  --radius-md: 18px;  /* fields: inputs, search, selects, textareas */
+  --radius-lg: 22px;  /* cards */
+  --radius-xl: 26px;  /* large cards, dialogs, the composer */
+
+  /* Heights rise with the corners: a 14px radius on a 28px control is halfway to a pill, but on
+     a 36px control it reads as softly rounded, which is the intent. */
+  --h-control-sm: 30px;
+  --h-control: 36px;
+  --h-control-lg: 44px;
   --dock-h: 56px;
 
   /* -- Motion: short and flat, and nothing bounces -------------------------------------- */
@@ -2654,7 +2662,7 @@ html.force-reduced-motion .auth-layout {
   border: none;
   border-right: 0.5px solid var(--hairline);
   border-radius: 0;
-  padding: 6px 8px 8px;
+  padding: 8px 10px 10px;
   box-shadow: none;
 }
 
@@ -2664,9 +2672,9 @@ html.force-reduced-motion .auth-layout {
 }
 
 .brand-mark {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
   font-size: 11px;
   background: var(--accent-1);
   box-shadow: none;
@@ -2687,11 +2695,11 @@ html.force-reduced-motion .auth-layout {
 }
 
 .nav-item {
-  height: 28px;
-  gap: 8px;
-  padding: 0 8px;
-  margin: 1px 0;
-  border-radius: 6px;
+  height: 34px;
+  gap: 10px;
+  padding: 0 10px;
+  margin: 2px 0;
+  border-radius: var(--radius-sm);
   font-size: var(--fs-base);
   font-weight: 450;
   color: var(--text-muted);
@@ -2722,8 +2730,8 @@ html.force-reduced-motion .auth-layout {
 }
 
 .nav-active-pill {
-  height: 28px;
-  border-radius: 6px;
+  height: 34px;
+  border-radius: var(--radius-sm);
   background: rgba(var(--accent-1-rgb), 0.16);
   box-shadow: none;
 }
@@ -2743,9 +2751,9 @@ html.force-reduced-motion .auth-layout {
 }
 
 .sidebar-command-hint {
-  height: 24px;
-  margin: 0 2px 8px;
-  border-radius: 6px;
+  height: 30px;
+  margin: 0 2px 10px;
+  border-radius: var(--radius-sm);
   background: var(--field);
   border: 0.5px solid var(--hairline);
   font-size: var(--fs-xs);
@@ -2753,7 +2761,7 @@ html.force-reduced-motion .auth-layout {
 
 .sidebar-footer,
 .sidebar-account {
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: none;
   background: transparent;
 }
@@ -2763,8 +2771,8 @@ html.force-reduced-motion .auth-layout {
 }
 
 .sidebar-account .account-avatar {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   font-size: 10px;
 }
 
@@ -2792,7 +2800,7 @@ html.force-reduced-motion .auth-layout {
 .daily-inspiration {
   background: var(--card);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   box-shadow: none;
 }
 
@@ -2817,7 +2825,7 @@ html.force-reduced-motion .auth-layout {
 .note-card,
 .code-track-card {
   border: 0.5px solid var(--hairline);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   box-shadow: none;
   background: var(--card);
 }
@@ -2957,7 +2965,7 @@ html.force-reduced-motion .auth-layout {
 .quotes-featured {
   background: var(--card);
   border: 0.5px solid var(--hairline);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   box-shadow: none;
   color: var(--text);
 }
@@ -2983,7 +2991,7 @@ html.force-reduced-motion .auth-layout {
 .quotes-featured-category,
 .quotes-chip-row .chip,
 .quote-card-category {
-  border-radius: 5px;
+  border-radius: var(--radius-full);
   font-size: var(--fs-2xs);
   font-weight: 450;
   letter-spacing: 0;
@@ -2993,7 +3001,7 @@ html.force-reduced-motion .auth-layout {
 .quote-card {
   background: var(--card);
   border: 0.5px solid var(--hairline);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   box-shadow: none;
 }
 
@@ -3010,8 +3018,8 @@ html.force-reduced-motion .auth-layout {
 /* ---- Controls ---------------------------------------------------------------------------- */
 .btn {
   height: var(--h-control);
-  padding: 0 12px;
-  border-radius: 6px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
   font-size: var(--fs-base);
   font-weight: 500;
   letter-spacing: 0;
@@ -3055,9 +3063,9 @@ html.force-reduced-motion .auth-layout {
 }
 
 .icon-btn {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 11px;
   border: none;
   background: transparent;
   color: var(--text-muted);
@@ -3070,9 +3078,9 @@ html.force-reduced-motion .auth-layout {
 
 /* Contextual actions read as light text actions, not eight web buttons in a row. */
 .suggestion-chip {
-  height: 26px;
-  padding: 0 10px;
-  border-radius: 6px;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: var(--radius-full);
   border: none;
   background: var(--fill-subtle);
   font-size: var(--fs-sm);
@@ -3088,8 +3096,9 @@ html.force-reduced-motion .auth-layout {
 
 /* Subject chips keep an outline, because choosing one is a real state. */
 .chip {
-  height: 26px;
-  border-radius: 6px;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: var(--radius-full);
   border: 0.5px solid var(--hairline);
   background: transparent;
   font-size: var(--fs-sm);
@@ -3107,8 +3116,8 @@ html.force-reduced-motion .auth-layout {
 .subtabs,
 .subtab-bar,
 .auth-tabs {
-  padding: 2px;
-  border-radius: 7px;
+  padding: 3px;
+  border-radius: var(--radius-md);
   background: var(--field);
   border: 0.5px solid var(--hairline);
 }
@@ -3116,8 +3125,8 @@ html.force-reduced-motion .auth-layout {
 .segmented-btn,
 .subtab,
 .auth-tab {
-  height: 23px;
-  border-radius: 5px;
+  height: 30px;
+  border-radius: var(--radius-sm);
   font-size: var(--fs-sm);
   font-weight: 500;
 }
@@ -3137,10 +3146,10 @@ select.tool-input,
 .mode-select,
 .auth-input,
 .creator-input {
-  height: 30px;
+  height: 40px;
   padding-top: 0;
   padding-bottom: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border: 0.5px solid var(--hairline-strong);
   background: var(--field);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -3148,7 +3157,7 @@ select.tool-input,
 }
 
 .tool-textarea {
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   border: 0.5px solid var(--hairline-strong);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -3165,7 +3174,7 @@ select.tool-input,
 .attach-menu,
 .slash-menu,
 .toast {
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 0.5px solid var(--raised-border);
   background: var(--raised);
   backdrop-filter: var(--vibrancy);
@@ -3174,8 +3183,8 @@ select.tool-input,
 }
 
 .account-menu-item {
-  height: 26px;
-  border-radius: 5px;
+  height: 32px;
+  border-radius: var(--radius-sm);
   font-size: var(--fs-base);
 }
 
@@ -3185,7 +3194,7 @@ select.tool-input,
 }
 
 .modal {
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border: 0.5px solid var(--raised-border);
   background: var(--raised-solid);
   box-shadow: var(--elev-3);
@@ -3198,9 +3207,9 @@ select.tool-input,
 
 /* ---- Dock: small, translucent, out of the way -------------------------------------------- */
 .dock {
-  gap: 2px;
-  padding: 4px 6px;
-  border-radius: 14px;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: var(--radius-xl);
   background: var(--raised);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -3209,15 +3218,10 @@ select.tool-input,
 }
 
 .dock-item {
-  width: 32px;
-  height: 32px;
-  border-radius: 7px;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
   color: var(--text-muted);
-}
-
-.dock-item svg {
-  width: 17px;
-  height: 17px;
 }
 
 .dock-item:hover {
@@ -3285,8 +3289,8 @@ select.tool-input,
 }
 
 .settings-nav a {
-  height: 26px;
-  border-radius: 6px;
+  height: 30px;
+  border-radius: var(--radius-sm);
   font-size: var(--fs-sm);
 }
 
@@ -3299,7 +3303,7 @@ select.tool-input,
 .allowance,
 .creator-model,
 .creator-account {
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   border: 0.5px solid var(--hairline);
   background: var(--card);
   box-shadow: none;
@@ -3317,7 +3321,7 @@ select.tool-input,
 /* ---- The tutor ---------------------------------------------------------------------------- */
 .composer-form.composer-v2,
 .superbar {
-  border-radius: 10px;
+  border-radius: var(--radius-xl);
   border: 0.5px solid var(--hairline-strong);
   background: var(--field);
   box-shadow: var(--elev-2);
@@ -3325,7 +3329,7 @@ select.tool-input,
 
 .composer-v2 .btn-send,
 .superbar-send {
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   box-shadow: none;
 }
 
@@ -3363,9 +3367,9 @@ select.tool-input,
   --sp-7: 20px;
   --sp-8: 24px;
   --sp-10: 30px;
-  --h-control-sm: 22px;
-  --h-control: 26px;
-  --h-control-lg: 30px;
+  --h-control-sm: 26px;
+  --h-control: 32px;
+  --h-control-lg: 38px;
   --view-gap: 18px;
 }
 
@@ -3550,8 +3554,9 @@ select.tool-input,
 
 /* The question. One bubble in the conversation, so there is never any doubt who said what. */
 .message.user .bubble {
-  padding: 9px 14px;
-  border-radius: 12px 12px 4px 12px;
+  padding: 11px 16px;
+  /* Soft on three corners, tucked on the one nearest its owner. */
+  border-radius: var(--radius-xl) var(--radius-xl) 8px var(--radius-xl);
   font-size: var(--fs-md);
   line-height: 1.55;
 }
@@ -3708,4 +3713,460 @@ select.tool-input,
   .message.ai.is-streaming .bubble.answer::after {
     animation: none;
   }
+}
+
+/* =====================================================================================
+   20. Corners, finished
+   -------------------------------------------------------------------------------------
+   Everything that was still on an old corner, brought onto the scale. Each of these was found
+   by walking the running app and listing every computed radius that was not one of the scale's
+   steps — which is also how the scale is kept honest as H1 grows.
+   ===================================================================================== */
+.icon-btn,
+.icon-btn-sm {
+  border-radius: var(--radius-sm);
+}
+
+.account-avatar,
+.avatar {
+  border-radius: var(--radius-sm);
+}
+
+/* Labels and status words are the one place a full round belongs. */
+.chip,
+.quote-card-category,
+.quotes-featured-category,
+.tag,
+.pill,
+.status-pill,
+.badge {
+  border-radius: var(--radius-full);
+}
+
+.subtab,
+.subtab-btn,
+.segmented-btn {
+  border-radius: var(--radius-sm);
+}
+
+/* The periodic table: a hundred small tiles, so they get the smallest step rather than the
+   control step — at 5px they were the last sharp thing left on the page. */
+.pt-element {
+  border-radius: var(--radius-xs);
+}
+
+/* Code, tables and other blocks of content sit on the card step, one below their container. */
+.code-block,
+.message.ai .bubble pre,
+pre {
+  border-radius: var(--radius-lg);
+}
+
+.message.ai .bubble :not(pre) > code {
+  border-radius: var(--radius-xs);
+}
+
+.message.ai .bubble table,
+.data-table,
+.table-wrap {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Empty states are surfaces of their own, not holes in the page. */
+.empty-state {
+  padding: var(--sp-8) var(--sp-6);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+}
+
+/* Drop targets read as a soft dashed card rather than a boxed-off region. */
+.upload-area,
+.dropzone,
+.scan-drop {
+  border-radius: var(--radius-xl);
+}
+
+.composer-form.composer-v2 {
+  border-radius: var(--radius-xl);
+}
+
+.composer-v2 .btn-send,
+.btn-send {
+  border-radius: var(--radius-sm);
+}
+
+/* A panel inside the window is flush with it, so it has no corners of its own to round; the
+   window's 34px does that job. Everything that floats gets the panel step. */
+.tool-panel,
+.notes-pane,
+.editor-pane {
+  border-radius: var(--r-panel);
+}
+
+/* =====================================================================================
+   21. Soft depth and tactile states
+   -------------------------------------------------------------------------------------
+   Depth comes from a faint layered surface and a shadow you have to look for, not from an
+   outline. Interactive things answer the pointer within about a tenth of a second: a card
+   rises a hair, a control compresses a hair, and nothing changes colour dramatically.
+   ===================================================================================== */
+.bento-tile.clickable,
+.doc-card,
+.deck-card,
+.project-card,
+.subject-card,
+.note-card,
+.code-track-card,
+.quote-card,
+.tool-card-sm {
+  transition: transform var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+  will-change: auto;
+}
+
+.bento-tile.clickable:hover,
+.doc-card:hover,
+.deck-card:hover,
+.project-card:hover,
+.subject-card:hover,
+.note-card:hover,
+.code-track-card:hover,
+.quote-card:hover,
+.tool-card-sm:hover {
+  transform: translateY(-1px);
+  background: var(--card-hover);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+}
+
+:root[data-theme="light"] .bento-tile.clickable:hover,
+:root[data-theme="light"] .doc-card:hover,
+:root[data-theme="light"] .deck-card:hover,
+:root[data-theme="light"] .project-card:hover,
+:root[data-theme="light"] .subject-card:hover,
+:root[data-theme="light"] .note-card:hover,
+:root[data-theme="light"] .code-track-card:hover,
+:root[data-theme="light"] .quote-card:hover,
+:root[data-theme="light"] .tool-card-sm:hover {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
+}
+
+.bento-tile.clickable:active,
+.doc-card:active,
+.deck-card:active,
+.project-card:active,
+.quote-card:active,
+.tool-card-sm:active {
+  transform: translateY(0) scale(0.995);
+  box-shadow: none;
+}
+
+/* A control that cannot be used says so quietly, and stops responding to the pointer. */
+.btn:disabled,
+.icon-btn:disabled,
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none;
+}
+
+/* Toggles: a real switch, with the thumb travelling rather than blinking. */
+.toggle {
+  transition: background var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+}
+
+.toggle-thumb {
+  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-1) var(--ease-out);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+}
+
+.toggle:active .toggle-thumb {
+  transform: scale(0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-tile.clickable:hover,
+  .doc-card:hover,
+  .deck-card:hover,
+  .project-card:hover,
+  .subject-card:hover,
+  .note-card:hover,
+  .code-track-card:hover,
+  .quote-card:hover,
+  .tool-card-sm:hover {
+    transform: none;
+  }
+}
+
+/* =====================================================================================
+   22. Settings, and the answer as a workspace
+   ===================================================================================== */
+/* Each settings group is a soft card again, with the rows inside it separated by hairlines
+   rather than by more cards. Same information, same order, same controls — just gathered onto
+   a surface instead of floating on the page. */
+.settings-section {
+  padding: var(--sp-6) var(--sp-7) var(--sp-7);
+  border: none;
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  box-shadow: none;
+}
+
+.settings-section h2 {
+  margin: 0 0 var(--sp-1);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
+.settings-section > .settings-hint:first-of-type {
+  margin-bottom: var(--sp-5);
+}
+
+.settings-section.danger-zone {
+  background: color-mix(in srgb, var(--danger) 7%, var(--card));
+}
+
+.toggle-row,
+.danger-row {
+  padding: var(--sp-3) 0;
+  border-top: 1px solid var(--hairline);
+}
+
+/* The answer: a workspace, not a bubble. It keeps the whole width it had and gains a surface so
+   it reads as its own place on the page — a faint one, with no border, because an outline would
+   put it back in a box. */
+.chat-log .message.ai .bubble.answer {
+  padding: var(--sp-5) var(--sp-6) var(--sp-6);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  border: none;
+  box-shadow: none;
+}
+
+:root[data-theme="light"] .chat-log .message.ai .bubble.answer {
+  background: var(--card);
+}
+
+/* The composer belongs to the same workspace, so it lines up with it and shares its corner. */
+.composer-form.composer-v2 {
+  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-5);
+}
+
+/* A streaming answer breathes rather than blinks. */
+.message.ai.is-streaming .bubble.answer {
+  background: color-mix(in srgb, var(--accent-1) 4%, var(--card));
+}
+
+/* =====================================================================================
+   23. Nothing interactive is silent
+   -------------------------------------------------------------------------------------
+   Found by walking the running app and comparing each kind of control at rest, under the
+   pointer and under keyboard focus. Anything that looked identical in all three is answered
+   here. The selected state of a control needed its own hover too: a chip or an index link that
+   was already selected used to sit under the pointer with nothing to say.
+   ===================================================================================== */
+.segmented-btn:hover:not(.active) {
+  background: var(--fill-subtle);
+  color: var(--text);
+}
+
+.segmented-btn.active:hover {
+  filter: brightness(1.06);
+}
+
+.chip.active:hover,
+.chip[aria-checked="true"]:hover {
+  background: rgba(var(--accent-1-rgb), 0.24);
+}
+
+.settings-nav a.is-current:hover {
+  background: rgba(var(--accent-1-rgb), 0.24);
+}
+
+.nav-item.active:hover .nav-active-pill,
+.nav-item.active:hover ~ .nav-active-pill {
+  background: rgba(var(--accent-1-rgb), 0.22);
+}
+
+/* The switch: the track lightens under the pointer, and the whole control takes a focus ring as
+   one piece rather than the thumb taking it alone. */
+.toggle:hover {
+  background: var(--fill-hover);
+}
+
+.toggle.on:hover {
+  filter: brightness(1.08);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 3px;
+}
+
+/* Tiles that lead somewhere say so under the pointer; tiles that are only reporting a number do
+   not pretend to be buttons. */
+.bento-tile.clickable {
+  cursor: pointer;
+}
+
+.bento-tile.clickable:hover {
+  background: var(--card-hover);
+}
+
+/* Cards that are a single link get a keyboard stop of their own, so a card is not reachable by
+   mouse only. */
+.doc-card,
+.deck-card,
+.project-card,
+.note-card,
+.quote-card {
+  scroll-margin-block: var(--sp-6);
+}
+
+.doc-card:focus-visible,
+.deck-card:focus-visible,
+.project-card:focus-visible,
+.note-card:focus-visible,
+.quote-card:focus-visible,
+.bento-tile.clickable:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 3px;
+}
+
+/* =====================================================================================
+   24. Icons on one scale
+   -------------------------------------------------------------------------------------
+   The icons were drawn at whatever size each piece of markup asked for — 12, 13, 15, 17, 19 —
+   which reads as a wobble even when nothing else is wrong. Three sizes now: small for dense
+   rows, default for controls, large for the dock. The SVGs carry width/height attributes, so
+   these rules have to set both.
+   ===================================================================================== */
+:root {
+  --icon-sm: 14px;
+  --icon: 16px;
+  --icon-lg: 18px;
+}
+
+.nav-item svg,
+.icon-btn svg,
+.icon-btn-sm svg,
+.btn svg,
+.chip svg,
+.suggestion-chip svg,
+.segmented-btn svg,
+.settings-nav svg,
+.account-menu-item svg,
+.toolbar-btn svg {
+  width: var(--icon);
+  height: var(--icon);
+  flex: 0 0 auto;
+}
+
+.sidebar-command-hint svg,
+.sidebar-account svg,
+.space-switcher-btn svg,
+.bento-tile-eyebrow svg,
+.tile-eyebrow svg,
+.status-row svg,
+.answer-actions svg {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  flex: 0 0 auto;
+}
+
+.dock-item svg,
+.composer-tool svg,
+.btn-send svg,
+.superbar-send svg,
+.empty-state svg {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  flex: 0 0 auto;
+}
+
+/* Two small controls were a few pixels off the height scale, which showed up as a jagged edge
+   wherever they sat beside a button. */
+.quote-fav-btn,
+.quote-copy-btn,
+.quote-share-btn,
+.quote-card-footer button {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+}
+
+.space-switcher-btn {
+  height: var(--h-control-sm);
+}
+
+/* On a phone every control has to be comfortable to hit with a thumb. The actions under an
+   answer were 26px, which is fine for a pointer and not for a finger. */
+@media (max-width: 899px) {
+  .msg-more-btn,
+  .msg-copy-btn,
+  .answer-actions button,
+  .quote-card-footer button {
+    width: 34px;
+    height: 34px;
+  }
+
+  .icon-btn,
+  .icon-btn-sm {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* On the narrowest phones the tutor toolbar has more controls than there are pixels, so it
+   scrolls sideways the way the subject row does rather than pushing past the panel edge. */
+@media (max-width: 430px) {
+  .view-actions.chat-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+
+  .view-actions.chat-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .view-actions.chat-toolbar > * {
+    flex: 0 0 auto;
+  }
+}
+
+/* =====================================================================================
+   25. Surfaces you can actually see
+   -------------------------------------------------------------------------------------
+   The card wash was so faint (3% white) that two cards side by side read as one banded block
+   with a seam down it rather than as two objects. A touch more presence, a touch more air
+   between them, and the greeting lifted out of a card it never needed.
+   ===================================================================================== */
+:root {
+  --card-material: rgba(255, 255, 255, 0.05);
+  --card-hover: rgba(255, 255, 255, 0.075);
+}
+
+:root[data-theme="light"] {
+  --card-material: rgba(15, 23, 42, 0.035);
+  --card-hover: rgba(15, 23, 42, 0.055);
+}
+
+.bento {
+  gap: var(--sp-4);
+}
+
+/* The greeting is a heading, not a widget. */
+.bento-tile.bento-hero {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.bento-tile.bento-hero:hover {
+  background: transparent;
 }
