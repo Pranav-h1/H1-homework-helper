@@ -44,7 +44,9 @@ export function getTextSize() {
 export function applyTextSize(value) {
   const size = known(TEXT_SIZES, value, "default");
   const { scale } = TEXT_SIZES.find((s) => s.value === size);
-  document.documentElement.style.setProperty("--fs-scale", String(scale));
+  // The scale is --fs-user x --fs-viewport: this sets the person s half, and the stylesheet
+  // tempers it on smaller screens through the other.
+  document.documentElement.style.setProperty("--fs-user", String(scale));
   document.documentElement.setAttribute("data-text-size", size);
   return size;
 }

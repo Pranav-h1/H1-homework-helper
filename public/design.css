@@ -2448,20 +2448,24 @@ html.force-reduced-motion .auth-layout {
      size sets (0.92 / 1 / 1.1). Nothing else in H1 needs to know the setting exists. */
   --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Lexend, system-ui, sans-serif;
-  --fs-scale: 1;
-  /* Sized for a desktop application rather than a web page: the body sits at 15px, a section
-     title at 19, a page title at 30 and a greeting at 38, with each step far enough from the
-     last to be read as a different level rather than as the same text slightly bigger. */
-  --fs-2xs: calc(12px * var(--fs-scale));
-  --fs-xs: calc(13px * var(--fs-scale));
-  --fs-sm: calc(14px * var(--fs-scale));
-  --fs-base: calc(15px * var(--fs-scale));
-  --fs-md: calc(16px * var(--fs-scale));
-  --fs-lg: calc(19px * var(--fs-scale));
-  --fs-xl: calc(24px * var(--fs-scale));
-  --fs-2xl: calc(30px * var(--fs-scale));
-  --fs-3xl: calc(38px * var(--fs-scale));
-  --lh-body: 1.7;
+  /* The scale is two numbers multiplied: --fs-user is the person's choice in Settings, and
+     --fs-viewport is how much of it the screen can carry. A phone gets the same hierarchy at
+     nine tenths the size rather than a different design. */
+  --fs-user: 1;
+  --fs-viewport: 1;
+  --fs-scale: calc(var(--fs-user) * var(--fs-viewport));
+  /* Body at 16px, a card title at 18, a section heading at 21, a page title at 34 and the
+     greeting at 44 — the proportions of an application someone sits in front of all evening. */
+  --fs-2xs: calc(13px * var(--fs-scale));
+  --fs-xs: calc(14px * var(--fs-scale));
+  --fs-sm: calc(15px * var(--fs-scale));
+  --fs-base: calc(16px * var(--fs-scale));
+  --fs-md: calc(18px * var(--fs-scale));
+  --fs-lg: calc(21px * var(--fs-scale));
+  --fs-xl: calc(27px * var(--fs-scale));
+  --fs-2xl: calc(34px * var(--fs-scale));
+  --fs-3xl: calc(44px * var(--fs-scale));
+  --lh-body: 1.72;
   --lh-snug: 1.5;
   --tracking-tight: -0.01em;
   --tracking-caps: 0.01em;
@@ -2471,33 +2475,39 @@ html.force-reduced-motion .auth-layout {
      clerical. Each step has a job, and a component picks the step for what it IS, not for how
      big it happens to be. Fully round is reserved for chips, tags and status dots — a control
      that is round on both ends reads as a label, not as something you press. */
-  --r-window: 36px;   /* the application window */
-  --r-panel: 28px;    /* panels: the content stage, the sidebar, large surfaces */
+  --r-window: 38px;   /* the application window */
+  --r-panel: 30px;    /* panels: the content stage, the sidebar, large surfaces */
   --radius-xs: 10px;  /* the smallest things: dots, tiny tags, inner details */
-  --radius-sm: 16px;  /* controls: buttons, icon buttons, segmented items */
-  --radius-md: 20px;  /* fields: inputs, search, selects, textareas */
-  --radius-lg: 24px;  /* cards */
-  --radius-xl: 30px;  /* large cards, dialogs, the composer */
+  --radius-sm: 18px;  /* controls: buttons, icon buttons, segmented items */
+  --radius-md: 22px;  /* fields: inputs, search, selects, textareas */
+  --radius-lg: 26px;  /* cards */
+  --radius-xl: 32px;  /* large cards, dialogs, the composer */
 
   /* Heights rise with the corners: a 14px radius on a 28px control is halfway to a pill, but on
      a 36px control it reads as softly rounded, which is the intent. */
-  --h-control-sm: 34px;
-  --h-control: 42px;
-  --h-control-lg: 50px;
-  --h-field: 46px;
-  --dock-h: 64px;
-  --sidebar-w: 268px;
+  --h-control-sm: 38px;
+  --h-control: 46px;
+  --h-control-lg: 56px;
+  --h-field: 52px;
+  --dock-h: 70px;
+  --sidebar-w: 292px;
+  --card-pad: var(--sp-7);
+  --panel-pad: var(--sp-10);
 
   /* Two more steps at the top of the spacing scale, for the air between big surfaces. */
   --sp-12: 48px;
   --sp-14: 56px;
 
   /* -- Motion: short and flat, and nothing bounces -------------------------------------- */
-  --dur-1: 110ms;
-  --dur-2: 160ms;
-  --dur-3: 220ms;
-  --ease-out: cubic-bezier(0.25, 0.1, 0.25, 1);
-  --ease-spring: cubic-bezier(0.25, 0.1, 0.25, 1);
+  /* Slower, and on one gentle curve. A state change should look like it settled rather than
+     like it snapped: a hover reads in 200ms, a panel in 320, something entering the screen in
+     440. Nothing springs, nothing bounces. */
+  --dur-1: 200ms;
+  --dur-2: 320ms;
+  --dur-3: 440ms;
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0.05, 0.2, 1);
+  --ease-spring: cubic-bezier(0.22, 0.61, 0.36, 1);
   /* -- Opacity: glass is Apple's medium, so the slider may go a long way down ------------- */
   --alpha-surface-floor: 0.1;
   --alpha-overlay-floor: 0.58;
@@ -3376,10 +3386,10 @@ select.tool-input,
   --sp-7: 20px;
   --sp-8: 24px;
   --sp-10: 30px;
-  --h-control-sm: 30px;
-  --h-control: 36px;
-  --h-control-lg: 44px;
-  --h-field: 40px;
+  --h-control-sm: 34px;
+  --h-control: 40px;
+  --h-control-lg: 48px;
+  --h-field: 46px;
   --view-gap: 18px;
 }
 
@@ -4790,4 +4800,543 @@ select.tool-input,
 .docs-layout,
 .split-layout {
   gap: var(--sp-6);
+}
+
+/* =====================================================================================
+   30. Operating-system scale
+   -------------------------------------------------------------------------------------
+   The type and the controls went up another step, so every surface around them is re-cut to
+   match: the title bar becomes a place rather than a strip, the sidebar gets room to breathe,
+   cards get real padding, and the tutor becomes the widest, calmest thing on screen.
+
+   Everything here reads the tokens above. There are no new numbers in this section that are not
+   derived from the scale, which is what keeps a change to the scale a change to the whole app.
+   ===================================================================================== */
+
+/* ---- The title bar, with the clock as its subject ------------------------------------------ */
+.desktop-topbar {
+  height: 84px;
+  padding: 0 var(--sp-6) 0 var(--sp-7);
+  gap: var(--sp-4);
+}
+
+.topbar-title {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.traffic-lights {
+  gap: 10px;
+  margin-right: var(--sp-4);
+}
+
+.traffic-light {
+  width: 14px;
+  height: 14px;
+}
+
+/* The clock. Large, light and quiet — the one piece of type in the chrome that is allowed to be
+   big, because it is the thing you glance at without meaning to. */
+.topbar-clock {
+  align-items: flex-end;
+  gap: 2px;
+  height: auto;
+  padding: var(--sp-2) var(--sp-4);
+  margin-right: var(--sp-2);
+  border-radius: var(--radius-md);
+  line-height: 1.05;
+}
+
+.topbar-clock .clock-time {
+  font-size: calc(32px * var(--fs-scale));
+  font-weight: 320;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  /* The minute changes once an hour-and-a-bit's worth of glances; when it does, it fades rather
+     than flicks. clock.js dips the opacity, waits, and writes the new value underneath. */
+  transition: opacity var(--dur-3) var(--ease-in-out);
+}
+
+.topbar-clock .clock-time.is-changing {
+  opacity: 0.32;
+}
+
+.topbar-clock .clock-date {
+  font-size: var(--fs-sm);
+  font-weight: 450;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  transition: opacity var(--dur-3) var(--ease-in-out);
+}
+
+.topbar-clock .clock-date.is-changing {
+  opacity: 0.32;
+}
+
+.topbar-status {
+  height: var(--h-control-sm);
+  padding: 0 var(--sp-4);
+  font-size: var(--fs-sm);
+}
+
+.space-switcher-btn {
+  height: var(--h-control-sm);
+  padding: 0 var(--sp-4);
+  font-size: var(--fs-sm);
+}
+
+.topbar-actions {
+  gap: var(--sp-1);
+}
+
+/* ---- Sidebar --------------------------------------------------------------------------------- */
+.sidebar {
+  padding: var(--sp-4) var(--sp-4) var(--sp-5);
+}
+
+.brand {
+  padding: var(--sp-3) var(--sp-3) var(--sp-6);
+}
+
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  font-size: var(--fs-sm);
+}
+
+.brand-name {
+  font-size: var(--fs-lg);
+  font-weight: 620;
+}
+
+.nav-item {
+  height: 46px;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-3);
+  margin: 3px 0;
+  font-size: var(--fs-base);
+  font-weight: 500;
+}
+
+.nav-active-pill {
+  height: 46px;
+}
+
+.nav-item svg {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+}
+
+.nav-section-label {
+  padding: var(--sp-6) var(--sp-3) var(--sp-2);
+  font-size: var(--fs-xs);
+}
+
+.sidebar-command-hint {
+  height: 44px;
+  margin: 0 2px var(--sp-4);
+  font-size: var(--fs-sm);
+}
+
+.sidebar-account {
+  height: 64px;
+  padding: 0 var(--sp-3);
+}
+
+.sidebar-account .account-avatar {
+  width: 40px;
+  height: 40px;
+  font-size: var(--fs-sm);
+}
+
+/* ---- The stage ---------------------------------------------------------------------------------- */
+.main-view {
+  padding: var(--sp-10) var(--panel-pad);
+  gap: var(--sp-7);
+}
+
+.view {
+  gap: var(--sp-10);
+}
+
+.view-header h1,
+.page-header h1 {
+  font-size: var(--fs-2xl);
+  font-weight: 650;
+  letter-spacing: -0.022em;
+}
+
+.view-header p,
+.page-header p,
+.view-sub {
+  font-size: var(--fs-md);
+  line-height: 1.6;
+}
+
+/* ---- Cards ------------------------------------------------------------------------------------- */
+.bento {
+  gap: var(--sp-6);
+}
+
+.bento-tile,
+.tool-card-sm,
+.result-card,
+.ch-card,
+.daily-inspiration,
+.doc-card,
+.deck-card,
+.project-card,
+.subject-card,
+.note-card,
+.code-track-card,
+.quote-card,
+.planner-item,
+.task-row {
+  padding: var(--card-pad);
+}
+
+.bento-tile-title,
+.card-title,
+.doc-card-name,
+.deck-card-topic,
+.project-card-title,
+.note-card-title {
+  font-size: var(--fs-md);
+  font-weight: 620;
+}
+
+.bento-tile-sub,
+.card-sub {
+  font-size: var(--fs-base);
+  line-height: 1.6;
+}
+
+/* ---- Home --------------------------------------------------------------------------------------- */
+.hero-greeting {
+  font-size: var(--fs-3xl);
+  font-weight: 640;
+  letter-spacing: -0.028em;
+}
+
+.hero-sub,
+.hero-desc {
+  font-size: var(--fs-md);
+}
+
+.hero-stat-pill strong {
+  font-size: var(--fs-xl);
+}
+
+.hero-stat-pill span {
+  font-size: var(--fs-sm);
+}
+
+/* ---- Controls ------------------------------------------------------------------------------------ */
+.btn {
+  padding: 0 var(--sp-6);
+  font-size: var(--fs-base);
+}
+
+.icon-btn,
+.icon-btn-sm {
+  width: 44px;
+  height: 44px;
+}
+
+.chip,
+.suggestion-chip {
+  height: 42px;
+  padding: 0 var(--sp-5);
+  font-size: var(--fs-base);
+}
+
+.segmented-btn,
+.subtab,
+.subtab-btn,
+.auth-tab {
+  height: 42px;
+  padding: 0 var(--sp-5);
+  font-size: var(--fs-base);
+}
+
+input.tool-input,
+select.tool-input,
+.notes-search,
+.history-search-input,
+.mode-select,
+.auth-input,
+.creator-input {
+  padding-left: var(--sp-5);
+  padding-right: var(--sp-5);
+  font-size: var(--fs-base);
+}
+
+.tool-textarea,
+.note-body-input,
+textarea {
+  padding: var(--sp-4) var(--sp-5);
+  font-size: var(--fs-base);
+  line-height: 1.7;
+}
+
+/* ---- The tutor: the widest, calmest thing on screen ------------------------------------------------ */
+.chat-log .message.ai .bubble.answer {
+  padding: var(--sp-8) var(--sp-10);
+  font-size: var(--fs-md);
+  line-height: 1.8;
+}
+
+.message.user .bubble {
+  padding: var(--sp-4) var(--sp-6);
+  font-size: var(--fs-md);
+}
+
+.composer-form.composer-v2 {
+  padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-6);
+  border-radius: var(--radius-xl);
+}
+
+.composer-v2 .composer-input {
+  min-height: 40px;
+  font-size: var(--fs-md);
+  line-height: 1.65;
+}
+
+.composer-v2 .btn-send {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+}
+
+.composer-hint {
+  font-size: var(--fs-sm);
+}
+
+/* ---- Settings ---------------------------------------------------------------------------------------- */
+.settings-section {
+  padding: var(--sp-8) var(--sp-10) var(--sp-10);
+}
+
+.settings-section h2 {
+  font-size: var(--fs-xl);
+  font-weight: 640;
+}
+
+.settings-hint {
+  font-size: var(--fs-base);
+  line-height: 1.6;
+}
+
+.field-label {
+  margin: var(--sp-7) 0 var(--sp-3);
+  font-size: var(--fs-md);
+  font-weight: 560;
+}
+
+.toggle-row,
+.danger-row {
+  padding: var(--sp-5) 0;
+  font-size: var(--fs-md);
+}
+
+.toggle-row small,
+.danger-row-text span {
+  font-size: var(--fs-sm);
+}
+
+.toggle {
+  width: 58px;
+  height: 34px;
+}
+
+.toggle-thumb {
+  width: 28px;
+  height: 28px;
+}
+
+.toggle.on .toggle-thumb {
+  transform: translateX(24px);
+}
+
+.settings-nav a {
+  height: 42px;
+  font-size: var(--fs-base);
+}
+
+/* ---- Menus, dialogs, toasts ------------------------------------------------------------------------- */
+.account-menu-item {
+  height: 46px;
+  padding: 0 var(--sp-4);
+  font-size: var(--fs-base);
+}
+
+.modal {
+  padding: var(--sp-10);
+  border-radius: var(--radius-xl);
+}
+
+.modal h2,
+.modal h3 {
+  font-size: var(--fs-xl);
+  font-weight: 640;
+}
+
+.modal p {
+  font-size: var(--fs-md);
+  line-height: 1.6;
+}
+
+.toast {
+  padding: var(--sp-4) var(--sp-6);
+  font-size: var(--fs-base);
+}
+
+/* ---- The sign-in screen ------------------------------------------------------------------------------ */
+.auth-card {
+  padding: var(--sp-10);
+  border-radius: var(--radius-xl);
+}
+
+.auth-card h1,
+.auth-hero h1 {
+  font-size: var(--fs-2xl);
+  font-weight: 650;
+  letter-spacing: -0.022em;
+}
+
+.auth-hero p,
+.auth-card p {
+  font-size: var(--fs-md);
+  line-height: 1.6;
+}
+
+.auth-submit,
+.auth-card .btn {
+  height: var(--h-control-lg);
+  font-size: var(--fs-md);
+}
+
+/* ---- Code -------------------------------------------------------------------------------------------- */
+.code-editor,
+.code-output,
+.CodeMirror,
+.code-area {
+  font-size: var(--fs-base);
+  line-height: 1.7;
+}
+
+.message.ai .bubble pre code,
+.code-block code {
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+
+/* ---- The dock ------------------------------------------------------------------------------------------ */
+.dock {
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+}
+
+.dock-item {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+}
+
+/* ---- Empty states --------------------------------------------------------------------------------------- */
+.empty-state {
+  padding: var(--sp-14) var(--sp-10);
+  max-width: 720px;
+}
+
+.empty-state h2 {
+  font-size: var(--fs-xl);
+}
+
+.empty-state p {
+  font-size: var(--fs-md);
+}
+
+/* ---- Screens that cannot carry the full scale ------------------------------------------------------------ */
+@media (max-width: 1280px) {
+  :root {
+    --fs-viewport: 0.94;
+  }
+}
+
+@media (max-width: 899px) {
+  :root {
+    --fs-viewport: 0.88;
+    --panel-pad: var(--sp-5);
+    --card-pad: var(--sp-5);
+  }
+
+  .topbar-clock .clock-time {
+    font-size: calc(24px * var(--fs-scale));
+  }
+
+  .nav-item,
+  .nav-active-pill {
+    height: 44px;
+  }
+
+  .chat-log .message.ai .bubble.answer {
+    padding: var(--sp-5);
+  }
+
+  .settings-section {
+    padding: var(--sp-6);
+  }
+
+  .modal {
+    padding: var(--sp-6);
+  }
+}
+
+@media (max-width: 430px) {
+  :root {
+    --fs-viewport: 0.85;
+  }
+}
+
+/* The sidebar holds 23 destinations. At 46px each with generous group spacing, two thirds of
+   them were below the fold; at 42px with tighter group headings the list is still comfortable to
+   read and click, and far more of it is in view at once. */
+.nav-item,
+.nav-active-pill {
+  height: 42px;
+}
+
+.nav-item {
+  margin: 2px 0;
+}
+
+.nav-section-label {
+  padding: var(--sp-4) var(--sp-3) 2px;
+}
+
+.sidebar-scroll {
+  scrollbar-width: thin;
+}
+
+/* At phone width the account card squeezed its description into a four-word column between the
+   avatar and the button. It stacks instead, which also gives the button a full-width target. */
+@media (max-width: 560px) {
+  .account-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-4);
+  }
+
+  .account-card .btn {
+    width: 100%;
+  }
+
+  .account-card-text {
+    width: 100%;
+  }
 }

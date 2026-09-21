@@ -172,7 +172,7 @@ export function describeZone(date = new Date(), value = getStoredRegion()) {
 export function setRegion(value) {
   const region = findRegion(value) ? value : DEVICE_REGION;
   safeSet(KEY, region);
-  render();
+  render({ immediate: true });
   listeners.forEach((cb) => {
     try {
       cb(region);
@@ -188,18 +188,47 @@ export function onRegionChange(cb) {
   return () => listeners.delete(cb);
 }
 
+// The minute changing is the only thing on screen that moves without being asked, so it should
+// look like it settled rather than like it flicked: the old value dims, the new one is written
+// underneath it, and it comes back up. Nothing moves and nothing scales. Anyone who has asked
+// for reduced motion just gets the new value.
+const FADE_MS = 260;
+
+function prefersReducedMotion() {
+  try {
+    return document.documentElement.classList.contains("force-reduced-motion") || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch {
+    return false;
+  }
+}
+
+function softSet(el, value, immediate) {
+  if (el.textContent === value) return;
+  // The placeholder in the markup is not a value anyone read, so the first real time is
+  // written straight in rather than faded up from a row of dashes.
+  if (immediate || !el.textContent || el.textContent.includes("--") || prefersReducedMotion()) {
+    el.textContent = value;
+    return;
+  }
+  el.classList.add("is-changing");
+  window.setTimeout(() => {
+    el.textContent = value;
+    el.classList.remove("is-changing");
+  }, FADE_MS);
+}
+
 // --- the clock itself ------------------------------------------------------------------------
-export function render() {
+export function render({ immediate = false } = {}) {
   const now = new Date();
   const time = formatTime(now);
   const long = formatDate(now);
   const short = formatShortDate(now);
   const zone = describeZone(now);
   document.querySelectorAll("[data-clock-time]").forEach((el) => {
-    el.textContent = time;
+    softSet(el, time, immediate);
   });
   document.querySelectorAll("[data-clock-date]").forEach((el) => {
-    el.textContent = el.dataset.clockDate === "short" ? short : long;
+    softSet(el, el.dataset.clockDate === "short" ? short : long, immediate);
   });
   document.querySelectorAll("[data-clock]").forEach((el) => {
     el.title = `${long} · ${zone}`;
@@ -223,7 +252,7 @@ function schedule() {
 }
 
 export function initClock() {
-  render();
+  render({ immediate: true });
   schedule();
   // A laptop that was asleep, or a tab left in the background, comes back to a stale clock —
   // and a background tab's timers are throttled, so the tick may be minutes late.

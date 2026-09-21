@@ -2924,11 +2924,26 @@ textarea::placeholder {
   }
 
   .chip span:not(.chip-icon) {
-    display: none;
+    display: inline;
   }
 
   .chip {
-    padding: 9px 12px;
+    padding: 0 var(--sp-4);
+  }
+
+  .subject-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .subject-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .subject-bar .chip {
+    flex: 0 0 auto;
   }
 
   .quiz-question-card, .tool-panel {
