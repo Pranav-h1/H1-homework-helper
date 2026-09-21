@@ -2449,17 +2449,20 @@ html.force-reduced-motion .auth-layout {
   --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Lexend, system-ui, sans-serif;
   --fs-scale: 1;
-  --fs-2xs: calc(10.5px * var(--fs-scale));
-  --fs-xs: calc(11.5px * var(--fs-scale));
-  --fs-sm: calc(12.5px * var(--fs-scale));
-  --fs-base: calc(13px * var(--fs-scale));
-  --fs-md: calc(14px * var(--fs-scale));
-  --fs-lg: calc(16px * var(--fs-scale));
-  --fs-xl: calc(19px * var(--fs-scale));
-  --fs-2xl: calc(22px * var(--fs-scale));
-  --fs-3xl: calc(26px * var(--fs-scale));
-  --lh-body: 1.65;
-  --lh-snug: 1.45;
+  /* Sized for a desktop application rather than a web page: the body sits at 15px, a section
+     title at 19, a page title at 30 and a greeting at 38, with each step far enough from the
+     last to be read as a different level rather than as the same text slightly bigger. */
+  --fs-2xs: calc(12px * var(--fs-scale));
+  --fs-xs: calc(13px * var(--fs-scale));
+  --fs-sm: calc(14px * var(--fs-scale));
+  --fs-base: calc(15px * var(--fs-scale));
+  --fs-md: calc(16px * var(--fs-scale));
+  --fs-lg: calc(19px * var(--fs-scale));
+  --fs-xl: calc(24px * var(--fs-scale));
+  --fs-2xl: calc(30px * var(--fs-scale));
+  --fs-3xl: calc(38px * var(--fs-scale));
+  --lh-body: 1.7;
+  --lh-snug: 1.5;
   --tracking-tight: -0.01em;
   --tracking-caps: 0.01em;
   /* -- Geometry: softly rounded, never bubbly -------------------------------------------- */
@@ -2468,20 +2471,26 @@ html.force-reduced-motion .auth-layout {
      clerical. Each step has a job, and a component picks the step for what it IS, not for how
      big it happens to be. Fully round is reserved for chips, tags and status dots — a control
      that is round on both ends reads as a label, not as something you press. */
-  --r-window: 34px;   /* the application window */
+  --r-window: 36px;   /* the application window */
   --r-panel: 28px;    /* panels: the content stage, the sidebar, large surfaces */
   --radius-xs: 10px;  /* the smallest things: dots, tiny tags, inner details */
-  --radius-sm: 14px;  /* controls: buttons, icon buttons, segmented items */
-  --radius-md: 18px;  /* fields: inputs, search, selects, textareas */
-  --radius-lg: 22px;  /* cards */
-  --radius-xl: 26px;  /* large cards, dialogs, the composer */
+  --radius-sm: 16px;  /* controls: buttons, icon buttons, segmented items */
+  --radius-md: 20px;  /* fields: inputs, search, selects, textareas */
+  --radius-lg: 24px;  /* cards */
+  --radius-xl: 30px;  /* large cards, dialogs, the composer */
 
   /* Heights rise with the corners: a 14px radius on a 28px control is halfway to a pill, but on
      a 36px control it reads as softly rounded, which is the intent. */
-  --h-control-sm: 30px;
-  --h-control: 36px;
-  --h-control-lg: 44px;
-  --dock-h: 56px;
+  --h-control-sm: 34px;
+  --h-control: 42px;
+  --h-control-lg: 50px;
+  --h-field: 46px;
+  --dock-h: 64px;
+  --sidebar-w: 268px;
+
+  /* Two more steps at the top of the spacing scale, for the air between big surfaces. */
+  --sp-12: 48px;
+  --sp-14: 56px;
 
   /* -- Motion: short and flat, and nothing bounces -------------------------------------- */
   --dur-1: 110ms;
@@ -3367,9 +3376,10 @@ select.tool-input,
   --sp-7: 20px;
   --sp-8: 24px;
   --sp-10: 30px;
-  --h-control-sm: 26px;
-  --h-control: 32px;
-  --h-control-lg: 38px;
+  --h-control-sm: 30px;
+  --h-control: 36px;
+  --h-control-lg: 44px;
+  --h-field: 40px;
   --view-gap: 18px;
 }
 
@@ -4169,4 +4179,615 @@ button:disabled {
 
 .bento-tile.bento-hero:hover {
   background: transparent;
+}
+
+/* =====================================================================================
+   26. Rebalanced for the larger scale
+   -------------------------------------------------------------------------------------
+   Type and controls grew, so everything around them is re-proportioned: padding, the gaps
+   between surfaces, the chrome, the reading measure. Growing the type alone would have left an
+   interface that reads big and feels cramped, which is the opposite of the intent.
+   ===================================================================================== */
+
+/* ---- The window and its chrome ------------------------------------------------------------ */
+.desktop-topbar {
+  height: 52px;
+  padding: 0 14px 0 18px;
+  gap: 10px;
+}
+
+.topbar-title {
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+.traffic-lights {
+  gap: 9px;
+  margin-right: 10px;
+}
+
+.traffic-light {
+  width: 13px;
+  height: 13px;
+}
+
+.topbar-status,
+.space-switcher-btn {
+  height: var(--h-control-sm);
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-sm);
+}
+
+.topbar-actions {
+  gap: 4px;
+}
+
+/* ---- Sidebar ------------------------------------------------------------------------------- */
+.sidebar {
+  padding: 10px 12px 12px;
+}
+
+.brand {
+  padding: 8px 8px 16px;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  font-size: var(--fs-sm);
+}
+
+.brand-name {
+  font-size: var(--fs-lg);
+}
+
+.brand-tagline {
+  font-size: var(--fs-2xs);
+}
+
+.nav-item {
+  height: 40px;
+  gap: 12px;
+  padding: 0 12px;
+  margin: 2px 0;
+  font-size: var(--fs-base);
+}
+
+.nav-active-pill {
+  height: 40px;
+}
+
+.nav-section-label {
+  padding: 18px 12px 6px;
+  font-size: var(--fs-xs);
+}
+
+.sidebar-command-hint {
+  height: 38px;
+  margin: 0 2px 12px;
+  font-size: var(--fs-sm);
+}
+
+.sidebar-account {
+  height: 56px;
+  padding: 0 10px;
+}
+
+.sidebar-account .account-avatar {
+  width: 34px;
+  height: 34px;
+  font-size: var(--fs-sm);
+}
+
+/* ---- The content stage --------------------------------------------------------------------- */
+.main-view {
+  padding: var(--sp-8) calc(var(--sp-10) + 8px);
+  gap: var(--sp-6);
+}
+
+.view {
+  gap: var(--sp-8);
+}
+
+.view-header,
+.page-header {
+  padding-bottom: var(--sp-5);
+}
+
+.view-header h1,
+.page-header h1 {
+  font-size: var(--fs-2xl);
+  font-weight: 640;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.view-header p,
+.page-header p,
+.view-sub {
+  font-size: var(--fs-md);
+  color: var(--text-muted);
+}
+
+/* ---- Cards ---------------------------------------------------------------------------------- */
+.bento {
+  gap: var(--sp-5);
+}
+
+.bento-tile,
+.tool-card-sm,
+.result-card,
+.ch-card,
+.daily-inspiration,
+.doc-card,
+.deck-card,
+.project-card,
+.subject-card,
+.note-card,
+.code-track-card,
+.quote-card {
+  padding: var(--sp-6);
+}
+
+.bento-tile-title,
+.card-title,
+.doc-card-name,
+.deck-card-topic,
+.project-card-title {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.bento-tile-sub,
+.card-sub {
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+}
+
+.bento-tile-eyebrow,
+.tile-eyebrow,
+.bento-label {
+  font-size: var(--fs-xs);
+  margin-bottom: 2px;
+}
+
+/* ---- Home ----------------------------------------------------------------------------------- */
+.hero-greeting {
+  font-size: var(--fs-3xl);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.hero-sub,
+.hero-desc {
+  font-size: var(--fs-md);
+}
+
+.hero-stat-pill strong {
+  font-size: var(--fs-xl);
+}
+
+.hero-stat-pill span {
+  font-size: var(--fs-xs);
+}
+
+/* ---- Controls --------------------------------------------------------------------------------- */
+.btn {
+  padding: 0 20px;
+  font-size: var(--fs-base);
+  font-weight: 550;
+}
+
+.icon-btn,
+.icon-btn-sm {
+  width: 38px;
+  height: 38px;
+}
+
+.chip,
+.suggestion-chip {
+  height: 36px;
+  padding: 0 16px;
+  font-size: var(--fs-sm);
+}
+
+.segmented,
+.subtabs,
+.subtab-bar,
+.auth-tabs {
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.segmented-btn,
+.subtab,
+.subtab-btn,
+.auth-tab {
+  height: 36px;
+  padding: 0 16px;
+  font-size: var(--fs-sm);
+}
+
+input.tool-input,
+select.tool-input,
+.notes-search,
+.history-search-input,
+.mode-select,
+.auth-input,
+.creator-input {
+  height: var(--h-field);
+  padding-left: 16px;
+  padding-right: 16px;
+  font-size: var(--fs-base);
+}
+
+.tool-textarea {
+  padding: 14px 16px;
+  font-size: var(--fs-base);
+  line-height: 1.6;
+}
+
+/* ---- Settings: a system settings application --------------------------------------------------- */
+#view-settings {
+  gap: var(--sp-8);
+}
+
+.settings-section {
+  padding: var(--sp-7) var(--sp-8) var(--sp-8);
+}
+
+.settings-section h2 {
+  font-size: var(--fs-xl);
+  font-weight: 620;
+  letter-spacing: -0.015em;
+}
+
+.settings-hint {
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+.field-label {
+  margin: var(--sp-6) 0 var(--sp-2);
+  font-size: var(--fs-base);
+  font-weight: 550;
+  color: var(--text);
+}
+
+.toggle-row,
+.danger-row {
+  padding: var(--sp-4) 0;
+  font-size: var(--fs-base);
+}
+
+.toggle-row small,
+.danger-row-text span {
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+}
+
+.toggle {
+  width: 52px;
+  height: 32px;
+}
+
+.toggle-thumb {
+  width: 26px;
+  height: 26px;
+}
+
+.toggle.on .toggle-thumb {
+  transform: translateX(20px);
+}
+
+.settings-nav a {
+  height: 36px;
+  padding: 0 12px;
+  font-size: var(--fs-sm);
+}
+
+.account-card,
+.allowance,
+.creator-model,
+.creator-account {
+  padding: var(--sp-5);
+  border-radius: var(--radius-lg);
+}
+
+/* ---- The tutor ---------------------------------------------------------------------------------- */
+.chat-log .message.ai .bubble.answer {
+  padding: var(--sp-7) var(--sp-8);
+  font-size: calc(var(--fs-md) + 1px);
+  line-height: 1.75;
+}
+
+.message.user .bubble {
+  padding: 14px 20px;
+  font-size: var(--fs-md);
+}
+
+.composer-form.composer-v2 {
+  padding: 10px 10px 10px var(--sp-5);
+}
+
+.composer-v2 .composer-input {
+  min-height: 30px;
+  font-size: var(--fs-md);
+  line-height: 1.6;
+}
+
+.composer-v2 .btn-send {
+  width: 44px;
+  height: 44px;
+}
+
+.composer-hint {
+  font-size: var(--fs-xs);
+}
+
+/* ---- The dock ------------------------------------------------------------------------------------ */
+.dock {
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: var(--radius-xl);
+}
+
+.dock-item {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Menus, dialogs, toasts ----------------------------------------------------------------------- */
+.account-menu-item {
+  height: 40px;
+  padding: 0 14px;
+  font-size: var(--fs-base);
+}
+
+.modal {
+  padding: var(--sp-7);
+}
+
+.modal h2,
+.modal h3 {
+  font-size: var(--fs-xl);
+}
+
+.toast {
+  padding: 14px 18px;
+  font-size: var(--fs-base);
+}
+
+/* ---- Empty states -------------------------------------------------------------------------------- */
+.empty-state {
+  padding: var(--sp-12) var(--sp-8);
+  gap: var(--sp-3);
+}
+
+.empty-state h2 {
+  font-size: var(--fs-xl);
+  font-weight: 620;
+}
+
+.empty-state p {
+  font-size: var(--fs-md);
+  max-width: 46ch;
+}
+
+/* ---- Wide screens: let it breathe rather than stretch ---------------------------------------------- */
+@media (min-width: 1600px) {
+  .main-view {
+    padding-left: var(--sp-14);
+    padding-right: var(--sp-14);
+  }
+}
+
+/* ---- Small screens keep the hierarchy, at a size that fits ------------------------------------------ */
+@media (max-width: 899px) {
+  .main-view {
+    padding: var(--sp-5) var(--sp-5) var(--sp-4);
+  }
+
+  .view-header h1,
+  .page-header h1 {
+    font-size: var(--fs-xl);
+  }
+
+  .hero-greeting {
+    font-size: var(--fs-2xl);
+  }
+
+  .settings-section {
+    padding: var(--sp-5) var(--sp-5) var(--sp-6);
+  }
+
+  .chat-log .message.ai .bubble.answer {
+    padding: var(--sp-5);
+  }
+}
+
+/* =====================================================================================
+   27. The title bar
+   -------------------------------------------------------------------------------------
+   The strip along the top is the first thing anyone looks at and the last thing anyone
+   consciously notices, which is exactly why it has to be right. Everything in it now sits on one
+   34px rail with one corner radius, grouped by what it does: the window's own buttons at the far
+   left, the place you are in next to them, and on the right the three things that report rather
+   than act — time, connection, account — each in a soft capsule that only shows itself under the
+   pointer.
+   ===================================================================================== */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* The clock: two lines on one baseline grid, digits that do not shift as the minute changes, and
+   a capsule that stays out of the way until you go near it. */
+.topbar-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  height: 38px;
+  padding: 0 14px;
+  margin-right: 2px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  line-height: 1.12;
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+  transition: background var(--dur-2) var(--ease-out);
+}
+
+.topbar-clock:hover {
+  background: var(--fill-subtle);
+}
+
+.topbar-clock .clock-time {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.topbar-clock .clock-date {
+  font-size: var(--fs-2xs);
+  font-weight: 450;
+  letter-spacing: 0;
+  color: var(--text-faint);
+}
+
+/* The connection indicator is a capsule of the same height, with the dot centred on the text. */
+.topbar-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--radius-full);
+  background: var(--fill-subtle);
+  border: none;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.topbar-status:hover {
+  background: var(--fill-hover);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+}
+
+.space-switcher-btn {
+  height: 34px;
+  gap: 7px;
+  font-weight: 500;
+}
+
+.topbar-divider {
+  display: none;
+}
+
+/* A hairline under the bar rather than a line between every item. */
+.desktop-topbar {
+  border-bottom: 0.5px solid var(--hairline);
+}
+
+/* On a tablet the date drops but the capsule keeps its shape. */
+@media (max-width: 1100px) {
+  .topbar-clock {
+    height: 34px;
+    padding: 0 12px;
+  }
+}
+
+/* On a phone the clock is one line beside the theme switch, and it keeps the same corner. */
+.mobile-clock {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  margin-left: auto;
+  padding: 0 12px;
+  border-radius: var(--radius-full);
+  background: var(--fill-subtle);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* =====================================================================================
+   28. The dashboard at the larger scale
+   -------------------------------------------------------------------------------------
+   Four tiles across was right when a tile title was 14px; at 16px with real padding they turn
+   into four narrow columns of wrapped text. Below a wide desktop they pair up instead — fewer,
+   larger surfaces, which is also what makes the page calmer.
+   ===================================================================================== */
+@media (max-width: 1499px) {
+  .bento {
+    grid-template-areas:
+      "hero hero hero hero"
+      "super super super super"
+      "continue continue brain brain"
+      "weak weak deadline deadline"
+      "note note quiz quiz"
+      "code code focus focus";
+  }
+}
+
+@media (max-width: 1099px) {
+  .bento {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "hero hero"
+      "super super"
+      "continue continue"
+      "brain brain"
+      "weak deadline"
+      "note quiz"
+      "code focus";
+  }
+}
+
+/* =====================================================================================
+   29. Panels in a wide page
+   -------------------------------------------------------------------------------------
+   A setup panel is a form, so it keeps a comfortable measure rather than stretching to the full
+   width of a large display — but it sits in the middle of the space it has instead of clinging
+   to the left edge, which is what made these pages look unfinished on a wide screen.
+   ===================================================================================== */
+.tool-panel {
+  margin-inline: auto;
+}
+
+.tool-panel .field-label:first-of-type {
+  margin-top: 0;
+}
+
+/* An empty state fills the space it is given rather than sitting in one corner of it. */
+.empty-state {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 640px;
+}
+
+/* Two-column views (a list beside a reader) keep both halves usable at the larger scale. */
+.notes-layout,
+.docs-layout,
+.split-layout {
+  gap: var(--sp-6);
 }
