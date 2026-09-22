@@ -5340,3 +5340,299 @@ textarea {
     width: 100%;
   }
 }
+
+/* =====================================================================================
+   31. The clock, finished
+   -------------------------------------------------------------------------------------
+   The last pass made the clock large. This one makes it a component: a soft capsule of its own
+   material, with room around the type, a corner that matches the cards below it, and depth you
+   register rather than notice. The rules it follows are named here rather than typed in twice,
+   because the status capsule beside it has to be its sibling, not its lookalike.
+   ===================================================================================== */
+:root {
+  /* Materials, named. Everything translucent in H1 draws from these four. */
+  --blur-chrome: 28px;          /* the sidebar and the title bar */
+  --blur-capsule: 16px;         /* small floating things inside the chrome */
+  --blur-overlay: 24px;         /* menus, popovers, the dock */
+  --border-soft: color-mix(in srgb, var(--hairline) 70%, transparent);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.16), 0 6px 20px rgba(0, 0, 0, 0.1);
+  --capsule-fill: color-mix(in srgb, var(--fill-subtle) 85%, transparent);
+  --capsule-fill-hover: var(--fill-hover);
+}
+
+:root[data-theme="light"] {
+  --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 20px rgba(15, 23, 42, 0.05);
+}
+
+/* The two capsules in the title bar share one shape, one material and one rhythm. */
+.topbar-clock,
+.topbar-status {
+  border: 1px solid var(--border-soft);
+  background: var(--capsule-fill);
+  backdrop-filter: blur(var(--blur-capsule)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--blur-capsule)) saturate(140%);
+  box-shadow: var(--shadow-soft);
+  transition: background var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
+}
+
+.topbar-clock:hover,
+.topbar-status:hover {
+  background: var(--capsule-fill-hover);
+  border-color: var(--hairline-strong);
+}
+
+.topbar-clock {
+  align-items: flex-end;
+  gap: 3px;
+  height: auto;
+  padding: 11px var(--sp-5) 12px;
+  margin-right: var(--sp-3);
+  border-radius: var(--radius-lg);
+  line-height: 1;
+}
+
+/* The time is the only large numeral in the chrome, so it is set the way a numeral wants to be:
+   a light weight, tight tracking, and figures that all take the same width so nothing shifts as
+   the minute changes. */
+.topbar-clock .clock-time {
+  font-size: calc(30px * var(--fs-scale));
+  font-weight: 340;
+  letter-spacing: -0.028em;
+  line-height: 1.02;
+  color: var(--text);
+}
+
+.topbar-clock .clock-date {
+  font-size: calc(13px * var(--fs-scale));
+  font-weight: 480;
+  letter-spacing: 0.004em;
+  line-height: 1.2;
+  color: var(--text-muted);
+}
+
+/* The status capsule is the shorter sibling: same corner family, same material, centred on the
+   clock's optical middle rather than on its box. */
+.topbar-status {
+  height: 42px;
+  padding: 0 var(--sp-5);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.space-switcher-btn {
+  height: 42px;
+  border-radius: var(--radius-md);
+}
+
+/* Room around the group: the icons on either side stop crowding the capsules. */
+.topbar-actions {
+  gap: var(--sp-2);
+}
+
+.desktop-topbar {
+  padding-right: var(--sp-5);
+}
+
+/* On the phone the same capsule, one line, sized for a thumb rather than a pointer. */
+.mobile-clock {
+  height: 36px;
+  padding: 0 var(--sp-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--capsule-fill);
+  box-shadow: var(--shadow-soft);
+  font-size: var(--fs-sm);
+  font-weight: 560;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 1100px) {
+  .topbar-clock {
+    padding: 10px var(--sp-4) 11px;
+  }
+}
+
+/* A square control is rounded a little more than a wide one so it reads as a squircle rather
+   than as a button with the corners filed off. This is the rule the send button follows, and it
+   is written down here so the next square control follows it too. */
+.btn-send,
+.composer-v2 .btn-send,
+.superbar-send {
+  border-radius: var(--radius-md);
+}
+
+/* =====================================================================================
+   32. Waiting for an answer
+   -------------------------------------------------------------------------------------
+   An answer arrives on a soft card. While H1 is thinking, three small dots sat bare on the page
+   and the card appeared from nothing underneath them — the page jumped at the exact moment
+   attention was on it. The waiting state is now the same card at the same width, already in
+   place, with the dots resting inside it: the words simply fill a space that was always there.
+   ===================================================================================== */
+.chat-log .message.ai .bubble:not(.answer) {
+  padding: var(--sp-7) var(--sp-8);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  border: none;
+  box-shadow: none;
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+}
+
+/* Larger, slower, and it breathes rather than bounces: opacity carries the motion, so nothing
+   on the page moves while H1 is thinking. */
+.typing-dots {
+  gap: 7px;
+  padding: 0;
+}
+
+.typing-dots span {
+  width: 8px;
+  height: 8px;
+  background: var(--text-faint);
+  animation: breathe 1.8s var(--ease-in-out) infinite;
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.22s;
+}
+
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.44s;
+}
+
+@keyframes breathe {
+  0%, 70%, 100% { opacity: 0.28; }
+  35% { opacity: 0.95; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-dots span {
+    animation: none;
+    opacity: 0.55;
+  }
+}
+
+/* =====================================================================================
+   33. The empty tutor
+   -------------------------------------------------------------------------------------
+   The first thing a student sees in the tutor is the invitation to use it, so it is given the
+   width of the workspace it introduces rather than a small card in the middle of it.
+   ===================================================================================== */
+#view-chat .empty-state,
+.chat-empty {
+  max-width: none;
+  padding: var(--sp-14) var(--sp-10);
+  background: var(--card);
+  border-radius: var(--radius-xl);
+}
+
+#view-chat .empty-state h2,
+.chat-empty h2 {
+  font-size: var(--fs-2xl);
+  font-weight: 640;
+  letter-spacing: -0.02em;
+}
+
+#view-chat .empty-state p,
+.chat-empty p {
+  font-size: var(--fs-md);
+  max-width: 52ch;
+  line-height: 1.65;
+}
+
+/* =====================================================================================
+   34. Inside an answer
+   -------------------------------------------------------------------------------------
+   Sections of a long answer need to be told apart at a glance without drawing lines between
+   them: space above a heading does that, and a rule only appears where the writer asked for one.
+   ===================================================================================== */
+.message.ai .bubble.answer > h3 + p,
+.message.ai .bubble.answer > h4 + p {
+  margin-top: 0;
+}
+
+.message.ai .bubble.answer > * + h3 {
+  margin-top: 1.85em;
+}
+
+.message.ai .bubble.answer > * + h4 {
+  margin-top: 1.6em;
+}
+
+.message.ai .bubble.answer hr {
+  margin: 1.9em 0;
+  background: var(--hairline);
+}
+
+/* The code block's header belongs to the block: same corner, no double border where they meet. */
+.code-block-bar {
+  padding: 10px var(--sp-5);
+  border-bottom: 1px solid var(--hairline);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.message.ai .bubble pre {
+  padding: var(--sp-5);
+}
+
+.code-block pre {
+  border: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  margin: 0;
+}
+
+/* =====================================================================================
+   35. The composer, finished
+   ===================================================================================== */
+.composer-form.composer-v2 {
+  gap: var(--sp-3);
+  box-shadow: var(--shadow-soft);
+}
+
+.composer-form.composer-v2:focus-within {
+  border-color: color-mix(in srgb, var(--accent-1) 50%, transparent);
+  box-shadow: var(--shadow-soft), 0 0 0 4px rgba(var(--accent-1-rgb), 0.14);
+}
+
+/* The row of small controls under the field lines up with the text above it, not with the edge. */
+.composer-tools {
+  gap: var(--sp-2);
+  padding-left: 2px;
+}
+
+.composer-v2 .btn-send:disabled,
+.composer-form.is-empty .btn-send {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+.composer-v2 .btn-send {
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-1) var(--ease-out),
+    filter var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+}
+
+/* The waiting card is the answer card: same width, so the words fill the space they were
+   promised instead of the card growing around them when they arrive. The row it sits in has to
+   stretch too, or the card can only be as wide as three dots. */
+.chat-log .message.ai,
+.chat-log .message.ai > .message-body {
+  width: 100%;
+}
+
+.chat-log .message.ai .bubble:not(.answer) {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* One ring, not two: the composer shows focus as a whole, so the field inside it does not draw
+   its own outline on top. The field keeps the ring when it is the only thing focused. */
+.composer-form.composer-v2:focus-within .composer-input:focus-visible,
+.superbar:focus-within .superbar-input:focus-visible {
+  outline: none;
+}
