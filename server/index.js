@@ -590,7 +590,7 @@ app.post("/api/chat", async (req, res) => {
     }
     // The limit applies to what was typed; attached files are budgeted separately below.
     if (content.length > MAX_MESSAGE_LENGTH) {
-      return res.status(400).json({ error: `Message is too long (max ${MAX_MESSAGE_LENGTH} characters).` });
+      return res.status(400).json({ error: `That message is over ${MAX_MESSAGE_LENGTH} characters. Attach it as a file with the + button and ask about it — H1 reads attachments in full.` });
     }
     cleaned.push({ role: m.role, content, images: m.images, documents: m.documents });
   }

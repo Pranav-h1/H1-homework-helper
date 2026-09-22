@@ -35,11 +35,9 @@
   --radius-full: 999px;
   /* Motion. Fast in, faster out; nothing bounces except on purpose. */
   --dur-1: 120ms;
-  --ease-in-out: cubic-bezier(0.45, 0, 0.25, 1);
   --t-fast: var(--dur-1);
   --t-base: var(--dur-2);
   --t-slow: var(--dur-3);
-  --sidebar-w: 236px;
   --panel: color-mix(in srgb, var(--panel-material) calc(var(--alpha-surface) * 100%), transparent);
   --card: color-mix(in srgb, var(--card-material) calc(var(--alpha-surface) * 100%), transparent);
   --raised: color-mix(in srgb, var(--raised-material) calc(var(--alpha-overlay) * 100%), transparent);
@@ -163,7 +161,6 @@ kbd,
    3. The shell: window, sidebar, content panel
    ===================================================================================== */
 .app {
-  border-radius: var(--r-window);
   border-color: var(--hairline);
   background: var(--bg);
 }
@@ -171,11 +168,6 @@ kbd,
 /* The content panel is the one raised surface — the stage everything happens on. */
 .main-view {
   backdrop-filter: none;
-  gap: var(--sp-5);
-}
-
-.view {
-  animation: viewIn var(--dur-3) var(--ease-out);
 }
 
 @keyframes viewIn {
@@ -237,7 +229,6 @@ kbd,
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 4px 8px;
-  scrollbar-width: thin;
   scrollbar-color: transparent transparent;
   /* A soft edge where the list meets the pinned header and footer. */
   mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 calc(100% - 14px), transparent 100%);
@@ -385,8 +376,6 @@ kbd,
 
 .sidebar-account {
   gap: 10px;
-  height: 46px;
-  padding: 0 8px;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   background: transparent;
@@ -454,7 +443,6 @@ kbd,
 .account-menu-item {
   display: flex;
   align-items: center;
-  padding: 0 10px;
   font-weight: var(--fw-medium);
   transition: background var(--dur-1) var(--ease-out);
 }
@@ -489,42 +477,6 @@ kbd,
 
 /* The clock. Two lines on a wide window, time only when there is no room for the date, and
    tabular figures so the digits do not jitter as the minute changes. */
-.topbar-clock {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 1px;
-  padding: 0 10px 0 4px;
-  line-height: 1.15;
-  white-space: nowrap;
-  cursor: default;
-  user-select: none;
-}
-
-.topbar-clock .clock-time {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-}
-
-.topbar-clock .clock-date {
-  font-size: var(--fs-2xs);
-  color: var(--text-muted);
-}
-
-.mobile-clock {
-  margin-left: auto;
-  padding: 0 6px;
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
 /* Tablet-width windows keep the time but drop the date rather than crowd the title bar. */
 @media (max-width: 1100px) {
   .topbar-clock .clock-date {
@@ -639,23 +591,12 @@ kbd,
   max-width: 380px;
 }
 .topbar-status {
-  height: 28px;
-  padding: 0 10px;
-  background: transparent;
   backdrop-filter: none;
-  border: 1px solid var(--hairline);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-medium);
 }
 
 .space-switcher-btn {
-  height: 28px;
-  padding: 0 10px;
-  border-radius: var(--radius-sm);
   background: transparent;
   border: 1px solid var(--hairline);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-semibold);
   transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 
@@ -805,20 +746,10 @@ input[type="number"]:not(.creator-limit-input) {
 }
 
 /* Toggles: a crisper switch with a smooth thumb. */
-.toggle {
-  transition: background var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
-}
-
-.toggle-thumb {
-  transition: transform var(--dur-2) var(--ease-out);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
 /* =====================================================================================
    6. Chips, segmented controls, tabs
    ===================================================================================== */
 .chip {
-  padding: 0 12px;
   gap: 6px;
   color: var(--text-muted);
   transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
@@ -924,10 +855,6 @@ input[type="number"]:not(.creator-limit-input) {
   border-color: var(--hairline-strong);
 }
 
-.bento-tile.clickable:hover {
-  background: var(--card-hover);
-}
-
 /* A card inside a card is one card too many: inner groups become plain rows. */
 .settings-section .account-card,
 .settings-section .allowance,
@@ -994,13 +921,11 @@ input[type="number"]:not(.creator-limit-input) {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 11px 14px 11px 12px;
   border-radius: var(--radius-md);
   background: var(--raised);
   border: 1px solid var(--raised-border);
   box-shadow: var(--elev-3);
   color: var(--text);
-  font-size: var(--fs-sm);
   font-weight: var(--fw-medium);
   line-height: 1.45;
   cursor: default;
@@ -1120,8 +1045,6 @@ input[type="number"]:not(.creator-limit-input) {
 .empty-state {
   display: grid;
   justify-items: center;
-  gap: 6px;
-  padding: var(--sp-10) var(--sp-6);
   text-align: center;
 }
 
@@ -1135,8 +1058,6 @@ input[type="number"]:not(.creator-limit-input) {
 
 .empty-state p {
   margin: 0;
-  max-width: 44ch;
-  font-size: var(--fs-sm);
   line-height: var(--lh-snug);
   color: var(--text-muted);
 }
@@ -1307,7 +1228,6 @@ html.force-reduced-motion .modal {
        greeting → ask → what's going on → everything else
    ===================================================================================== */
 .bento {
-  gap: 12px;
   grid-template-areas:
     "hero hero hero hero"
     "super super super super"
@@ -1323,10 +1243,6 @@ html.force-reduced-motion .modal {
   border: none;
   padding: 4px 2px 0;
   align-items: flex-end;
-}
-
-.hero-greeting {
-  line-height: 1.1;
 }
 
 .hero-sub {
@@ -1619,8 +1535,6 @@ html.force-reduced-motion .modal {
 
 .empty-state h2 {
   margin: 8px 0 0;
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-semibold);
   letter-spacing: -0.015em;
 }
 
@@ -1727,8 +1641,6 @@ html.force-reduced-motion .modal {
 }
 
 .composer-v2 .btn-send {
-  width: 36px;
-  height: 36px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 3px 10px rgba(var(--accent-1-rgb), 0.3);
 }
 
@@ -1801,7 +1713,6 @@ html.force-reduced-motion .modal {
 
 .settings-nav a {
   display: block;
-  padding: 0 10px;
   color: var(--text-muted);
   font-weight: var(--fw-medium);
   line-height: 32px;
@@ -2014,8 +1925,6 @@ html.force-reduced-motion .modal {
 }
 
 .auth-card {
-  padding: 28px 28px 22px;
-  border-radius: var(--radius-xl);
   background: var(--raised);
   backdrop-filter: none;
   border: 1px solid var(--raised-border);
@@ -2355,13 +2264,6 @@ html.force-reduced-motion .auth-layout {
 /* The answer is not a speech bubble. It sits directly on the panel like an article, keeping
    the reading-column grid from the tutor workspace; the student's own message is the only
    bubble in the conversation, which is what makes the two easy to tell apart. */
-.chat-log .message.ai .bubble.answer {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  border-radius: 0;
-}
-
 .chat-log .message + .message.ai {
   margin-top: 6px;
 }
@@ -2373,7 +2275,6 @@ html.force-reduced-motion .auth-layout {
 
 .message.ai .bubble :not(pre) > code {
   padding: 1px 6px;
-  border-radius: 6px;
   background: var(--fill-hover);
   border: 1px solid var(--hairline);
   font-size: 0.88em;
@@ -2459,7 +2360,6 @@ html.force-reduced-motion .auth-layout {
   --fw-medium: 500;
   --fw-semibold: 600;
   --fw-bold: 700;
-
   --fs-user: 1;
   --fs-viewport: 1;
   --fs-scale: calc(var(--fs-user) * var(--fs-viewport));
@@ -2502,11 +2402,9 @@ html.force-reduced-motion .auth-layout {
   --sidebar-w: 292px;
   --card-pad: var(--sp-7);
   --panel-pad: var(--sp-10);
-
   /* Two more steps at the top of the spacing scale, for the air between big surfaces. */
   --sp-12: 48px;
   --sp-14: 56px;
-
   /* -- Motion: short and flat, and nothing bounces -------------------------------------- */
   /* Slower, and on one gentle curve. A state change should look like it settled rather than
      like it snapped: a hover reads in 200ms, a panel in 320, something entering the screen in
@@ -2528,11 +2426,9 @@ html.force-reduced-motion .auth-layout {
   /* -- Surfaces ---------------------------------------------------------------------------- */
   --bg: #191a1c;
   --panel-material: #1e1f22;
-  --card-material: rgba(255, 255, 255, 0.032);
   --raised-material: #2a2b2f;
   --raised-solid: #2a2b2f;
   --panel-border: rgba(255, 255, 255, 0.075);
-  --card-hover: rgba(255, 255, 255, 0.055);
   --raised-border: rgba(255, 255, 255, 0.1);
   --hairline: rgba(255, 255, 255, 0.075);
   --hairline-strong: rgba(255, 255, 255, 0.13);
@@ -2579,14 +2475,11 @@ html.force-reduced-motion .auth-layout {
   --desk-bloom-1: rgba(255, 255, 255, 0.5);
   --desk-bloom-2: rgba(255, 255, 255, 0.3);
   --desk-bloom-3: transparent;
-
   --bg: #ececee;
   --panel-material: #ffffff;
-  --card-material: rgba(0, 0, 0, 0.026);
   --raised-material: #ffffff;
   --raised-solid: #ffffff;
   --panel-border: rgba(0, 0, 0, 0.09);
-  --card-hover: rgba(0, 0, 0, 0.045);
   --raised-border: rgba(0, 0, 0, 0.1);
   --hairline: rgba(0, 0, 0, 0.085);
   --hairline-strong: rgba(0, 0, 0, 0.16);
@@ -2599,7 +2492,6 @@ html.force-reduced-motion .auth-layout {
   --text: #1d1d1f;
   --text-muted: #5f5f66;
   --text-faint: #6b6b70;
-
   --accent-fill: color-mix(in srgb, var(--accent-1) 66%, #000000);
   --chrome-tint: rgba(246, 246, 248, 0.72);
   --elev-1: 0 0.5px 1px rgba(0, 0, 0, 0.06);
@@ -2620,39 +2512,17 @@ html.force-reduced-motion .auth-layout {
 }
 
 .shell {
-  gap: 0;
   padding: 0;
 }
 
 .desktop-topbar {
-  height: 40px;
-  padding: 0 10px 0 14px;
-  gap: 8px;
   background: var(--chrome-material);
   backdrop-filter: var(--vibrancy);
   -webkit-backdrop-filter: var(--vibrancy);
-  border-bottom: 0.5px solid var(--hairline);
-}
-
-.topbar-title {
-  font-size: var(--fs-base);
-  font-weight: var(--fw-semibold);
-  letter-spacing: 0;
-}
-
-.topbar-divider {
-  display: none;
 }
 
 /* Real window buttons: 12px, flat, with the faintest inner definition. */
-.traffic-lights {
-  gap: 8px;
-  margin-right: 6px;
-}
-
 .traffic-light {
-  width: 12px;
-  height: 12px;
   border: none;
   box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
 }
@@ -2664,11 +2534,8 @@ html.force-reduced-motion .auth-layout {
 /* In a Mac title bar the status and the space switcher are items, not outlined buttons. */
 .topbar-status,
 .space-switcher-btn {
-  height: 24px;
-  padding: 0 8px;
   border: none;
   background: transparent;
-  font-size: var(--fs-xs);
   font-weight: var(--fw-medium);
   color: var(--text-muted);
 }
@@ -2676,10 +2543,6 @@ html.force-reduced-motion .auth-layout {
 .space-switcher-btn:hover,
 .topbar-status:hover {
   background: var(--fill-subtle);
-}
-
-.topbar-actions {
-  gap: 2px;
 }
 
 /* ---- Sidebar: a native source list ------------------------------------------------------ */
@@ -2690,27 +2553,19 @@ html.force-reduced-motion .auth-layout {
   border: none;
   border-right: 0.5px solid var(--hairline);
   border-radius: 0;
-  padding: 8px 10px 10px;
   box-shadow: none;
 }
 
 .brand {
-  padding: 4px 6px 12px;
   border: none;
 }
 
 .brand-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 9px;
-  font-size: 11px;
   background: var(--accent-1);
   box-shadow: none;
 }
 
 .brand-name {
-  font-size: var(--fs-md);
-  font-weight: var(--fw-semibold);
   letter-spacing: -0.01em;
   background: none;
   -webkit-text-fill-color: var(--text);
@@ -2718,24 +2573,15 @@ html.force-reduced-motion .auth-layout {
 }
 
 .brand-tagline {
-  font-size: var(--fs-2xs);
   color: var(--text-faint);
 }
 
 .nav-item {
-  height: 34px;
-  gap: 10px;
-  padding: 0 10px;
-  margin: 2px 0;
   border-radius: var(--radius-sm);
-  font-size: var(--fs-base);
-  font-weight: var(--fw-medium);
   color: var(--text-muted);
 }
 
 .nav-item svg {
-  width: 15px;
-  height: 15px;
   color: currentColor;
   opacity: 0.85;
 }
@@ -2758,7 +2604,6 @@ html.force-reduced-motion .auth-layout {
 }
 
 .nav-active-pill {
-  height: 34px;
   border-radius: var(--radius-sm);
   background: rgba(var(--accent-1-rgb), 0.16);
   box-shadow: none;
@@ -2770,8 +2615,6 @@ html.force-reduced-motion .auth-layout {
 
 /* Sentence case, quiet, with real space above each group. */
 .nav-section-label {
-  padding: 14px 8px 2px;
-  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   letter-spacing: 0;
   text-transform: none;
@@ -2779,12 +2622,9 @@ html.force-reduced-motion .auth-layout {
 }
 
 .sidebar-command-hint {
-  height: 30px;
-  margin: 0 2px 10px;
   border-radius: var(--radius-sm);
   background: var(--field);
   border: 0.5px solid var(--hairline);
-  font-size: var(--fs-xs);
 }
 
 .sidebar-footer,
@@ -2798,25 +2638,12 @@ html.force-reduced-motion .auth-layout {
   background: var(--fill-subtle);
 }
 
-.sidebar-account .account-avatar {
-  width: 28px;
-  height: 28px;
-  font-size: 10px;
-}
-
 /* ---- Content: sections on the window, not a wall of cards ------------------------------- */
 .main-view {
   background: var(--panel);
   border: none;
   border-radius: 0;
   box-shadow: none;
-  /* +15px each side: the shell gap and padding this style removes, given back to the content
-     so the workspace is the same width as in Classic. */
-  padding: var(--sp-6) calc(var(--sp-7) + 15px);
-}
-
-.view {
-  gap: 26px;
 }
 
 /* A tile is a group of content, marked by a faint wash and nothing else: no border, no shadow,
@@ -2861,14 +2688,6 @@ html.force-reduced-motion .auth-layout {
 .view-header,
 .page-header {
   border-bottom: 0.5px solid var(--hairline);
-  padding-bottom: 12px;
-}
-
-.view-header h1,
-.page-header h1 {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-semibold);
-  letter-spacing: -0.015em;
 }
 
 /* Home: an elegant greeting, and counters that stop shouting. */
@@ -2880,9 +2699,6 @@ html.force-reduced-motion .auth-layout {
 }
 
 .hero-greeting {
-  font-size: 28px;
-  font-weight: var(--fw-semibold);
-  letter-spacing: -0.02em;
   background: none;
   -webkit-text-fill-color: var(--text);
   color: var(--text);
@@ -2890,7 +2706,6 @@ html.force-reduced-motion .auth-layout {
 
 .hero-sub,
 .hero-desc {
-  font-size: var(--fs-md);
   color: var(--text-muted);
 }
 
@@ -2919,13 +2734,11 @@ html.force-reduced-motion .auth-layout {
 
 /* The counters read as quiet facts, not a score line. */
 .hero-stat-pill strong {
-  font-size: var(--fs-lg);
   font-weight: var(--fw-semibold);
   letter-spacing: -0.01em;
 }
 
 .hero-stat-pill span {
-  font-size: var(--fs-2xs);
   font-weight: var(--fw-medium);
   letter-spacing: 0;
   text-transform: none;
@@ -3046,10 +2859,7 @@ html.force-reduced-motion .auth-layout {
 /* ---- Controls ---------------------------------------------------------------------------- */
 .btn {
   height: var(--h-control);
-  padding: 0 16px;
   border-radius: var(--radius-sm);
-  font-size: var(--fs-base);
-  font-weight: var(--fw-medium);
   letter-spacing: 0;
 }
 
@@ -3144,8 +2954,6 @@ html.force-reduced-motion .auth-layout {
 .subtabs,
 .subtab-bar,
 .auth-tabs {
-  padding: 3px;
-  border-radius: var(--radius-md);
   background: var(--field);
   border: 0.5px solid var(--hairline);
 }
@@ -3174,14 +2982,12 @@ select.tool-input,
 .mode-select,
 .auth-input,
 .creator-input {
-  height: 40px;
   padding-top: 0;
   padding-bottom: 0;
   border-radius: var(--radius-md);
   border: 0.5px solid var(--hairline-strong);
   background: var(--field);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-  font-size: var(--fs-base);
 }
 
 .tool-textarea {
@@ -3211,9 +3017,7 @@ select.tool-input,
 }
 
 .account-menu-item {
-  height: 32px;
   border-radius: var(--radius-sm);
-  font-size: var(--fs-base);
 }
 
 .account-menu-item:hover {
@@ -3222,7 +3026,6 @@ select.tool-input,
 }
 
 .modal {
-  border-radius: var(--radius-xl);
   border: 0.5px solid var(--raised-border);
   background: var(--raised-solid);
   box-shadow: var(--elev-3);
@@ -3235,9 +3038,6 @@ select.tool-input,
 
 /* ---- Dock: small, translucent, out of the way -------------------------------------------- */
 .dock {
-  gap: 4px;
-  padding: 6px 8px;
-  border-radius: var(--radius-xl);
   background: var(--raised);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -3246,14 +3046,10 @@ select.tool-input,
 }
 
 .dock-item {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-sm);
   color: var(--text-muted);
 }
 
 .dock-item:hover {
-  background: var(--fill-hover);
   color: var(--text);
 }
 
@@ -3272,43 +3068,20 @@ select.tool-input,
 
 /* ---- Settings: categories → sections → rows ---------------------------------------------- */
 .settings-section {
-  padding: 0 0 22px;
-  border: none;
   border-bottom: 0.5px solid var(--hairline);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
 }
 
 .settings-section:last-of-type {
   border-bottom: none;
 }
 
-.settings-section h2 {
-  margin: 0 0 4px;
-  font-size: var(--fs-md);
-  font-weight: var(--fw-semibold);
-}
-
 .settings-hint {
-  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
 .field-label {
-  margin: 14px 0 5px;
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
   letter-spacing: 0;
   text-transform: none;
-  color: var(--text-muted);
-}
-
-.toggle-row,
-.danger-row {
-  padding: 9px 0;
-  border-top: 0.5px solid var(--hairline);
-  font-size: var(--fs-base);
 }
 
 .toggle-row:first-of-type,
@@ -3317,9 +3090,7 @@ select.tool-input,
 }
 
 .settings-nav a {
-  height: 30px;
   border-radius: var(--radius-sm);
-  font-size: var(--fs-sm);
 }
 
 .settings-nav a.is-current {
@@ -3331,7 +3102,6 @@ select.tool-input,
 .allowance,
 .creator-model,
 .creator-account {
-  border-radius: var(--radius-lg);
   border: 0.5px solid var(--hairline);
   background: var(--card);
   box-shadow: none;
@@ -3433,9 +3203,6 @@ select.tool-input,
    instead of the page itself.
    ===================================================================================== */
 .chat-log .message.ai .bubble.answer {
-  padding: 6px clamp(4px, 1.4vw, 28px) 4px;
-  font-size: calc(var(--fs-md) + 0.5px);
-  line-height: 1.72;
   letter-spacing: 0.002em;
   color: var(--text);
 }
@@ -3525,8 +3292,6 @@ select.tool-input,
 }
 
 .code-block-bar {
-  padding: 5px 10px;
-  border-bottom: 0.5px solid var(--hairline);
   background: transparent;
 }
 
@@ -3583,10 +3348,8 @@ select.tool-input,
 
 /* The question. One bubble in the conversation, so there is never any doubt who said what. */
 .message.user .bubble {
-  padding: 11px 16px;
   /* Soft on three corners, tucked on the one nearest its owner. */
   border-radius: var(--radius-xl) var(--radius-xl) 8px var(--radius-xl);
-  font-size: var(--fs-md);
   line-height: 1.55;
 }
 
@@ -3598,39 +3361,16 @@ select.tool-input,
    once there is something to send.
    ===================================================================================== */
 .composer-form.composer-v2 {
-  padding: 8px 8px 8px 14px;
-  border-radius: 12px;
   border: 0.5px solid var(--hairline-strong);
   background: var(--field);
-  box-shadow: var(--elev-1);
   transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out);
-}
-
-.composer-form.composer-v2:focus-within {
-  border-color: color-mix(in srgb, var(--accent-1) 55%, transparent);
-  box-shadow: var(--elev-2), 0 0 0 3px rgba(var(--accent-1-rgb), 0.16);
-}
-
-.composer-v2 .composer-input {
-  font-size: var(--fs-md);
-  line-height: 1.55;
-}
-
-.composer-v2 .btn-send {
-  border-radius: 8px;
-  transition: transform var(--dur-1) var(--ease-out), opacity var(--dur-2) var(--ease-out), filter var(--dur-1) var(--ease-out);
 }
 
 .composer-form.is-empty .btn-send {
   opacity: 0.45;
 }
 
-.composer-v2 .btn-send:active:not(:disabled) {
-  transform: scale(0.94);
-}
-
 .composer-hint {
-  font-size: var(--fs-2xs);
   color: var(--text-faint);
 }
 
@@ -3679,17 +3419,12 @@ select.tool-input,
 .slash-menu,
 .space-switcher-popover,
 .notif-center-popover {
-  animation: popIn var(--dur-2) var(--ease-out);
   transform-origin: top center;
 }
 
 @keyframes popIn {
   from { opacity: 0; transform: translateY(-4px) scale(0.985); }
   to { opacity: 1; transform: none; }
-}
-
-.modal {
-  animation: sheetIn var(--dur-3) var(--ease-out);
 }
 
 @keyframes sheetIn {
@@ -3804,7 +3539,6 @@ pre {
 
 /* Empty states are surfaces of their own, not holes in the page. */
 .empty-state {
-  padding: var(--sp-8) var(--sp-6);
   border-radius: var(--radius-xl);
   background: var(--card);
 }
@@ -3813,10 +3547,6 @@ pre {
 .upload-area,
 .dropzone,
 .scan-drop {
-  border-radius: var(--radius-xl);
-}
-
-.composer-form.composer-v2 {
   border-radius: var(--radius-xl);
 }
 
@@ -3849,8 +3579,6 @@ pre {
 .code-track-card,
 .quote-card,
 .tool-card-sm {
-  transition: transform var(--dur-2) var(--ease-out), background var(--dur-2) var(--ease-out),
-    box-shadow var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
   will-change: auto;
 }
 
@@ -3863,9 +3591,7 @@ pre {
 .code-track-card:hover,
 .quote-card:hover,
 .tool-card-sm:hover {
-  transform: translateY(-1px);
   background: var(--card-hover);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
 }
 
 :root[data-theme="light"] .bento-tile.clickable:hover,
@@ -3886,7 +3612,6 @@ pre {
 .project-card:active,
 .quote-card:active,
 .tool-card-sm:active {
-  transform: translateY(0) scale(0.995);
   box-shadow: none;
 }
 
@@ -3910,10 +3635,6 @@ button:disabled {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
 }
 
-.toggle:active .toggle-thumb {
-  transform: scale(0.94);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .bento-tile.clickable:hover,
   .doc-card:hover,
@@ -3935,7 +3656,6 @@ button:disabled {
    rather than by more cards. Same information, same order, same controls — just gathered onto
    a surface instead of floating on the page. */
 .settings-section {
-  padding: var(--sp-6) var(--sp-7) var(--sp-7);
   border: none;
   border-radius: var(--radius-xl);
   background: var(--card);
@@ -3944,9 +3664,6 @@ button:disabled {
 
 .settings-section h2 {
   margin: 0 0 var(--sp-1);
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-semibold);
-  letter-spacing: -0.012em;
 }
 
 .settings-section > .settings-hint:first-of-type {
@@ -3959,7 +3676,6 @@ button:disabled {
 
 .toggle-row,
 .danger-row {
-  padding: var(--sp-3) 0;
   border-top: 1px solid var(--hairline);
 }
 
@@ -3967,7 +3683,6 @@ button:disabled {
    it reads as its own place on the page — a faint one, with no border, because an outline would
    put it back in a box. */
 .chat-log .message.ai .bubble.answer {
-  padding: var(--sp-5) var(--sp-6) var(--sp-6);
   border-radius: var(--radius-xl);
   background: var(--card);
   border: none;
@@ -3979,10 +3694,6 @@ button:disabled {
 }
 
 /* The composer belongs to the same workspace, so it lines up with it and shares its corner. */
-.composer-form.composer-v2 {
-  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-5);
-}
-
 /* A streaming answer breathes rather than blinks. */
 .message.ai.is-streaming .bubble.answer {
   background: color-mix(in srgb, var(--accent-1) 4%, var(--card));
@@ -4126,10 +3837,6 @@ button:disabled {
   border-radius: var(--radius-sm);
 }
 
-.space-switcher-btn {
-  height: var(--h-control-sm);
-}
-
 /* On a phone every control has to be comfortable to hit with a thumb. The actions under an
    answer were 26px, which is fine for a pointer and not for a finger. */
 @media (max-width: 899px) {
@@ -4185,10 +3892,6 @@ button:disabled {
   --card-hover: rgba(15, 23, 42, 0.055);
 }
 
-.bento {
-  gap: var(--sp-4);
-}
-
 /* The greeting is a heading, not a widget. */
 .bento-tile.bento-hero {
   background: transparent;
@@ -4209,27 +3912,6 @@ button:disabled {
    ===================================================================================== */
 
 /* ---- The window and its chrome ------------------------------------------------------------ */
-.desktop-topbar {
-  height: 52px;
-  padding: 0 14px 0 18px;
-  gap: 10px;
-}
-
-.topbar-title {
-  font-size: var(--fs-md);
-  font-weight: var(--fw-semibold);
-}
-
-.traffic-lights {
-  gap: 9px;
-  margin-right: 10px;
-}
-
-.traffic-light {
-  width: 13px;
-  height: 13px;
-}
-
 .topbar-status,
 .space-switcher-btn {
   height: var(--h-control-sm);
@@ -4238,78 +3920,12 @@ button:disabled {
   font-size: var(--fs-sm);
 }
 
-.topbar-actions {
-  gap: 4px;
-}
-
 /* ---- Sidebar ------------------------------------------------------------------------------- */
-.sidebar {
-  padding: 10px 12px 12px;
-}
-
-.brand {
-  padding: 8px 8px 16px;
-}
-
-.brand-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 11px;
-  font-size: var(--fs-sm);
-}
-
-.brand-name {
-  font-size: var(--fs-lg);
-}
-
 .brand-tagline {
   font-size: var(--fs-2xs);
 }
 
-.nav-item {
-  height: 40px;
-  gap: 12px;
-  padding: 0 12px;
-  margin: 2px 0;
-  font-size: var(--fs-base);
-}
-
-.nav-active-pill {
-  height: 40px;
-}
-
-.nav-section-label {
-  padding: 18px 12px 6px;
-  font-size: var(--fs-xs);
-}
-
-.sidebar-command-hint {
-  height: 38px;
-  margin: 0 2px 12px;
-  font-size: var(--fs-sm);
-}
-
-.sidebar-account {
-  height: 56px;
-  padding: 0 10px;
-}
-
-.sidebar-account .account-avatar {
-  width: 34px;
-  height: 34px;
-  font-size: var(--fs-sm);
-}
-
 /* ---- The content stage --------------------------------------------------------------------- */
-.main-view {
-  padding: var(--sp-8) calc(var(--sp-10) + 8px);
-  gap: var(--sp-6);
-}
-
-.view {
-  gap: var(--sp-8);
-}
-
 .view-header,
 .page-header {
   padding-bottom: var(--sp-5);
@@ -4317,24 +3933,16 @@ button:disabled {
 
 .view-header h1,
 .page-header h1 {
-  font-size: var(--fs-2xl);
-  font-weight: var(--fw-semibold);
-  letter-spacing: -0.02em;
   line-height: 1.15;
 }
 
 .view-header p,
 .page-header p,
 .view-sub {
-  font-size: var(--fs-md);
   color: var(--text-muted);
 }
 
 /* ---- Cards ---------------------------------------------------------------------------------- */
-.bento {
-  gap: var(--sp-5);
-}
-
 .bento-tile,
 .tool-card-sm,
 .result-card,
@@ -4360,12 +3968,6 @@ button:disabled {
   letter-spacing: -0.01em;
 }
 
-.bento-tile-sub,
-.card-sub {
-  font-size: var(--fs-sm);
-  line-height: 1.55;
-}
-
 .bento-tile-eyebrow,
 .tile-eyebrow,
 .bento-label {
@@ -4375,43 +3977,12 @@ button:disabled {
 
 /* ---- Home ----------------------------------------------------------------------------------- */
 .hero-greeting {
-  font-size: var(--fs-3xl);
-  font-weight: var(--fw-semibold);
-  letter-spacing: -0.025em;
   line-height: 1.1;
-}
-
-.hero-sub,
-.hero-desc {
-  font-size: var(--fs-md);
-}
-
-.hero-stat-pill strong {
-  font-size: var(--fs-xl);
-}
-
-.hero-stat-pill span {
-  font-size: var(--fs-xs);
 }
 
 /* ---- Controls --------------------------------------------------------------------------------- */
 .btn {
-  padding: 0 20px;
-  font-size: var(--fs-base);
   font-weight: var(--fw-medium);
-}
-
-.icon-btn,
-.icon-btn-sm {
-  width: 38px;
-  height: 38px;
-}
-
-.chip,
-.suggestion-chip {
-  height: 36px;
-  padding: 0 16px;
-  font-size: var(--fs-sm);
 }
 
 .segmented,
@@ -4422,15 +3993,6 @@ button:disabled {
   border-radius: var(--radius-md);
 }
 
-.segmented-btn,
-.subtab,
-.subtab-btn,
-.auth-tab {
-  height: 36px;
-  padding: 0 16px;
-  font-size: var(--fs-sm);
-}
-
 input.tool-input,
 select.tool-input,
 .notes-search,
@@ -4439,9 +4001,6 @@ select.tool-input,
 .auth-input,
 .creator-input {
   height: var(--h-field);
-  padding-left: 16px;
-  padding-right: 16px;
-  font-size: var(--fs-base);
 }
 
 .tool-textarea {
@@ -4455,58 +4014,21 @@ select.tool-input,
   gap: var(--sp-8);
 }
 
-.settings-section {
-  padding: var(--sp-7) var(--sp-8) var(--sp-8);
-}
-
 .settings-section h2 {
-  font-size: var(--fs-xl);
-  font-weight: var(--fw-semibold);
   letter-spacing: -0.015em;
 }
 
-.settings-hint {
-  font-size: var(--fs-sm);
-  line-height: 1.6;
-}
-
 .field-label {
-  margin: var(--sp-6) 0 var(--sp-2);
-  font-size: var(--fs-base);
-  font-weight: var(--fw-medium);
   color: var(--text);
-}
-
-.toggle-row,
-.danger-row {
-  padding: var(--sp-4) 0;
-  font-size: var(--fs-base);
 }
 
 .toggle-row small,
 .danger-row-text span {
-  font-size: var(--fs-sm);
   line-height: 1.55;
 }
 
-.toggle {
-  width: 52px;
-  height: 32px;
-}
-
-.toggle-thumb {
-  width: 26px;
-  height: 26px;
-}
-
-.toggle.on .toggle-thumb {
-  transform: translateX(20px);
-}
-
 .settings-nav a {
-  height: 36px;
   padding: 0 12px;
-  font-size: var(--fs-sm);
 }
 
 .account-card,
@@ -4518,83 +4040,22 @@ select.tool-input,
 }
 
 /* ---- The tutor ---------------------------------------------------------------------------------- */
-.chat-log .message.ai .bubble.answer {
-  padding: var(--sp-7) var(--sp-8);
-  font-size: calc(var(--fs-md) + 1px);
-  line-height: 1.75;
-}
-
-.message.user .bubble {
-  padding: 14px 20px;
-  font-size: var(--fs-md);
-}
-
-.composer-form.composer-v2 {
-  padding: 10px 10px 10px var(--sp-5);
-}
-
-.composer-v2 .composer-input {
-  min-height: 30px;
-  font-size: var(--fs-md);
-  line-height: 1.6;
-}
-
-.composer-v2 .btn-send {
-  width: 44px;
-  height: 44px;
-}
-
-.composer-hint {
-  font-size: var(--fs-xs);
-}
-
 /* ---- The dock ------------------------------------------------------------------------------------ */
 .dock {
-  gap: 6px;
-  padding: 8px 10px;
   border-radius: var(--radius-xl);
 }
 
-.dock-item {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-sm);
-}
-
 /* ---- Menus, dialogs, toasts ----------------------------------------------------------------------- */
-.account-menu-item {
-  height: 40px;
-  padding: 0 14px;
-  font-size: var(--fs-base);
-}
-
-.modal {
-  padding: var(--sp-7);
-}
-
-.modal h2,
-.modal h3 {
-  font-size: var(--fs-xl);
-}
-
-.toast {
-  padding: 14px 18px;
-  font-size: var(--fs-base);
-}
-
 /* ---- Empty states -------------------------------------------------------------------------------- */
 .empty-state {
-  padding: var(--sp-12) var(--sp-8);
   gap: var(--sp-3);
 }
 
 .empty-state h2 {
-  font-size: var(--fs-xl);
   font-weight: var(--fw-semibold);
 }
 
 .empty-state p {
-  font-size: var(--fs-md);
   max-width: 46ch;
 }
 
@@ -4643,7 +4104,6 @@ select.tool-input,
 .topbar-actions {
   display: flex;
   align-items: center;
-  gap: 2px;
 }
 
 /* The clock: two lines on one baseline grid, digits that do not shift as the minute changes, and
@@ -4651,15 +4111,8 @@ select.tool-input,
 .topbar-clock {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   justify-content: center;
-  gap: 0;
-  height: 38px;
-  padding: 0 14px;
-  margin-right: 2px;
-  border-radius: var(--radius-md);
   background: transparent;
-  line-height: 1.12;
   white-space: nowrap;
   cursor: default;
   user-select: none;
@@ -4670,35 +4123,13 @@ select.tool-input,
   background: var(--fill-subtle);
 }
 
-.topbar-clock .clock-time {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  letter-spacing: -0.005em;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-}
-
-.topbar-clock .clock-date {
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-medium);
-  letter-spacing: 0;
-  color: var(--text-faint);
-}
-
 /* The connection indicator is a capsule of the same height, with the dot centred on the text. */
 .topbar-status {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  height: 34px;
-  padding: 0 14px;
-  border-radius: var(--radius-full);
   background: var(--fill-subtle);
   border: none;
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  color: var(--text-muted);
 }
 
 .topbar-status:hover {
@@ -4711,7 +4142,6 @@ select.tool-input,
 }
 
 .space-switcher-btn {
-  height: 34px;
   gap: 7px;
   font-weight: var(--fw-medium);
 }
@@ -4737,14 +4167,7 @@ select.tool-input,
 .mobile-clock {
   display: inline-flex;
   align-items: center;
-  height: 32px;
   margin-left: auto;
-  padding: 0 12px;
-  border-radius: var(--radius-full);
-  background: var(--fill-subtle);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -4801,7 +4224,6 @@ select.tool-input,
 .empty-state {
   width: 100%;
   margin-inline: auto;
-  max-width: 640px;
 }
 
 /* Two-column views (a list beside a reader) keep both halves usable at the larger scale. */
@@ -4847,21 +4269,7 @@ select.tool-input,
 
 /* The clock. Large, light and quiet — the one piece of type in the chrome that is allowed to be
    big, because it is the thing you glance at without meaning to. */
-.topbar-clock {
-  align-items: flex-end;
-  gap: 2px;
-  height: auto;
-  padding: var(--sp-2) var(--sp-4);
-  margin-right: var(--sp-2);
-  border-radius: var(--radius-md);
-  line-height: 1.05;
-}
-
 .topbar-clock .clock-time {
-  font-size: calc(32px * var(--fs-scale));
-  font-weight: var(--fw-light);
-  letter-spacing: -0.025em;
-  color: var(--text);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
   /* The minute changes once an hour-and-a-bit's worth of glances; when it does, it fades rather
@@ -4874,10 +4282,6 @@ select.tool-input,
 }
 
 .topbar-clock .clock-date {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-medium);
-  letter-spacing: 0;
-  color: var(--text-muted);
   transition: opacity var(--dur-3) var(--ease-in-out);
 }
 
@@ -4885,20 +4289,9 @@ select.tool-input,
   opacity: 0.32;
 }
 
-.topbar-status {
-  height: var(--h-control-sm);
-  padding: 0 var(--sp-4);
-  font-size: var(--fs-sm);
-}
-
 .space-switcher-btn {
-  height: var(--h-control-sm);
   padding: 0 var(--sp-4);
   font-size: var(--fs-sm);
-}
-
-.topbar-actions {
-  gap: var(--sp-1);
 }
 
 /* ---- Sidebar --------------------------------------------------------------------------------- */
@@ -4926,7 +4319,6 @@ select.tool-input,
   height: 46px;
   gap: var(--sp-3);
   padding: 0 var(--sp-3);
-  margin: 3px 0;
   font-size: var(--fs-base);
   font-weight: var(--fw-medium);
 }
@@ -4941,7 +4333,6 @@ select.tool-input,
 }
 
 .nav-section-label {
-  padding: var(--sp-6) var(--sp-3) var(--sp-2);
   font-size: var(--fs-xs);
 }
 
@@ -5392,12 +4783,8 @@ textarea {
 }
 
 .topbar-clock {
-  align-items: flex-end;
-  gap: 3px;
   height: auto;
-  padding: 11px var(--sp-5) 12px;
   margin-right: var(--sp-3);
-  border-radius: var(--radius-lg);
   line-height: 1;
 }
 
@@ -5405,19 +4792,7 @@ textarea {
    a light weight, tight tracking, and figures that all take the same width so nothing shifts as
    the minute changes. */
 .topbar-clock .clock-time {
-  font-size: calc(30px * var(--fs-scale));
-  font-weight: var(--fw-light);
-  letter-spacing: -0.028em;
-  line-height: 1.02;
   color: var(--text);
-}
-
-.topbar-clock .clock-date {
-  font-size: calc(13px * var(--fs-scale));
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.004em;
-  line-height: 1.2;
-  color: var(--text-muted);
 }
 
 /* The status capsule is the shorter sibling: same corner family, same material, centred on the
@@ -5450,7 +4825,6 @@ textarea {
   height: 36px;
   padding: 0 var(--sp-4);
   border: 1px solid var(--border-soft);
-  border-radius: var(--radius-md);
   background: var(--capsule-fill);
   box-shadow: var(--shadow-soft);
   font-size: var(--fs-sm);
@@ -5662,8 +5036,6 @@ textarea {
   align-items: center;
   text-align: center;
   gap: 5px;
-  padding: 14px var(--sp-6) 15px;
-  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -5721,4 +5093,238 @@ textarea {
 /* The single-line clock on a phone is already a pill; this keeps the pair in step. */
 .mobile-clock {
   border-radius: var(--radius-full);
+}
+
+/* =====================================================================================
+   38. Corners where surfaces meet
+   -------------------------------------------------------------------------------------
+   The window has always been round. What was sharp is everything inside it: the title bar, the
+   sidebar and the content panel all met at exact right angles, so the eye found a hard corner a
+   few pixels in from a soft one. Each interior junction is now curved, and the window itself is
+   rounded a little further so the outside stays softer than anything inside it.
+   ===================================================================================== */
+.app {
+  border-radius: 44px;
+}
+
+/* The content panel is a pane set into the window: round on the two edges that face the chrome,
+   flush on the two that follow the window. */
+.main-view {
+  border-top-left-radius: var(--radius-xl);
+  border-bottom-left-radius: var(--radius-xl);
+}
+
+/* The sidebar keeps the window company on the left, so it curves where it meets the panel. */
+.sidebar {
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+
+/* Give the two a hairline of space so the curves read as two surfaces rather than one shape
+   with a notch cut out of it. */
+.shell {
+  gap: 2px;
+}
+
+/* =====================================================================================
+   39. Less motion
+   -------------------------------------------------------------------------------------
+   Almost everything that moved has stopped moving. The interface still answers — a hover still
+   lightens, a press still darkens, a panel still arrives — but it does it by changing rather
+   than by travelling. What is left that moves at all: the dots while H1 thinks, the sweep across
+   a skeleton, and the caret at the end of a streaming answer, because each of those is telling
+   you something is happening.
+   ===================================================================================== */
+
+/* Views arrive by fading, not by sliding up. */
+.view {
+  animation: viewFade var(--dur-3) var(--ease-out);
+}
+
+@keyframes viewFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Cards answer with their surface, not by lifting off the page. */
+.bento-tile.clickable:hover,
+.doc-card:hover,
+.deck-card:hover,
+.project-card:hover,
+.subject-card:hover,
+.note-card:hover,
+.code-track-card:hover,
+.quote-card:hover,
+.tool-card-sm:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.bento-tile.clickable:active,
+.doc-card:active,
+.deck-card:active,
+.project-card:active,
+.quote-card:active,
+.tool-card-sm:active {
+  transform: none;
+  background: var(--fill-press);
+}
+
+/* Controls press by darkening rather than by shrinking. */
+.btn:active:not(:disabled),
+.chip:active,
+.suggestion-chip:active,
+.dock-item:active,
+.nav-item:active,
+.icon-btn:active {
+  transform: none;
+  filter: brightness(0.94);
+}
+
+.composer-v2 .btn-send:active:not(:disabled) {
+  transform: none;
+  filter: brightness(0.94);
+}
+
+.toggle:active .toggle-thumb {
+  transform: none;
+}
+
+.toggle.on:active .toggle-thumb {
+  transform: translateX(24px);
+}
+
+/* Menus, dialogs and toasts fade in place. */
+.account-menu,
+.attach-menu,
+.slash-menu,
+.space-switcher-popover,
+.notif-center-popover {
+  animation: calmIn var(--dur-2) var(--ease-out);
+}
+
+.modal {
+  animation: calmIn var(--dur-3) var(--ease-out);
+}
+
+@keyframes calmIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* The dock stops magnifying under the pointer; the icon under the cursor simply lights up. */
+.dock-item {
+  transform: none !important;
+}
+
+.dock-item:hover {
+  background: var(--fill-hover);
+}
+
+/* Cards no longer move, so there is nothing left to interpolate on transform; leaving it in the
+   transition list only kept a hundredth of a pixel travelling after every hover. */
+.bento-tile.clickable,
+.doc-card,
+.deck-card,
+.project-card,
+.subject-card,
+.note-card,
+.code-track-card,
+.quote-card,
+.tool-card-sm {
+  transition: background var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out),
+    color var(--dur-2) var(--ease-out);
+}
+
+/* =====================================================================================
+   40. One size per row
+   -------------------------------------------------------------------------------------
+   The tutor's toolbar was running three heights at once: a 52px dropdown, 34px buttons beside it
+   and a 52px send button below. 34px is not even on the control scale. Everything in a row is
+   now the same height, and the only control that is deliberately larger than its neighbours is
+   the send button, because it is the one doing the work.
+   ===================================================================================== */
+.chat-toolbar .btn,
+.view-actions .btn,
+.chat-toolbar .mode-select,
+.view-actions .mode-select,
+.chat-toolbar select,
+.view-actions select {
+  height: var(--h-control);
+  min-height: var(--h-control);
+  font-size: var(--fs-sm);
+}
+
+/* Square buttons in that row are squares, not slightly-wrong rectangles. */
+.chat-toolbar .btn.btn-icon,
+.view-actions .btn.btn-icon {
+  width: var(--h-control);
+  padding: 0;
+  border-radius: var(--radius-md);
+}
+
+.chat-toolbar .btn,
+.view-actions .btn {
+  /* A button carrying only an icon becomes a square at the row height; one carrying words keeps
+     its padding and simply cannot be narrower than that square. */
+  min-width: var(--h-control);
+  padding: 0 var(--sp-5);
+}
+
+.chat-toolbar .btn:has(> svg:only-child),
+.view-actions .btn:has(> svg:only-child) {
+  width: var(--h-control);
+  padding: 0;
+  border-radius: var(--radius-md);
+}
+
+/* The composer's own row: the two tools match each other, and the send button is one step up. */
+.composer-tool,
+.composer-v2 .composer-tool {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+}
+
+/* =====================================================================================
+   41. When something goes wrong
+   -------------------------------------------------------------------------------------
+   An error was a line of red text sitting in the answer card with the word "Retry" underneath in
+   whatever shape it landed in. It is a card of its own now: the same corner and padding as an
+   answer, a red-tinted surface rather than red type, the message in the ordinary text colour so
+   it stays readable, and a real button to try again.
+   ===================================================================================== */
+/* Matched to the waiting-state rule above, which is equally specific and would otherwise
+   paint this card the ordinary surface colour. */
+.chat-log .message.error .bubble:not(.answer) {
+  padding: var(--sp-6) var(--sp-7);
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, var(--danger) 10%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--danger) 26%, transparent);
+  color: var(--text);
+  font-size: var(--fs-base);
+  line-height: 1.6;
+  box-shadow: none;
+}
+
+.chat-log .message.error .bubble:not(.answer)::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: var(--danger);
+  vertical-align: 0.05em;
+}
+
+.chat-log .message.error .message-actions {
+  margin-top: var(--sp-3);
+  padding-left: 2px;
+}
+
+.btn-retry {
+  height: var(--h-control-sm);
+  padding: 0 var(--sp-5);
+  font-size: var(--fs-sm);
 }

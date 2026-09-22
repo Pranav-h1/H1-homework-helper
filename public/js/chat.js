@@ -727,8 +727,9 @@ function showErrorBubble(text) {
   actions.className = "message-actions";
   const retryBtn = document.createElement("button");
   retryBtn.type = "button";
-  retryBtn.className = "icon-btn-sm";
-  retryBtn.textContent = "Retry";
+  // A real button: it was an icon-sized control carrying a word, so it rendered as bare text.
+  retryBtn.className = "btn btn-ghost btn-retry";
+  retryBtn.textContent = "Try again";
   retryBtn.addEventListener("click", () => {
     row.remove();
     requestReply();
