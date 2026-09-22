@@ -5697,3 +5697,28 @@ textarea {
     padding: 11px var(--sp-5) 12px;
   }
 }
+
+/* =====================================================================================
+   37. The clock is a pill
+   -------------------------------------------------------------------------------------
+   At 80px tall, a 32px corner is 40% of the height — mathematically generous, and still read as
+   square, because the capsule sits directly beside a status indicator that is fully round. Two
+   neighbours in the same material, one stadium-shaped and one not, is the mismatch the eye
+   catches. The clock is now the same shape as its sibling, with more room at the ends so the
+   type does not sit inside the curve.
+   ===================================================================================== */
+.topbar-clock {
+  border-radius: var(--radius-full);
+  padding: 14px var(--sp-8) 15px;
+}
+
+@media (max-width: 1100px) {
+  .topbar-clock {
+    padding: 11px var(--sp-6) 12px;
+  }
+}
+
+/* The single-line clock on a phone is already a pill; this keeps the pair in step. */
+.mobile-clock {
+  border-radius: var(--radius-full);
+}
