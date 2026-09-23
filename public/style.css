@@ -1385,24 +1385,6 @@ textarea::placeholder {
   transform: translateY(-1px) scale(0.99);
 }
 
-.tool-icon {
-  font-size: 30px;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.tool-title {
-  font-size: 16px;
-  font-weight: var(--fw-bold);
-  font-family: var(--font-display);
-}
-
-.tool-desc {
-  font-size: 13px;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
 .empty-state {
   margin: auto;
   text-align: center;
@@ -2638,7 +2620,7 @@ textarea::placeholder {
 
 .status-pill-ok {
   color: var(--success);
-  border-color: rgba(52, 211, 153, 0.35);
+  border-color: color-mix(in srgb, var(--success) 35%, transparent);
   background: var(--success-bg);
 }
 
@@ -2693,7 +2675,7 @@ textarea::placeholder {
 }
 
 .toast.toast-success {
-  border-color: rgba(52, 211, 153, 0.4);
+  border-color: color-mix(in srgb, var(--success) 40%, transparent);
   color: var(--success);
 }
 
@@ -3077,91 +3059,6 @@ textarea::placeholder {
   font-size: 14.5px;
 }
 
-.hero-ask {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 18px;
-  padding: 6px 8px 6px 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  backdrop-filter: blur(16px);
-  box-shadow: var(--shadow-sm);
-  transition: border-color var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease);
-}
-
-.hero-ask:focus-within {
-  border-color: var(--accent-1);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-1) 14%, transparent);
-}
-
-.hero-ask-icon {
-  flex-shrink: 0;
-  color: var(--text-faint);
-}
-
-.hero-ask-input {
-  flex: 1;
-  background: none;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font-family: inherit;
-  font-size: 15px;
-  padding: 11px 0;
-  min-width: 0;
-}
-
-.hero-ask-input::placeholder {
-  color: var(--text-faint);
-}
-
-.hero-ask-send {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--accent-grad);
-  color: var(--accent-contrast);
-  flex-shrink: 0;
-  padding: 0;
-  box-shadow: var(--shadow-glow);
-}
-
-.quick-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.quick-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  padding: 7px 14px;
-  border-radius: var(--radius-full);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  cursor: pointer;
-  font-family: inherit;
-  transition: border-color var(--t-base) var(--ease), color var(--t-base) var(--ease), transform var(--t-fast) var(--ease), background var(--t-base) var(--ease);
-}
-
-.quick-action:hover {
-  border-color: var(--accent-1);
-  color: var(--text);
-  transform: translateY(-1px);
-  background: var(--surface-hover);
-}
-
-.quick-action:active {
-  transform: translateY(0) scale(0.97);
-}
-
 .section-heading {
   display: flex;
   align-items: baseline;
@@ -3239,51 +3136,12 @@ textarea::placeholder {
   text-overflow: ellipsis;
 }
 
-.soon-badge {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 9.5px;
-  font-weight: var(--fw-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-faint);
-  background: var(--surface-solid);
-  border: 1px solid var(--border);
-  padding: 2px 7px;
-  border-radius: var(--radius-full);
-}
-
 /* =========================================================
    Skeleton loaders
    ========================================================= */
-.skeleton {
-  border-radius: var(--radius-md);
-  background: linear-gradient(100deg, var(--surface-solid) 30%, var(--surface-hover) 50%, var(--surface-solid) 70%);
-  background-size: 220% 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
-}
-
 @keyframes shimmer {
   from { background-position: 120% 0; }
   to { background-position: -20% 0; }
-}
-
-.skeleton-line {
-  height: 14px;
-  margin-bottom: 8px;
-}
-
-.skeleton-card {
-  height: 64px;
-  margin-bottom: 10px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .skeleton {
-    animation: none;
-    background: var(--surface-solid);
-  }
 }
 
 /* =========================================================
@@ -3297,7 +3155,7 @@ textarea::placeholder {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(6, 8, 14, 0.5);
+  background: var(--scrim);
   backdrop-filter: blur(6px);
   animation: overlayIn var(--t-base) var(--ease);
 }
@@ -3360,8 +3218,13 @@ textarea::placeholder {
 }
 
 .modal-danger .btn-primary {
-  background: linear-gradient(135deg, #ff6b7a, #ff4d5e);
-  box-shadow: 0 0 0 1px rgba(255, 107, 122, 0.35), 0 10px 30px rgba(255, 107, 122, 0.25);
+  background: var(--danger);
+  color: var(--on-danger, #fff);
+  box-shadow: var(--elev-1);
+}
+
+.modal-danger .btn-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
 }
 
 /* =========================================================
@@ -3374,7 +3237,7 @@ textarea::placeholder {
   display: flex;
   justify-content: center;
   padding: 12vh 20px 20px;
-  background: rgba(6, 8, 14, 0.5);
+  background: var(--scrim);
   backdrop-filter: blur(6px);
   animation: overlayIn var(--t-base) var(--ease);
 }
@@ -3394,7 +3257,7 @@ textarea::placeholder {
   align-items: flex-end;
   justify-content: center;
   padding: 20px;
-  background: rgba(6, 8, 14, 0.5);
+  background: var(--scrim);
   backdrop-filter: blur(6px);
   animation: overlayIn var(--t-base) var(--ease);
 }
@@ -4044,16 +3907,6 @@ textarea::placeholder {
   background: var(--surface-hover);
 }
 
-.cursor-blink {
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  background: var(--text-muted);
-  margin-left: 2px;
-  vertical-align: text-bottom;
-  animation: blink 0.9s step-end infinite;
-}
-
 @keyframes blink {
   50% { opacity: 0; }
 }
@@ -4082,12 +3935,12 @@ textarea::placeholder {
 }
 
 .flash-mark-btn.known {
-  border-color: rgba(52, 211, 153, 0.35);
+  border-color: color-mix(in srgb, var(--success) 35%, transparent);
   color: var(--success);
 }
 
 .flash-mark-btn.practice {
-  border-color: rgba(251, 191, 36, 0.35);
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
   color: var(--warning);
 }
 
@@ -4643,23 +4496,6 @@ textarea::placeholder {
 /* =========================================================
    Home progress widget
    ========================================================= */
-.home-progress-widget {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-}
-
-.progress-mini-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  backdrop-filter: blur(14px);
-}
-
 .progress-mini-value {
   font-size: 22px;
   font-weight: var(--fw-bold);
@@ -4670,13 +4506,6 @@ textarea::placeholder {
   font-size: var(--fs-xs);
   color: var(--text-muted);
   font-weight: var(--fw-semibold);
-}
-
-.progress-mini-card.wide {
-  grid-column: span 2;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .recommend-card {
@@ -4935,15 +4764,6 @@ textarea::placeholder {
   font-weight: var(--fw-bold);
 }
 
-.exam-day-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  margin-bottom: 12px;
-  backdrop-filter: blur(14px);
-}
-
 .exam-day-header {
   display: flex;
   align-items: center;
@@ -5007,9 +4827,7 @@ textarea::placeholder {
   display: block;
 }
 
-.traffic-light.red { background: #ff6159; }
-.traffic-light.yellow { background: #ffbd2e; }
-.traffic-light.green { background: #28c941; }
+/* The window buttons are defined once, with the rest of H1's identity, in design.css. */
 
 .topbar-divider {
   width: 1px;
@@ -5538,12 +5356,6 @@ textarea::placeholder {
   min-width: 160px;
 }
 
-.homework-filters {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 .homework-list {
   display: flex;
   flex-direction: column;
@@ -5805,13 +5617,6 @@ textarea::placeholder {
   color: var(--text-faint);
 }
 
-.document-actions-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-}
-
 /* =========================================================
    Deck library (Flashcards)
    ========================================================= */
@@ -5866,12 +5671,6 @@ textarea::placeholder {
   letter-spacing: 0.05em;
   color: var(--text-faint);
   margin: 4px 0 -2px;
-}
-
-.planner-generate-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
 }
 
 /* =========================================================
@@ -8961,12 +8760,6 @@ textarea::placeholder {
   position: relative;
 }
 
-.code-copy-btn {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-}
-
 .builder-trim-note {
   font-size: var(--fs-xs);
   color: var(--warning);
@@ -10864,7 +10657,7 @@ body.pyw-fullscreen-open {
   padding: 12px 14px;
   border-radius: var(--radius-xs);
   background: var(--warning-bg);
-  border: 1px solid rgba(251, 191, 36, 0.3);
+  border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
   font-size: 13px;
 }
 
@@ -11090,7 +10883,7 @@ body.pyw-fullscreen-open {
 }
 
 .ch-card.solved {
-  border-color: rgba(52, 211, 153, 0.35);
+  border-color: color-mix(in srgb, var(--success) 35%, transparent);
 }
 
 .ch-card-top,
@@ -11141,7 +10934,7 @@ body.pyw-fullscreen-open {
 
 .ch-diff-beginner {
   background: rgba(34, 211, 238, 0.14);
-  color: #22d3ee;
+  color: var(--accent-2-text);
 }
 
 .ch-diff-easy {
@@ -11264,7 +11057,7 @@ body.pyw-fullscreen-open {
 }
 
 .ch-explain {
-  border-color: rgba(52, 211, 153, 0.3);
+  border-color: color-mix(in srgb, var(--success) 30%, transparent);
 }
 
 /* --- Build: Python projects -------------------------------------------- */
