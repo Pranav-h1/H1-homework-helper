@@ -2384,7 +2384,7 @@ html.force-reduced-motion .auth-layout {
      clerical. Each step has a job, and a component picks the step for what it IS, not for how
      big it happens to be. Fully round is reserved for chips, tags and status dots — a control
      that is round on both ends reads as a label, not as something you press. */
-  --r-window: 38px;   /* the application window */
+  --r-window: 44px;   /* the application window */
   --r-panel: 30px;    /* panels: the content stage, the sidebar, large surfaces */
   --radius-xs: 10px;  /* the smallest things: dots, tiny tags, inner details */
   --radius-sm: 18px;  /* controls: buttons, icon buttons, segmented items */
@@ -5104,7 +5104,7 @@ textarea {
    rounded a little further so the outside stays softer than anything inside it.
    ===================================================================================== */
 .app {
-  border-radius: 44px;
+  border-radius: var(--r-window);
 }
 
 /* The content panel is a pane set into the window: round on the two edges that face the chrome,
@@ -5328,3 +5328,36 @@ textarea {
   padding: 0 var(--sp-5);
   font-size: var(--fs-sm);
 }
+
+/* =====================================================================================
+   42. The window corners, carried by the chrome
+   -------------------------------------------------------------------------------------
+   The window clips its children with overflow:hidden, which is normally enough. It is not enough
+   for a child that has a backdrop-filter: a blurred element is composited on its own layer and
+   can paint straight past the parent's rounded corner. The title bar is exactly that — blurred,
+   full width, and sitting in both top corners — so on a machine compositing on the GPU the
+   corners came out square even though the window is round. Headless rendering does not reproduce
+   it, which is why it survived several passes.
+   The fix is not to clip harder but to give every piece of chrome that touches a window corner
+   the same corner of its own, so the shape is correct whether the clip applies or not.
+   ===================================================================================== */
+.desktop-topbar {
+  border-top-left-radius: var(--r-window);
+  border-top-right-radius: var(--r-window);
+}
+
+.mobile-topbar {
+  border-top-left-radius: var(--r-window);
+  border-top-right-radius: var(--r-window);
+}
+
+/* The sidebar reaches the bottom-left corner, the content panel the bottom-right. */
+.sidebar {
+  border-bottom-left-radius: var(--r-window);
+}
+
+.main-view {
+  border-bottom-right-radius: var(--r-window);
+}
+
+/* The dock floats clear of the edges, so it keeps its own corner. */
