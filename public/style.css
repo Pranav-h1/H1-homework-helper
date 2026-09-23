@@ -440,7 +440,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 6px 8px 18px;
+  padding: 6px 8px 16px;
 }
 
 .brand-mark {
@@ -482,7 +482,7 @@ textarea::placeholder {
 .nav-group {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   position: relative;
 }
 
@@ -520,7 +520,7 @@ textarea::placeholder {
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 11px 12px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: transparent;
   border: 1px solid transparent;
@@ -649,7 +649,7 @@ textarea::placeholder {
   flex-direction: column;
   overflow-y: auto;
   padding: 24px 28px 24px;
-  gap: 18px;
+  gap: 16px;
   background: var(--glass-base-bg);
   backdrop-filter: blur(var(--glass-base-blur));
   border: 1px solid var(--glass-base-border);
@@ -701,7 +701,7 @@ textarea::placeholder {
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  gap: 18px;
+  gap: 16px;
   animation: viewIn 0.32s var(--ease);
 }
 
@@ -845,7 +845,7 @@ textarea::placeholder {
 .icon-btn-sm {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--sp-h1);
   background: transparent;
   border: none;
   color: var(--text-faint);
@@ -916,7 +916,7 @@ textarea::placeholder {
   height: 34px;
   border-radius: 50%;
   border: 2px solid transparent;
-  padding: 3px;
+  padding: 2px;
   cursor: pointer;
   background: linear-gradient(135deg, var(--swatch-1), var(--swatch-2)) padding-box,
     linear-gradient(135deg, var(--swatch-1), var(--swatch-2)) border-box;
@@ -944,7 +944,7 @@ textarea::placeholder {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 11px 16px;
+  padding: 10px 16px;
   background: var(--danger-bg);
   border: 1px solid var(--danger-border);
   border-radius: var(--radius-sm);
@@ -986,11 +986,11 @@ textarea::placeholder {
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--sp-2);
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-muted);
-  padding: 8px 15px;
+  padding: 8px 14px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: var(--fw-semibold);
@@ -1044,7 +1044,7 @@ textarea::placeholder {
   border: 1px solid var(--glass-elevated-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-elevated-shadow);
-  padding: 20px 22px;
+  padding: 20px 20px;
   transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), border-color 180ms var(--ease);
   will-change: transform;
 }
@@ -1100,7 +1100,7 @@ textarea::placeholder {
 
 .bento-superbar {
   grid-area: super;
-  padding: 14px 18px;
+  padding: 14px 16px;
 }
 
 .superbar {
@@ -1184,7 +1184,7 @@ textarea::placeholder {
   background: var(--glass-base-bg);
   border: 1px solid var(--glass-base-border);
   color: var(--text-muted);
-  padding: 8px 15px;
+  padding: 8px 14px;
   border-radius: var(--radius-full);
   font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
@@ -1274,7 +1274,7 @@ textarea::placeholder {
   margin-top: 12px;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--sp-h1);
   font-size: 12px;
   font-weight: var(--fw-bold);
   color: var(--accent-text);
@@ -1366,7 +1366,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 22px 20px;
+  padding: 20px 20px;
   cursor: pointer;
   font-family: inherit;
   color: var(--text);
@@ -1443,7 +1443,7 @@ textarea::placeholder {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 18px;
+  padding: var(--sp-5);
   background: var(--glass-elevated-bg);
   backdrop-filter: blur(var(--glass-elevated-blur));
   border: 1px solid var(--glass-elevated-border);
@@ -1476,7 +1476,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 10px;
+  padding: 6px 10px;
   border-radius: var(--radius-sm);
   background: var(--glass-base-bg);
   border: 1px solid var(--glass-base-border);
@@ -1694,7 +1694,7 @@ textarea::placeholder {
 .message.ai .bubble {
   font-size: 16.5px;
   line-height: 1.75;
-  padding: 20px 26px;
+  padding: 20px 24px;
   width: 100%;
 }
 
@@ -1848,7 +1848,7 @@ textarea::placeholder {
   background: var(--surface-solid);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 8px 8px 8px 18px;
+  padding: 8px 8px 8px 16px;
   transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
   flex-shrink: 0;
 }
@@ -1925,7 +1925,7 @@ textarea::placeholder {
   font-size: 15.5px;
   line-height: 1.5;
   max-height: 160px;
-  padding: 9px 0;
+  padding: 8px 0;
 }
 
 .composer-input::placeholder {
@@ -1997,7 +1997,7 @@ textarea::placeholder {
   background: var(--surface-solid);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 11px 14px;
+  padding: 10px 14px;
   color: var(--text);
   font-size: 14px;
   margin-top: 6px;
@@ -2045,7 +2045,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 16px 18px;
+  padding: 16px 16px;
   backdrop-filter: blur(14px);
   animation: stepIn 0.35s var(--ease) both;
 }
@@ -2317,7 +2317,7 @@ textarea::placeholder {
   background: var(--surface-solid);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 13px 16px;
+  padding: 12px 16px;
   font-size: 14px;
   font-weight: var(--fw-medium);
   color: var(--text);
@@ -2577,7 +2577,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 20px 22px;
+  padding: 20px 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -2609,7 +2609,7 @@ textarea::placeholder {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 12px;
+  padding: 4px 12px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: var(--fw-bold);
@@ -2660,7 +2660,7 @@ textarea::placeholder {
   background: var(--surface-elevated);
   border: 1px solid var(--border-strong);
   color: var(--text);
-  padding: 11px 18px;
+  padding: 10px 16px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: var(--fw-semibold);
@@ -2805,7 +2805,7 @@ textarea::placeholder {
 
   .message.ai .bubble {
     font-size: 16px;
-    padding: 16px 18px;
+    padding: 16px 16px;
   }
 
   .chat-log {
@@ -2875,7 +2875,7 @@ textarea::placeholder {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     background: none;
     border: none;
     color: var(--text-faint);
@@ -3089,7 +3089,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 15px 16px;
+  padding: 14px 16px;
   cursor: pointer;
   font-family: inherit;
   color: var(--text);
@@ -3191,7 +3191,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 20px 14px;
+  padding: 16px 20px 14px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
@@ -3202,7 +3202,7 @@ textarea::placeholder {
 }
 
 .modal-body {
-  padding: 18px 20px;
+  padding: 16px 20px;
   overflow-y: auto;
   font-size: var(--fs-sm);
   color: var(--text-muted);
@@ -3213,7 +3213,7 @@ textarea::placeholder {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  padding: 14px 20px 18px;
+  padding: 14px 20px 16px;
   flex-shrink: 0;
 }
 
@@ -3270,7 +3270,7 @@ textarea::placeholder {
   width: 100%;
   max-width: 560px;
   margin-bottom: 12vh;
-  padding: 18px 20px;
+  padding: 16px 20px;
   background: var(--glass-floating-bg);
   backdrop-filter: blur(var(--glass-floating-blur));
   border: 1px solid var(--glass-floating-border);
@@ -3312,7 +3312,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 13px;
+  padding: 6px 12px;
   border-radius: var(--radius-full);
   background: var(--glass-base-bg);
   border: 1px solid var(--glass-base-border);
@@ -3383,7 +3383,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 18px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
@@ -3486,7 +3486,7 @@ textarea::placeholder {
 }
 
 .command-empty {
-  padding: 30px 16px;
+  padding: 28px 16px;
   text-align: center;
   color: var(--text-faint);
   font-size: 13px;
@@ -3516,7 +3516,7 @@ textarea::placeholder {
 .toggle-row-stacked span:first-child {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .toggle-row-stacked small {
@@ -3687,7 +3687,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: var(--sp-5);
   backdrop-filter: blur(14px);
 }
 
@@ -3754,7 +3754,7 @@ textarea::placeholder {
   border: 1px solid var(--border);
   color: var(--text);
   border-radius: var(--radius-sm);
-  padding: 9px 12px;
+  padding: 8px 12px;
   font-size: var(--fs-sm);
   font-family: inherit;
   margin-bottom: 12px;
@@ -3779,7 +3779,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 11px 12px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -3931,7 +3931,7 @@ textarea::placeholder {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 9px 16px;
+  padding: 8px 16px;
 }
 
 .flash-mark-btn.known {
@@ -3965,7 +3965,7 @@ textarea::placeholder {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
   align-items: center;
   text-align: center;
 }
@@ -4093,7 +4093,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 16px 18px;
+  padding: 16px 16px;
   backdrop-filter: blur(14px);
   animation: stepIn var(--t-slow) var(--ease);
 }
@@ -4221,7 +4221,7 @@ textarea::placeholder {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -4264,7 +4264,7 @@ textarea::placeholder {
   border: 1px solid var(--border);
   color: var(--text);
   border-radius: var(--radius-sm);
-  padding: 9px 12px;
+  padding: 8px 12px;
   font-size: 13px;
   font-weight: var(--fw-semibold);
   font-family: inherit;
@@ -4404,7 +4404,7 @@ textarea::placeholder {
   background: var(--surface-solid);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 7px 10px;
+  padding: 6px 10px;
   color: var(--text);
   font-size: var(--fs-sm);
 }
@@ -4423,7 +4423,7 @@ textarea::placeholder {
 .folder-chip {
   font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-radius: var(--radius-full);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -4537,7 +4537,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: var(--sp-5);
   backdrop-filter: blur(14px);
 }
 
@@ -4671,7 +4671,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 18px 12px;
+  padding: 16px 12px;
   /* An achievement that hasn't been earned is greyscaled, and its icon is dimmed — but its
      name and description stay at full strength. Dimming the whole card put the title at 2.9:1
      against the background, well under WCAG AA; the greyscale, the faded icon and the missing
@@ -4720,7 +4720,7 @@ textarea::placeholder {
   grid-template-rows: repeat(7, 1fr);
   grid-auto-flow: column;
   grid-auto-columns: 11px;
-  gap: 3px;
+  gap: 2px;
   overflow-x: auto;
   padding-bottom: 4px;
 }
@@ -4759,7 +4759,7 @@ textarea::placeholder {
   background: var(--accent-grad-soft);
   border: 1px solid rgba(var(--accent-1-rgb), 0.35);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: var(--sp-5);
   margin-bottom: 16px;
   font-weight: var(--fw-bold);
 }
@@ -4816,7 +4816,7 @@ textarea::placeholder {
 
 .traffic-lights {
   display: flex;
-  gap: 7px;
+  gap: var(--sp-2);
   flex-shrink: 0;
 }
 
@@ -4865,7 +4865,7 @@ textarea::placeholder {
   right: 3px;
   min-width: 15px;
   height: 15px;
-  padding: 0 3px;
+  padding: 0 2px;
   border-radius: var(--radius-full);
   background: var(--danger);
   color: var(--on-danger);
@@ -4902,7 +4902,7 @@ textarea::placeholder {
 .notif-center-list {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   max-height: 360px;
   overflow-y: auto;
 }
@@ -4911,7 +4911,7 @@ textarea::placeholder {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 9px 8px;
+  padding: 8px 8px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   border: none;
@@ -4950,7 +4950,7 @@ textarea::placeholder {
 }
 
 .notif-center-empty {
-  padding: 22px 12px;
+  padding: 20px 12px;
   text-align: center;
   color: var(--text-faint);
   font-size: 13px;
@@ -4963,7 +4963,7 @@ textarea::placeholder {
 .space-switcher-btn {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--sp-2);
   padding: 6px 12px 6px 10px;
   border-radius: var(--radius-full);
   background: var(--glass-base-bg);
@@ -5034,9 +5034,9 @@ textarea::placeholder {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   min-width: 0;
-  padding: 9px 8px;
+  padding: 8px 8px;
   background: none;
   border: none;
   cursor: pointer;
@@ -5105,8 +5105,8 @@ textarea::placeholder {
 .topbar-status {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 14px;
+  gap: var(--sp-2);
+  padding: 6px 14px;
   border-radius: var(--radius-full);
   background: var(--glass-base-bg);
   backdrop-filter: blur(var(--glass-base-blur));
@@ -5197,8 +5197,8 @@ textarea::placeholder {
   pointer-events: auto;
   display: flex;
   align-items: flex-end;
-  gap: 5px;
-  padding: 9px 12px;
+  gap: var(--sp-h1);
+  padding: 8px 12px;
   background: var(--glass-floating-bg);
   backdrop-filter: blur(var(--glass-floating-blur));
   border: 1px solid var(--glass-floating-border);
@@ -5273,7 +5273,7 @@ textarea::placeholder {
   color: var(--text);
   font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-radius: var(--radius-sm);
   white-space: nowrap;
   opacity: 0;
@@ -5369,7 +5369,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 16px 18px;
+  padding: 16px 16px;
   backdrop-filter: blur(14px);
   transition: transform var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
   animation: stepIn var(--t-slow) var(--ease);
@@ -5412,7 +5412,7 @@ textarea::placeholder {
 .homework-badge {
   font-size: 11px;
   font-weight: var(--fw-bold);
-  padding: 3px 9px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   background: var(--surface-solid);
   border: 1px solid var(--border);
@@ -5584,7 +5584,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: var(--sp-5);
   backdrop-filter: blur(14px);
   cursor: pointer;
   transition: transform var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
@@ -5715,7 +5715,7 @@ textarea::placeholder {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
 }
 
@@ -5749,7 +5749,7 @@ textarea::placeholder {
 .calendar-day-dot-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
+  gap: 2px;
 }
 
 .calendar-dot {
@@ -5787,7 +5787,7 @@ textarea::placeholder {
 .focus-cycle-badge {
   font-size: 12px;
   font-weight: var(--fw-bold);
-  padding: 5px 12px;
+  padding: 4px 12px;
   border-radius: var(--radius-full);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -5851,7 +5851,7 @@ textarea::placeholder {
   background: var(--surface-solid);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 18px;
+  padding: var(--sp-5);
   text-align: right;
   font-family: var(--font-display);
   font-size: 30px;
@@ -5939,7 +5939,7 @@ textarea::placeholder {
 .periodic-table-grid {
   display: grid;
   grid-template-columns: repeat(18, minmax(30px, 1fr));
-  gap: 3px;
+  gap: 2px;
   overflow-x: auto;
 }
 
@@ -6040,7 +6040,7 @@ textarea::placeholder {
 .quotes-featured {
   position: relative;
   text-align: center;
-  padding: 36px 32px 30px;
+  padding: 32px 32px 28px;
   border-radius: var(--r-panel);
   background: var(--accent-grad-soft);
   border: 1px solid rgba(var(--accent-1-rgb), 0.25);
@@ -6082,7 +6082,7 @@ textarea::placeholder {
 .quotes-featured-category {
   display: inline-block;
   margin-top: 14px;
-  padding: 5px 14px;
+  padding: 4px 14px;
   border-radius: var(--radius-full);
   background: var(--surface-solid);
   border: 1px solid var(--border);
@@ -6118,7 +6118,7 @@ textarea::placeholder {
   min-width: 220px;
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   padding: 10px 16px;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -6167,7 +6167,7 @@ textarea::placeholder {
 
 /* Load-more marker for the paged quote grid — an IntersectionObserver watches it. */
 .quotes-sentinel {
-  padding: 18px 0 4px;
+  padding: 16px 0 4px;
   text-align: center;
   font-size: var(--fs-sm);
   color: var(--text-faint);
@@ -6178,7 +6178,7 @@ textarea::placeholder {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 22px 20px 18px;
+  padding: 20px 20px 16px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -6262,7 +6262,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px 22px;
+  padding: 16px 20px;
   background: var(--glass-base-bg);
   backdrop-filter: blur(var(--glass-base-blur));
   border: 1px solid var(--glass-base-border);
@@ -6309,7 +6309,7 @@ textarea::placeholder {
 
 @media (max-width: 560px) {
   .quotes-featured {
-    padding: 26px 18px 22px;
+    padding: 24px 16px 20px;
   }
   .quotes-featured-text {
     font-size: 19px;
@@ -6362,7 +6362,7 @@ textarea::placeholder {
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-elevated-shadow);
   backdrop-filter: blur(var(--glass-elevated-blur));
-  padding: 22px;
+  padding: var(--sp-6);
 }
 
 .brain-card h2 {
@@ -6442,7 +6442,7 @@ textarea::placeholder {
 .brain-top {
   display: grid;
   grid-template-columns: minmax(260px, 320px) 1fr;
-  gap: 18px;
+  gap: 16px;
   align-items: start;
 }
 
@@ -6586,7 +6586,7 @@ textarea::placeholder {
   border-radius: var(--radius-xs);
   color: var(--text);
   font-size: 13px;
-  padding: 7px 10px;
+  padding: 6px 10px;
   cursor: pointer;
 }
 
@@ -6701,7 +6701,7 @@ textarea::placeholder {
 }
 
 .brain-btn-sm {
-  padding: 6px 11px;
+  padding: 6px 10px;
   font-size: 12px;
   white-space: nowrap;
 }
@@ -6780,7 +6780,7 @@ textarea::placeholder {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .brain-signal-title {
@@ -6801,7 +6801,7 @@ textarea::placeholder {
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 4px 9px;
+  padding: 4px 8px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.07);
   color: var(--text-muted);
@@ -6833,7 +6833,7 @@ textarea::placeholder {
 }
 
 .brain-topic {
-  padding: 15px;
+  padding: var(--sp-4);
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -6887,7 +6887,7 @@ textarea::placeholder {
 .brain-topic-tag {
   font-size: 10.5px;
   font-weight: var(--fw-semibold);
-  padding: 3px 8px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.06);
   color: var(--text-muted);
@@ -6912,7 +6912,7 @@ textarea::placeholder {
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-floating-shadow);
   backdrop-filter: blur(var(--glass-floating-blur));
-  padding: 22px;
+  padding: var(--sp-6);
   margin-bottom: 20px;
 }
 
@@ -6964,7 +6964,7 @@ textarea::placeholder {
   background: var(--surface-solid);
   border: 1px solid var(--border);
   border-radius: var(--radius-xs);
-  padding: 9px 12px;
+  padding: 8px 12px;
   color: var(--text);
   font-size: var(--fs-sm);
   font-weight: var(--fw-regular);
@@ -7128,7 +7128,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 22px;
+  padding: var(--sp-6);
   backdrop-filter: blur(14px);
 }
 
@@ -7173,8 +7173,8 @@ textarea::placeholder {
   max-width: 210px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 9px 11px;
+  gap: 2px;
+  padding: 8px 10px;
   border-radius: var(--radius-xs);
   background: var(--glass-floating-bg);
   border: 1px solid var(--glass-floating-border);
@@ -7198,7 +7198,7 @@ textarea::placeholder {
 
 .universe-detail {
   margin-top: 16px;
-  padding: 16px 18px;
+  padding: 16px 16px;
   border-radius: var(--radius-sm);
   background: var(--glass-base-bg);
   border: 1px solid var(--glass-base-border);
@@ -7251,7 +7251,7 @@ textarea::placeholder {
 .universe-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 18px;
+  gap: 8px 16px;
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1px solid var(--border);
@@ -7260,7 +7260,7 @@ textarea::placeholder {
 .universe-legend-item {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--sp-2);
   font-size: var(--fs-xs);
   color: var(--text-muted);
 }
@@ -7295,7 +7295,7 @@ textarea::placeholder {
   border-radius: var(--radius-lg);
   box-shadow: var(--glass-elevated-shadow);
   backdrop-filter: blur(var(--glass-elevated-blur));
-  padding: 26px;
+  padding: 24px;
   max-width: 780px;
 }
 
@@ -7407,7 +7407,7 @@ textarea::placeholder {
   margin-top: 6px;
   font-size: 11px;
   font-weight: var(--fw-semibold);
-  padding: 3px 9px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   background: rgba(var(--accent-2-rgb), 0.14);
   color: var(--accent-2-text);
@@ -7480,12 +7480,12 @@ textarea::placeholder {
 .boss-options {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
 }
 
 .boss-option {
   text-align: left;
-  padding: 13px 16px;
+  padding: 12px 16px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -7600,7 +7600,7 @@ textarea::placeholder {
   display: flex;
   justify-content: space-between;
   gap: 14px;
-  padding: 9px 0;
+  padding: 8px 0;
   border-bottom: 1px solid var(--border);
   font-size: var(--fs-sm);
 }
@@ -7709,8 +7709,8 @@ textarea::placeholder {
   max-width: 200px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 9px 11px;
+  gap: 2px;
+  padding: 8px 10px;
   border-radius: var(--radius-xs);
   background: var(--glass-floating-bg);
   border: 1px solid var(--glass-floating-border);
@@ -7844,7 +7844,7 @@ textarea::placeholder {
 }
 
 .replay-card {
-  padding: 18px;
+  padding: var(--sp-5);
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border-strong);
@@ -7854,7 +7854,7 @@ textarea::placeholder {
   display: inline-block;
   font-size: 11px;
   font-weight: var(--fw-semibold);
-  padding: 3px 9px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   background: rgba(var(--accent-2-rgb), 0.14);
   color: var(--accent-2-text);
@@ -7964,7 +7964,7 @@ textarea::placeholder {
 .pack-steps {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
 }
 
 .pack-step {
@@ -8176,7 +8176,7 @@ textarea::placeholder {
 .code-lesson-list {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
   margin-top: 20px;
 }
 
@@ -8245,7 +8245,7 @@ textarea::placeholder {
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 3px 9px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.07);
   color: var(--text-muted);
@@ -8268,7 +8268,7 @@ textarea::placeholder {
 .code-lesson-layout {
   display: grid;
   grid-template-columns: minmax(300px, 420px) 1fr;
-  gap: 18px;
+  gap: 16px;
   align-items: start;
 }
 
@@ -8319,7 +8319,7 @@ textarea::placeholder {
   font-family: ui-monospace, Menlo, Consolas, monospace;
   font-size: var(--fs-sm);
   background: rgba(255, 255, 255, 0.08);
-  padding: 2px 5px;
+  padding: 2px 4px;
   border-radius: 5px;
   color: var(--text);
 }
@@ -8556,7 +8556,7 @@ textarea::placeholder {
 .code-check-list {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: var(--sp-2);
 }
 
 .code-check {
@@ -8634,7 +8634,7 @@ textarea::placeholder {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--sp-h1);
   transition: border-color 160ms var(--ease), background 160ms var(--ease);
 }
 
@@ -8656,7 +8656,7 @@ textarea::placeholder {
 .builder-list {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
 }
 
 .builder-row {
@@ -8664,7 +8664,7 @@ textarea::placeholder {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 13px 16px;
+  padding: 12px 16px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -8723,7 +8723,7 @@ textarea::placeholder {
 .builder-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 16px;
   align-items: start;
 }
 
@@ -8925,7 +8925,7 @@ textarea::placeholder {
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 9px 10px;
+  padding: 8px 10px;
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
@@ -8981,7 +8981,7 @@ textarea::placeholder {
 .attach-menu-tip kbd {
   font-family: inherit;
   font-size: 10.5px;
-  padding: 1px 5px;
+  padding: 1px 4px;
   border-radius: 5px;
   border: 1px solid var(--border-strong);
   background: var(--surface);
@@ -9004,7 +9004,7 @@ textarea::placeholder {
   align-items: center;
   gap: 10px;
   max-width: 260px;
-  padding: 7px 34px 7px 7px;
+  padding: 6px 32px 6px 6px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -9141,7 +9141,7 @@ textarea::placeholder {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  padding: 22px 30px;
+  padding: 20px 28px;
   border-radius: var(--radius-lg);
   background: var(--glass-floating-bg);
   border: 1px solid var(--glass-floating-border);
@@ -9488,7 +9488,7 @@ textarea::placeholder {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 10px;
+  padding: 4px 10px;
   border-radius: 8px;
   border: 1px solid transparent;
   background: transparent;
@@ -9680,7 +9680,7 @@ textarea::placeholder {
 .pyw-actions .btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--sp-2);
 }
 
 .pyw-run .pyw-ico {
@@ -9746,7 +9746,7 @@ textarea::placeholder {
   font-size: 11px;
   color: var(--text-faint);
   font-family: var(--font-mono);
-  padding: 2px 7px;
+  padding: 2px 6px;
   border: 1px solid var(--border);
   border-radius: 6px;
 }
@@ -9882,7 +9882,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 7px 14px;
+  padding: 6px 14px;
   border-bottom: 1px solid var(--border);
   background: var(--code-gutter);
 }
@@ -10139,7 +10139,7 @@ textarea::placeholder {
 .code-check-stdin .pyw-inline-code {
   color: var(--text-muted);
   background: var(--code-bg);
-  padding: 0 5px;
+  padding: 0 4px;
   border-radius: 5px;
 }
 
@@ -10191,13 +10191,13 @@ body.pyw-fullscreen-open {
 .pyc-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr);
-  gap: 18px;
+  gap: 16px;
   align-items: stretch;
   margin-bottom: 22px;
 }
 
 .pyc-hero-text {
-  padding: 22px;
+  padding: var(--sp-6);
   border-radius: var(--radius-lg);
   background: linear-gradient(160deg, rgba(55, 118, 171, 0.16), rgba(255, 212, 59, 0.06)), var(--glass-base-bg);
   border: 1px solid var(--glass-base-border);
@@ -10224,7 +10224,7 @@ body.pyw-fullscreen-open {
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
-  padding: 22px;
+  padding: var(--sp-6);
   border-radius: var(--radius-lg);
   background: var(--glass-elevated-bg);
   border: 1px solid var(--glass-elevated-border);
@@ -10282,7 +10282,7 @@ body.pyw-fullscreen-open {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px 18px;
+  padding: 16px 16px;
   cursor: pointer;
   list-style: none;
 }
@@ -10371,7 +10371,7 @@ body.pyw-fullscreen-open {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 18px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -10429,7 +10429,7 @@ body.pyw-fullscreen-open {
 
 .pyc-tag {
   font-size: 11px;
-  padding: 3px 8px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   background: var(--warning-bg);
   color: var(--warning);
@@ -10488,7 +10488,7 @@ body.pyw-fullscreen-open {
   font-size: 11px;
   font-weight: var(--fw-bold);
   letter-spacing: 0.03em;
-  padding: 3px 10px;
+  padding: 2px 10px;
   border-radius: var(--radius-full);
   background: rgba(55, 118, 171, 0.18);
   color: var(--accent-2-text);
@@ -10504,7 +10504,7 @@ body.pyw-fullscreen-open {
 .pyl-step {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--sp-2);
   padding: 6px 12px 6px 8px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border);
@@ -10544,7 +10544,7 @@ body.pyw-fullscreen-open {
 }
 
 .pyl-section {
-  padding: 18px 20px;
+  padding: 16px 20px;
   border-radius: var(--radius-lg);
   background: var(--glass-base-bg);
   border: 1px solid var(--glass-base-border);
@@ -10696,7 +10696,7 @@ body.pyw-fullscreen-open {
 
 .pyl-q-opt {
   text-align: left;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: var(--surface);
@@ -10736,7 +10736,7 @@ body.pyw-fullscreen-open {
 
 .pyl-q-why {
   margin-top: 8px;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-radius: 12px;
   background: var(--danger-bg);
   font-size: var(--fs-sm);
@@ -10819,7 +10819,7 @@ body.pyw-fullscreen-open {
 .ch-chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--sp-2);
   padding: 6px 12px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border);
@@ -10928,7 +10928,7 @@ body.pyw-fullscreen-open {
   font-weight: var(--fw-bold);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 3px 8px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
 }
 
@@ -10984,7 +10984,7 @@ body.pyw-fullscreen-open {
   grid-template-columns: 22px minmax(0, 1fr) auto auto;
   gap: 10px;
   align-items: center;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-radius: 12px;
   border: 1px solid transparent;
   background: var(--surface);
@@ -11037,7 +11037,7 @@ body.pyw-fullscreen-open {
   align-items: baseline;
   gap: 10px;
   flex-wrap: wrap;
-  padding: 7px 12px;
+  padding: 6px 12px;
   border-radius: 10px;
   background: var(--code-bg);
   border: 1px solid var(--border);
@@ -11071,7 +11071,7 @@ body.pyw-fullscreen-open {
   font-weight: var(--fw-bold);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 2px 7px;
+  padding: 2px 6px;
   border-radius: var(--radius-full);
   margin-right: 8px;
   vertical-align: 2px;
@@ -11087,7 +11087,7 @@ body.pyw-fullscreen-open {
 .builder-py-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
-  gap: 18px;
+  gap: 16px;
   align-items: start;
 }
 
@@ -11161,7 +11161,7 @@ body.pyw-fullscreen-open {
   }
 
   .pyw-tool {
-    padding: 7px;
+    padding: 6px;
   }
 
   .pyw-err-explain {
@@ -11255,7 +11255,7 @@ samp,
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 2px 12px;
   align-items: center;
-  padding: 5px 0;
+  padding: 4px 0;
   font-size: 13px;
 }
 
@@ -11313,7 +11313,7 @@ samp,
 
 #mainView.is-chat .subject-bar .chip {
   flex-shrink: 0;
-  padding: 5px 12px;
+  padding: 4px 12px;
   font-size: var(--fs-sm);
 }
 
@@ -11356,7 +11356,7 @@ samp,
 }
 
 .view-chat .view-actions .btn {
-  padding: 7px 11px;
+  padding: 6px 10px;
 }
 
 #readingWidthBtn[aria-pressed="true"] {
@@ -11397,8 +11397,8 @@ samp,
   position: relative;
   max-width: none;
   margin: 0;
-  gap: 18px;
-  padding: 4px 6px 18px 2px;
+  gap: 16px;
+  padding: 4px 6px 16px 2px;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
   scroll-padding-top: 12px;
@@ -11447,7 +11447,7 @@ samp,
   display: grid;
   grid-template-columns: [full-start] minmax(0, 1fr) [prose-start] minmax(0, 82ch) [prose-end] minmax(0, 1fr) [full-end];
   align-content: start;
-  padding: clamp(16px, 1.5vw, 26px) clamp(16px, 2.4vw, 40px);
+  padding: clamp(16px, 1.5vw, 24px) clamp(16px, 2.4vw, 40px);
   border-radius: 20px;
   font-size: clamp(15.5px, 14.6px + 0.16vw, 17.5px);
   line-height: 1.72;
@@ -11689,7 +11689,7 @@ samp,
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 15px 8px 12px;
+  padding: 8px 14px 8px 12px;
   border: 1px solid var(--glass-floating-border);
   border-radius: var(--radius-full);
   background: var(--glass-floating-bg);
@@ -11734,7 +11734,7 @@ samp,
 }
 
 .view-chat .composer-v2 .composer-input {
-  padding: 7px 6px 3px;
+  padding: 6px 6px 2px;
 }
 
 .view-chat .composer-v2 .composer-tool {
@@ -11760,14 +11760,14 @@ samp,
   }
 
   .chat-log .message.ai .bubble.answer {
-    padding: 15px 15px;
+    padding: 14px 14px;
     border-radius: 16px;
     font-size: 16px;
   }
 
   .answer th,
   .answer td {
-    padding: 8px 11px;
+    padding: 8px 10px;
   }
 }
 
@@ -11840,7 +11840,7 @@ html.force-reduced-motion .chat-jump {
   }
 
   .view-chat .view-actions .btn {
-    padding: 7px;
+    padding: 6px;
   }
 }
 
@@ -11862,7 +11862,7 @@ html.force-reduced-motion .chat-jump {
 
 .boot-error-card {
   max-width: 380px;
-  padding: 28px 26px;
+  padding: 28px 24px;
   text-align: center;
   border-radius: var(--radius-lg);
   background: var(--glass-elevated-bg);
@@ -12006,7 +12006,7 @@ html.force-reduced-motion .chat-jump {
 .auth-card {
   position: relative;
   width: min(100%, 420px);
-  padding: 30px 28px 24px;
+  padding: 28px 28px 24px;
   border-radius: var(--radius-lg);
   background: var(--glass-floating-bg);
   border: 1px solid var(--glass-floating-border);
@@ -12057,7 +12057,7 @@ html.force-reduced-motion .chat-jump {
 }
 
 .auth-tab {
-  padding: 9px 10px;
+  padding: 8px 10px;
   border: none;
   border-radius: calc(var(--radius-md) - 5px);
   background: transparent;
@@ -12104,7 +12104,7 @@ html.force-reduced-motion .chat-jump {
   background: var(--surface-solid);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 11px 14px;
+  padding: 10px 14px;
   color: var(--text);
   font-family: inherit;
   font-size: 14.5px;
@@ -12355,7 +12355,7 @@ html.force-reduced-motion .chat-jump {
 .account-menu-item {
   display: block;
   width: 100%;
-  padding: 9px 10px;
+  padding: 8px 10px;
   border: none;
   border-radius: 8px;
   background: none;
@@ -12427,7 +12427,7 @@ html.force-reduced-motion .chat-jump {
 .form-dialog .form-dialog-body {
   display: grid;
   gap: 14px;
-  padding: 18px 20px 0;
+  padding: 16px 20px 0;
   overflow-y: auto;
 }
 
@@ -12442,7 +12442,7 @@ html.force-reduced-motion .chat-jump {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  padding: 16px 20px 18px;
+  padding: 16px 20px 16px;
 }
 
 .form-dialog .btn.is-busy {
@@ -12607,7 +12607,7 @@ html.force-reduced-motion .chat-jump {
   width: auto;
   flex: 1 1 160px;
   min-width: 0;
-  padding: 9px 12px;
+  padding: 8px 12px;
   font-size: var(--fs-sm);
 }
 
@@ -12632,7 +12632,7 @@ html.force-reduced-motion .chat-jump {
 .creator-account {
   display: grid;
   gap: 2px;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -12722,7 +12722,7 @@ html.force-reduced-motion .chat-jump {
 
 .auth-pitch {
   display: grid;
-  gap: 22px;
+  gap: var(--sp-6);
   max-width: 460px;
 }
 

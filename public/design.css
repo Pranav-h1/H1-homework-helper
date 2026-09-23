@@ -23,6 +23,9 @@
 :root {
   --lh-tight: 1.2;
   /* Spacing — a 4px rhythm. */
+  /* Half-steps: the gaps between a glyph and a word, where the 4px grid is too coarse. */
+  --sp-h1: 6px;
+  --sp-h2: 10px;
   --sp-1: 4px;
   --sp-2: 8px;
   --sp-3: 12px;
@@ -609,7 +612,7 @@ kbd,
    4. Buttons
    ===================================================================================== */
 .btn {
-  gap: 7px;
+  gap: var(--sp-2);
   line-height: 1;
   transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out), transform var(--dur-1) var(--ease-out), opacity var(--dur-1) var(--ease-out);
 }
@@ -774,7 +777,7 @@ input[type="number"]:not(.creator-limit-input) {
 
 .segmented {
   gap: 2px;
-  padding: 3px;
+  padding: 2px;
   border-radius: var(--radius-md);
   border: 1px solid var(--hairline);
   background: var(--fill-subtle);
@@ -804,7 +807,7 @@ input[type="number"]:not(.creator-limit-input) {
 .subtabs,
 .subtab-bar {
   gap: 2px;
-  padding: 3px;
+  padding: 2px;
   border-radius: var(--radius-md);
   border: 1px solid var(--hairline);
   background: var(--fill-subtle);
@@ -889,7 +892,7 @@ input[type="number"]:not(.creator-limit-input) {
 }
 
 .modal-header {
-  padding: 18px 20px 6px;
+  padding: 16px 20px 6px;
 }
 
 .modal-header h2 {
@@ -1011,7 +1014,7 @@ input[type="number"]:not(.creator-limit-input) {
   left: 50%;
   top: calc(100% + 6px);
   transform: translateX(-50%) translateY(-2px);
-  padding: 5px 8px;
+  padding: 4px 8px;
   border-radius: var(--radius-xs);
   background: var(--raised);
   border: 1px solid var(--raised-border);
@@ -1240,7 +1243,7 @@ html.force-reduced-motion .modal {
 .hero-stat-pill {
   align-items: flex-start;
   min-width: 0;
-  padding: 2px 0 2px 18px;
+  padding: 2px 0 2px 16px;
   margin-left: 18px;
   background: none;
   border: none;
@@ -1918,7 +1921,7 @@ html.force-reduced-motion .modal {
 }
 
 .auth-tabs {
-  padding: 3px;
+  padding: 2px;
   margin-bottom: 20px;
   border-radius: var(--radius-md);
   background: var(--fill-subtle);
@@ -2696,7 +2699,7 @@ html.force-reduced-motion .auth-layout {
 }
 
 .hero-stat-strip {
-  gap: 22px;
+  gap: var(--sp-6);
   padding: 0;
   background: transparent;
   border: none;
@@ -4105,7 +4108,7 @@ select.tool-input,
 .topbar-status {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--sp-2);
   background: var(--fill-subtle);
   border: none;
 }
@@ -4120,7 +4123,7 @@ select.tool-input,
 }
 
 .space-switcher-btn {
-  gap: 7px;
+  gap: var(--sp-2);
   font-weight: var(--fw-medium);
 }
 
@@ -4813,7 +4816,7 @@ textarea {
 
 @media (max-width: 1100px) {
   .topbar-clock {
-    padding: 10px var(--sp-4) 11px;
+    padding: var(--sp-h2) var(--sp-4);
   }
 }
 
@@ -4848,7 +4851,7 @@ textarea {
 /* Larger, slower, and it breathes rather than bounces: opacity carries the motion, so nothing
    on the page moves while H1 is thinking. */
 .typing-dots {
-  gap: 7px;
+  gap: var(--sp-2);
   padding: 0;
 }
 
@@ -5013,7 +5016,7 @@ textarea {
      object. */
   align-items: center;
   text-align: center;
-  gap: 5px;
+  gap: var(--sp-h1);
   box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -5044,7 +5047,7 @@ textarea {
 
 @media (max-width: 1100px) {
   .topbar-clock {
-    padding: 11px var(--sp-5) 12px;
+    padding: var(--sp-h2) var(--sp-5);
   }
 }
 
@@ -5059,7 +5062,9 @@ textarea {
    ===================================================================================== */
 .topbar-clock {
   border-radius: var(--radius-full);
-  padding: 14px var(--sp-8) 15px;
+  padding: var(--sp-h2) var(--sp-8);
+  /* The caption carries the optical offset instead of the box. */
+  padding-bottom: calc(var(--sp-h2) + 1px);
 }
 
 @media (max-width: 1100px) {
@@ -5339,3 +5344,104 @@ textarea {
 }
 
 /* The dock floats clear of the edges, so it keeps its own corner. */
+
+/* =====================================================================================
+   43. The states nobody looks at until they hit one
+   -------------------------------------------------------------------------------------
+   Buttons had a disabled state. Fields did not: a disabled input rendered at full strength with
+   an ordinary cursor, so the only way to discover it was not accepting text was to type into it
+   and watch nothing happen. And a field marked invalid looked exactly like a field that was
+   fine. Both now say what they are, in the same language the rest of H1 uses.
+   ===================================================================================== */
+input:disabled,
+textarea:disabled,
+select:disabled,
+.tool-input:disabled,
+.tool-textarea:disabled,
+.auth-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--fill-subtle);
+  border-color: var(--hairline);
+  color: var(--text-muted);
+}
+
+input:disabled::placeholder,
+textarea:disabled::placeholder {
+  color: var(--text-faint);
+}
+
+/* A field that has been rejected carries the danger colour on its edge and in its focus ring,
+   and nowhere else — the message beside it does the explaining. */
+input[aria-invalid="true"],
+textarea[aria-invalid="true"],
+select[aria-invalid="true"],
+.is-invalid {
+  border-color: color-mix(in srgb, var(--danger) 55%, transparent);
+  background: color-mix(in srgb, var(--danger) 6%, var(--field));
+}
+
+input[aria-invalid="true"]:focus-visible,
+textarea[aria-invalid="true"]:focus-visible,
+select[aria-invalid="true"]:focus-visible,
+.is-invalid:focus-visible {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 24%, transparent);
+  outline: none;
+}
+
+/* The line of help under a field, in three tempers. */
+.field-error,
+.form-error {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--danger);
+}
+
+.field-hint {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+/* A control that is working: it stops accepting a second click and says so. */
+.btn.is-loading,
+.btn[aria-busy="true"] {
+  cursor: progress;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+/* =====================================================================================
+   44. Spacing, on the record
+   -------------------------------------------------------------------------------------
+   The half-steps above, applied where raw pixels were doing the same job in a hundred places.
+   ===================================================================================== */
+.icon-btn,
+.icon-btn-sm,
+.quote-fav-btn,
+.quote-copy-btn,
+.quote-share-btn,
+.command-kbd,
+.sidebar-status {
+  padding: var(--sp-h1);
+}
+
+.chip,
+.suggestion-chip {
+  gap: var(--sp-h1);
+}
+
+.quote-card-footer,
+.sidebar-theme-toggle {
+  gap: var(--sp-h2);
+}
+
+.accent-swatch {
+  padding: var(--sp-1);
+}
+
+.space-switcher-btn,
+.topbar-status {
+  gap: var(--sp-2);
+}
