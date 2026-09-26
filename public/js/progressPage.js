@@ -27,10 +27,7 @@ function statCard(value, label) {
 // study X" with nothing behind it.
 function buildRevisionCenter(stats) {
   const card = document.createElement("div");
-  card.className = "bento-tile";
-  card.style.background = "var(--accent-grad-soft)";
-  card.style.borderColor = "rgba(124, 92, 255, 0.3)";
-  card.style.marginBottom = "20px";
+  card.className = "bento-tile tile-accent";
 
   const dueFlashcards = getDecks().reduce((sum, d) => sum + getDueCount(d), 0);
   const patterns = getMistakePatterns();
@@ -51,7 +48,7 @@ function buildRevisionCenter(stats) {
   }
 
   card.innerHTML = `
-    <div class="bento-tile-eyebrow">🧭 Revision Center — what should I revise now?</div>
+    <div class="bento-tile-eyebrow"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><polygon points="16.2 7.8 14.1 14.1 7.8 16.2 9.9 9.9 16.2 7.8"/></svg><span>Revision Center — what should I revise now?</span></div>
     <div class="bento-tile-title" style="margin-bottom:10px"></div>`;
   card.querySelector(".bento-tile-title").textContent = rec.text;
   const btn = document.createElement("button");
@@ -288,7 +285,7 @@ function buildCodingCard() {
 function renderEmptyState() {
   container.innerHTML = `
     <div class="empty-state">
-      <div class="empty-emoji">📊</div>
+      <div class="empty-emoji" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="11" width="3" height="6" rx="1"/><rect x="11" y="7" width="3" height="10" rx="1"/><rect x="16" y="13" width="3" height="4" rx="1"/></svg></div>
       <h2>No activity yet</h2>
       <p>Chat with H1, take a quiz, or start a study session — your progress will show up here.</p>
     </div>`;
@@ -326,7 +323,7 @@ export function renderProgressPage() {
 
   const statsGrid = document.createElement("div");
   statsGrid.className = "progress-stats-grid";
-  statsGrid.appendChild(statCard(stats.streak, "Day streak 🔥"));
+  statsGrid.appendChild(statCard(stats.streak, "Day streak"));
   statsGrid.appendChild(statCard(stats.totalQuestions, "Questions attempted"));
   statsGrid.appendChild(statCard(stats.quizzesCompleted, "Quizzes completed"));
   statsGrid.appendChild(statCard(stats.avgScorePct === null ? "—" : `${stats.avgScorePct}%`, "Average quiz score"));
@@ -401,7 +398,7 @@ export function renderProgressPage() {
     teaser.type = "button";
     teaser.className = "achievements-teaser";
     teaser.innerHTML = `
-      <span class="achievements-teaser-icon">🏆</span>
+      <span class="achievements-teaser-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3a3 3 0 0 1-3 4"/><path d="M7 5H4a3 3 0 0 0 3 4"/></svg></span>
       <span class="achievements-teaser-text">
         <strong>${earnedCount} / ${achievements.length} achievements unlocked</strong>
         <span>See all badges →</span>

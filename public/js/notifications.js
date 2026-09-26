@@ -34,7 +34,7 @@ function runCheck(force) {
   showToast(message, "success", 5000);
   if (window.Notification && Notification.permission === "granted") {
     try {
-      new Notification("H1 — The Student OS", { body: message, icon: undefined });
+      new Notification("H1", { body: message, icon: undefined });
     } catch {
       // Some browsers restrict Notification() outside a service worker — the in-app toast above still covers it.
     }
