@@ -258,7 +258,11 @@
             <button class="account-menu-item account-menu-danger" id="accountMenuAction" type="button" role="menuitem">Sign in</button>
           </div>
         </div>
-        <div class="sidebar-credit">Developed by Pranav Ganesh · H1 Lab</div>
+        <div class="sidebar-credit">
+          <span class="sidebar-credit-brand">H1 Labs</span>
+          <span class="sidebar-credit-tag">Build. Learn. Create.</span>
+          <span class="sidebar-credit-by">Developed by Pranav Ganesh</span>
+        </div>
         </div>
       </nav>
 
@@ -294,69 +298,69 @@
 
         <!-- ===== Home ===== -->
         <section id="view-home" class="view view-home" data-view-panel="home">
-          <div class="bento">
-            <div class="bento-tile bento-hero">
-              <div>
-                <h1 class="hero-greeting" id="heroGreeting">Good day 👋</h1>
-                <p class="hero-sub">What are we learning today?</p>
-              </div>
-              <div class="hero-stat-strip" id="heroStatStrip"></div>
+          <header class="home-hero">
+            <div class="home-hero-text">
+              <h1 class="hero-greeting" id="heroGreeting">Good day 👋</h1>
+              <p class="hero-sub">What are we learning today?</p>
             </div>
+            <div class="hero-stat-strip" id="heroStatStrip"></div>
+          </header>
 
-            <div class="bento-tile bento-superbar">
-              <form id="heroAskForm" class="superbar">
-                <span class="superbar-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18.5 9.5l-4.7 1.9L12 16l-1.8-4.6L5.5 9.5l4.7-1.9z"></path><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"></path></svg></span>
-                <input id="heroAskInput" class="superbar-input" type="text" placeholder="Ask H1 anything…" maxlength="4000" aria-label="Ask H1 anything" />
-                <div class="superbar-actions">
-                  <button type="button" class="icon-btn" id="superbarAttachBtn" title="Attach a file" aria-label="Attach a file">
-                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-                  </button>
-                  <button type="button" class="icon-btn" id="superbarScanBtn" title="Scan homework" aria-label="Scan homework">
-                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                  </button>
-                  <button type="button" class="icon-btn" id="superbarCommandBtn" title="Command Center" aria-label="Open command center">
-                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="M9 9h.01M15 9h.01M9 15h6"></path></svg>
-                  </button>
-                  <button class="superbar-send" type="submit" aria-label="Ask H1">
-                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                  </button>
-                </div>
-              </form>
-              <div class="superbar-suggestions" id="quickActions">
-                <button class="suggestion-chip" type="button" data-quick="explain">Explain this</button>
-                <button class="suggestion-chip" type="button" data-quick="solve">Solve this</button>
-                <button class="suggestion-chip" type="button" data-quick="summarize">Summarize this PDF</button>
-                <button class="suggestion-chip" type="button" data-quick="quiz">Make a quiz</button>
-                <button class="suggestion-chip" type="button" data-quick="flashcards">Make flashcards</button>
-                <button class="suggestion-chip" type="button" data-quick="plan">Plan my week</button>
-                <button class="suggestion-chip" type="button" data-quick="simple">Explain simply</button>
-                <button class="suggestion-chip" type="button" data-quick="revise">Help me revise</button>
+          <div class="home-ask">
+            <form id="heroAskForm" class="superbar">
+              <span class="superbar-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18.5 9.5l-4.7 1.9L12 16l-1.8-4.6L5.5 9.5l4.7-1.9z"></path><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"></path></svg></span>
+              <input id="heroAskInput" class="superbar-input" type="text" placeholder="Ask H1 anything…" maxlength="4000" aria-label="Ask H1 anything" />
+              <div class="superbar-actions">
+                <button type="button" class="icon-btn" id="superbarAttachBtn" title="Attach a file" aria-label="Attach a file">
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                </button>
+                <button type="button" class="icon-btn" id="superbarScanBtn" title="Scan homework" aria-label="Scan homework">
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                </button>
+                <button type="button" class="icon-btn" id="superbarCommandBtn" title="Command Center" aria-label="Open command center">
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="M9 9h.01M15 9h.01M9 15h6"></path></svg>
+                </button>
+                <button class="superbar-send" type="submit" aria-label="Ask H1">
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
               </div>
-            </div>
-
-            <div class="bento-tile bento-brain clickable" id="bentoBrain"></div>
-            <div class="bento-tile bento-continue clickable" id="bentoContinue"></div>
-            <div class="bento-tile bento-weak clickable" id="bentoWeak"></div>
-            <div class="bento-tile bento-deadline clickable" id="bentoDeadline"></div>
-            <div class="bento-tile bento-note clickable" id="bentoNote"></div>
-            <div class="bento-tile bento-quiz clickable" id="bentoQuiz"></div>
-            <div class="bento-tile bento-code clickable" id="bentoCode" role="button" tabindex="0"></div>
-            <div class="bento-tile bento-focus clickable" id="bentoFocus"></div>
-          </div>
-
-          <div class="daily-inspiration">
-            <span class="daily-inspiration-mark">“</span>
-            <p class="daily-inspiration-text" id="dailyInspirationText"></p>
-            <div class="daily-inspiration-actions">
-              <button id="dailyInspirationFavBtn" class="icon-btn" type="button" aria-label="Favorite this quote" aria-pressed="false">★</button>
-              <button id="dailyInspirationCopyBtn" class="icon-btn" type="button" aria-label="Copy this quote">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              </button>
-              <button id="dailyInspirationOpenBtn" class="btn btn-ghost" type="button">Quotes Factory →</button>
+            </form>
+            <div class="superbar-suggestions" id="quickActions">
+              <button class="suggestion-chip" type="button" data-quick="explain">Explain this</button>
+              <button class="suggestion-chip" type="button" data-quick="solve">Solve this</button>
+              <button class="suggestion-chip" type="button" data-quick="summarize">Summarize this PDF</button>
+              <button class="suggestion-chip" type="button" data-quick="quiz">Make a quiz</button>
+              <button class="suggestion-chip" type="button" data-quick="flashcards">Make flashcards</button>
+              <button class="suggestion-chip" type="button" data-quick="plan">Plan my week</button>
+              <button class="suggestion-chip" type="button" data-quick="simple">Explain simply</button>
+              <button class="suggestion-chip" type="button" data-quick="revise">Help me revise</button>
             </div>
           </div>
 
-          <div class="section-heading"><h2>Explore H1</h2></div>
+          <section class="home-section">
+            <h2 class="home-section-title">Pick up where you left off</h2>
+            <div class="home-lead">
+              <div class="bento-tile tile-lead bento-continue clickable" id="bentoContinue"></div>
+              <div class="home-lead-side">
+                <div class="bento-tile tile-support bento-deadline clickable" id="bentoDeadline"></div>
+                <div class="bento-tile tile-support bento-weak clickable" id="bentoWeak"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="home-section">
+            <h2 class="home-section-title">Your study space</h2>
+            <div class="home-list">
+              <div class="bento-tile tile-row bento-brain clickable" id="bentoBrain"></div>
+              <div class="bento-tile tile-row bento-note clickable" id="bentoNote"></div>
+              <div class="bento-tile tile-row bento-quiz clickable" id="bentoQuiz"></div>
+              <div class="bento-tile tile-row bento-code clickable" id="bentoCode" role="button" tabindex="0"></div>
+              <div class="bento-tile tile-row bento-focus clickable" id="bentoFocus"></div>
+            </div>
+          </section>
+
+          <section class="home-section">
+            <h2 class="home-section-title">Explore H1</h2>
           <div class="tool-grid-secondary">
             <button class="tool-card-sm" type="button" data-open-view="homework">
               <span class="tool-card-sm-icon">📘</span>
@@ -401,6 +405,19 @@
               </span>
             </button>
           </div>
+          </section>
+
+          <footer class="daily-inspiration">
+            <span class="daily-inspiration-mark">“</span>
+            <p class="daily-inspiration-text" id="dailyInspirationText"></p>
+            <div class="daily-inspiration-actions">
+              <button id="dailyInspirationFavBtn" class="icon-btn" type="button" aria-label="Favorite this quote" aria-pressed="false">★</button>
+              <button id="dailyInspirationCopyBtn" class="icon-btn" type="button" aria-label="Copy this quote">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+              <button id="dailyInspirationOpenBtn" class="btn btn-ghost" type="button">Quotes Factory →</button>
+            </div>
+          </footer>
         </section>
 
         <!-- ===== AI Tutor (chat) ===== -->
@@ -2034,7 +2051,7 @@
           </div>
 
           <div class="settings-section creator-section" id="creatorSection" hidden>
-            <h2>Creator controls <span class="creator-badge">H1 Lab</span></h2>
+            <h2>Creator controls <span class="creator-badge">H1 Labs</span></h2>
             <p class="settings-hint">Only H1's own account sees this. The server checks that on every request — it isn't a hidden switch in the page.</p>
 
             <h3 class="creator-subhead">The model H1 answers with</h3>
@@ -2097,11 +2114,14 @@
               <button type="button" class="segmented-btn" data-value="compact" role="radio" aria-checked="false">Compact</button>
             </div>
 
-            <label class="toggle-row">
-              <span>Reduce motion</span>
-              <span class="toggle" id="reduceMotionToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
-            </label>
-            <p class="settings-hint">H1 also follows your system’s own reduced-motion setting.</p>
+            <span class="field-label" id="motionLabel">Motion</span>
+            <p class="settings-hint">Reduced keeps the feedback that tells you something happened and drops the rest. Off stops everything except the indicators that mean H1 is working.</p>
+            <div class="segmented" id="motionSetting" role="radiogroup" aria-labelledby="motionLabel">
+              <button type="button" class="segmented-btn" data-value="full" role="radio" aria-checked="false">Full</button>
+              <button type="button" class="segmented-btn" data-value="reduced" role="radio" aria-checked="true">Reduced</button>
+              <button type="button" class="segmented-btn" data-value="off" role="radio" aria-checked="false">Off</button>
+            </div>
+            <p class="settings-hint">If your system asks for reduced motion, H1 follows that too.</p>
 
           </div>
 
@@ -2253,9 +2273,10 @@
 
           <div class="settings-section">
             <h2>About</h2>
-            <p class="about-line"><strong>H1 — The Student OS</strong></p>
+            <p class="about-line"><strong>H1 Homework Helper — The Student OS</strong></p>
             <p class="settings-hint">Version 4.0 · An AI-powered study companion for Math, Science, English, Hindi, Tamil and general homework.</p>
-            <p class="settings-hint">Developed by Pranav Ganesh · H1 Lab</p>
+            <p class="settings-hint">An H1 Labs product · Build. Learn. Create.</p>
+            <p class="settings-hint">Developed by Pranav Ganesh</p>
           </div>
         </section>
       </main>
@@ -2462,7 +2483,7 @@
           <li><span aria-hidden="true">🐍</span><div><strong>A real Code Lab</strong>Python and web projects that actually run in your browser.</div></li>
           <li><span aria-hidden="true">☁️</span><div><strong>On every device</strong>Sign in anywhere and your work is already there.</div></li>
         </ul>
-        <p class="auth-credit auth-credit-aside">Developed by Pranav Ganesh · H1 Lab</p>
+        <p class="auth-credit auth-credit-aside"><strong>H1 Labs</strong> · Build. Learn. Create.<br />Developed by Pranav Ganesh</p>
       </aside>
 
     <main class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
@@ -2529,7 +2550,7 @@
         <p class="auth-alt-note" id="authGuestNote">Everything stays on this device, just for this visit. H1 will ask again next time you open it.</p>
       </div>
 
-      <p class="auth-credit auth-credit-card">Developed by Pranav Ganesh · H1 Lab</p>
+      <p class="auth-credit auth-credit-card"><strong>H1 Labs</strong> · Developed by Pranav Ganesh</p>
     </main>
     </div>
   </div>

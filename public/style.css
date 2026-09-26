@@ -279,7 +279,7 @@ textarea::placeholder {
   border-radius: 0 0 10px 0;
   z-index: 500;
   font-weight: var(--fw-semibold);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .skip-link:focus {
@@ -327,7 +327,6 @@ textarea::placeholder {
   border-radius: 50%;
   filter: blur(90px);
   opacity: 0.9;
-  will-change: transform;
 }
 
 .desktop-atmosphere .bloom-1 {
@@ -336,7 +335,6 @@ textarea::placeholder {
   top: -20vw;
   left: -10vw;
   background: var(--desk-bloom-1);
-  animation: driftA 46s ease-in-out infinite alternate;
 }
 
 .desktop-atmosphere .bloom-2 {
@@ -345,7 +343,6 @@ textarea::placeholder {
   bottom: -22vw;
   right: -12vw;
   background: var(--desk-bloom-2);
-  animation: driftB 54s ease-in-out infinite alternate;
 }
 
 .desktop-atmosphere .bloom-3 {
@@ -354,17 +351,6 @@ textarea::placeholder {
   top: 30vh;
   right: 18vw;
   background: var(--desk-bloom-3);
-  animation: driftA 60s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes driftA {
-  from { transform: translate(0, 0) scale(1); }
-  to { transform: translate(4vw, 3vh) scale(1.08); }
-}
-
-@keyframes driftB {
-  from { transform: translate(0, 0) scale(1); }
-  to { transform: translate(-3vw, -4vh) scale(1.06); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -469,7 +455,7 @@ textarea::placeholder {
 
 .brand-name {
   font-weight: var(--fw-bold);
-  font-size: 16px;
+  font-size: var(--fs-md);
   font-family: var(--font-display);
 }
 
@@ -525,7 +511,7 @@ textarea::placeholder {
   background: transparent;
   border: 1px solid transparent;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   cursor: pointer;
   text-align: left;
@@ -601,7 +587,7 @@ textarea::placeholder {
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--border);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
@@ -731,7 +717,7 @@ textarea::placeholder {
 }
 
 .view-chat .view-header h1 {
-  font-size: 19px;
+  font-size: var(--fs-lg);
 }
 
 .view-chat .view-sub {
@@ -740,7 +726,7 @@ textarea::placeholder {
 }
 
 .view-header h1 {
-  font-size: 24px;
+  font-size: var(--fs-xl);
   font-weight: var(--fw-bold);
   letter-spacing: -0.3px;
 }
@@ -748,7 +734,7 @@ textarea::placeholder {
 .view-sub {
   margin: 6px 0 0;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .view-actions {
@@ -884,7 +870,7 @@ textarea::placeholder {
   border: none;
   background: transparent;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   padding: 8px 14px;
   border-radius: 9px;
@@ -949,7 +935,7 @@ textarea::placeholder {
   border: 1px solid var(--danger-border);
   border-radius: var(--radius-sm);
   color: var(--danger);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-medium);
   animation: slideDown 0.25s var(--ease);
 }
@@ -958,7 +944,7 @@ textarea::placeholder {
   background: none;
   border: none;
   color: inherit;
-  font-size: 18px;
+  font-size: var(--fs-lg);
   line-height: 1;
   cursor: pointer;
   padding: 0 4px;
@@ -992,7 +978,7 @@ textarea::placeholder {
   color: var(--text-muted);
   padding: 8px 14px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   cursor: pointer;
   font-family: inherit;
@@ -1000,7 +986,7 @@ textarea::placeholder {
 }
 
 .chip-icon {
-  font-size: 14px;
+  font-size: var(--fs-base);
   line-height: 1;
 }
 
@@ -1087,12 +1073,12 @@ textarea::placeholder {
 }
 
 .hero-stat-pill strong {
-  font-size: 18px;
+  font-size: var(--fs-lg);
   font-family: var(--font-display);
 }
 
 .hero-stat-pill span {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   color: var(--text-muted);
   font-weight: var(--fw-semibold);
   white-space: nowrap;
@@ -1134,7 +1120,7 @@ textarea::placeholder {
   outline: none;
   color: var(--text);
   font-family: inherit;
-  font-size: 15.5px;
+  font-size: var(--fs-base);
   padding: 8px 0;
 }
 
@@ -1245,7 +1231,7 @@ textarea::placeholder {
 }
 
 .bento-tile-eyebrow {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1257,7 +1243,7 @@ textarea::placeholder {
 }
 
 .bento-tile-title {
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-bold);
   line-height: 1.4;
   font-family: var(--font-display);
@@ -1275,7 +1261,7 @@ textarea::placeholder {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-h1);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   color: var(--accent-text);
 }
@@ -1336,14 +1322,14 @@ textarea::placeholder {
   background: var(--accent-grad);
   color: var(--accent-contrast);
   font-weight: var(--fw-bold);
-  font-size: 22px;
+  font-size: var(--fs-xl);
   font-family: var(--font-display);
   box-shadow: var(--shadow-glow);
 }
 
 .profile-streak-row {
   margin-top: 10px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   color: var(--text-muted);
 }
@@ -1394,13 +1380,13 @@ textarea::placeholder {
 }
 
 .empty-emoji {
-  font-size: 40px;
+  font-size: var(--fs-3xl);
   margin-bottom: 8px;
 }
 
 .empty-state h2 {
   color: var(--text);
-  font-size: 19px;
+  font-size: var(--fs-lg);
   margin: 8px 0 6px;
 }
 
@@ -1459,12 +1445,12 @@ textarea::placeholder {
 }
 
 .inspector-header h3 {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-family: var(--font-display);
 }
 
 .inspector-section-title {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1497,7 +1483,7 @@ textarea::placeholder {
   border: none;
   color: var(--text-faint);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--fs-base);
   line-height: 1;
   padding: 2px 4px;
 }
@@ -1511,7 +1497,7 @@ textarea::placeholder {
 }
 
 .context-empty {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
   margin: 0;
   line-height: 1.5;
@@ -1584,7 +1570,7 @@ textarea::placeholder {
 }
 
 .modal-list-text span {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--text-faint);
 }
 
@@ -1684,7 +1670,7 @@ textarea::placeholder {
 .bubble {
   padding: 16px 20px;
   border-radius: var(--radius-md);
-  font-size: 15.5px;
+  font-size: var(--fs-base);
   line-height: 1.7;
   word-wrap: break-word;
   box-shadow: var(--shadow-sm);
@@ -1692,7 +1678,7 @@ textarea::placeholder {
 }
 
 .message.ai .bubble {
-  font-size: 16.5px;
+  font-size: var(--fs-md);
   line-height: 1.75;
   padding: 20px 24px;
   width: 100%;
@@ -1922,7 +1908,7 @@ textarea::placeholder {
   resize: none;
   color: var(--text);
   font-family: inherit;
-  font-size: 15.5px;
+  font-size: var(--fs-base);
   line-height: 1.5;
   max-height: 160px;
   padding: 8px 0;
@@ -1970,7 +1956,7 @@ textarea::placeholder {
   padding: 12px 14px;
   color: var(--text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
   line-height: 1.5;
   resize: vertical;
   min-height: 48px;
@@ -1999,7 +1985,7 @@ textarea::placeholder {
   border-radius: var(--radius-sm);
   padding: 10px 14px;
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-base);
   margin-top: 6px;
   transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
@@ -2070,7 +2056,7 @@ textarea::placeholder {
 }
 
 .step-text {
-  font-size: 14.5px;
+  font-size: var(--fs-base);
   line-height: 1.6;
   padding-top: 4px;
 }
@@ -2142,7 +2128,7 @@ textarea::placeholder {
   border: 1px solid var(--border);
   font-weight: var(--fw-bold);
   font-variant-numeric: tabular-nums;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .exam-timer-badge.low {
@@ -2214,7 +2200,7 @@ textarea::placeholder {
 .exam-topic-row-label {
   width: 160px;
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   text-align: left;
   overflow: hidden;
@@ -2318,7 +2304,7 @@ textarea::placeholder {
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 12px 16px;
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-medium);
   color: var(--text);
   cursor: pointer;
@@ -2341,7 +2327,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   color: var(--text-muted);
 }
@@ -2399,7 +2385,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: var(--fs-xl);
   font-weight: var(--fw-bold);
   font-family: var(--font-display);
   background: conic-gradient(var(--accent-1) calc(var(--pct) * 1%), var(--surface) 0);
@@ -2437,12 +2423,12 @@ textarea::placeholder {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .quiz-review-icon {
   flex-shrink: 0;
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 1.4;
 }
 
@@ -2538,7 +2524,7 @@ textarea::placeholder {
   position: absolute;
   top: 14px;
   left: 18px;
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -2554,7 +2540,7 @@ textarea::placeholder {
 
 .flash-hint {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
 }
 
@@ -2585,7 +2571,7 @@ textarea::placeholder {
 }
 
 .settings-section h2 {
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-bold);
   margin-bottom: 2px;
 }
@@ -2611,7 +2597,7 @@ textarea::placeholder {
   gap: 6px;
   padding: 4px 12px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   background: var(--surface-solid);
   border: 1px solid var(--border);
@@ -2662,7 +2648,7 @@ textarea::placeholder {
   color: var(--text);
   padding: 10px 16px;
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   box-shadow: var(--shadow-lg);
   animation: toastIn 0.25s var(--ease);
@@ -2699,7 +2685,7 @@ textarea::placeholder {
   flex-shrink: 0;
   text-align: center;
   padding: 8px 6px 2px;
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   color: var(--text-faint);
 }
 
@@ -2799,12 +2785,12 @@ textarea::placeholder {
   }
 
   .bubble {
-    font-size: 15px;
+    font-size: var(--fs-base);
     padding: 14px 16px;
   }
 
   .message.ai .bubble {
-    font-size: 16px;
+    font-size: var(--fs-md);
     padding: 16px 16px;
   }
 
@@ -2824,7 +2810,7 @@ textarea::placeholder {
   }
 
   .view-chat .view-header h1 {
-    font-size: 16px;
+    font-size: var(--fs-md);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2879,7 +2865,7 @@ textarea::placeholder {
     background: none;
     border: none;
     color: var(--text-faint);
-    font-size: 10.5px;
+    font-size: var(--fs-2xs);
     font-weight: var(--fw-semibold);
     padding: 6px 10px;
     border-radius: var(--radius-sm);
@@ -2898,7 +2884,7 @@ textarea::placeholder {
 
 @media (max-width: 560px) {
   .view-header h1 {
-    font-size: 20px;
+    font-size: var(--fs-lg);
   }
 
   .tool-grid {
@@ -2933,7 +2919,7 @@ textarea::placeholder {
   }
 
   .flashcard-face p {
-    font-size: 15px;
+    font-size: var(--fs-base);
   }
 }
 
@@ -3047,7 +3033,7 @@ textarea::placeholder {
 }
 
 .hero-greeting {
-  font-size: 28px;
+  font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
   font-family: var(--font-display);
   letter-spacing: -0.4px;
@@ -3056,7 +3042,7 @@ textarea::placeholder {
 .hero-sub {
   margin: 0;
   color: var(--text-muted);
-  font-size: 14.5px;
+  font-size: var(--fs-base);
 }
 
 .section-heading {
@@ -3067,7 +3053,7 @@ textarea::placeholder {
 }
 
 .section-heading h2 {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -3197,7 +3183,7 @@ textarea::placeholder {
 }
 
 .modal-header h2 {
-  font-size: 16px;
+  font-size: var(--fs-md);
   font-weight: var(--fw-bold);
 }
 
@@ -3293,12 +3279,12 @@ textarea::placeholder {
 
 .qc-header h3 {
   flex: 1;
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-family: var(--font-display);
 }
 
 .qc-header-icon {
-  font-size: 18px;
+  font-size: var(--fs-lg);
 }
 
 .qc-types {
@@ -3342,7 +3328,7 @@ textarea::placeholder {
   padding: 12px 14px;
   color: var(--text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
   resize: none;
   outline: none;
   transition: border-color var(--t-fast) var(--ease);
@@ -3395,7 +3381,7 @@ textarea::placeholder {
   outline: none;
   color: var(--text);
   font-family: inherit;
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 
 .command-input::placeholder {
@@ -3403,7 +3389,7 @@ textarea::placeholder {
 }
 
 .command-kbd {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   color: var(--text-faint);
   background: var(--surface);
@@ -3418,7 +3404,7 @@ textarea::placeholder {
 }
 
 .command-group-heading {
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -3478,7 +3464,7 @@ textarea::placeholder {
   justify-content: space-between;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .shortcut-row:hover {
@@ -3489,7 +3475,7 @@ textarea::placeholder {
   padding: 28px 16px;
   text-align: center;
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 /* =========================================================
@@ -3520,7 +3506,7 @@ textarea::placeholder {
 }
 
 .toggle-row-stacked small {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1.45;
   color: var(--text-faint);
   max-width: 46ch;
@@ -3579,12 +3565,12 @@ textarea::placeholder {
 
 .danger-row-text strong {
   display: block;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text);
 }
 
 .danger-row-text span {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
@@ -3672,7 +3658,7 @@ textarea::placeholder {
 }
 
 .note-item-preview {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -3696,7 +3682,7 @@ textarea::placeholder {
   border: none;
   outline: none;
   color: var(--text);
-  font-size: 18px;
+  font-size: var(--fs-lg);
   font-weight: var(--fw-bold);
   font-family: var(--font-display);
 }
@@ -3714,7 +3700,7 @@ textarea::placeholder {
   outline: none;
   color: var(--text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
   line-height: 1.6;
 }
 
@@ -3831,7 +3817,7 @@ textarea::placeholder {
    Chat: timestamps + action bar
    ========================================================= */
 .message-timestamp {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   color: var(--text-faint);
   margin: 0 4px;
 }
@@ -3994,7 +3980,7 @@ textarea::placeholder {
 .study-timer-time {
   position: relative;
   z-index: 1;
-  font-size: 40px;
+  font-size: var(--fs-3xl);
   font-weight: var(--fw-bold);
   font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
@@ -4003,7 +3989,7 @@ textarea::placeholder {
 .study-timer-label {
   position: relative;
   z-index: 1;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin-top: 4px;
 }
@@ -4015,7 +4001,7 @@ textarea::placeholder {
 }
 
 .study-meta strong {
-  font-size: 16px;
+  font-size: var(--fs-md);
 }
 
 .study-meta span {
@@ -4048,7 +4034,7 @@ textarea::placeholder {
 }
 
 .result-card h3 {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   /* Small uppercase text on the raised card only reached 3.7:1 with the faint tone. */
@@ -4066,7 +4052,7 @@ textarea::placeholder {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 14px;
+  font-size: var(--fs-base);
   line-height: 1.5;
 }
 
@@ -4082,7 +4068,7 @@ textarea::placeholder {
   padding: 10px 12px;
   background: var(--surface-solid);
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .term-chip strong {
@@ -4099,7 +4085,7 @@ textarea::placeholder {
 }
 
 .practice-question {
-  font-size: 14.5px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   margin-bottom: 8px;
 }
@@ -4132,7 +4118,7 @@ textarea::placeholder {
 }
 
 .plan-task-group {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   color: var(--text-faint);
   text-transform: uppercase;
@@ -4170,7 +4156,7 @@ textarea::placeholder {
 }
 
 .plan-task-title {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
 }
 
@@ -4181,7 +4167,7 @@ textarea::placeholder {
 }
 
 .plan-task-desc {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin-top: 3px;
 }
@@ -4197,7 +4183,7 @@ textarea::placeholder {
 }
 
 .recent-chip {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   padding: 6px 12px;
   border-radius: var(--radius-full);
@@ -4226,7 +4212,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-faint);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   cursor: pointer;
   margin-bottom: 6px;
@@ -4243,7 +4229,7 @@ textarea::placeholder {
    ========================================================= */
 @media (max-width: 640px) {
   .hero-greeting {
-    font-size: 22px;
+    font-size: var(--fs-xl);
   }
 
   .study-timer-ring {
@@ -4252,7 +4238,7 @@ textarea::placeholder {
   }
 
   .study-timer-time {
-    font-size: 32px;
+    font-size: var(--fs-3xl);
   }
 }
 
@@ -4265,7 +4251,7 @@ textarea::placeholder {
   color: var(--text);
   border-radius: var(--radius-sm);
   padding: 8px 12px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   font-family: inherit;
   cursor: pointer;
@@ -4292,7 +4278,7 @@ textarea::placeholder {
 
 .quiz-timer {
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
   font-variant-numeric: tabular-nums;
   background: var(--surface);
@@ -4308,7 +4294,7 @@ textarea::placeholder {
 
 .quiz-adaptive-badge {
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -4341,7 +4327,7 @@ textarea::placeholder {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   color: var(--accent-contrast);
 }
@@ -4462,7 +4448,7 @@ textarea::placeholder {
   border: none;
   border-bottom: 1px solid var(--border);
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   padding: 4px 2px;
 }
 
@@ -4482,7 +4468,7 @@ textarea::placeholder {
   border: none;
   color: var(--text-faint);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .note-ai-actions {
@@ -4497,7 +4483,7 @@ textarea::placeholder {
    Home progress widget
    ========================================================= */
 .progress-mini-value {
-  font-size: 22px;
+  font-size: var(--fs-xl);
   font-weight: var(--fw-bold);
   font-family: var(--font-display);
 }
@@ -4542,13 +4528,13 @@ textarea::placeholder {
 }
 
 .progress-stat-value {
-  font-size: 28px;
+  font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
   font-family: var(--font-display);
 }
 
 .progress-stat-label {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -4610,7 +4596,7 @@ textarea::placeholder {
 }
 
 .achievements-teaser-icon {
-  font-size: 28px;
+  font-size: var(--fs-2xl);
 }
 
 .achievements-teaser-text {
@@ -4620,7 +4606,7 @@ textarea::placeholder {
 }
 
 .achievements-teaser-text strong {
-  font-size: 14.5px;
+  font-size: var(--fs-base);
 }
 
 .achievements-teaser-text span {
@@ -4656,7 +4642,7 @@ textarea::placeholder {
 }
 
 .bar-chart-label {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   color: var(--text-faint);
 }
 
@@ -4693,14 +4679,14 @@ textarea::placeholder {
 }
 
 .achievement-icon {
-  font-size: 28px;
+  font-size: var(--fs-2xl);
   margin-bottom: 6px;
   /* Decorative, so this is the part that fades while an achievement is still locked. */
   opacity: 0.5;
 }
 
 .achievement-title {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
 }
 
@@ -4709,7 +4695,7 @@ textarea::placeholder {
 }
 
 .achievement-desc {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--text-muted);
   margin-top: 4px;
   line-height: 1.4;
@@ -4743,7 +4729,7 @@ textarea::placeholder {
   align-items: center;
   justify-content: space-between;
   padding: 8px 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   border-bottom: 1px solid var(--border);
 }
 
@@ -4772,7 +4758,7 @@ textarea::placeholder {
 }
 
 .exam-day-header strong {
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .exam-day-progress {
@@ -4839,7 +4825,7 @@ textarea::placeholder {
 .topbar-title {
   font-family: var(--font-display);
   font-weight: var(--fw-bold);
-  font-size: 14.5px;
+  font-size: var(--fs-base);
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -4869,7 +4855,7 @@ textarea::placeholder {
   border-radius: var(--radius-full);
   background: var(--danger);
   color: var(--on-danger);
-  font-size: 9.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   line-height: 15px;
   text-align: center;
@@ -4895,7 +4881,7 @@ textarea::placeholder {
 }
 
 .notif-center-header h3 {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-family: var(--font-display);
 }
 
@@ -4940,12 +4926,12 @@ textarea::placeholder {
 }
 
 .notif-row-title {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
 }
 
 .notif-row-sub {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
 }
 
@@ -4953,7 +4939,7 @@ textarea::placeholder {
   padding: 20px 12px;
   text-align: center;
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .space-switcher-wrap {
@@ -5042,7 +5028,7 @@ textarea::placeholder {
   cursor: pointer;
   font-family: inherit;
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   text-align: left;
 }
@@ -5076,7 +5062,7 @@ textarea::placeholder {
   color: var(--text-faint);
   cursor: pointer;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 .space-row-actions button:hover {
@@ -5111,7 +5097,7 @@ textarea::placeholder {
   background: var(--glass-base-bg);
   backdrop-filter: blur(var(--glass-base-blur));
   border: 1px solid var(--glass-base-border);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   color: var(--text-muted);
   white-space: nowrap;
@@ -5398,7 +5384,7 @@ textarea::placeholder {
 }
 
 .homework-title {
-  font-size: 14.5px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-bold);
 }
 
@@ -5410,7 +5396,7 @@ textarea::placeholder {
 }
 
 .homework-badge {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   padding: 2px 8px;
   border-radius: var(--radius-full);
@@ -5424,7 +5410,7 @@ textarea::placeholder {
 .homework-badge.overdue { color: var(--danger); border-color: var(--danger-border); }
 
 .homework-notes {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin-top: 6px;
   line-height: 1.5;
@@ -5460,7 +5446,7 @@ textarea::placeholder {
 }
 
 .scan-dropzone-icon {
-  font-size: 40px;
+  font-size: var(--fs-3xl);
 }
 
 .scan-preview-wrap {
@@ -5545,11 +5531,11 @@ textarea::placeholder {
 }
 
 .subject-card-icon {
-  font-size: 22px;
+  font-size: var(--fs-xl);
 }
 
 .subject-card-title {
-  font-size: 15.5px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-bold);
   font-family: var(--font-display);
 }
@@ -5558,7 +5544,7 @@ textarea::placeholder {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
@@ -5603,11 +5589,11 @@ textarea::placeholder {
 }
 
 .document-icon {
-  font-size: 24px;
+  font-size: var(--fs-xl);
 }
 
 .document-title {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-bold);
   word-break: break-word;
 }
@@ -5665,7 +5651,7 @@ textarea::placeholder {
    Study Planner
    ========================================================= */
 .planner-group-heading {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -5684,7 +5670,7 @@ textarea::placeholder {
 }
 
 .calendar-month-label {
-  font-size: 16px;
+  font-size: var(--fs-md);
   font-weight: var(--fw-bold);
   font-family: var(--font-display);
   min-width: 160px;
@@ -5699,7 +5685,7 @@ textarea::placeholder {
 
 .calendar-weekday {
   text-align: center;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   color: var(--text-faint);
   text-transform: uppercase;
@@ -5785,7 +5771,7 @@ textarea::placeholder {
 }
 
 .focus-cycle-badge {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   padding: 4px 12px;
   border-radius: var(--radius-full);
@@ -5829,7 +5815,7 @@ textarea::placeholder {
   align-items: center;
   justify-content: center;
   font-weight: var(--fw-bold);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .achievements-summary-inner {
@@ -5840,7 +5826,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
 }
 
@@ -5854,7 +5840,7 @@ textarea::placeholder {
   padding: var(--sp-5);
   text-align: right;
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
   word-break: break-all;
   min-height: 60px;
@@ -5867,7 +5853,8 @@ textarea::placeholder {
 }
 
 .calc-btn {
-  padding: 16px 0;
+  min-height: var(--h-control-lg);
+  padding: 0;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--surface);
@@ -5911,7 +5898,7 @@ textarea::placeholder {
 }
 
 .util-panel h3 {
-  font-size: 14px;
+  font-size: var(--fs-base);
   margin: 0 0 12px;
   font-family: var(--font-display);
 }
@@ -5930,7 +5917,7 @@ textarea::placeholder {
 
 .util-result {
   margin-top: 10px;
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-bold);
   color: var(--accent-text);
   min-height: 20px;
@@ -5965,7 +5952,7 @@ textarea::placeholder {
 }
 
 .pt-element-symbol {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
 }
 
@@ -5979,7 +5966,7 @@ textarea::placeholder {
 
 .timer-display {
   font-family: var(--font-display);
-  font-size: 44px;
+  font-size: var(--fs-3xl);
   font-weight: var(--fw-bold);
   text-align: center;
   margin: 10px 0;
@@ -6009,12 +5996,12 @@ textarea::placeholder {
   border-radius: var(--radius-lg);
   background: var(--accent-grad);
   color: var(--accent-contrast);
-  font-size: 24px;
+  font-size: var(--fs-xl);
   box-shadow: var(--shadow-glow);
 }
 
 .quotes-hero h1 {
-  font-size: 30px;
+  font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
   letter-spacing: -0.4px;
 }
@@ -6048,7 +6035,7 @@ textarea::placeholder {
 }
 
 .quotes-featured-eyebrow {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -6057,7 +6044,7 @@ textarea::placeholder {
 
 .quotes-featured-mark {
   font-family: var(--font-display);
-  font-size: 56px;
+  font-size: var(--fs-3xl);
   line-height: 1;
   color: rgba(var(--accent-1-rgb), 0.35);
   margin-top: 4px;
@@ -6067,7 +6054,7 @@ textarea::placeholder {
   max-width: 640px;
   margin: 4px auto 0;
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--fs-xl);
   font-weight: var(--fw-bold);
   line-height: 1.4;
   letter-spacing: -0.2px;
@@ -6118,8 +6105,9 @@ textarea::placeholder {
   min-width: 220px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: var(--sp-2);
+  height: var(--h-field);
+  padding: 0 var(--sp-3);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
@@ -6139,7 +6127,7 @@ textarea::placeholder {
   outline: none;
   color: var(--text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .quotes-search-wrap input::placeholder {
@@ -6217,7 +6205,7 @@ textarea::placeholder {
 }
 
 .quote-card-category {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -6245,7 +6233,7 @@ textarea::placeholder {
   border: none;
   color: var(--text-faint);
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--fs-base);
   transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
 }
 
@@ -6272,7 +6260,7 @@ textarea::placeholder {
 .daily-inspiration-mark {
   flex-shrink: 0;
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: var(--fs-2xl);
   line-height: 1;
   color: rgba(var(--accent-1-rgb), 0.4);
 }
@@ -6280,7 +6268,7 @@ textarea::placeholder {
 .daily-inspiration-text {
   flex: 1;
   min-width: 0;
-  font-size: 14.5px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   line-height: 1.5;
 }
@@ -6312,10 +6300,10 @@ textarea::placeholder {
     padding: 24px 16px 20px;
   }
   .quotes-featured-text {
-    font-size: 19px;
+    font-size: var(--fs-lg);
   }
   .quotes-featured-mark {
-    font-size: 42px;
+    font-size: var(--fs-3xl);
   }
   .quotes-grid {
     grid-template-columns: 1fr;
@@ -6336,13 +6324,13 @@ textarea::placeholder {
 
 .brain-hero h1 {
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: var(--fs-2xl);
   letter-spacing: -0.02em;
   margin: 0 0 8px;
 }
 
 .brain-hero-sub {
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-muted);
   line-height: 1.6;
   max-width: 68ch;
@@ -6403,7 +6391,7 @@ textarea::placeholder {
 }
 
 .brain-empty-icon {
-  font-size: 44px;
+  font-size: var(--fs-3xl);
   line-height: 1;
   margin-bottom: 14px;
 }
@@ -6415,7 +6403,7 @@ textarea::placeholder {
 }
 
 .brain-empty p {
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-muted);
   line-height: 1.65;
   max-width: 60ch;
@@ -6478,7 +6466,7 @@ textarea::placeholder {
 
 .brain-score-number {
   font-family: var(--font-display);
-  font-size: 42px;
+  font-size: var(--fs-3xl);
   font-weight: var(--fw-bold);
   line-height: 1;
   letter-spacing: -0.03em;
@@ -6491,7 +6479,7 @@ textarea::placeholder {
 }
 
 .brain-score-caption {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   line-height: 1.55;
   margin: 0 0 16px;
@@ -6517,7 +6505,7 @@ textarea::placeholder {
 }
 
 .brain-score-value {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
   font-variant-numeric: tabular-nums;
 }
@@ -6585,7 +6573,7 @@ textarea::placeholder {
   border: 1px solid var(--border);
   border-radius: var(--radius-xs);
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   padding: 6px 10px;
   cursor: pointer;
 }
@@ -6658,13 +6646,13 @@ textarea::placeholder {
 }
 
 .mission-task-icon {
-  font-size: 14px;
+  font-size: var(--fs-base);
   line-height: 1;
   flex-shrink: 0;
 }
 
 .mission-task-title {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   line-height: 1.4;
 }
@@ -6702,7 +6690,7 @@ textarea::placeholder {
 
 .brain-btn-sm {
   padding: 6px 10px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   white-space: nowrap;
 }
 
@@ -6723,7 +6711,7 @@ textarea::placeholder {
 
 .brain-stat-value {
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
   line-height: 1;
   letter-spacing: -0.02em;
@@ -6770,7 +6758,7 @@ textarea::placeholder {
 }
 
 .brain-signal-icon {
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 1.3;
   flex-shrink: 0;
 }
@@ -6784,7 +6772,7 @@ textarea::placeholder {
 }
 
 .brain-signal-title {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   line-height: 1.4;
 }
@@ -6797,7 +6785,7 @@ textarea::placeholder {
 
 .brain-level-badge {
   flex-shrink: 0;
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -6857,14 +6845,14 @@ textarea::placeholder {
 }
 
 .brain-topic-name {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   line-height: 1.35;
   overflow-wrap: anywhere;
 }
 
 .brain-topic-pct {
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-bold);
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
@@ -6885,7 +6873,7 @@ textarea::placeholder {
 }
 
 .brain-topic-tag {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-semibold);
   padding: 2px 8px;
   border-radius: var(--radius-full);
@@ -6925,7 +6913,7 @@ textarea::placeholder {
 
 .cooked-panel-head h2 {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: var(--fs-lg);
   margin: 0;
 }
 
@@ -6949,7 +6937,7 @@ textarea::placeholder {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   color: var(--text-muted);
 }
@@ -6986,7 +6974,7 @@ textarea::placeholder {
 
 .cooked-summary strong {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: var(--fs-md);
 }
 
 .cooked-note {
@@ -7030,7 +7018,7 @@ textarea::placeholder {
 }
 
 .cooked-block-title {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   line-height: 1.4;
 }
@@ -7058,7 +7046,7 @@ textarea::placeholder {
 
 @media (max-width: 620px) {
   .brain-hero h1 {
-    font-size: 25px;
+    font-size: var(--fs-xl);
   }
 
   .cooked-btn {
@@ -7078,7 +7066,7 @@ textarea::placeholder {
 }
 
 .mission-divider {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -7213,13 +7201,13 @@ textarea::placeholder {
 
 .universe-detail-head h3 {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: var(--fs-md);
   margin: 0;
   overflow-wrap: anywhere;
 }
 
 .universe-detail-sub {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin: 4px 0 0;
 }
@@ -7301,19 +7289,19 @@ textarea::placeholder {
 
 .boss-intro-body h2 {
   font-family: var(--font-display);
-  font-size: 23px;
+  font-size: var(--fs-xl);
   letter-spacing: -0.02em;
   margin: 0 0 10px;
 }
 
 .boss-sigil {
-  font-size: 46px;
+  font-size: var(--fs-3xl);
   line-height: 1;
   margin-bottom: 12px;
 }
 
 .boss-intro-line {
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-muted);
   line-height: 1.65;
   margin: 0 0 12px;
@@ -7351,11 +7339,11 @@ textarea::placeholder {
 }
 
 .boss-topic-row strong {
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .boss-topic-why {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin: 4px 0 0;
 }
@@ -7379,7 +7367,7 @@ textarea::placeholder {
 }
 
 .boss-loading {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
@@ -7405,7 +7393,7 @@ textarea::placeholder {
 .boss-topic-tag {
   display: inline-block;
   margin-top: 6px;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-semibold);
   padding: 2px 8px;
   border-radius: var(--radius-full);
@@ -7421,7 +7409,7 @@ textarea::placeholder {
 }
 
 .boss-combo {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   color: var(--warning);
   font-variant-numeric: tabular-nums;
@@ -7490,7 +7478,7 @@ textarea::placeholder {
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-base);
   cursor: pointer;
   transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
 }
@@ -7528,7 +7516,7 @@ textarea::placeholder {
 }
 
 .boss-model-answer {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin: 0;
 }
@@ -7538,7 +7526,7 @@ textarea::placeholder {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
@@ -7568,13 +7556,13 @@ textarea::placeholder {
 /* --- Result ------------------------------------------------------------ */
 .boss-results h2 {
   font-family: var(--font-display);
-  font-size: 25px;
+  font-size: var(--fs-xl);
   letter-spacing: -0.02em;
   margin: 0 0 10px;
 }
 
 .boss-result-sub {
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text-muted);
   line-height: 1.65;
   margin: 0;
@@ -7588,7 +7576,7 @@ textarea::placeholder {
 }
 
 .boss-breakdown-heading {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -7799,7 +7787,7 @@ textarea::placeholder {
 }
 
 .replay-more {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
   margin: 0;
 }
@@ -7832,7 +7820,7 @@ textarea::placeholder {
 }
 
 .replay-progress {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
@@ -7852,7 +7840,7 @@ textarea::placeholder {
 
 .replay-topic {
   display: inline-block;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-semibold);
   padding: 2px 8px;
   border-radius: var(--radius-full);
@@ -7862,7 +7850,7 @@ textarea::placeholder {
 }
 
 .replay-question {
-  font-size: 15.5px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   line-height: 1.55;
   margin: 0;
@@ -7914,7 +7902,7 @@ textarea::placeholder {
 }
 
 .replay-grade-label {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
@@ -7925,7 +7913,7 @@ textarea::placeholder {
 
 .replay-summary-title {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: var(--fs-md);
   margin: 0;
 }
 
@@ -7949,7 +7937,7 @@ textarea::placeholder {
 
 .pack-title {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: var(--fs-md);
   margin: 0 0 6px;
 }
 
@@ -7986,7 +7974,7 @@ textarea::placeholder {
   animation: pack-spin 720ms linear infinite;
   display: grid;
   place-items: center;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   line-height: 1;
 }
@@ -8029,7 +8017,7 @@ textarea::placeholder {
 
 .pack-done-title {
   font-family: var(--font-display);
-  font-size: 15.5px;
+  font-size: var(--fs-base);
   margin: 0 0 8px;
 }
 
@@ -8096,7 +8084,7 @@ textarea::placeholder {
 }
 
 .code-progress-label {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
   margin: 7px 0 0;
   font-variant-numeric: tabular-nums;
@@ -8131,7 +8119,7 @@ textarea::placeholder {
 }
 
 .code-track-icon {
-  font-size: 30px;
+  font-size: var(--fs-2xl);
   line-height: 1;
   margin-bottom: 10px;
 }
@@ -8168,7 +8156,7 @@ textarea::placeholder {
 }
 
 .code-crumb-step {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
 }
@@ -8205,7 +8193,7 @@ textarea::placeholder {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
   background: rgba(255, 255, 255, 0.07);
   color: var(--text-muted);
@@ -8222,7 +8210,7 @@ textarea::placeholder {
 }
 
 .code-lesson-title {
-  font-size: 14.5px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
 }
 
@@ -8241,7 +8229,7 @@ textarea::placeholder {
 }
 
 .code-lesson-tag {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -8281,13 +8269,13 @@ textarea::placeholder {
 
 .code-lesson-heading {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: var(--fs-lg);
   letter-spacing: -0.02em;
   margin: 0 0 6px;
 }
 
 .code-lesson-goal-big {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--accent-2-text);
   margin: 0 0 16px;
 }
@@ -8354,7 +8342,7 @@ textarea::placeholder {
 
 .code-example-label,
 .code-task-label {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -8391,7 +8379,7 @@ textarea::placeholder {
 }
 
 .code-hint-label {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -8401,13 +8389,13 @@ textarea::placeholder {
 
 .code-hint-loading,
 .code-checking {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin: 0;
 }
 
 .code-hint-error {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--danger);
   margin: 0;
 }
@@ -8451,7 +8439,7 @@ textarea::placeholder {
   padding: 14px;
   color: var(--text);
   font-family: ui-monospace, Menlo, Consolas, monospace;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.6;
   tab-size: 2;
 }
@@ -8470,7 +8458,7 @@ textarea::placeholder {
 }
 
 .code-panel-label {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -8541,7 +8529,7 @@ textarea::placeholder {
 }
 
 .code-result-summary strong {
-  font-size: 14px;
+  font-size: var(--fs-base);
   display: block;
 }
 
@@ -8586,11 +8574,11 @@ textarea::placeholder {
 }
 
 .code-check-label {
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .code-check-hint {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin: 4px 0 0;
   line-height: 1.5;
@@ -8610,7 +8598,7 @@ textarea::placeholder {
 }
 
 .builder-templates-label {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -8644,7 +8632,7 @@ textarea::placeholder {
 }
 
 .builder-template-blurb {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   line-height: 1.5;
 }
@@ -8675,7 +8663,7 @@ textarea::placeholder {
 }
 
 .builder-row-name {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   overflow-wrap: anywhere;
 }
@@ -8834,8 +8822,8 @@ textarea::placeholder {
 }
 
 .composer-tool {
-  width: 36px;
-  height: 36px;
+  width: var(--h-control-sm);
+  height: var(--h-control-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -8980,7 +8968,7 @@ textarea::placeholder {
 
 .attach-menu-tip kbd {
   font-family: inherit;
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   padding: 1px 4px;
   border-radius: 5px;
   border: 1px solid var(--border-strong);
@@ -9045,7 +9033,7 @@ textarea::placeholder {
   height: 38px;
   padding: 0 4px;
   border-radius: 9px;
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   letter-spacing: 0.03em;
   color: #fff;
@@ -9075,7 +9063,7 @@ textarea::placeholder {
 }
 
 .attach-chip-sub {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--text-faint);
   line-height: 1.35;
   display: -webkit-box;
@@ -9151,7 +9139,7 @@ textarea::placeholder {
 }
 
 .chat-drop-card strong {
-  font-size: 16px;
+  font-size: var(--fs-md);
   color: var(--text);
 }
 
@@ -9212,7 +9200,7 @@ textarea::placeholder {
 }
 
 .bubble-file-name {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   white-space: nowrap;
   overflow: hidden;
@@ -9494,7 +9482,7 @@ textarea::placeholder {
   background: transparent;
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
@@ -9528,7 +9516,7 @@ textarea::placeholder {
 
 .code-block pre code {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.6;
   background: none;
   padding: 0;
@@ -9627,7 +9615,7 @@ textarea::placeholder {
   background: transparent;
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
@@ -9703,7 +9691,7 @@ textarea::placeholder {
 }
 
 .pyw-status {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
   margin-left: 4px;
   display: inline-flex;
@@ -9743,7 +9731,7 @@ textarea::placeholder {
 
 .pyw-kbd {
   margin-left: auto;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--text-faint);
   font-family: var(--font-mono);
   padding: 2px 6px;
@@ -9811,7 +9799,7 @@ textarea::placeholder {
   border-radius: 10px;
   padding: 10px 12px;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
 }
 
@@ -9830,7 +9818,7 @@ textarea::placeholder {
 
 .pyw-files-label {
   display: block;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   margin-bottom: 8px;
 }
@@ -9844,7 +9832,7 @@ textarea::placeholder {
 
 .pyw-file-chip {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   padding: 4px 10px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border);
@@ -9888,7 +9876,7 @@ textarea::placeholder {
 }
 
 .pyw-panel-title {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -9896,7 +9884,7 @@ textarea::placeholder {
 }
 
 .pyw-panel-meta {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
 }
@@ -9910,7 +9898,7 @@ textarea::placeholder {
   background: var(--code-bg);
   color: var(--text);
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
@@ -9954,7 +9942,7 @@ textarea::placeholder {
 }
 
 .pyw-err-title {
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .pyw-err-real {
@@ -10011,7 +9999,7 @@ textarea::placeholder {
 }
 
 .pyw-err-explain dt {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -10030,7 +10018,7 @@ textarea::placeholder {
 
 .pyw-err-tb {
   margin-top: 12px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 .pyw-err-tb summary {
@@ -10045,7 +10033,7 @@ textarea::placeholder {
   border-radius: 10px;
   background: var(--code-bg);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   line-height: 1.55;
   overflow-x: auto;
   color: var(--text);
@@ -10092,7 +10080,7 @@ textarea::placeholder {
 
 .code-check-stdin {
   margin: 4px 0 0;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
 }
 
@@ -10116,7 +10104,7 @@ textarea::placeholder {
 .code-check-cmp-k {
   flex-shrink: 0;
   width: 62px;
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -10204,7 +10192,7 @@ body.pyw-fullscreen-open {
 }
 
 .pyc-eyebrow {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -10214,7 +10202,7 @@ body.pyw-fullscreen-open {
 
 .pyc-title {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--fs-xl);
   letter-spacing: -0.02em;
   margin: 0 0 8px;
 }
@@ -10236,7 +10224,7 @@ body.pyw-fullscreen-open {
 }
 
 .pyc-next-k {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -10248,18 +10236,18 @@ body.pyw-fullscreen-open {
 }
 
 .pyc-next-meta {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
 }
 
 .pyc-next-title {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: var(--fs-lg);
   margin-top: 2px;
 }
 
 .pyc-next-goal {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin: 2px 0 14px;
   line-height: 1.55;
@@ -10325,7 +10313,7 @@ body.pyw-fullscreen-open {
 }
 
 .pyc-level-k {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -10334,7 +10322,7 @@ body.pyw-fullscreen-open {
 
 .pyc-level-title {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: var(--fs-md);
   margin: 1px 0 2px;
 }
 
@@ -10351,7 +10339,7 @@ body.pyw-fullscreen-open {
 }
 
 .pyc-level-count {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -10392,7 +10380,7 @@ body.pyw-fullscreen-open {
   place-items: center;
   border-radius: 50%;
   border: 1px solid var(--border-strong);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
@@ -10410,7 +10398,7 @@ body.pyw-fullscreen-open {
 }
 
 .pyc-row-title {
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
 }
 
@@ -10428,7 +10416,7 @@ body.pyw-fullscreen-open {
 }
 
 .pyc-tag {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   padding: 2px 8px;
   border-radius: var(--radius-full);
   background: var(--warning-bg);
@@ -10485,7 +10473,7 @@ body.pyw-fullscreen-open {
 
 .pyl-level-pill {
   display: inline-block;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   letter-spacing: 0.03em;
   padding: 2px 10px;
@@ -10511,7 +10499,7 @@ body.pyw-fullscreen-open {
   background: var(--surface);
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
@@ -10529,7 +10517,7 @@ body.pyw-fullscreen-open {
   place-items: center;
   border-radius: 50%;
   border: 1.5px solid var(--border-strong);
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   line-height: 1;
 }
 
@@ -10557,7 +10545,7 @@ body.pyw-fullscreen-open {
 }
 
 .pyl-label {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -10658,7 +10646,7 @@ body.pyw-fullscreen-open {
   border-radius: var(--radius-xs);
   background: var(--warning-bg);
   border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .pyl-confirm p {
@@ -10683,7 +10671,7 @@ body.pyw-fullscreen-open {
 
 .pyl-q-text {
   margin: 0 0 8px;
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   line-height: 1.5;
 }
@@ -10702,7 +10690,7 @@ body.pyw-fullscreen-open {
   background: var(--surface);
   color: var(--text);
   font-family: inherit;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.4;
   cursor: pointer;
   transition: border-color var(--t-fast) var(--ease), background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
@@ -10784,19 +10772,19 @@ body.pyw-fullscreen-open {
 
 .ch-stat-value {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: var(--fs-xl);
   font-weight: var(--fw-bold);
   font-variant-numeric: tabular-nums;
 }
 
 .ch-stat-label {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin-top: 2px;
 }
 
 .ch-stat-sub {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--text-faint);
   margin-top: 2px;
 }
@@ -10843,7 +10831,7 @@ body.pyw-fullscreen-open {
 }
 
 .ch-chip-count {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-medium);
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
@@ -10895,7 +10883,7 @@ body.pyw-fullscreen-open {
 }
 
 .ch-card-title {
-  font-size: 15px;
+  font-size: var(--fs-base);
   font-weight: var(--fw-semibold);
   line-height: 1.35;
 }
@@ -10924,7 +10912,7 @@ body.pyw-fullscreen-open {
 }
 
 .ch-diff {
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -10990,7 +10978,7 @@ body.pyw-fullscreen-open {
   background: var(--surface);
   color: var(--text);
   font-family: inherit;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   text-align: left;
   cursor: pointer;
 }
@@ -11016,7 +11004,7 @@ body.pyw-fullscreen-open {
 
 .ch-history-score,
 .ch-history-time {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
   white-space: nowrap;
 }
@@ -11067,7 +11055,7 @@ body.pyw-fullscreen-open {
 
 .builder-kind {
   display: inline-block;
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -11245,7 +11233,7 @@ samp,
 
 .coding-progress-section {
   margin: 14px 0 6px;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-bold);
   color: var(--text);
 }
@@ -11256,7 +11244,7 @@ samp,
   gap: 2px 12px;
   align-items: center;
   padding: 4px 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .coding-progress-label {
@@ -11738,8 +11726,8 @@ samp,
 }
 
 .view-chat .composer-v2 .composer-tool {
-  width: 44px;
-  height: 44px;
+  width: var(--h-control-sm);
+  height: var(--h-control-sm);
 }
 
 /* --- Tablet and phone ------------------------------------------------------------------------ */
@@ -11762,7 +11750,7 @@ samp,
   .chat-log .message.ai .bubble.answer {
     padding: 14px 14px;
     border-radius: 16px;
-    font-size: 16px;
+    font-size: var(--fs-md);
   }
 
   .answer th,
@@ -11885,13 +11873,13 @@ html.force-reduced-motion .chat-jump {
 .boot-error-card h2 {
   margin: 0 0 8px;
   font-family: var(--font-display);
-  font-size: 19px;
+  font-size: var(--fs-lg);
 }
 
 .boot-error-card p {
   margin: 0 0 18px;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: var(--fs-base);
   line-height: 1.55;
 }
 
@@ -11929,7 +11917,7 @@ html.force-reduced-motion .chat-jump {
 .boot-splash-text {
   margin: 0;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .auth-mark {
@@ -12024,14 +12012,14 @@ html.force-reduced-motion .chat-jump {
 .auth-title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--fs-xl);
   line-height: 1.1;
 }
 
 .auth-tagline {
   margin: 2px 0 0;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .auth-notice {
@@ -12041,7 +12029,7 @@ html.force-reduced-motion .chat-jump {
   background: var(--warning-bg);
   border: 1px solid color-mix(in srgb, var(--warning) 40%, transparent);
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
 }
 
@@ -12107,7 +12095,7 @@ html.force-reduced-motion .chat-jump {
   padding: 10px 14px;
   color: var(--text);
   font-family: inherit;
-  font-size: 14.5px;
+  font-size: var(--fs-base);
   transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
 
@@ -12174,7 +12162,7 @@ html.force-reduced-motion .chat-jump {
   background: var(--danger-bg);
   border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
 }
 
@@ -12182,7 +12170,7 @@ html.force-reduced-motion .chat-jump {
   width: 100%;
   justify-content: center;
   padding: 12px 16px;
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 
 .auth-submit.is-busy {
@@ -12221,7 +12209,7 @@ html.force-reduced-motion .chat-jump {
 .auth-alt-note {
   margin: 4px 0 0;
   color: var(--text-faint);
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 .auth-credit {
@@ -12299,7 +12287,7 @@ html.force-reduced-motion .chat-jump {
 }
 
 .sidebar-account-name {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   white-space: nowrap;
   overflow: hidden;
@@ -12360,7 +12348,7 @@ html.force-reduced-motion .chat-jump {
   border-radius: 8px;
   background: none;
   color: var(--text);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   text-align: left;
   cursor: pointer;
 }
@@ -12405,7 +12393,7 @@ html.force-reduced-motion .chat-jump {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: var(--fs-md);
 }
 
 .account-card-text {
@@ -12416,7 +12404,7 @@ html.force-reduced-motion .chat-jump {
 }
 
 .account-card-text strong {
-  font-size: 15px;
+  font-size: var(--fs-base);
 }
 
 .account-card .settings-hint {
@@ -12523,7 +12511,7 @@ html.force-reduced-motion .chat-jump {
   background: rgba(var(--accent-1-rgb), 0.16);
   border: 1px solid color-mix(in srgb, var(--accent-1) 45%, transparent);
   color: var(--accent-text);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: var(--fw-bold);
   letter-spacing: 0.02em;
   vertical-align: middle;
@@ -12531,7 +12519,7 @@ html.force-reduced-motion .chat-jump {
 
 .creator-subhead {
   margin: 20px 0 8px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -12567,11 +12555,11 @@ html.force-reduced-motion .chat-jump {
 }
 
 .creator-model-text strong {
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .creator-model-text span {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   overflow-wrap: anywhere;
 }
@@ -12592,7 +12580,7 @@ html.force-reduced-motion .chat-jump {
   border-radius: 99px;
   background: rgba(var(--accent-1-rgb), 0.18);
   color: var(--accent-text);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: var(--fw-semibold);
 }
 
@@ -12643,7 +12631,7 @@ html.force-reduced-motion .chat-jump {
 }
 
 .creator-account span {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -12661,7 +12649,7 @@ html.force-reduced-motion .chat-jump {
 
 .auth-creator-mark {
   display: block;
-  font-size: 30px;
+  font-size: var(--fs-2xl);
   line-height: 1;
   margin-bottom: 10px;
   background: var(--accent-grad);
@@ -12679,7 +12667,7 @@ html.force-reduced-motion .chat-jump {
 .auth-creator p {
   margin: 0;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
 }
 
@@ -12730,19 +12718,19 @@ html.force-reduced-motion .chat-jump {
   width: 60px;
   height: 60px;
   border-radius: 18px;
-  font-size: 23px;
+  font-size: var(--fs-xl);
 }
 
 .auth-pitch-name {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
   line-height: 1;
 }
 
 .auth-brand-lg .auth-tagline {
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .auth-pitch-line {
@@ -12780,19 +12768,19 @@ html.force-reduced-motion .chat-jump {
   border-radius: 11px;
   background: var(--surface);
   border: 1px solid var(--border);
-  font-size: 16px;
+  font-size: var(--fs-md);
 }
 
 .auth-points li > div {
   display: grid;
   gap: 2px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   color: var(--text-muted);
 }
 
 .auth-points li strong {
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: var(--text);
   font-weight: var(--fw-semibold);
 }

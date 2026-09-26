@@ -9,12 +9,11 @@ import {
   getStoredDevice,
   setDevice,
   applyDevice,
-  getStoredReduceMotion,
-  setReduceMotion,
   getStoredAccent,
   setAccent,
   applyAccent,
 } from "./theme.js";
+import { getStoredMotion, initMotion, setMotion } from "./motion.js";
 import { showToast } from "./toast.js";
 import { onHealthChange, startHealthPolling } from "./health.js";
 import { confirmDanger } from "./modal.js";
@@ -54,7 +53,6 @@ import { initToolsHub } from "./toolsHub.js";
 import { initSubtabs, selectSubtabInView } from "./subtabs.js";
 import { initNotifications, setEnabled as setRemindersEnabled } from "./notifications.js";
 import { initDock } from "./dock.js";
-import { initMagnetic } from "./magnetic.js";
 import { initProfile, renderProfile } from "./profile.js";
 import { initQuickCapture } from "./quickCapture.js";
 import { initSpacesUI, onSpaceUIRefresh } from "./spacesUI.js";
@@ -100,7 +98,6 @@ const enterToSendGroup = document.getElementById("enterToSendSetting");
 const autoScrollToggle = document.getElementById("autoScrollToggle");
 const saveConversationsToggle = document.getElementById("saveConversationsToggle");
 const aiKnowsMeToggle = document.getElementById("aiKnowsMeToggle");
-const reduceMotionToggle = document.getElementById("reduceMotionToggle");
 const gamificationToggle = document.getElementById("gamificationToggle");
 const aiLanguageGroup = document.getElementById("aiLanguageSetting");
 const deadlineRemindersToggle = document.getElementById("deadlineRemindersToggle");
@@ -141,6 +138,7 @@ applySubjectUI();
 const textSizeGroup = document.getElementById("textSizeSetting");
 const densityGroup = document.getElementById("densitySetting");
 const responseWidthGroup = document.getElementById("responseWidthSetting");
+const motionGroup = document.getElementById("motionSetting");
 const sidebarSettingGroup = document.getElementById("sidebarSetting");
 
 textSizeGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
@@ -161,6 +159,12 @@ responseWidthGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
   });
 });
 
+motionGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    syncSegmented(motionGroup, setMotion(btn.dataset.value));
+  });
+});
+
 // The tutor has the same control in its toolbar; whichever is used, both follow.
 onReadingWidthChange((value) => syncSegmented(responseWidthGroup, value));
 
@@ -178,10 +182,12 @@ function syncInterfaceUI() {
   syncSegmented(textSizeGroup, getTextSize());
   syncSegmented(densityGroup, getDensity());
   syncSegmented(responseWidthGroup, getReadingWidth());
+  syncSegmented(motionGroup, getStoredMotion());
   syncSegmented(sidebarSettingGroup, document.getElementById("app").classList.contains("sidebar-collapsed") ? "collapsed" : "expanded");
 }
 
 initInterfacePrefs();
+initMotion();
 syncInterfaceUI();
 // The sidebar can also be collapsed from the title bar, so Settings re-reads it when opened.
 document.addEventListener("h1:view-changed", (event) => {
@@ -407,14 +413,12 @@ function wireToggle(el, key, defaultOn, onChange) {
 wireToggle(autoScrollToggle, "h1-auto-scroll", true);
 wireToggle(saveConversationsToggle, "h1-save-conversations", true);
 wireToggle(aiKnowsMeToggle, "h1-ai-knows-me", true);
-wireToggle(reduceMotionToggle, "h1-reduce-motion", false, (on) => setReduceMotion(on));
 wireToggle(gamificationToggle, "h1-gamification-enabled", true, (on) => {
   setGamificationEnabled(on);
   renderHomeWidget();
 });
 wireToggle(achievementNotificationsToggle, "h1-achievement-notifications", true);
 wireToggle(deadlineRemindersToggle, "h1-deadline-reminders", false, (on) => setRemindersEnabled(on));
-setReduceMotion(getStoredReduceMotion());
 setGamificationEnabled(gamificationEnabled());
 
 /* ===========================================================
@@ -629,6 +633,7 @@ const SETTINGS_KEYS = [
   "h1-save-conversations",
   "h1-ai-knows-me",
   "h1-reduce-motion",
+  "h1-motion",
   "h1-ai-mode",
   "h1-ai-language",
   "h1-gamification-enabled",
@@ -713,7 +718,6 @@ onSpaceUIRefresh(() => {
   renderUpcomingWidget();
   renderProfile();
 });
-initMagnetic(".bento-tile", 5);
 
 bindMoreTools({ summarizeText, generatePracticeFromSource });
 

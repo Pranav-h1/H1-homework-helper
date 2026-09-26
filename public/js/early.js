@@ -22,6 +22,19 @@
     root.setAttribute("data-theme", "dark");
   }
 
+  // Motion, before anything can move. Reduced is the default, so an unconfigured H1 opens calm
+  // rather than animating its way in and settling down a moment later.
+  try {
+    var motion = localStorage.getItem("h1-motion");
+    if (motion !== "full" && motion !== "reduced" && motion !== "off") {
+      motion = localStorage.getItem("h1-reduce-motion") === "1" ? "off" : "reduced";
+    }
+    root.setAttribute("data-motion", motion);
+    if (motion === "off") root.className += (root.className ? " " : "") + "force-reduced-motion";
+  } catch (e) {
+    root.setAttribute("data-motion", "reduced");
+  }
+
   // Hold the interface back for a moment while boot.js works out whether this is a signed-in
   // account or a guest — otherwise the app shell flashes up, then gets covered by the sign-in
   // screen. The timeout is a safety net: if boot.js never runs (dropped request, a browser

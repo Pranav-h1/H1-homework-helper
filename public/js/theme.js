@@ -91,21 +91,6 @@ export function setDevice(value) {
   applyDevice(value);
 }
 
-const REDUCE_MOTION_KEY = "h1-reduce-motion";
-
-export function getStoredReduceMotion() {
-  return safeGet(REDUCE_MOTION_KEY, "0") === "1";
-}
-
-export function applyReduceMotion(value) {
-  document.documentElement.classList.toggle("force-reduced-motion", Boolean(value));
-}
-
-export function setReduceMotion(value) {
-  safeSet(REDUCE_MOTION_KEY, value ? "1" : "0");
-  applyReduceMotion(value);
-}
-
 export function isCompactLayout() {
   const device = getStoredDevice();
   if (device === "desktop") return false;

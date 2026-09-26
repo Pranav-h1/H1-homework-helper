@@ -15,6 +15,7 @@ const KNOWN_KEYS = [
   "h1-save-conversations",
   "h1-ai-knows-me",
   "h1-reduce-motion",
+  "h1-motion",
   "h1-ai-mode",
   "h1-ai-language",
   "h1-gamification-enabled",
