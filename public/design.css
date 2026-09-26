@@ -43,9 +43,10 @@
   --t-slow: var(--dur-3);
   --panel: color-mix(in srgb, var(--panel-material) calc(var(--alpha-surface) * 100%), transparent);
   --card: color-mix(in srgb, var(--card-material) calc(var(--alpha-surface) * 100%), transparent);
-  /* The single accent-filled surface in H1: the one card on Home you are meant to resume from.
-     Mixed from the raw material so the interface-opacity slider still reaches it. */
-  --tile-lead-material: color-mix(in srgb, rgb(var(--accent-1-rgb)) 9%, var(--card-material));
+  /* The card on Home you are meant to resume from. It is the largest surface on the page and
+     sits in the first position; it does not also need to be a colour. Mixed from the raw
+     material so the interface-opacity slider still reaches it. */
+  --tile-lead-material: color-mix(in srgb, var(--text) 5%, var(--card-material));
   --tile-lead: color-mix(in srgb, var(--tile-lead-material) calc(var(--alpha-surface) * 100%), transparent);
   --raised: color-mix(in srgb, var(--raised-material) calc(var(--alpha-overlay) * 100%), transparent);
   --selection: rgba(var(--accent-1-rgb), 0.32);
@@ -70,9 +71,9 @@
 :root[data-theme="light"] {
   --panel: color-mix(in srgb, var(--panel-material) calc(var(--alpha-surface) * 100%), transparent);
   --card: color-mix(in srgb, var(--card-material) calc(var(--alpha-surface) * 100%), transparent);
-  /* The single accent-filled surface in H1: the one card on Home you are meant to resume from.
-     Mixed from the raw material so the interface-opacity slider still reaches it. */
-  --tile-lead-material: color-mix(in srgb, rgb(var(--accent-1-rgb)) 9%, var(--card-material));
+  /* The card on Home you are meant to resume from: one step up from the cards around it, and
+     no colour. Mixed from the raw material so the interface-opacity slider still reaches it. */
+  --tile-lead-material: color-mix(in srgb, var(--text) 4%, var(--card-material));
   --tile-lead: color-mix(in srgb, var(--tile-lead-material) calc(var(--alpha-surface) * 100%), transparent);
   --raised: color-mix(in srgb, var(--raised-material) calc(var(--alpha-overlay) * 100%), transparent);
   --focus-ring-color: rgba(var(--accent-1-rgb), 0.55);
@@ -1411,8 +1412,6 @@ html.force-reduced-motion .modal {
 
 .bento-continue {
   justify-content: flex-start;
-  background: linear-gradient(135deg, rgba(var(--accent-1-rgb), 0.1), rgba(var(--accent-2-rgb), 0.03) 70%), var(--card);
-  border-color: rgba(var(--accent-1-rgb), 0.22);
 }
 
 .bento-code {
@@ -1892,11 +1891,11 @@ html.force-reduced-motion .modal {
 /* =====================================================================================
    23. The front door — sign in, create an account, or carry on as a guest
    ===================================================================================== */
+/* The sign-in screen is the first thing anyone sees of H1, so it is the last place to put two
+   coloured clouds behind the type. It is the same neutral background as the application it is
+   the door to. */
 .auth-screen {
-  background:
-    radial-gradient(1200px 600px at 12% -10%, rgba(var(--accent-1-rgb), 0.16), transparent 60%),
-    radial-gradient(900px 500px at 105% 110%, rgba(var(--accent-2-rgb), 0.1), transparent 60%),
-    var(--bg);
+  background: var(--bg);
 }
 
 .auth-atmosphere .bloom {
@@ -2101,7 +2100,7 @@ html.force-reduced-motion .auth-layout {
    ===================================================================================== */
 .creator-section {
   border-color: color-mix(in srgb, var(--accent-1) 28%, transparent);
-  background: linear-gradient(180deg, rgba(var(--accent-1-rgb), 0.06), transparent 240px), var(--card);
+  background: var(--card);
 }
 
 .creator-badge {
@@ -2385,11 +2384,11 @@ html.force-reduced-motion .auth-layout {
      clerical. Each step has a job, and a component picks the step for what it IS, not for how
      big it happens to be. Fully round is reserved for chips, tags and status dots — a control
      that is round on both ends reads as a label, not as something you press. */
-  --r-window: 32px;   /* the application window */
-  --r-panel: 20px;    /* panels: the content stage, the sidebar, large surfaces */
-  --radius-xs: 6px;  /* the smallest things: dots, tiny tags, inner details */
-  --radius-sm: 10px;  /* controls: buttons, icon buttons, segmented items */
-  --radius-md: 12px;  /* fields: inputs, search, selects, textareas */
+  --r-window: 22px;   /* the application window */
+  --r-panel: 18px;    /* panels: the content stage, the sidebar, large surfaces */
+  --radius-xs: 6px;   /* the smallest things: dots, tiny tags, inner details */
+  --radius-sm: 8px;   /* small controls: icon buttons, segmented items, chips */
+  --radius-md: 10px;  /* buttons and fields */
   --radius-lg: 14px;  /* cards */
   --radius-xl: 18px;  /* large cards, dialogs, the composer */
 
@@ -2402,8 +2401,8 @@ html.force-reduced-motion .auth-layout {
   --h-field: 36px;
   --dock-h: 54px;
   --sidebar-w: 236px;
-  --card-pad: var(--sp-4);
-  --panel-pad: var(--sp-6);
+  --card-pad: var(--sp-5);
+  --panel-pad: var(--sp-8);
   /* Two more steps at the top of the spacing scale, for the air between big surfaces. */
   --sp-12: 48px;
   --sp-14: 56px;
@@ -2455,9 +2454,9 @@ html.force-reduced-motion .auth-layout {
   --glass-elevated-blur: 0px;
   --glass-floating-blur: 28px;
   /* -- Depth: barely there ----------------------------------------------------------------- */
-  --elev-1: 0 0.5px 1px rgba(0, 0, 0, 0.26);
-  --elev-2: 0 2px 8px rgba(0, 0, 0, 0.26), 0 0.5px 1px rgba(0, 0, 0, 0.28);
-  --elev-3: 0 16px 48px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --elev-1: none;
+  --elev-2: 0 1px 2px rgba(0, 0, 0, 0.22);
+  --elev-3: 0 10px 34px rgba(0, 0, 0, 0.42), 0 1px 2px rgba(0, 0, 0, 0.26);
   --glass-base-shadow: none;
   --glass-elevated-shadow: none;
   --glass-floating-shadow: var(--elev-3);
@@ -2608,7 +2607,7 @@ html.force-reduced-motion .auth-layout {
 
 .nav-active-pill {
   border-radius: var(--radius-sm);
-  background: rgba(var(--accent-1-rgb), 0.16);
+  background: rgba(var(--accent-1-rgb), 0.11);
   box-shadow: none;
 }
 
@@ -2948,7 +2947,7 @@ html.force-reduced-motion .auth-layout {
 
 .chip.active,
 .chip[aria-checked="true"] {
-  background: rgba(var(--accent-1-rgb), 0.16);
+  background: var(--fill-press);
   border-color: transparent;
   color: var(--text);
 }
@@ -3097,7 +3096,7 @@ select.tool-input,
 }
 
 .settings-nav a.is-current {
-  background: rgba(var(--accent-1-rgb), 0.16);
+  background: rgba(var(--accent-1-rgb), 0.11);
   color: var(--text);
 }
 
@@ -3711,16 +3710,16 @@ button:disabled {
 
 .chip.active:hover,
 .chip[aria-checked="true"]:hover {
-  background: rgba(var(--accent-1-rgb), 0.24);
+  background: var(--fill-press);
 }
 
 .settings-nav a.is-current:hover {
-  background: rgba(var(--accent-1-rgb), 0.24);
+  background: rgba(var(--accent-1-rgb), 0.15);
 }
 
 .nav-item.active:hover .nav-active-pill,
 .nav-item.active:hover ~ .nav-active-pill {
-  background: rgba(var(--accent-1-rgb), 0.22);
+  background: rgba(var(--accent-1-rgb), 0.15);
 }
 
 /* The switch: the track lightens under the pointer, and the whole control takes a focus ring as
@@ -4113,7 +4112,7 @@ select.tool-input,
 }
 
 .topbar-clock:hover {
-  background: var(--fill-subtle);
+  background: none;
 }
 
 /* The connection indicator is a capsule of the same height, with the dot centred on the text. */
@@ -4351,12 +4350,12 @@ select.tool-input,
 
 /* ---- The stage ---------------------------------------------------------------------------------- */
 .main-view {
-  padding: var(--sp-5) var(--panel-pad) var(--sp-6);
-  gap: var(--sp-4);
+  padding: var(--sp-6) var(--panel-pad) var(--sp-8);
+  gap: var(--sp-5);
 }
 
 .view {
-  gap: var(--sp-5);
+  gap: var(--sp-6);
 }
 
 .view-header h1,
@@ -4729,6 +4728,14 @@ textarea {
 
 .sidebar-scroll {
   scrollbar-width: thin;
+  /* The list is a few rows longer than the sidebar at most window heights, so the last visible
+     row was cut in half against the account card and read as a rendering fault. It fades into
+     the edge instead, which is also how it says there is more below. */
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), transparent 100%);
+}
+
+.sidebar-scroll:not(:hover) {
+  scrollbar-color: transparent transparent;
 }
 
 /* At phone width the account card squeezed its description into a four-word column between the
@@ -5043,12 +5050,14 @@ textarea {
      object. */
   align-items: center;
   text-align: center;
-  gap: var(--sp-h1);
-  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  gap: 1px;
+  background: none;
+  border: none;
+  box-shadow: none;
 }
 
 :root[data-theme="light"] .topbar-clock {
-  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  box-shadow: none;
 }
 
 .topbar-clock .clock-time {
@@ -5517,8 +5526,8 @@ select[aria-invalid="true"]:focus-visible,
   align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--sp-3);
-  padding-bottom: var(--sp-4);
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-6);
 }
 
 .home-hero-text {
@@ -5531,17 +5540,17 @@ select[aria-invalid="true"]:focus-visible,
 
 /* The ask bar: the one raised surface on the page, and the only thing here with a shadow. */
 .home-ask {
-  margin-bottom: var(--sp-6);
+  margin-bottom: var(--sp-10);
 }
 
 .home-section + .home-section {
-  margin-top: var(--sp-6);
+  margin-top: var(--sp-10);
 }
 
 /* A group label, in the sentence case the rest of H1 uses — quiet enough that the card
    titles under it stay the loudest thing in the group. */
 .home-section-title {
-  margin: 0 0 var(--sp-3);
+  margin: 0 0 var(--sp-4);
   font-size: var(--fs-sm);
   font-weight: var(--fw-semibold);
   letter-spacing: 0;
@@ -5559,16 +5568,19 @@ select[aria-invalid="true"]:focus-visible,
   grid-area: auto;
 }
 
+/* The card to resume from spans the row, and the two dated cards sit under it. Side by side,
+   the tall column of two forced the lead card to match their combined height and it spent a
+   hundred and forty pixels saying nothing. Wide and short, it says the same thing in the space
+   the words need, and the row below stays level. */
 .home-lead {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--sp-3);
-  align-items: stretch;
 }
 
 .home-lead-side {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--sp-3);
   min-width: 0;
 }
@@ -5576,10 +5588,10 @@ select[aria-invalid="true"]:focus-visible,
 /* The one card in H1 that carries the accent as a fill. It is mixed from the raw material so
    the interface-opacity slider still reaches it. */
 .tile-lead {
-  min-height: 132px;
-  padding: var(--sp-5);
+  min-height: 0;
+  padding: var(--sp-5) var(--sp-6);
   background: var(--tile-lead);
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .tile-lead .bento-tile-action {
@@ -5598,10 +5610,10 @@ select[aria-invalid="true"]:focus-visible,
   padding-top: 0;
 }
 
-/* The accent tint lifts this one card's background, and the faint text step was cut against
-   the plain card behind it: on the tint it lands at 4.4:1. Here the faint step collapses into
-   the muted one, which clears 5:1 on the tint, and only on this surface. */
-:root[data-theme="light"] .tile-lead {
+/* This card sits a step above the cards around it, and the faint text step was cut against the
+   plain card behind it: on the lifted surface it lands at 4.4:1 in both themes. Here the faint
+   step collapses into the muted one, which clears 5:1, and only on this surface. */
+.tile-lead {
   --text-faint: var(--text-muted);
 }
 
@@ -5703,7 +5715,7 @@ select[aria-invalid="true"]:focus-visible,
 
 /* ---- The quote: a line at the end of the page, not a panel ---------------------------------- */
 .view-home .daily-inspiration {
-  margin-top: var(--sp-6);
+  margin-top: var(--sp-10);
   padding: var(--sp-4) 0 0;
   gap: var(--sp-3);
   background: none;
@@ -5723,17 +5735,6 @@ select[aria-invalid="true"]:focus-visible,
   font-weight: var(--fw-regular);
   font-style: italic;
   color: var(--text-muted);
-}
-
-@media (max-width: 1099px) {
-  .home-lead {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .home-lead-side {
-    grid-template-rows: none;
-    grid-template-columns: 1fr 1fr;
-  }
 }
 
 @media (max-width: 640px) {
@@ -5812,34 +5813,35 @@ select[aria-invalid="true"]:focus-visible,
 }
 
 /* =====================================================================================
-   47. H1 Labs, quietly
+   47. The name, and one line under it
    -------------------------------------------------------------------------------------
-   The parent brand belongs at the foot of the sidebar and on the sign-in screen, at the size
-   a footer is read at — never in the chrome, never in a colour, never above the product. H1
-   Homework Helper is still the thing you opened.
+   H1 is the name; "Build. Create. Innovate." is the line under it. It sits with the mark at
+   the top of the sidebar and on the sign-in screen, set as a caption — the same weight and
+   colour as any other secondary line in the app, because a motto that shouts is an
+   advertisement. It appears once per screen and nowhere in the chrome.
    ===================================================================================== */
+.brand-name {
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+.brand-tagline,
+.auth-tagline {
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-regular);
+  letter-spacing: 0.005em;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
 .sidebar-credit {
   display: flex;
   flex-direction: column;
-  gap: 1px;
   padding: var(--sp-3) var(--sp-2) var(--sp-1);
   line-height: 1.35;
 }
 
-.sidebar-credit-brand {
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-semibold);
-  letter-spacing: 0.01em;
-  color: var(--text-muted);
-}
-
-.sidebar-credit-tag {
-  font-size: var(--fs-2xs);
-  color: var(--text-faint);
-}
-
 .sidebar-credit-by {
-  margin-top: 2px;
   font-size: var(--fs-2xs);
   color: var(--text-faint);
 }
@@ -5932,5 +5934,89 @@ select[aria-invalid="true"]:focus-visible,
 .modal-danger .btn-primary:active:not(:disabled),
 .btn-danger-solid:active:not(:disabled) {
   background: color-mix(in srgb, #000 18%, var(--danger-fill));
+}
+
+/* =====================================================================================
+   50. The floating dock, on a desktop that already has a sidebar
+   -------------------------------------------------------------------------------------
+   The dock is a glass capsule that hovers over the content, throws a large shadow, animates in
+   on load, and offers eleven destinations — every one of which is already in the sidebar three
+   inches to its left. It is the single most "floating" thing in the application and it
+   navigates nowhere the sidebar does not.
+
+   So on a desktop, where the sidebar is present, it is gone. On tablet and phone the sidebar is
+   collapsed and the bottom bar is the navigation, so there it stays exactly as it was — and
+   dockInset.js measures visibility, so the room pages used to reserve for the dock is released
+   on desktop and still reserved on a phone, with no change to that logic.
+
+   Nothing became unreachable: every destination is in the sidebar, the command palette and the
+   keyboard shortcuts, as before.
+   ===================================================================================== */
+@media (min-width: 900px) {
+  .dock-wrap {
+    display: none;
+  }
+}
+
+.app.device-desktop .dock-wrap {
+  display: none;
+}
+
+/* =====================================================================================
+   51. Restraint, applied
+   -------------------------------------------------------------------------------------
+   The remaining places where the interface was decorating rather than communicating.
+   ===================================================================================== */
+
+/* Translucency is for the window chrome. The title bar and the sidebar keep it, because they
+   are the frame; everything else is an opaque surface, which is both calmer and cheaper. */
+.dock,
+.mobile-bottom-nav {
+  box-shadow: var(--elev-2);
+}
+
+/* A card is a group of content. It does not need an edge as well as a fill, and it certainly
+   does not need to lift when the pointer passes over it. */
+.bento-tile,
+.tool-card-sm,
+.result-card,
+.ch-card,
+.doc-card,
+.deck-card,
+.project-card,
+.subject-card,
+.note-card,
+.code-track-card,
+.quote-card {
+  box-shadow: none;
+}
+
+/* The ask bar and the composer are the two places a shadow still earns its keep — they sit
+   above the page and take typing — and even there it is one pixel of separation, not a lift. */
+.superbar,
+.composer-form.composer-v2 {
+  box-shadow: var(--elev-2);
+}
+
+.superbar:focus-within,
+.composer-form.composer-v2:focus-within {
+  border-color: rgba(var(--accent-1-rgb), 0.5);
+  box-shadow: 0 0 0 3px rgba(var(--accent-1-rgb), 0.14);
+}
+
+/* Section headings inside a view, on one treatment: the label is quiet, the rule under it does
+   the separating. This is what replaces a card around every group. */
+.section-heading {
+  margin-top: var(--sp-8);
+  padding-bottom: var(--sp-2);
+  border-bottom: 0.5px solid var(--hairline);
+}
+
+.section-heading h2 {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-muted);
 }
 

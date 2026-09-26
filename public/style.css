@@ -1046,7 +1046,7 @@ textarea::placeholder {
 
 .bento-hero {
   grid-area: hero;
-  background: linear-gradient(135deg, rgba(var(--accent-1-rgb), 0.16), rgba(var(--accent-2-rgb), 0.05));
+  background: var(--fill-subtle);
   border-color: rgba(var(--accent-1-rgb), 0.28);
   display: flex;
   align-items: center;
@@ -1203,7 +1203,7 @@ textarea::placeholder {
 
 .bento-code {
   grid-area: code;
-  background: linear-gradient(150deg, rgba(55, 118, 171, 0.16), rgba(255, 212, 59, 0.06)), var(--glass-elevated-bg);
+  background: var(--glass-elevated-bg);
 }
 
 .bento-code-bar {
@@ -6010,10 +6010,7 @@ textarea::placeholder {
   margin: 6px 0 0;
   font-size: var(--fs-md);
   font-weight: var(--fw-semibold);
-  background: var(--accent-grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--accent-text);
 }
 
 .quotes-hero-desc {
@@ -9576,7 +9573,7 @@ textarea::placeholder {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3776ab, #ffd43b);
+  background: var(--accent-1);
   flex-shrink: 0;
 }
 
@@ -10171,7 +10168,7 @@ body.pyw-fullscreen-open {
 
 /* --- Track grid: Python card --------------------------------------------- */
 .code-track-card.is-python {
-  background: linear-gradient(160deg, rgba(55, 118, 171, 0.18), rgba(255, 212, 59, 0.08)), var(--glass-elevated-bg);
+  background: var(--glass-elevated-bg);
   border-color: rgba(55, 118, 171, 0.35);
 }
 
@@ -10187,7 +10184,7 @@ body.pyw-fullscreen-open {
 .pyc-hero-text {
   padding: var(--sp-6);
   border-radius: var(--radius-lg);
-  background: linear-gradient(160deg, rgba(55, 118, 171, 0.16), rgba(255, 212, 59, 0.06)), var(--glass-base-bg);
+  background: var(--glass-base-bg);
   border: 1px solid var(--glass-base-border);
 }
 
@@ -10568,7 +10565,7 @@ body.pyw-fullscreen-open {
 
 .pyl-challenge {
   border-color: rgba(var(--accent-1-rgb), 0.35);
-  background: linear-gradient(160deg, rgba(var(--accent-1-rgb), 0.1), transparent 60%), var(--glass-base-bg);
+  background: var(--glass-base-bg);
 }
 
 .pyl-example .code-block {
@@ -12483,7 +12480,7 @@ html.force-reduced-motion .chat-jump {
 }
 
 .allowance-bar > span.is-unlimited {
-  background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-1));
+  background: var(--accent-1);
 }
 
 .allowance.is-low .allowance-bar > span {
@@ -12500,7 +12497,7 @@ html.force-reduced-motion .chat-jump {
 
 .creator-section {
   border: 1px solid color-mix(in srgb, var(--accent-1) 35%, transparent);
-  background: linear-gradient(180deg, rgba(var(--accent-1-rgb), 0.07), transparent 60%);
+  background: var(--fill-subtle);
 }
 
 .creator-badge {
@@ -12652,10 +12649,7 @@ html.force-reduced-motion .chat-jump {
   font-size: var(--fs-2xl);
   line-height: 1;
   margin-bottom: 10px;
-  background: var(--accent-grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--accent-text);
 }
 
 .auth-creator h2 {
@@ -12739,10 +12733,7 @@ html.force-reduced-motion .chat-jump {
   font-size: clamp(24px, 3vw, 33px);
   line-height: 1.22;
   letter-spacing: -0.01em;
-  background: linear-gradient(120deg, var(--text), color-mix(in srgb, var(--accent-1) 62%, var(--text)));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--text);
 }
 
 .auth-points {
