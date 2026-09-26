@@ -78,10 +78,10 @@ function renderHeroStrip(stats) {
     const { level } = getLevel(xp);
     heroStatStrip.appendChild(statPill(`Lv ${level}`, `${xp} XP`));
   }
-  heroStatStrip.appendChild(statPill(stats.streak, "Day streak 🔥"));
+  heroStatStrip.appendChild(statPill(stats.streak, "day streak"));
   const goalMinutes = getDailyGoalMinutes();
   const todayMinutes = todayStudyMinutes();
-  heroStatStrip.appendChild(statPill(`${Math.min(todayMinutes, goalMinutes)}/${goalMinutes}`, "Today's goal (min)"));
+  heroStatStrip.appendChild(statPill(`${Math.min(todayMinutes, goalMinutes)}/${goalMinutes}`, "min toward today's goal"));
 }
 
 // The Learning Brain's headline, on Home. Deliberately not a second copy of the "weak

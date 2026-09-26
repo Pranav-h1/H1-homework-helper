@@ -1250,20 +1250,21 @@ html.force-reduced-motion .modal {
 }
 
 .hero-stat-pill {
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--sp-h1);
   min-width: 0;
-  padding: 2px 0 2px 16px;
-  margin-left: 18px;
+  padding: 0;
+  margin: 0;
   background: none;
   border: none;
-  border-left: 1px solid var(--hairline);
   border-radius: 0;
 }
 
-.hero-stat-pill:first-child {
-  margin-left: 0;
-  padding-left: 0;
-  border-left: none;
+.hero-stat-pill + .hero-stat-pill::before {
+  content: "\00b7";
+  margin: 0 var(--sp-2);
+  color: var(--text-faint);
 }
 
 .hero-stat-pill strong {
@@ -2711,11 +2712,16 @@ html.force-reduced-motion .auth-layout {
   color: var(--text-muted);
 }
 
+/* A line of facts, not a panel of figures: they read left to right under the greeting, in the
+   same secondary colour as the line above them, separated by a middot rather than a rule. */
 .hero-stat-strip {
-  gap: var(--sp-6);
+  gap: 0;
+  margin-top: var(--sp-2);
   padding: 0;
   background: transparent;
   border: none;
+  flex-wrap: wrap;
+  align-items: baseline;
 }
 
 .stat-value {
@@ -4423,11 +4429,15 @@ select.tool-input,
 }
 
 .hero-stat-pill strong {
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text-muted);
 }
 
 .hero-stat-pill span {
-  font-size: var(--fs-2xs);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  color: var(--text-faint);
 }
 
 /* ---- Controls ------------------------------------------------------------------------------------ */
@@ -6018,5 +6028,150 @@ select[aria-invalid="true"]:focus-visible,
   letter-spacing: 0;
   text-transform: none;
   color: var(--text-muted);
+}
+
+/* =====================================================================================
+   52. One icon set, everywhere
+   -------------------------------------------------------------------------------------
+   icons.js has said it since the day it was written — "emoji ... not as interface furniture" —
+   and the JavaScript obeyed. The static markup never did: the subject bar, the theme picker,
+   the quick-action cards, ten empty states and the sign-in page were drawn in the system emoji
+   font. Each one arrived with its own colour, its own weight, its own optical size and its own
+   idea of a baseline, which is why no two rows of this interface quite lined up.
+
+   All of it is now the same 24px grid, 2px stroke, round caps — and, because it is a stroke in
+   currentColor, it takes the colour of the text beside it and dims with it.
+   ===================================================================================== */
+
+/* An icon is drawn at the size it was asked for. Inside a flex row with stretch alignment a
+   bare <svg> grows to the row's height — which is how a 12px chevron came to render 12 wide and
+   15 tall, and why the icon audit kept reporting a size nobody had written. */
+svg.h1-icon,
+.btn > svg,
+.icon-btn > svg,
+.icon-btn-sm > svg,
+.chip > svg,
+.segmented-btn > svg,
+.nav-item > svg {
+  flex: none;
+  align-self: center;
+}
+
+/* The slots that used to hold a glyph now centre an icon. */
+.chip-icon,
+.tool-card-sm-icon,
+.empty-emoji,
+.scan-dropzone-icon,
+.quotes-hero-icon,
+.auth-creator-mark,
+.qc-header-icon,
+.context-chip > span:first-child {
+  display: grid;
+  place-items: center;
+  line-height: 0;
+}
+
+.chip-icon {
+  width: var(--icon);
+  height: var(--icon);
+  color: currentColor;
+  opacity: 0.75;
+}
+
+.chip.active .chip-icon,
+.chip[aria-checked="true"] .chip-icon {
+  opacity: 1;
+}
+
+/* The quick-action card: the icon is a quiet mark beside the words, not a picture above them. */
+.tool-card-sm-icon {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  background: var(--fill-subtle);
+  color: var(--text-muted);
+}
+
+.tool-card-sm:hover .tool-card-sm-icon {
+  color: var(--text);
+}
+
+.empty-emoji {
+  color: var(--text-faint);
+}
+
+.scan-dropzone-icon {
+  color: var(--text-muted);
+}
+
+.quotes-hero-icon,
+.auth-creator-mark,
+.qc-header-icon {
+  color: var(--accent-text);
+}
+
+/* A label that is an icon plus words: one gap, set once, so a button, a tab, a segmented option
+   and a list item all space them the same way. */
+.segmented-btn,
+.btn,
+.chip,
+.suggestion-chip,
+.context-chip,
+.section-heading h2,
+.auth-points li > span:first-child {
+  gap: var(--sp-2);
+}
+
+.segmented-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-heading h2 {
+  display: flex;
+  align-items: center;
+}
+
+/* Favourite: one star, outlined at rest and filled when it is on — the state is the shape, not
+   a second character borrowed from the text font. */
+[aria-pressed] .h1-icon {
+  transition: fill var(--dur-1) var(--ease-out);
+}
+
+[aria-pressed="true"] .h1-icon {
+  fill: currentColor;
+}
+
+/* The command palette: a row is a line of text with a mark beside it, so the mark is the same
+   grey as everything else until the row is the one you are on. */
+.command-item-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-xs);
+  background: none;
+  color: var(--text-faint);
+  line-height: 0;
+}
+
+.command-item:hover .command-item-icon,
+.command-item.active .command-item-icon,
+.command-item[aria-selected="true"] .command-item-icon {
+  color: var(--text);
+}
+
+/* The four points on the sign-in page: an icon in a soft square, aligned to the first line of
+   text rather than floating in the middle of the pair. */
+.auth-points li > span:first-child {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--fill-subtle);
+  color: var(--text-muted);
+  line-height: 0;
 }
 

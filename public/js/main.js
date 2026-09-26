@@ -507,7 +507,7 @@ function updateGreeting() {
   const hour = new Date().getHours();
   const part = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
   const name = greetingName();
-  heroGreeting.textContent = name ? `Good ${part}, ${name} 👋` : `Good ${part} 👋`;
+  heroGreeting.textContent = name ? `Good ${part}, ${name}` : `Good ${part}`;
 }
 updateGreeting();
 document.addEventListener("h1:view-changed", (event) => {

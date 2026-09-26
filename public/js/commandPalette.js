@@ -1,4 +1,5 @@
 import { switchView, onViewChange } from "./nav.js";
+import { emojiIcon } from "./icons.js";
 import { setTheme } from "./theme.js";
 import { loadConversations, setActiveConversationId } from "./conversations.js";
 import { safeGetJson, safeSetJson } from "./storage.js";
@@ -310,7 +311,12 @@ function render() {
     btn.className = "command-item";
     btn.dataset.active = String(i === activeIndex);
     btn.innerHTML = `<span class="command-item-icon"></span><span></span>`;
-    btn.querySelector(".command-item-icon").textContent = item.icon;
+    const slot = btn.querySelector(".command-item-icon");
+    // Entries are authored with an emoji because that reads well in the source; the palette
+    // draws H1's own icon for it, and only falls back to the character if there is no mapping.
+    const drawn = emojiIcon(item.icon, 16);
+    if (drawn) slot.innerHTML = drawn;
+    else slot.textContent = item.icon;
     btn.querySelector("span:last-child").textContent = item.subtitle ? `${item.title} · ${item.subtitle}` : item.title;
     btn.addEventListener("click", () => runItem(i));
     list.appendChild(btn);
