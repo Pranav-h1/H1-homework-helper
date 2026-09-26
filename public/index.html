@@ -963,13 +963,13 @@
             </div>
 
             <label class="toggle-row">
-              <span>Timed mode (30s per question)</span>
-              <span class="toggle" id="quizTimedToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
+              <span id="quizTimedToggleLabel">Timed mode (30s per question)</span>
+              <span class="toggle" id="quizTimedToggle" role="switch" aria-labelledby="quizTimedToggleLabel" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
 
             <label class="toggle-row">
-              <span>🧠 Adaptive difficulty <span class="settings-hint" style="display:block;margin-top:2px">Gets harder when you're doing well, easier when you're not — starts from the difficulty above.</span></span>
-              <span class="toggle" id="quizAdaptiveToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
+              <span id="quizAdaptiveToggleLabel">🧠 Adaptive difficulty <span class="settings-hint" style="display:block;margin-top:2px">Gets harder when you're doing well, easier when you're not — starts from the difficulty above.</span></span>
+              <span class="toggle" id="quizAdaptiveToggle" role="switch" aria-labelledby="quizAdaptiveToggleLabel" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
 
             <button id="quizStartBtn" class="btn btn-primary btn-block" type="button">
@@ -1373,8 +1373,8 @@
                 <button type="button" class="segmented-btn" data-value="45">45 min</button>
               </div>
               <label class="toggle-row">
-                <span>Auto-start a 5 min break after</span>
-                <span class="toggle on" id="studyAutoBreakToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+                <span id="studyAutoBreakToggleLabel">Auto-start a 5 min break after</span>
+                <span class="toggle on" id="studyAutoBreakToggle" role="switch" aria-labelledby="studyAutoBreakToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
               </label>
               <button id="studyStartBtn" class="btn btn-primary btn-block" type="button">
                 <span>Start focus session</span>
@@ -2171,19 +2171,19 @@
               <button type="button" class="segmented-btn" data-value="ctrlenter" role="radio" aria-checked="false">Ctrl + Enter</button>
             </div>
             <label class="toggle-row">
-              <span>Auto-scroll to latest message</span>
-              <span class="toggle" id="autoScrollToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              <span id="autoScrollToggleLabel">Auto-scroll to latest message</span>
+              <span class="toggle" id="autoScrollToggle" role="switch" aria-labelledby="autoScrollToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
             <label class="toggle-row">
-              <span>Save conversations</span>
-              <span class="toggle" id="saveConversationsToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              <span id="saveConversationsToggleLabel">Save conversations</span>
+              <span class="toggle" id="saveConversationsToggle" role="switch" aria-labelledby="saveConversationsToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
             <label class="toggle-row toggle-row-stacked">
-              <span>
+              <span id="aiKnowsMeToggleLabel">
                 Let H1 use what it knows about your studying
                 <small>Sends a short summary of your streak, weak topics, deadlines and due reviews with your questions, so answers are about you.</small>
               </span>
-              <span class="toggle on" id="aiKnowsMeToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              <span class="toggle on" id="aiKnowsMeToggle" role="switch" aria-labelledby="aiKnowsMeToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
             <button id="settingsClearChatBtn" class="btn btn-ghost" type="button">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -2205,21 +2205,21 @@
           <div class="settings-section">
             <h2>Notifications</h2>
             <label class="toggle-row">
-              <span>Deadline reminders</span>
-              <span class="toggle" id="deadlineRemindersToggle" role="switch" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
+              <span id="deadlineRemindersToggleLabel">Deadline reminders</span>
+              <span class="toggle" id="deadlineRemindersToggle" role="switch" aria-labelledby="deadlineRemindersToggleLabel" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
             <p class="settings-hint">Only works while H1 is open in this browser tab — this is not a background/push notification. When on, H1 checks your homework and planner deadlines and lets you know if something is due today or overdue.</p>
             <label class="toggle-row">
-              <span>Achievement unlock notifications</span>
-              <span class="toggle on" id="achievementNotificationsToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              <span id="achievementNotificationsToggleLabel">Achievement unlock notifications</span>
+              <span class="toggle on" id="achievementNotificationsToggle" role="switch" aria-labelledby="achievementNotificationsToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
           </div>
 
           <div class="settings-section">
             <h2>Accessibility</h2>
             <label class="toggle-row">
-              <span>Gamification (XP, levels, achievements)</span>
-              <span class="toggle" id="gamificationToggle" role="switch" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              <span id="gamificationToggleLabel">Gamification (XP, levels, achievements)</span>
+              <span class="toggle" id="gamificationToggle" role="switch" aria-labelledby="gamificationToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
             </label>
           </div>
 
