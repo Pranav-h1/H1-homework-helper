@@ -560,12 +560,12 @@
               <p class="view-sub">Track what's due, and get a step-by-step breakdown when you're stuck.</p>
             </div>
             <div class="subtabs" role="tablist">
-              <button type="button" class="subtab-btn active" data-subtab="tasks">My Tasks</button>
-              <button type="button" class="subtab-btn" data-subtab="explain">Step-by-Step</button>
+              <button role="tab" aria-selected="true" type="button" class="subtab-btn active" data-subtab="tasks">My Tasks</button>
+              <button role="tab" aria-selected="false" type="button" class="subtab-btn" data-subtab="explain">Step-by-Step</button>
             </div>
           </div>
 
-          <div data-subtab-panel="tasks">
+          <div data-subtab-panel="tasks" role="tabpanel">
             <div class="homework-toolbar">
               <input id="homeworkSearch" class="tool-input" type="search" placeholder="Search homework…" aria-label="Search homework" />
               <select id="homeworkStatusFilter" class="tool-input" aria-label="Filter by status" style="max-width:130px">
@@ -652,7 +652,7 @@
             <div id="homeworkList" class="homework-list"></div>
           </div>
 
-          <div data-subtab-panel="explain" hidden>
+          <div data-subtab-panel="explain" role="tabpanel" hidden>
             <form id="explainForm" class="tool-input-row">
               <textarea id="explainInput" class="tool-textarea" placeholder="e.g. How do you solve 2x + 3 = 11?" rows="2" maxlength="4000" aria-label="Question to explain"></textarea>
               <button id="explainSubmitBtn" class="btn btn-primary" type="submit">
@@ -1407,21 +1407,21 @@
               <p class="view-sub">Learn Python and the web by writing real code H1 actually runs — then take on challenges and build your own programs and pages.</p>
             </div>
             <div class="subtabs" role="tablist">
-              <button type="button" class="subtab-btn active" data-subtab="learn">Learn</button>
-              <button type="button" class="subtab-btn" data-subtab="challenges">Challenges</button>
-              <button type="button" class="subtab-btn" data-subtab="build">Build</button>
+              <button role="tab" aria-selected="true" type="button" class="subtab-btn active" data-subtab="learn">Learn</button>
+              <button role="tab" aria-selected="false" type="button" class="subtab-btn" data-subtab="challenges">Challenges</button>
+              <button role="tab" aria-selected="false" type="button" class="subtab-btn" data-subtab="build">Build</button>
             </div>
           </div>
 
-          <div data-subtab-panel="learn">
+          <div data-subtab-panel="learn" role="tabpanel">
             <div id="codeLearnRoot"></div>
           </div>
 
-          <div data-subtab-panel="challenges" hidden>
+          <div data-subtab-panel="challenges" role="tabpanel" hidden>
             <div id="codeChallengesRoot"></div>
           </div>
 
-          <div data-subtab-panel="build" hidden>
+          <div data-subtab-panel="build" role="tabpanel" hidden>
             <div id="codeBuildRoot"></div>
           </div>
         </section>
@@ -1644,12 +1644,12 @@
               <p class="view-sub">Calculators, converters, references — and H1's writing &amp; language helpers.</p>
             </div>
             <div class="subtabs" role="tablist">
-              <button type="button" class="subtab-btn active" data-subtab="utilities">Utilities</button>
-              <button type="button" class="subtab-btn" data-subtab="writing">Writing &amp; Language</button>
+              <button role="tab" aria-selected="true" type="button" class="subtab-btn active" data-subtab="utilities">Utilities</button>
+              <button role="tab" aria-selected="false" type="button" class="subtab-btn" data-subtab="writing">Writing &amp; Language</button>
             </div>
           </div>
 
-          <div data-subtab-panel="utilities">
+          <div data-subtab-panel="utilities" role="tabpanel">
             <div class="util-grid">
               <div class="util-panel">
                 <h3>Calculator</h3>
@@ -1795,7 +1795,7 @@
             </div>
           </div>
 
-          <div data-subtab-panel="writing" hidden>
+          <div data-subtab-panel="writing" role="tabpanel" hidden>
             <div class="section-heading"><h2>Summarize</h2></div>
             <form id="summarizeForm" class="tool-input-row">
               <textarea id="summarizeInput" class="tool-textarea" placeholder="Paste a paragraph, article, or notes to summarize…" rows="6" maxlength="6000" aria-label="Text to summarize" style="min-height:120px"></textarea>
