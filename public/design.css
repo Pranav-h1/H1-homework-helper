@@ -5637,11 +5637,11 @@ select[aria-invalid="true"]:focus-visible,
 
 /* ---- Level one -------------------------------------------------------------------------- */
 /* Every tile still carries a grid-area name from the old bento layout ("continue", "weak").
-   Outside that grid those names resolve to nothing and the tiles pile into one cell, so the
-   placement is handed back to the flow here rather than unpicked from every feature rule. */
-.home-lead .bento-tile,
-.home-lead-side .bento-tile,
-.home-list .bento-tile {
+   Outside that grid those names resolve to nothing and the tiles pile into one cell. Rather
+   than list each new container as it appears — which is how two of them ended up drawn on top
+   of each other — the placement is handed back to the flow for any tile that is NOT inside the
+   grid those names were written for. */
+.bento-tile:not(.bento .bento-tile) {
   grid-area: auto;
 }
 
@@ -6373,5 +6373,216 @@ svg.h1-icon,
   background: var(--fill-subtle);
   color: var(--text-muted);
   line-height: 0;
+}
+
+/* =====================================================================================
+   53. Composition — the page gets a shape, not a stack
+   -------------------------------------------------------------------------------------
+   Home was four full-width sections in a column: greeting, ask bar, continue, study space,
+   quick actions, quote. Every group the same width, in the same place, one after another —
+   which is a list of groups, not a composition, and it is why the page kept reading as a
+   template however carefully the insides of it were tuned.
+
+   It is now a wide main column with a narrower rail beside it. The thing you came back for
+   spans the main column; the two dated cards suit a narrow stack better than a squashed pair,
+   so they go to the rail with the places you visit less often underneath. Three different
+   widths on one page, each holding the kind of content it fits.
+   ===================================================================================== */
+.home-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  gap: var(--sp-10);
+  align-items: start;
+}
+
+.home-main,
+.home-rail {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: var(--sp-10);
+}
+
+.home-main > .home-section + .home-section,
+.home-rail > .home-section + .home-section {
+  margin-top: 0;
+}
+
+.home-rail-stack {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+/* In the rail the quick actions are a single column of rows rather than a grid of squares. */
+.home-rail .tool-grid-secondary {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-2);
+}
+
+.home-rail .tool-card-sm {
+  padding: var(--sp-3) var(--sp-4);
+}
+
+/* The lead card is the widest thing on the page and is allowed to say so. */
+.home-main .tile-lead {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 1180px) {
+  .home-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-8);
+  }
+
+  .home-rail .tool-grid-secondary {
+    grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));
+  }
+
+  .home-rail-stack {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .home-main .tile-lead {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-rail-stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* =====================================================================================
+   54. Settings, as a settings screen
+   -------------------------------------------------------------------------------------
+   Eleven standalone cards in a column, each with its own heading printed inside it, is how a
+   web dashboard does settings. A settings screen labels a group and then shows the group: the
+   heading sits on the page, and the controls under it share one surface with hairlines between
+   them. The markup follows — a section, a heading, and a body — so the surface belongs to the
+   controls rather than to the title.
+   ===================================================================================== */
+.settings-group {
+  display: block;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.settings-group h2 {
+  margin: 0 0 var(--sp-3);
+  padding-left: var(--sp-1);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.settings-group-body {
+  padding: var(--sp-5) var(--sp-6) var(--sp-6);
+  background: var(--card);
+  border: 0.5px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--elev-1), var(--glass-sheen);
+}
+
+/* The first control in a group starts at the top of the surface, not a heading's distance
+   below it — the heading is outside now. */
+.settings-group-body > .field-label:first-child,
+.settings-group-body > .settings-hint:first-child {
+  margin-top: 0;
+}
+
+/* Rows inside a group are divided rather than boxed. */
+.settings-group-body > .toggle-row,
+.settings-group-body > .danger-row {
+  margin: 0 calc(var(--sp-6) * -1);
+  padding: var(--sp-4) var(--sp-6);
+}
+
+.settings-group-body > .toggle-row + .toggle-row,
+.settings-group-body > .danger-row + .danger-row,
+.settings-group-body > .toggle-row + .danger-row {
+  box-shadow: inset 0 0.5px 0 var(--hairline);
+}
+
+/* A card inside a card. The group already is the surface, so the row on it is just a row. */
+.settings-group-body > .account-card,
+.settings-group-body > .allowance {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.settings-group.danger-zone .settings-group-body {
+  background: color-mix(in srgb, var(--danger) 7%, var(--card));
+  border-color: color-mix(in srgb, var(--danger) 22%, transparent);
+}
+
+/* =====================================================================================
+   55. The room the window sits in
+   -------------------------------------------------------------------------------------
+   A flat colour behind glass is the reason glass looks like grey plastic: there is nothing for
+   it to pick up. So the backdrop gets light — two very large, very soft pools of it, one warm
+   from the accent and one cool, at a few percent. You should not be able to point at them. You
+   should only notice that the chrome in front has something to catch.
+   ===================================================================================== */
+.app {
+  background:
+    radial-gradient(120% 90% at 8% -10%, rgba(var(--accent-1-rgb), 0.07), transparent 58%),
+    radial-gradient(110% 80% at 100% 8%, rgba(var(--accent-2-rgb), 0.05), transparent 55%),
+    var(--bg);
+}
+
+:root[data-theme="light"] .app {
+  background:
+    radial-gradient(120% 90% at 8% -10%, rgba(var(--accent-1-rgb), 0.06), transparent 58%),
+    radial-gradient(110% 80% at 100% 8%, rgba(var(--accent-2-rgb), 0.045), transparent 55%),
+    var(--bg);
+}
+
+/* =====================================================================================
+   56. The sidebar is a rail
+   -------------------------------------------------------------------------------------
+   Twenty-three destinations in four groups, with the group labels the same weight as the rows
+   under them, reads as an admin menu. The labels step back, the groups get real distance
+   between them, and the account sits on its own surface at the foot so the list ends somewhere
+   instead of just stopping.
+   ===================================================================================== */
+.sidebar {
+  border-right: 0.5px solid var(--hairline);
+}
+
+.nav-section-label {
+  padding: var(--sp-5) var(--sp-3) var(--sp-2);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.nav-item {
+  border-radius: var(--radius-md);
+}
+
+.nav-item:hover:not(.active) {
+  background: var(--fill-hover);
+}
+
+.sidebar-account {
+  background: var(--fill-subtle);
+  border: 0.5px solid var(--hairline);
+}
+
+.sidebar-account:hover {
+  background: var(--fill-hover);
 }
 

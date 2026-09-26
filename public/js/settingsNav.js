@@ -21,7 +21,7 @@ function slug(text) {
 function sections() {
   const view = document.getElementById("view-settings");
   if (!view) return [];
-  return [...view.querySelectorAll(":scope > .settings-section")].filter((s) => !s.hidden);
+  return [...view.querySelectorAll(":scope > .settings-group")].filter((s) => !s.hidden);
 }
 
 function setCurrent(id) {

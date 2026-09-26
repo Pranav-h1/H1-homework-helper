@@ -335,75 +335,81 @@
             </div>
           </div>
 
-          <section class="home-section">
-            <h2 class="home-section-title">Continue studying</h2>
-            <div class="home-lead">
+          <div class="home-grid">
+            <div class="home-main">
+            <section class="home-section">
+              <h2 class="home-section-title">Continue studying</h2>
               <div class="bento-tile tile-lead bento-continue clickable" id="bentoContinue"></div>
-              <div class="home-lead-side">
+            </section>
+            <section class="home-section">
+              <h2 class="home-section-title">Your study space</h2>
+              <div class="home-list">
+                <div class="bento-tile tile-row bento-brain clickable" id="bentoBrain"></div>
+                <div class="bento-tile tile-row bento-note clickable" id="bentoNote"></div>
+                <div class="bento-tile tile-row bento-quiz clickable" id="bentoQuiz"></div>
+                <div class="bento-tile tile-row bento-code clickable" id="bentoCode" role="button" tabindex="0" aria-label="Code Lab"></div>
+                <div class="bento-tile tile-row bento-focus clickable" id="bentoFocus"></div>
+              </div>
+            </section>
+            </div>
+
+            <aside class="home-rail">
+            <section class="home-section">
+              <h2 class="home-section-title">Due next</h2>
+              <div class="home-rail-stack">
                 <div class="bento-tile tile-support bento-deadline clickable" id="bentoDeadline"></div>
                 <div class="bento-tile tile-support bento-weak clickable" id="bentoWeak"></div>
               </div>
+            </section>
+            <section class="home-section">
+              <h2 class="home-section-title">Quick actions</h2>
+            <div class="tool-grid-secondary">
+              <button class="tool-card-sm" type="button" data-open-view="homework">
+                <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+                <span class="tool-card-sm-text">
+                  <span class="tool-card-sm-title">Homework</span>
+                  <span class="tool-card-sm-desc">Track tasks &amp; deadlines</span>
+                </span>
+              </button>
+              <button class="tool-card-sm" type="button" data-open-view="subjects">
+                <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><polygon points="16.2 7.8 14.1 14.1 7.8 16.2 9.9 9.9 16.2 7.8"/></svg></span>
+                <span class="tool-card-sm-text">
+                  <span class="tool-card-sm-title">Subjects</span>
+                  <span class="tool-card-sm-desc">Your subject dashboards</span>
+                </span>
+              </button>
+              <button class="tool-card-sm" type="button" data-open-view="documents">
+                <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
+                <span class="tool-card-sm-text">
+                  <span class="tool-card-sm-title">Documents</span>
+                  <span class="tool-card-sm-desc">Upload &amp; study your files</span>
+                </span>
+              </button>
+              <button class="tool-card-sm" type="button" data-open-view="calendar">
+                <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                <span class="tool-card-sm-text">
+                  <span class="tool-card-sm-title">Calendar</span>
+                  <span class="tool-card-sm-desc">Everything on one timeline</span>
+                </span>
+              </button>
+              <button class="tool-card-sm" type="button" data-open-view="achievements">
+                <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3a3 3 0 0 1-3 4"/><path d="M7 5H4a3 3 0 0 0 3 4"/></svg></span>
+                <span class="tool-card-sm-text">
+                  <span class="tool-card-sm-title">Achievements</span>
+                  <span class="tool-card-sm-desc">See your unlocked badges</span>
+                </span>
+              </button>
+              <button class="tool-card-sm" type="button" data-open-view="tools">
+                <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.3 6.3a4.5 4.5 0 0 0 5.9 5.9l-8.2 8.2a2.6 2.6 0 0 1-3.7-3.7z"/><path d="M14.3 6.3 17 3.6a4.5 4.5 0 0 1 3.2 7.4"/></svg></span>
+                <span class="tool-card-sm-text">
+                  <span class="tool-card-sm-title">Tools</span>
+                  <span class="tool-card-sm-desc">Calculators &amp; more</span>
+                </span>
+              </button>
             </div>
-          </section>
-
-          <section class="home-section">
-            <h2 class="home-section-title">Your study space</h2>
-            <div class="home-list">
-              <div class="bento-tile tile-row bento-brain clickable" id="bentoBrain"></div>
-              <div class="bento-tile tile-row bento-note clickable" id="bentoNote"></div>
-              <div class="bento-tile tile-row bento-quiz clickable" id="bentoQuiz"></div>
-              <div class="bento-tile tile-row bento-code clickable" id="bentoCode" role="button" tabindex="0" aria-label="Code Lab"></div>
-              <div class="bento-tile tile-row bento-focus clickable" id="bentoFocus"></div>
-            </div>
-          </section>
-
-          <section class="home-section">
-            <h2 class="home-section-title">Quick actions</h2>
-          <div class="tool-grid-secondary">
-            <button class="tool-card-sm" type="button" data-open-view="homework">
-              <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-              <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Homework</span>
-                <span class="tool-card-sm-desc">Track tasks &amp; deadlines</span>
-              </span>
-            </button>
-            <button class="tool-card-sm" type="button" data-open-view="subjects">
-              <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><polygon points="16.2 7.8 14.1 14.1 7.8 16.2 9.9 9.9 16.2 7.8"/></svg></span>
-              <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Subjects</span>
-                <span class="tool-card-sm-desc">Your subject dashboards</span>
-              </span>
-            </button>
-            <button class="tool-card-sm" type="button" data-open-view="documents">
-              <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
-              <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Documents</span>
-                <span class="tool-card-sm-desc">Upload &amp; study your files</span>
-              </span>
-            </button>
-            <button class="tool-card-sm" type="button" data-open-view="calendar">
-              <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
-              <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Calendar</span>
-                <span class="tool-card-sm-desc">Everything on one timeline</span>
-              </span>
-            </button>
-            <button class="tool-card-sm" type="button" data-open-view="achievements">
-              <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3a3 3 0 0 1-3 4"/><path d="M7 5H4a3 3 0 0 0 3 4"/></svg></span>
-              <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Achievements</span>
-                <span class="tool-card-sm-desc">See your unlocked badges</span>
-              </span>
-            </button>
-            <button class="tool-card-sm" type="button" data-open-view="tools">
-              <span class="tool-card-sm-icon" aria-hidden="true"><svg class="h1-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.3 6.3a4.5 4.5 0 0 0 5.9 5.9l-8.2 8.2a2.6 2.6 0 0 1-3.7-3.7z"/><path d="M14.3 6.3 17 3.6a4.5 4.5 0 0 1 3.2 7.4"/></svg></span>
-              <span class="tool-card-sm-text">
-                <span class="tool-card-sm-title">Tools</span>
-                <span class="tool-card-sm-desc">Calculators &amp; more</span>
-              </span>
-            </button>
+            </section>
+            </aside>
           </div>
-          </section>
 
           <footer class="daily-inspiration">
             <span class="daily-inspiration-mark">“</span>
@@ -2013,268 +2019,292 @@
             </div>
           </div>
 
-          <div class="settings-section" id="accountSection">
+          <section class="settings-group" id="accountSection">
             <h2>Account</h2>
-            <div class="account-card">
-              <span class="account-avatar" id="accountAvatar" aria-hidden="true">?</span>
-              <div class="account-card-text">
-                <strong id="accountName">Guest</strong>
-                <span id="accountSub" class="settings-hint">Everything is stored on this device only.</span>
+            <div class="settings-group-body">
+              <div class="account-card">
+                <span class="account-avatar" id="accountAvatar" aria-hidden="true">?</span>
+                <div class="account-card-text">
+                  <strong id="accountName">Guest</strong>
+                  <span id="accountSub" class="settings-hint">Everything is stored on this device only.</span>
+                </div>
+                <button id="accountPrimaryBtn" class="btn btn-ghost" type="button">Sign in</button>
               </div>
-              <button id="accountPrimaryBtn" class="btn btn-ghost" type="button">Sign in</button>
+              <div id="accountAllowance" class="allowance" hidden>
+                <div class="allowance-head">
+                  <strong id="allowanceTitle">AI messages</strong>
+                  <span id="allowanceCount"></span>
+                </div>
+                <div class="allowance-bar" role="img" aria-labelledby="allowanceTitle"><span id="allowanceFill"></span></div>
+                <p id="allowanceNote" class="settings-hint"></p>
+              </div>
+              <p id="accountUsage" class="settings-hint" hidden></p>
+              <div id="accountActions" hidden>
+                <div class="danger-row">
+                  <div class="danger-row-text"><strong>Change password</strong><span>You'll stay signed in here; other devices are signed out.</span></div>
+                  <button id="accountPasswordBtn" class="btn btn-ghost" type="button">Change</button>
+                </div>
+                <div class="danger-row">
+                  <div class="danger-row-text"><strong>Sign out everywhere</strong><span>Ends your session on every device, including this one.</span></div>
+                  <button id="accountLogoutAllBtn" class="btn btn-ghost" type="button">Sign out all</button>
+                </div>
+                <div class="danger-row">
+                  <div class="danger-row-text"><strong>Delete account</strong><span>Permanently deletes your account and everything in it.</span></div>
+                  <button id="accountDeleteBtn" class="btn btn-danger" type="button">Delete</button>
+                </div>
+              </div>
             </div>
-            <div id="accountAllowance" class="allowance" hidden>
-              <div class="allowance-head">
-                <strong id="allowanceTitle">AI messages</strong>
-                <span id="allowanceCount"></span>
-              </div>
-              <div class="allowance-bar" role="img" aria-labelledby="allowanceTitle"><span id="allowanceFill"></span></div>
-              <p id="allowanceNote" class="settings-hint"></p>
-            </div>
-            <p id="accountUsage" class="settings-hint" hidden></p>
-            <div id="accountActions" hidden>
-              <div class="danger-row">
-                <div class="danger-row-text"><strong>Change password</strong><span>You'll stay signed in here; other devices are signed out.</span></div>
-                <button id="accountPasswordBtn" class="btn btn-ghost" type="button">Change</button>
-              </div>
-              <div class="danger-row">
-                <div class="danger-row-text"><strong>Sign out everywhere</strong><span>Ends your session on every device, including this one.</span></div>
-                <button id="accountLogoutAllBtn" class="btn btn-ghost" type="button">Sign out all</button>
-              </div>
-              <div class="danger-row">
-                <div class="danger-row-text"><strong>Delete account</strong><span>Permanently deletes your account and everything in it.</span></div>
-                <button id="accountDeleteBtn" class="btn btn-danger" type="button">Delete</button>
-              </div>
-            </div>
-          </div>
+          </section>
 
-          <div class="settings-section creator-section" id="creatorSection" hidden>
+          <section class="settings-group creator-section" id="creatorSection" hidden>
             <h2>Creator controls <span class="creator-badge">H1</span></h2>
-            <p class="settings-hint">Only H1's own account sees this. The server checks that on every request — it isn't a hidden switch in the page.</p>
+            <div class="settings-group-body">
+              <p class="settings-hint">Only H1's own account sees this. The server checks that on every request — it isn't a hidden switch in the page.</p>
 
-            <h3 class="creator-subhead">The model H1 answers with</h3>
-            <p class="settings-hint" id="creatorActiveNote">H1 is using the model set in the server's configuration.</p>
-            <div id="creatorModelList" class="creator-models"></div>
-            <div class="creator-add">
-              <select id="creatorModelProvider" class="auth-input creator-input" aria-label="Provider"></select>
-              <input id="creatorModelId" class="auth-input creator-input" type="text" placeholder="model id, e.g. gemini-2.0-flash" maxlength="120" aria-label="Model id" />
-              <input id="creatorModelLabel" class="auth-input creator-input" type="text" placeholder="name (optional)" maxlength="60" aria-label="Name" />
-              <button id="creatorAddModel" class="btn btn-ghost" type="button">Add model</button>
+              <h3 class="creator-subhead">The model H1 answers with</h3>
+              <p class="settings-hint" id="creatorActiveNote">H1 is using the model set in the server's configuration.</p>
+              <div id="creatorModelList" class="creator-models"></div>
+              <div class="creator-add">
+                <select id="creatorModelProvider" class="auth-input creator-input" aria-label="Provider"></select>
+                <input id="creatorModelId" class="auth-input creator-input" type="text" placeholder="model id, e.g. gemini-2.0-flash" maxlength="120" aria-label="Model id" />
+                <input id="creatorModelLabel" class="auth-input creator-input" type="text" placeholder="name (optional)" maxlength="60" aria-label="Name" />
+                <button id="creatorAddModel" class="btn btn-ghost" type="button">Add model</button>
+              </div>
+              <p id="creatorModelError" class="auth-error" hidden></p>
+
+              <h3 class="creator-subhead">Message allowance</h3>
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>AI messages per 24 hours</strong><span id="creatorLimitNote">Applies to every account except this one, and to anyone using H1 without an account.</span></div>
+                <span class="creator-limit-edit">
+                  <input id="creatorLimitInput" class="auth-input creator-input creator-limit-input" type="number" min="0" max="100000" step="1" aria-label="Messages per 24 hours" />
+                  <button id="creatorSaveLimit" class="btn btn-ghost" type="button">Save</button>
+                </span>
+              </div>
+
+              <h3 class="creator-subhead">Who's using H1</h3>
+              <div id="creatorAccounts" class="creator-accounts"></div>
             </div>
-            <p id="creatorModelError" class="auth-error" hidden></p>
+          </section>
 
-            <h3 class="creator-subhead">Message allowance</h3>
-            <div class="danger-row">
-              <div class="danger-row-text"><strong>AI messages per 24 hours</strong><span id="creatorLimitNote">Applies to every account except this one, and to anyone using H1 without an account.</span></div>
-              <span class="creator-limit-edit">
-                <input id="creatorLimitInput" class="auth-input creator-input creator-limit-input" type="number" min="0" max="100000" step="1" aria-label="Messages per 24 hours" />
-                <button id="creatorSaveLimit" class="btn btn-ghost" type="button">Save</button>
-              </span>
-            </div>
-
-            <h3 class="creator-subhead">Who's using H1</h3>
-            <div id="creatorAccounts" class="creator-accounts"></div>
-          </div>
-
-          <div class="settings-section">
+          <section class="settings-group">
             <h2>Appearance</h2>
+            <div class="settings-group-body">
+              <span class="field-label" id="themeSettingLabel">Theme</span>
+              <div class="segmented" id="themeSetting" role="radiogroup" aria-labelledby="themeSettingLabel">
+                <button type="button" class="segmented-btn" data-value="dark" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5a8.5 8.5 0 1 0 10.8 10.8z"/></svg><span>Dark</span></button>
+                <button type="button" class="segmented-btn" data-value="light" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></svg><span>Light</span></button>
+                <button type="button" class="segmented-btn" data-value="system" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="3.5" width="20" height="13" rx="2"/><line x1="8" y1="20.5" x2="16" y2="20.5"/><line x1="12" y1="16.5" x2="12" y2="20.5"/></svg><span>System</span></button>
+              </div>
 
-            <span class="field-label" id="themeSettingLabel">Theme</span>
-            <div class="segmented" id="themeSetting" role="radiogroup" aria-labelledby="themeSettingLabel">
-              <button type="button" class="segmented-btn" data-value="dark" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5a8.5 8.5 0 1 0 10.8 10.8z"/></svg><span>Dark</span></button>
-              <button type="button" class="segmented-btn" data-value="light" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></svg><span>Light</span></button>
-              <button type="button" class="segmented-btn" data-value="system" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="3.5" width="20" height="13" rx="2"/><line x1="8" y1="20.5" x2="16" y2="20.5"/><line x1="12" y1="16.5" x2="12" y2="20.5"/></svg><span>System</span></button>
+              <span class="field-label" id="accentSettingLabel">Accent color</span>
+              <div class="accent-swatch-group" id="accentSetting" role="radiogroup" aria-labelledby="accentSettingLabel">
+                <button type="button" class="accent-swatch" data-value="purple" role="radio" aria-checked="false" title="Purple" style="--swatch-1:#7c5cff;--swatch-2:#22d3ee"></button>
+                <button type="button" class="accent-swatch" data-value="blue" role="radio" aria-checked="false" title="Blue" style="--swatch-1:#3b82f6;--swatch-2:#22d3ee"></button>
+                <button type="button" class="accent-swatch" data-value="cyan" role="radio" aria-checked="false" title="Cyan" style="--swatch-1:#06b6d4;--swatch-2:#7c5cff"></button>
+                <button type="button" class="accent-swatch" data-value="green" role="radio" aria-checked="false" title="Green" style="--swatch-1:#22c55e;--swatch-2:#22d3ee"></button>
+                <button type="button" class="accent-swatch" data-value="orange" role="radio" aria-checked="false" title="Orange" style="--swatch-1:#f97316;--swatch-2:#fbbf24"></button>
+                <button type="button" class="accent-swatch" data-value="pink" role="radio" aria-checked="false" title="Pink" style="--swatch-1:#ec4899;--swatch-2:#f97316"></button>
+              </div>
+
+              <span class="field-label" id="opacityLabel">Interface opacity</span>
+              <p class="settings-hint">How solid H1’s panels, menus and chrome are. Text, icons and controls stay fully opaque.</p>
+              <div class="opacity-control">
+                <input id="opacitySetting" class="opacity-slider" type="range" min="0" max="100" step="5" value="100" aria-labelledby="opacityLabel" aria-describedby="opacityHint" />
+                <output id="opacityValue" class="opacity-value" for="opacitySetting">100%</output>
+                <button id="opacityReset" class="btn btn-ghost" type="button">Reset</button>
+              </div>
+              <p class="settings-hint" id="opacityHint"></p>
+
+              <span class="field-label" id="densityLabel">Density</span>
+              <p class="settings-hint">Comfortable leaves more air between things; compact fits more on screen. Text size is unaffected.</p>
+              <div class="segmented" id="densitySetting" role="radiogroup" aria-labelledby="densityLabel">
+                <button type="button" class="segmented-btn" data-value="comfortable" role="radio" aria-checked="true">Comfortable</button>
+                <button type="button" class="segmented-btn" data-value="compact" role="radio" aria-checked="false">Compact</button>
+              </div>
+
+              <span class="field-label" id="motionLabel">Motion</span>
+              <p class="settings-hint">Reduced keeps the feedback that tells you something happened and drops the rest. Off stops everything except the indicators that mean H1 is working.</p>
+              <div class="segmented" id="motionSetting" role="radiogroup" aria-labelledby="motionLabel">
+                <button type="button" class="segmented-btn" data-value="full" role="radio" aria-checked="false">Full</button>
+                <button type="button" class="segmented-btn" data-value="reduced" role="radio" aria-checked="true">Reduced</button>
+                <button type="button" class="segmented-btn" data-value="off" role="radio" aria-checked="false">Off</button>
+              </div>
+              <p class="settings-hint">If your system asks for reduced motion, H1 follows that too.</p>
             </div>
+          </section>
 
-            <span class="field-label" id="accentSettingLabel">Accent color</span>
-            <div class="accent-swatch-group" id="accentSetting" role="radiogroup" aria-labelledby="accentSettingLabel">
-              <button type="button" class="accent-swatch" data-value="purple" role="radio" aria-checked="false" title="Purple" style="--swatch-1:#7c5cff;--swatch-2:#22d3ee"></button>
-              <button type="button" class="accent-swatch" data-value="blue" role="radio" aria-checked="false" title="Blue" style="--swatch-1:#3b82f6;--swatch-2:#22d3ee"></button>
-              <button type="button" class="accent-swatch" data-value="cyan" role="radio" aria-checked="false" title="Cyan" style="--swatch-1:#06b6d4;--swatch-2:#7c5cff"></button>
-              <button type="button" class="accent-swatch" data-value="green" role="radio" aria-checked="false" title="Green" style="--swatch-1:#22c55e;--swatch-2:#22d3ee"></button>
-              <button type="button" class="accent-swatch" data-value="orange" role="radio" aria-checked="false" title="Orange" style="--swatch-1:#f97316;--swatch-2:#fbbf24"></button>
-              <button type="button" class="accent-swatch" data-value="pink" role="radio" aria-checked="false" title="Pink" style="--swatch-1:#ec4899;--swatch-2:#f97316"></button>
-            </div>
+<section class="settings-group">
+  <h2>Interface</h2>
+  <div class="settings-group-body">
+              <span class="field-label" id="textSizeLabel">Text size</span>
+              <div class="segmented" id="textSizeSetting" role="radiogroup" aria-labelledby="textSizeLabel">
+                <button type="button" class="segmented-btn" data-value="small" role="radio" aria-checked="false">Small</button>
+                <button type="button" class="segmented-btn" data-value="default" role="radio" aria-checked="true">Default</button>
+                <button type="button" class="segmented-btn" data-value="large" role="radio" aria-checked="false">Large</button>
+              </div>
 
-            <span class="field-label" id="opacityLabel">Interface opacity</span>
-            <p class="settings-hint">How solid H1’s panels, menus and chrome are. Text, icons and controls stay fully opaque.</p>
-            <div class="opacity-control">
-              <input id="opacitySetting" class="opacity-slider" type="range" min="0" max="100" step="5" value="100" aria-labelledby="opacityLabel" aria-describedby="opacityHint" />
-              <output id="opacityValue" class="opacity-value" for="opacitySetting">100%</output>
-              <button id="opacityReset" class="btn btn-ghost" type="button">Reset</button>
-            </div>
-            <p class="settings-hint" id="opacityHint"></p>
+              <span class="field-label" id="responseWidthLabel">Response width</span>
+              <p class="settings-hint">How wide an answer runs. Comfortable keeps prose at an easy reading length; wide tables, code and equations always use the full width.</p>
+              <div class="segmented" id="responseWidthSetting" role="radiogroup" aria-labelledby="responseWidthLabel">
+                <button type="button" class="segmented-btn" data-value="comfortable" role="radio" aria-checked="true">Comfortable</button>
+                <button type="button" class="segmented-btn" data-value="full" role="radio" aria-checked="false">Full width</button>
+              </div>
 
-            <span class="field-label" id="densityLabel">Density</span>
-            <p class="settings-hint">Comfortable leaves more air between things; compact fits more on screen. Text size is unaffected.</p>
-            <div class="segmented" id="densitySetting" role="radiogroup" aria-labelledby="densityLabel">
-              <button type="button" class="segmented-btn" data-value="comfortable" role="radio" aria-checked="true">Comfortable</button>
-              <button type="button" class="segmented-btn" data-value="compact" role="radio" aria-checked="false">Compact</button>
-            </div>
+              <span class="field-label" id="sidebarSettingLabel">Sidebar</span>
+              <div class="segmented" id="sidebarSetting" role="radiogroup" aria-labelledby="sidebarSettingLabel">
+                <button type="button" class="segmented-btn" data-value="expanded" role="radio" aria-checked="true">Expanded</button>
+                <button type="button" class="segmented-btn" data-value="collapsed" role="radio" aria-checked="false">Icons only</button>
+              </div>
+              <p class="settings-hint">This one is per device, so a phone and a laptop can differ.</p>
 
-            <span class="field-label" id="motionLabel">Motion</span>
-            <p class="settings-hint">Reduced keeps the feedback that tells you something happened and drops the rest. Off stops everything except the indicators that mean H1 is working.</p>
-            <div class="segmented" id="motionSetting" role="radiogroup" aria-labelledby="motionLabel">
-              <button type="button" class="segmented-btn" data-value="full" role="radio" aria-checked="false">Full</button>
-              <button type="button" class="segmented-btn" data-value="reduced" role="radio" aria-checked="true">Reduced</button>
-              <button type="button" class="segmented-btn" data-value="off" role="radio" aria-checked="false">Off</button>
-            </div>
-            <p class="settings-hint">If your system asks for reduced motion, H1 follows that too.</p>
-
-          </div>
-
-<div class="settings-section">
-            <h2>Interface</h2>
-            <span class="field-label" id="textSizeLabel">Text size</span>
-            <div class="segmented" id="textSizeSetting" role="radiogroup" aria-labelledby="textSizeLabel">
-              <button type="button" class="segmented-btn" data-value="small" role="radio" aria-checked="false">Small</button>
-              <button type="button" class="segmented-btn" data-value="default" role="radio" aria-checked="true">Default</button>
-              <button type="button" class="segmented-btn" data-value="large" role="radio" aria-checked="false">Large</button>
-            </div>
-
-            <span class="field-label" id="responseWidthLabel">Response width</span>
-            <p class="settings-hint">How wide an answer runs. Comfortable keeps prose at an easy reading length; wide tables, code and equations always use the full width.</p>
-            <div class="segmented" id="responseWidthSetting" role="radiogroup" aria-labelledby="responseWidthLabel">
-              <button type="button" class="segmented-btn" data-value="comfortable" role="radio" aria-checked="true">Comfortable</button>
-              <button type="button" class="segmented-btn" data-value="full" role="radio" aria-checked="false">Full width</button>
-            </div>
-
-            <span class="field-label" id="sidebarSettingLabel">Sidebar</span>
-            <div class="segmented" id="sidebarSetting" role="radiogroup" aria-labelledby="sidebarSettingLabel">
-              <button type="button" class="segmented-btn" data-value="expanded" role="radio" aria-checked="true">Expanded</button>
-              <button type="button" class="segmented-btn" data-value="collapsed" role="radio" aria-checked="false">Icons only</button>
-            </div>
-            <p class="settings-hint">This one is per device, so a phone and a laptop can differ.</p>
-
-            <span class="field-label" id="deviceSettingLabel">Preview layout</span>
-            <p class="settings-hint">See how H1 looks on another device size, regardless of your current screen.</p>
-            <div class="segmented segmented-wrap" id="deviceSetting" role="radiogroup" aria-labelledby="deviceSettingLabel">
-              <button type="button" class="segmented-btn" data-value="auto" role="radio" aria-checked="false">Auto</button>
-              <button type="button" class="segmented-btn" data-value="desktop" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="3.5" width="20" height="13" rx="2"/><line x1="8" y1="20.5" x2="16" y2="20.5"/><line x1="12" y1="16.5" x2="12" y2="20.5"/></svg><span>Desktop</span></button>
-              <button type="button" class="segmented-btn" data-value="tablet" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/></svg><span>iPad / Tablet</span></button>
-              <button type="button" class="segmented-btn" data-value="phone" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/></svg><span>Phone</span></button>
-            </div>
-          </div>
-          <div class="settings-section">
+              <span class="field-label" id="deviceSettingLabel">Preview layout</span>
+              <p class="settings-hint">See how H1 looks on another device size, regardless of your current screen.</p>
+              <div class="segmented segmented-wrap" id="deviceSetting" role="radiogroup" aria-labelledby="deviceSettingLabel">
+                <button type="button" class="segmented-btn" data-value="auto" role="radio" aria-checked="false">Auto</button>
+                <button type="button" class="segmented-btn" data-value="desktop" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="3.5" width="20" height="13" rx="2"/><line x1="8" y1="20.5" x2="16" y2="20.5"/><line x1="12" y1="16.5" x2="12" y2="20.5"/></svg><span>Desktop</span></button>
+                <button type="button" class="segmented-btn" data-value="tablet" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/></svg><span>iPad / Tablet</span></button>
+                <button type="button" class="segmented-btn" data-value="phone" role="radio" aria-checked="false"><svg class="h1-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/></svg><span>Phone</span></button>
+              </div>
+  </div>
+</section>
+          <section class="settings-group">
             <h2>Time &amp; region</h2>
-            <p class="settings-hint">The clock in the title bar, and how H1 writes dates.</p>
-            <label class="field-label" for="regionSetting">Country or region</label>
-            <select id="regionSetting" class="tool-input region-select"></select>
-            <p class="settings-hint" id="regionPreview"></p>
-          </div>
+            <div class="settings-group-body">
+              <p class="settings-hint">The clock in the title bar, and how H1 writes dates.</p>
+              <label class="field-label" for="regionSetting">Country or region</label>
+              <select id="regionSetting" class="tool-input region-select"></select>
+              <p class="settings-hint" id="regionPreview"></p>
+            </div>
+          </section>
 
-          <div class="settings-section">
+          <section class="settings-group">
             <h2>Chat</h2>
-            <span class="field-label" id="enterSettingLabel">Send message with</span>
-            <div class="segmented" id="enterToSendSetting" role="radiogroup" aria-labelledby="enterSettingLabel">
-              <button type="button" class="segmented-btn" data-value="enter" role="radio" aria-checked="false">Enter</button>
-              <button type="button" class="segmented-btn" data-value="ctrlenter" role="radio" aria-checked="false">Ctrl + Enter</button>
+            <div class="settings-group-body">
+              <span class="field-label" id="enterSettingLabel">Send message with</span>
+              <div class="segmented" id="enterToSendSetting" role="radiogroup" aria-labelledby="enterSettingLabel">
+                <button type="button" class="segmented-btn" data-value="enter" role="radio" aria-checked="false">Enter</button>
+                <button type="button" class="segmented-btn" data-value="ctrlenter" role="radio" aria-checked="false">Ctrl + Enter</button>
+              </div>
+              <label class="toggle-row">
+                <span id="autoScrollToggleLabel">Auto-scroll to latest message</span>
+                <span class="toggle" id="autoScrollToggle" role="switch" aria-labelledby="autoScrollToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              </label>
+              <label class="toggle-row">
+                <span id="saveConversationsToggleLabel">Save conversations</span>
+                <span class="toggle" id="saveConversationsToggle" role="switch" aria-labelledby="saveConversationsToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              </label>
+              <label class="toggle-row toggle-row-stacked">
+                <span id="aiKnowsMeToggleLabel">
+                  Let H1 use what it knows about your studying
+                  <small>Sends a short summary of your streak, weak topics, deadlines and due reviews with your questions, so answers are about you.</small>
+                </span>
+                <span class="toggle on" id="aiKnowsMeToggle" role="switch" aria-labelledby="aiKnowsMeToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              </label>
+              <button id="settingsClearChatBtn" class="btn btn-ghost" type="button">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <span>Clear current chat</span>
+              </button>
             </div>
-            <label class="toggle-row">
-              <span id="autoScrollToggleLabel">Auto-scroll to latest message</span>
-              <span class="toggle" id="autoScrollToggle" role="switch" aria-labelledby="autoScrollToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
-            </label>
-            <label class="toggle-row">
-              <span id="saveConversationsToggleLabel">Save conversations</span>
-              <span class="toggle" id="saveConversationsToggle" role="switch" aria-labelledby="saveConversationsToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
-            </label>
-            <label class="toggle-row toggle-row-stacked">
-              <span id="aiKnowsMeToggleLabel">
-                Let H1 use what it knows about your studying
-                <small>Sends a short summary of your streak, weak topics, deadlines and due reviews with your questions, so answers are about you.</small>
-              </span>
-              <span class="toggle on" id="aiKnowsMeToggle" role="switch" aria-labelledby="aiKnowsMeToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
-            </label>
-            <button id="settingsClearChatBtn" class="btn btn-ghost" type="button">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              <span>Clear current chat</span>
-            </button>
-          </div>
+          </section>
 
-          <div class="settings-section">
+          <section class="settings-group">
             <h2>AI</h2>
-            <span class="field-label" id="aiLanguageSettingLabel">AI response language</span>
-            <p class="settings-hint">Changes the language H1 replies in across the AI Tutor, hints, and explanations.</p>
-            <div class="segmented" id="aiLanguageSetting" role="radiogroup" aria-labelledby="aiLanguageSettingLabel"></div>
-            <div class="status-row" style="margin-top:14px">
-              <span>Status</span>
-              <span id="settingsStatusPill" class="status-pill status-pill-pending">Checking…</span>
+            <div class="settings-group-body">
+              <span class="field-label" id="aiLanguageSettingLabel">AI response language</span>
+              <p class="settings-hint">Changes the language H1 replies in across the AI Tutor, hints, and explanations.</p>
+              <div class="segmented" id="aiLanguageSetting" role="radiogroup" aria-labelledby="aiLanguageSettingLabel"></div>
+              <div class="status-row" style="margin-top:14px">
+                <span>Status</span>
+                <span id="settingsStatusPill" class="status-pill status-pill-pending">Checking…</span>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div class="settings-section">
+          <section class="settings-group">
             <h2>Notifications</h2>
-            <label class="toggle-row">
-              <span id="deadlineRemindersToggleLabel">Deadline reminders</span>
-              <span class="toggle" id="deadlineRemindersToggle" role="switch" aria-labelledby="deadlineRemindersToggleLabel" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
-            </label>
-            <p class="settings-hint">Only works while H1 is open in this browser tab — this is not a background/push notification. When on, H1 checks your homework and planner deadlines and lets you know if something is due today or overdue.</p>
-            <label class="toggle-row">
-              <span id="achievementNotificationsToggleLabel">Achievement unlock notifications</span>
-              <span class="toggle on" id="achievementNotificationsToggle" role="switch" aria-labelledby="achievementNotificationsToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
-            </label>
-          </div>
+            <div class="settings-group-body">
+              <label class="toggle-row">
+                <span id="deadlineRemindersToggleLabel">Deadline reminders</span>
+                <span class="toggle" id="deadlineRemindersToggle" role="switch" aria-labelledby="deadlineRemindersToggleLabel" aria-checked="false" tabindex="0"><span class="toggle-thumb"></span></span>
+              </label>
+              <p class="settings-hint">Only works while H1 is open in this browser tab — this is not a background/push notification. When on, H1 checks your homework and planner deadlines and lets you know if something is due today or overdue.</p>
+              <label class="toggle-row">
+                <span id="achievementNotificationsToggleLabel">Achievement unlock notifications</span>
+                <span class="toggle on" id="achievementNotificationsToggle" role="switch" aria-labelledby="achievementNotificationsToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+          </section>
 
-          <div class="settings-section">
+          <section class="settings-group">
             <h2>Accessibility</h2>
-            <label class="toggle-row">
-              <span id="gamificationToggleLabel">Gamification (XP, levels, achievements)</span>
-              <span class="toggle" id="gamificationToggle" role="switch" aria-labelledby="gamificationToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
-            </label>
-          </div>
+            <div class="settings-group-body">
+              <label class="toggle-row">
+                <span id="gamificationToggleLabel">Gamification (XP, levels, achievements)</span>
+                <span class="toggle" id="gamificationToggle" role="switch" aria-labelledby="gamificationToggleLabel" aria-checked="true" tabindex="0"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+          </section>
 
-          <div class="settings-section">
+          <section class="settings-group">
             <h2>Privacy</h2>
-            <p class="settings-hint" id="privacyText">H1 stores your conversations, notes, homework, documents, flashcards, quiz history and settings in this browser's local storage only. Nothing is uploaded except the text/image you send to the AI Tutor when you ask a question — and only the current message, not your other stored data.</p>
-          </div>
+            <div class="settings-group-body">
+              <p class="settings-hint" id="privacyText">H1 stores your conversations, notes, homework, documents, flashcards, quiz history and settings in this browser's local storage only. Nothing is uploaded except the text/image you send to the AI Tutor when you ask a question — and only the current message, not your other stored data.</p>
+            </div>
+          </section>
 
-          <div class="settings-section">
+          <section class="settings-group">
             <h2>Data</h2>
-            <div class="danger-row">
-              <div class="danger-row-text"><strong>Export data</strong><span>Download all your H1 data as a JSON file.</span></div>
-              <button id="exportDataBtn" class="btn btn-ghost" type="button">Export</button>
+            <div class="settings-group-body">
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Export data</strong><span>Download all your H1 data as a JSON file.</span></div>
+                <button id="exportDataBtn" class="btn btn-ghost" type="button">Export</button>
+              </div>
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Import data</strong><span>Restore from a previously exported JSON file.</span></div>
+                <button id="importDataBtn" class="btn btn-ghost" type="button">Import</button>
+                <input type="file" id="importDataInput" accept="application/json" hidden />
+              </div>
+              <div class="danger-row" id="guestImportRow" hidden>
+                <div class="danger-row-text"><strong>Copy on-device work into your account</strong><span id="guestImportSub">Work saved on this device before you signed in.</span></div>
+                <button id="guestImportBtn" class="btn btn-ghost" type="button">Copy in</button>
+              </div>
             </div>
-            <div class="danger-row">
-              <div class="danger-row-text"><strong>Import data</strong><span>Restore from a previously exported JSON file.</span></div>
-              <button id="importDataBtn" class="btn btn-ghost" type="button">Import</button>
-              <input type="file" id="importDataInput" accept="application/json" hidden />
-            </div>
-            <div class="danger-row" id="guestImportRow" hidden>
-              <div class="danger-row-text"><strong>Copy on-device work into your account</strong><span id="guestImportSub">Work saved on this device before you signed in.</span></div>
-              <button id="guestImportBtn" class="btn btn-ghost" type="button">Copy in</button>
-            </div>
-          </div>
+          </section>
 
-          <div class="settings-section danger-zone">
+          <section class="settings-group danger-zone">
             <h2>Danger zone</h2>
-            <div class="danger-row">
-              <div class="danger-row-text"><strong>Clear conversations</strong><span>Deletes all saved Ask H1 conversations.</span></div>
-              <button id="clearConversationsBtn" class="btn btn-danger" type="button">Clear</button>
+            <div class="settings-group-body">
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Clear conversations</strong><span>Deletes all saved Ask H1 conversations.</span></div>
+                <button id="clearConversationsBtn" class="btn btn-danger" type="button">Clear</button>
+              </div>
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Clear notes</strong><span>Deletes all saved notes.</span></div>
+                <button id="clearNotesBtn" class="btn btn-danger" type="button">Clear</button>
+              </div>
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Reset progress</strong><span>Clears XP, streaks and achievements only.</span></div>
+                <button id="resetProgressBtn" class="btn btn-danger" type="button">Reset</button>
+              </div>
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Reset settings</strong><span>Resets theme, subject and preferences to defaults.</span></div>
+                <button id="resetSettingsBtn" class="btn btn-danger" type="button">Reset</button>
+              </div>
+              <div class="danger-row">
+                <div class="danger-row-text"><strong>Reset everything</strong><span>Clears all of your H1 data — conversations, notes and everything else.</span></div>
+                <button id="resetEverythingBtn" class="btn btn-danger" type="button">Reset all</button>
+              </div>
             </div>
-            <div class="danger-row">
-              <div class="danger-row-text"><strong>Clear notes</strong><span>Deletes all saved notes.</span></div>
-              <button id="clearNotesBtn" class="btn btn-danger" type="button">Clear</button>
-            </div>
-            <div class="danger-row">
-              <div class="danger-row-text"><strong>Reset progress</strong><span>Clears XP, streaks and achievements only.</span></div>
-              <button id="resetProgressBtn" class="btn btn-danger" type="button">Reset</button>
-            </div>
-            <div class="danger-row">
-              <div class="danger-row-text"><strong>Reset settings</strong><span>Resets theme, subject and preferences to defaults.</span></div>
-              <button id="resetSettingsBtn" class="btn btn-danger" type="button">Reset</button>
-            </div>
-            <div class="danger-row">
-              <div class="danger-row-text"><strong>Reset everything</strong><span>Clears all of your H1 data — conversations, notes and everything else.</span></div>
-              <button id="resetEverythingBtn" class="btn btn-danger" type="button">Reset all</button>
-            </div>
-          </div>
+          </section>
 
-          <div class="settings-section">
+          <section class="settings-group">
             <h2>About</h2>
-            <p class="about-line"><strong>H1 — Build. Create. Innovate.</strong></p>
-            <p class="settings-hint">Version 4.0 · An AI-powered study companion for Math, Science, English, Hindi, Tamil and general homework.</p>
-            <p class="settings-hint">Developed by Pranav Ganesh</p>
-          </div>
+            <div class="settings-group-body">
+              <p class="about-line"><strong>H1 — Build. Create. Innovate.</strong></p>
+              <p class="settings-hint">Version 4.0 · An AI-powered study companion for Math, Science, English, Hindi, Tamil and general homework.</p>
+              <p class="settings-hint">Developed by Pranav Ganesh</p>
+            </div>
+          </section>
         </section>
       </main>
     </div>
