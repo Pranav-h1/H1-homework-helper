@@ -1091,7 +1091,9 @@ setEnterMode(enterMode);
 AI_MODES.forEach((m) => {
   const opt = document.createElement("option");
   opt.value = m.value;
-  opt.textContent = `${m.icon} ${m.label}`;
+  // A native <option> can only hold text, so the mode's emoji would be the one glyph in the
+  // whole interface still drawn in the system emoji font. The label alone is clear.
+  opt.textContent = m.label;
   opt.title = m.description;
   modeSelect.appendChild(opt);
 });

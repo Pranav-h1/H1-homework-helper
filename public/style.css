@@ -381,8 +381,8 @@ textarea::placeholder {
   display: flex;
   min-height: 0;
   position: relative;
-  gap: 12px;
-  padding: 0 12px 12px;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-3) var(--sp-3);
 }
 
 .mobile-topbar {

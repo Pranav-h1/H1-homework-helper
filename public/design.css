@@ -484,15 +484,6 @@ kbd,
   font-family: var(--font-body);
 }
 
-/* The clock. Two lines on a wide window, time only when there is no room for the date, and
-   tabular figures so the digits do not jitter as the minute changes. */
-/* Tablet-width windows keep the time but drop the date rather than crowd the title bar. */
-@media (max-width: 1100px) {
-  .topbar-clock .clock-date {
-    display: none;
-  }
-}
-
 /* Interface opacity: a real range input, so dragging, arrow keys, Home/End and screen
    readers all work without any of it being re-implemented. */
 /* Nothing rests under the dock.
@@ -595,9 +586,6 @@ kbd,
   font-weight: var(--fw-semibold);
   font-variant-numeric: tabular-nums;
   color: var(--text);
-}
-.region-select {
-  max-width: 380px;
 }
 .topbar-status {
   backdrop-filter: none;
@@ -2346,7 +2334,7 @@ html.force-reduced-motion .auth-layout {
      nine tenths the size rather than a different design. */
   /* Weights, five of them. A difference of 50 in the middle of the range is invisible on one
      word and reads as a wobble across a screen, so H1 uses the four the system face is cut
-     for, plus one light weight that only the clock wears. */
+     for, plus one light weight for the rare piece of large, quiet type. */
   --fw-light: 340;
   --fw-regular: 400;
   --fw-medium: 500;
@@ -2384,13 +2372,13 @@ html.force-reduced-motion .auth-layout {
      clerical. Each step has a job, and a component picks the step for what it IS, not for how
      big it happens to be. Fully round is reserved for chips, tags and status dots — a control
      that is round on both ends reads as a label, not as something you press. */
-  --r-window: 28px;   /* the application window */
-  --r-panel: 26px;    /* panels: the content stage, the sidebar, large glass surfaces */
-  --radius-xs: 8px;   /* the smallest things: dots, tiny tags, inner details */
-  --radius-sm: 12px;  /* small controls: icon buttons, segmented items */
-  --radius-md: 14px;  /* buttons and fields */
-  --radius-lg: 20px;  /* cards */
-  --radius-xl: 26px;  /* large cards, dialogs, the composer */
+  --r-window: 32px;   /* the application window */
+  --r-panel: 28px;    /* panels: the content stage, the sidebar, large glass surfaces */
+  --radius-xs: 10px;  /* the smallest things: dots, tiny tags, inner details */
+  --radius-sm: 14px;  /* small controls: icon buttons, segmented items */
+  --radius-md: 18px;  /* buttons and fields */
+  --radius-lg: 24px;  /* cards */
+  --radius-xl: 32px;  /* large cards, dialogs, the composer */
 
   /* Three sizes with real distance between them, so a primary action never reads as a utility
      button. The small step is for the things that sit beside content — an icon button in a
@@ -4150,23 +4138,6 @@ select.tool-input,
   align-items: center;
 }
 
-/* The clock: two lines on one baseline grid, digits that do not shift as the minute changes, and
-   a capsule that stays out of the way until you go near it. */
-.topbar-clock {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: transparent;
-  white-space: nowrap;
-  cursor: default;
-  user-select: none;
-  transition: background var(--dur-2) var(--ease-out);
-}
-
-.topbar-clock:hover {
-  background: none;
-}
-
 /* The connection indicator is a capsule of the same height, with the dot centred on the text. */
 .topbar-status {
   display: inline-flex;
@@ -4197,23 +4168,6 @@ select.tool-input,
 /* A hairline under the bar rather than a line between every item. */
 .desktop-topbar {
   border-bottom: 0.5px solid var(--hairline);
-}
-
-/* On a tablet the date drops but the capsule keeps its shape. */
-@media (max-width: 1100px) {
-  .topbar-clock {
-    height: 34px;
-    padding: 0 12px;
-  }
-}
-
-/* On a phone the clock is one line beside the theme switch, and it keeps the same corner. */
-.mobile-clock {
-  display: inline-flex;
-  align-items: center;
-  margin-left: auto;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
 }
 
 /* =====================================================================================
@@ -4312,28 +4266,6 @@ select.tool-input,
 .traffic-light {
   width: 12px;
   height: 12px;
-}
-
-/* The clock. Quiet and exact: it reads at a glance without becoming the subject of the screen.
-   Light weight, tabular figures, and a fade rather than a flick when the minute turns. */
-.topbar-clock .clock-time {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-  /* The minute changes once an hour-and-a-bit's worth of glances; when it does, it fades rather
-     than flicks. clock.js dips the opacity, waits, and writes the new value underneath. */
-  transition: opacity var(--dur-3) var(--ease-in-out);
-}
-
-.topbar-clock .clock-time.is-changing {
-  opacity: 0.32;
-}
-
-.topbar-clock .clock-date {
-  transition: opacity var(--dur-3) var(--ease-in-out);
-}
-
-.topbar-clock .clock-date.is-changing {
-  opacity: 0.32;
 }
 
 .space-switcher-btn {
@@ -4760,10 +4692,6 @@ textarea {
     --card-pad: var(--sp-5);
   }
 
-  .topbar-clock .clock-time {
-    font-size: calc(18px * var(--fs-scale));
-  }
-
   .nav-item,
   .nav-active-pill {
     height: 38px;
@@ -4834,12 +4762,12 @@ textarea {
 }
 
 /* =====================================================================================
-   31. The clock, finished
+   31. The materials, named
    -------------------------------------------------------------------------------------
-   The last pass made the clock large. This one makes it a component: a soft capsule of its own
-   material, with room around the type, a corner that matches the cards below it, and depth you
-   register rather than notice. The rules it follows are named here rather than typed in twice,
-   because the status capsule beside it has to be its sibling, not its lookalike.
+   Everything translucent in H1 draws from the four blurs and the capsule fill declared here,
+   so a floating thing in the chrome cannot end up with its own idea of what glass is. (This
+   section used to be about the title bar's clock, which has since been removed; the materials
+   it introduced are used by the rest of the chrome and stay.)
    ===================================================================================== */
 :root {
   /* Materials, named. Everything translucent in H1 draws from these four. */
@@ -4856,8 +4784,7 @@ textarea {
   --shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 20px rgba(15, 23, 42, 0.05);
 }
 
-/* The two capsules in the title bar share one shape, one material and one rhythm. */
-.topbar-clock,
+/* The status capsule: the one piece of chrome in the title bar with a surface of its own. */
 .topbar-status {
   border: 1px solid var(--border-soft);
   background: var(--capsule-fill);
@@ -4868,27 +4795,12 @@ textarea {
     box-shadow var(--dur-2) var(--ease-out);
 }
 
-.topbar-clock:hover,
 .topbar-status:hover {
   background: var(--capsule-fill-hover);
   border-color: var(--hairline-strong);
 }
 
-.topbar-clock {
-  height: auto;
-  margin-right: var(--sp-3);
-  line-height: 1;
-}
-
-/* The time is the only large numeral in the chrome, so it is set the way a numeral wants to be:
-   a light weight, tight tracking, and figures that all take the same width so nothing shifts as
-   the minute changes. */
-.topbar-clock .clock-time {
-  color: var(--text);
-}
-
-/* The status capsule is the shorter sibling: same corner family, same material, centred on the
-   clock's optical middle rather than on its box. */
+/* Sized to the toolbar's small step, so it lines up with the icon buttons beside it. */
 .topbar-status {
   height: var(--h-control-sm);
   padding: 0 var(--sp-3);
@@ -4910,25 +4822,6 @@ textarea {
 
 .desktop-topbar {
   padding-right: var(--sp-5);
-}
-
-/* On the phone the same capsule, one line, sized for a thumb rather than a pointer. */
-.mobile-clock {
-  height: 36px;
-  padding: 0 var(--sp-4);
-  border: 1px solid var(--border-soft);
-  background: var(--capsule-fill);
-  box-shadow: var(--shadow-soft);
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-semibold);
-  color: var(--text);
-  letter-spacing: -0.01em;
-}
-
-@media (max-width: 1100px) {
-  .topbar-clock {
-    padding: var(--sp-h2) var(--sp-4);
-  }
 }
 
 /* A square control is rounded a little more than a wide one so it reads as a squircle rather
@@ -5110,85 +5003,6 @@ textarea {
 .composer-form.composer-v2:focus-within .composer-input:focus-visible,
 .superbar:focus-within .superbar-input:focus-visible {
   outline: none;
-}
-
-/* =====================================================================================
-   36. The clock, one more look
-   -------------------------------------------------------------------------------------
-   Rounder, with more air, and with the two lines given a clearer relationship: the time is the
-   element, the date is its caption. The corner moves up one step to the one large surfaces use,
-   which at this size reads as soft rather than inflated, and the capsule gains a hairline of
-   light along its top edge — the one place in H1 where a highlight earns its keep, because a
-   piece of glass catches light at its top edge and this is the only glass at eye level.
-   ===================================================================================== */
-.topbar-clock {
-  /* Centred rather than right-aligned: the caption is wider than the numeral above it, and an
-     edge-aligned pair of unequal lines reads as a list, while a centred pair reads as one
-     object. */
-  align-items: center;
-  text-align: center;
-  gap: 1px;
-  background: none;
-  border: none;
-  box-shadow: none;
-}
-
-:root[data-theme="light"] .topbar-clock {
-  box-shadow: none;
-}
-
-.topbar-clock .clock-time {
-  font-size: calc(22px * var(--fs-scale));
-  font-weight: var(--fw-regular);
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-}
-
-/* The caption: quieter, and tracked out a touch so a small line under a large light numeral
-   does not read as compressed. */
-.topbar-clock .clock-date {
-  font-size: var(--fs-2xs);
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.012em;
-  line-height: 1.2;
-  color: var(--text-faint);
-}
-
-.topbar-clock:hover .clock-date {
-  color: var(--text-muted);
-}
-
-@media (max-width: 1100px) {
-  .topbar-clock {
-    padding: var(--sp-h2) var(--sp-5);
-  }
-}
-
-/* =====================================================================================
-   37. The clock is a pill
-   -------------------------------------------------------------------------------------
-   At 80px tall, a 32px corner is 40% of the height — mathematically generous, and still read as
-   square, because the capsule sits directly beside a status indicator that is fully round. Two
-   neighbours in the same material, one stadium-shaped and one not, is the mismatch the eye
-   catches. The clock is now the same shape as its sibling, with more room at the ends so the
-   type does not sit inside the curve.
-   ===================================================================================== */
-.topbar-clock {
-  border-radius: var(--radius-full);
-  padding: var(--sp-1) var(--sp-4);
-  /* The caption carries the optical offset instead of the box. */
-  padding-bottom: calc(var(--sp-1) + 1px);
-}
-
-@media (max-width: 1100px) {
-  .topbar-clock {
-    padding: var(--sp-1) var(--sp-3) calc(var(--sp-1) + 1px);
-  }
-}
-
-/* The single-line clock on a phone is already a pill; this keeps the pair in step. */
-.mobile-clock {
-  border-radius: var(--radius-full);
 }
 
 /* =====================================================================================
@@ -6556,10 +6370,6 @@ svg.h1-icon,
    between them, and the account sits on its own surface at the foot so the list ends somewhere
    instead of just stopping.
    ===================================================================================== */
-.sidebar {
-  border-right: 0.5px solid var(--hairline);
-}
-
 .nav-section-label {
   padding: var(--sp-5) var(--sp-3) var(--sp-2);
   font-size: var(--fs-2xs);
@@ -6584,5 +6394,75 @@ svg.h1-icon,
 
 .sidebar-account:hover {
   background: var(--fill-hover);
+}
+
+/* =====================================================================================
+   57. The last rough edges
+   -------------------------------------------------------------------------------------
+   A <select> is the one control a browser still insists on drawing itself. Left alone it
+   arrives with the operating system's own chevron, its own corner and its own idea of height,
+   which is why the tutor's mode picker was the single control on that screen that did not look
+   like it belonged to H1. It keeps its native behaviour — the keyboard, the picker, the
+   accessibility — and loses the native paint.
+   ===================================================================================== */
+select,
+select.tool-input,
+.mode-select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: var(--h-field);
+  padding-right: var(--sp-8);
+  border-radius: var(--radius-md);
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% + 1px),
+    calc(100% - 13px) calc(50% + 1px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  color: var(--text);
+  cursor: pointer;
+}
+
+select:hover {
+  background-color: var(--fill-hover);
+}
+
+/* The chevron is drawn in the text colour, so it must not inherit the muted tone a disabled
+   control takes, or it disappears. */
+select:disabled {
+  cursor: not-allowed;
+}
+
+/* ---- The tutor, finished ---------------------------------------------------------------------
+   The answer is the one surface in H1 that is read rather than scanned, so it gets the most
+   generous interior in the app and its actions line up with its own left edge rather than with
+   the canvas behind it. */
+.chat-log .message.ai .bubble.answer {
+  padding: var(--sp-7) var(--sp-8);
+  border-radius: var(--radius-xl);
+}
+
+.chat-log .message.ai .message-actions {
+  padding-left: var(--sp-2);
+}
+
+.message.user .bubble {
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl);
+}
+
+/* Code inside an answer: rounded one step in from the card it sits in, with room to breathe. */
+.message.ai .bubble.answer :is(.code-block, pre) {
+  border-radius: var(--radius-lg);
+}
+
+/* The empty tutor and the waiting card share the answer's corner, so the first thing that
+   appears in the thread is the same shape as everything that follows it. */
+#view-chat .empty-state,
+.chat-empty,
+.chat-log .message.ai .bubble:not(.answer) {
+  border-radius: var(--radius-xl);
 }
 

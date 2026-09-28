@@ -68,7 +68,6 @@ import { TEXT_SIZES, DENSITIES, getTextSize, setTextSize, getDensity, setDensity
 import { getReadingWidth, setReadingWidth, onReadingWidthChange } from "./chatLayout.js";
 import { initDockInset } from "./dockInset.js";
 import { DEFAULT_OPACITY, getStoredOpacity, setOpacity, initOpacity } from "./opacity.js";
-import { REGIONS, getStoredRegion, setRegion, initClock, render as renderClock, describeZone, formatTime, resolveZone } from "./clock.js";
 import { isAccountMode, currentUser } from "./session.js";
 import { onRemoteChange } from "./cloudSync.js";
 import { offerGuestDataImport, guestDataSummary, importGuestDataFromSettings } from "./guestMigration.js";
@@ -297,37 +296,6 @@ deviceSettingGroup.querySelectorAll(".segmented-btn").forEach((btn) => {
 });
 
 refreshDeviceUI();
-
-/* ===========================================================
-   Time and region: the title-bar clock
-   =========================================================== */
-const regionSelect = document.getElementById("regionSetting");
-const regionPreview = document.getElementById("regionPreview");
-
-REGIONS.forEach((region) => {
-  const option = document.createElement("option");
-  option.value = region.value;
-  option.textContent = region.zone ? `${region.label} — ${region.zone}` : region.label;
-  regionSelect.appendChild(option);
-});
-
-// The preview is written from the same clock the title bar uses, so what Settings promises and
-// what the window shows can never disagree.
-function syncRegionUI(value) {
-  regionSelect.value = value;
-  regionPreview.textContent = `${formatTime()} · ${describeZone()}${value === "auto" ? " (this device)" : ""}`;
-}
-
-regionSelect.addEventListener("change", () => {
-  syncRegionUI(setRegion(regionSelect.value));
-});
-
-initClock();
-syncRegionUI(getStoredRegion());
-// Keep the preview honest while Settings is open, and after a change from another device.
-setInterval(() => {
-  if (getCurrentView() === "settings") syncRegionUI(getStoredRegion());
-}, 15000);
 
 /* ===========================================================
    Accent color
@@ -756,8 +724,6 @@ onRemoteChange((keys) => {
   syncOpacityUI(initOpacity());
   initInterfacePrefs();
   syncInterfaceUI();
-  syncRegionUI(getStoredRegion());
-  renderClock();
   renderView(getCurrentView());
   refreshNotes();
   refreshFlashcards();
