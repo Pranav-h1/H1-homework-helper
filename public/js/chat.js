@@ -432,15 +432,41 @@ const LAST_ANSWER_ACTIONS = [
   ["Improve this answer", "improve"],
 ];
 
+// Offered in the open under the newest answer, because this is the moment they are useful:
+// the student has just read something and either did not follow it or wants to practise it.
+// Every one of these runs the same handler the menu does — nothing here is new behaviour.
+const FOLLOW_UP_ACTIONS = [
+  ["Explain simpler", "simpler"],
+  ["Give example", "example"],
+  ["Make flashcards", "flashcards"],
+  ["Add to Notes", "notes"],
+];
+
 const ANY_ANSWER_ACTIONS = [
   ["Add to Notes", "notes"],
-  ["💾 Save to Vault", "vault"],
+  ["Save to Vault", "vault"],
   ["Add to Project", "project"],
   ["Add to Study Plan", "plan"],
   ["Create practice questions", "practice"],
   ["Turn into quiz", "quiz"],
   ["Make flashcards", "flashcards"],
 ];
+
+// The row of follow-ups under the newest answer. It is rebuilt rather than kept in sync: a row
+// only belongs under the last message, and renderMessage already runs for each one.
+function buildFollowUps(index) {
+  const row = document.createElement("div");
+  row.className = "answer-followups";
+  FOLLOW_UP_ACTIONS.forEach(([label, action]) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "answer-followup";
+    btn.textContent = label;
+    btn.addEventListener("click", () => handleAction(action, index));
+    row.appendChild(btn);
+  });
+  return row;
+}
 
 // The menu is built when it's opened, not when the message is drawn: whether this is still the
 // latest answer (which decides if "Regenerate" etc. apply) can change after it was rendered,
@@ -477,7 +503,7 @@ function buildMessagePopover(msg, index) {
     copyBtn.addEventListener("click", () => copyText(msg.content, copyBtn));
     popover.appendChild(copyBtn);
 
-    const readBtn = actionButton(isSpeechSupported() ? "🔊 Read aloud" : "Read aloud unavailable", "read");
+    const readBtn = actionButton(isSpeechSupported() ? "Read aloud" : "Read aloud unavailable", "read");
     readBtn.disabled = !isSpeechSupported();
     readBtn.addEventListener("click", () => toggleReadAloud(msg.content, readBtn));
     popover.appendChild(readBtn);
@@ -654,6 +680,7 @@ function renderMessage(msg, index) {
     });
     footer.appendChild(quickCopy);
     footer.appendChild(buildMessagePopover(msg, index));
+    if (index === messages.length - 1) footer.appendChild(buildFollowUps(index));
   }
 
   if (msg.ts) {

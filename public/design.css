@@ -6710,3 +6710,61 @@ select:disabled {
   padding-inline: var(--sp-1);
 }
 
+/* =====================================================================================
+   61. What to do with an answer
+   -------------------------------------------------------------------------------------
+   H1 could already take an answer and explain it another way, turn it into practice
+   questions, build flashcards from it, save it to Notes, add it to a project or a study plan —
+   fifteen things in all. Every one of them was behind a "•••" that nobody opens, so the tutor
+   read as a chat page: a question, an answer, and a dead end.
+
+   The four that move a student forward now sit in the open under the newest answer, at the
+   moment they are useful — just after reading something you either did not follow or want to
+   practise. They are quiet: a row of small outlined controls, not a toolbar of buttons
+   competing with the answer above them. The other eleven stay in the menu, where a less
+   common action belongs.
+   ===================================================================================== */
+.answer-followups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-left: var(--sp-2);
+}
+
+.answer-followup {
+  height: var(--h-control-sm);
+  padding: 0 var(--sp-3);
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--hairline);
+  background: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition:
+    background var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out);
+}
+
+.answer-followup:hover {
+  background: var(--fill-hover);
+  border-color: var(--hairline-strong);
+  color: var(--text);
+}
+
+.answer-followup:active {
+  transform: scale(0.97);
+}
+
+/* The row belongs to the answer above it, so it shares the thread's measure and wraps rather
+   than scrolling sideways on a phone. */
+@media (max-width: 560px) {
+  .answer-followups {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
