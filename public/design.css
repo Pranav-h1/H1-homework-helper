@@ -2396,13 +2396,18 @@ html.force-reduced-motion .auth-layout {
   --sp-12: 48px;
   --sp-14: 56px;
   /* -- Motion: short and flat, and nothing bounces -------------------------------------- */
-  /* Slower, and on one gentle curve. A state change should look like it settled rather than
-     like it settled rather than like it snapped — but quickly. A hover reads in 110ms, a panel
-     in 160, something entering the screen in 220. Nothing springs, nothing bounces, and
-     nothing moves unless it is telling you something. */
+  /* One gentle curve, four lengths. A hover reads in 110ms, a panel in 160, something entering
+     the screen in 220, and a bar that is filling — a progress meter, a timer — in 420, where
+     the slowness is the information. Nothing springs, nothing bounces, and nothing moves
+     unless it is telling you something.
+
+     Every transition in H1 uses one of these four, which is what lets Settings → Appearance →
+     Motion govern the whole application from one place. A hardcoded duration is invisible to
+     that dial. */
   --dur-1: 110ms;
   --dur-2: 160ms;
   --dur-3: 220ms;
+  --dur-4: 420ms;
   --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-in-out: cubic-bezier(0.4, 0.05, 0.2, 1);
   --ease-spring: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -5656,6 +5661,7 @@ select[aria-invalid="true"]:focus-visible,
   --dur-1: 80ms;
   --dur-2: 110ms;
   --dur-3: 140ms;
+  --dur-4: 220ms;
 }
 
 /* Nothing loops at Reduced or Off. These are the animations that ran forever: a backdrop that
@@ -5697,12 +5703,15 @@ select[aria-invalid="true"]:focus-visible,
 }
 
 /* =====================================================================================
-   47. The name, and one line under it
+   47. Two names, in their own places
    -------------------------------------------------------------------------------------
-   H1 is the name; "Build. Create. Innovate." is the line under it. It sits with the mark at
-   the top of the sidebar and on the sign-in screen, set as a caption — the same weight and
-   colour as any other secondary line in the app, because a motto that shouts is an
-   advertisement. It appears once per screen and nowhere in the chrome.
+   The product is H1 Homework Helper, and that is what the sidebar, the sign-in screen and the
+   window title say. H1 Labs is who makes it, and it appears where a maker's name belongs: at
+   the foot of the sidebar, at the foot of the sign-in page, and in Settings → About.
+
+   The motto — "Where Ideas Become Reality." — sits beside the maker's name in those three
+   places and nowhere else. It is set at caption size in the faint colour, like every other
+   secondary line in the app, because a motto in the chrome is an advertisement.
    ===================================================================================== */
 .brand-name {
   line-height: 1.15;
@@ -5718,11 +5727,26 @@ select[aria-invalid="true"]:focus-visible,
   white-space: nowrap;
 }
 
+/* ---- The maker's name, at the foot of the sidebar --------------------------------------- */
 .sidebar-credit {
   display: flex;
   flex-direction: column;
+  gap: 1px;
   padding: var(--sp-3) var(--sp-2) var(--sp-1);
-  line-height: 1.35;
+  line-height: 1.4;
+}
+
+.sidebar-credit-brand {
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-medium);
+  color: var(--text-muted);
+}
+
+/* The separator is the only part of the line that steps back, so the name and the motto read
+   as one phrase rather than two labels. */
+.sidebar-credit-dot {
+  margin: 0 1px;
+  color: var(--text-faint);
 }
 
 .sidebar-credit-by {
@@ -5730,12 +5754,61 @@ select[aria-invalid="true"]:focus-visible,
   color: var(--text-faint);
 }
 
+/* ---- The same pair, at the foot of the sign-in page ------------------------------------- */
 .auth-credit {
   line-height: 1.5;
 }
 
+.auth-credit-brand {
+  display: block;
+  font-weight: var(--fw-medium);
+  color: var(--text-muted);
+}
+
 .auth-credit strong {
   font-weight: var(--fw-semibold);
+  color: var(--text-muted);
+}
+
+/* ---- On the way in ----------------------------------------------------------------------
+   The splash is on screen for a moment, so the maker's name goes at the foot of it at the size
+   a colophon is read at: the name, then the line, stacked, with the name dominant. */
+.boot-splash-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: var(--sp-6) 0 0;
+  font-size: var(--fs-2xs);
+  line-height: 1.4;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.boot-splash-brand span {
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.01em;
+  color: var(--text-muted);
+}
+
+/* ---- And in About, where it is allowed a line of its own -------------------------------- */
+.about-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: var(--sp-4) 0 var(--sp-3);
+  padding-top: var(--sp-4);
+  border-top: 0.5px solid var(--hairline);
+}
+
+.about-brand-name {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.about-brand-motto {
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
@@ -6464,5 +6537,62 @@ select:disabled {
 .chat-empty,
 .chat-log .message.ai .bubble:not(.answer) {
   border-radius: var(--radius-xl);
+}
+
+/* =====================================================================================
+   58. The narrowest phone
+   -------------------------------------------------------------------------------------
+   At 320px the bar above a code block ran out of room: the language label and three action
+   buttons are laid out in a row that cannot shrink, so "Copy", "Run" and "Explain" pushed
+   past the edge of the panel and were unreachable. Nothing above 360px showed it, which is
+   why it survived every sweep until the narrow sizes were added to the audit.
+
+   The bar wraps now, and below the smallest breakpoint the buttons lose their labels and keep
+   their icons and their titles — a 320px screen has room for three icons, not three words.
+   ===================================================================================== */
+.code-block-bar {
+  flex-wrap: wrap;
+  row-gap: var(--sp-1);
+}
+
+.code-block-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+/* Letting the bar wrap also lets its buttons size to their text, which on a phone is 24px —
+   under any reasonable thumb. They get a real target on every touch-sized screen, labels or
+   no labels. */
+@media (max-width: 900px), (pointer: coarse) {
+  .code-block-btn {
+    min-height: var(--h-control-sm);
+    min-width: var(--h-control-sm);
+    justify-content: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .code-block-bar {
+    padding-inline: var(--sp-2);
+  }
+
+  /* The label is inside the button next to its icon; hiding it leaves the icon, and the
+     button keeps its title and aria-label so nothing is lost to a screen reader. */
+  .code-block-btn {
+    gap: 0;
+    padding: var(--sp-1) var(--sp-2);
+  }
+
+  .code-block-btn > span:not(.h1-icon):not([class*="icon"]) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 
