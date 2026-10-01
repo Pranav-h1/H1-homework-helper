@@ -6596,3 +6596,117 @@ select:disabled {
   }
 }
 
+/* =====================================================================================
+   59. The first three seconds
+   -------------------------------------------------------------------------------------
+   The splash was a mark that pulsed and a line of text. With Motion set to Reduced — which is
+   the default — the pulse is off, so the first thing anyone saw of H1 was a completely static
+   screen that could not be told apart from a page that had stopped loading.
+
+   It is composed now: the mark, the product's name, a thin line that moves because something
+   is genuinely happening, the status text the loader writes into, and the maker at the foot.
+   The moving line is exempt from the motion settings for the same reason a spinner is — a
+   frozen progress indicator is a bug report.
+   ===================================================================================== */
+.boot-splash {
+  background:
+    radial-gradient(90% 60% at 50% 0%, rgba(var(--accent-1-rgb), 0.08), transparent 60%),
+    var(--bg);
+}
+
+.boot-splash-inner {
+  gap: var(--sp-4);
+  max-width: 320px;
+}
+
+.boot-splash-name {
+  margin: var(--sp-1) 0 0;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+/* A hairline that fills and recedes. It says "working" without spinning anything. */
+.boot-splash-progress {
+  display: block;
+  width: 132px;
+  height: 2px;
+  margin: var(--sp-1) 0 0;
+  border-radius: var(--radius-full);
+  background: var(--fill-press);
+  overflow: hidden;
+}
+
+.boot-splash-progress > span {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent-1);
+  animation: bootProgress 1.25s var(--ease-in-out) infinite;
+}
+
+@keyframes bootProgress {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(355%); }
+}
+
+/* Exempt, like the spinners: this one is the only thing on screen saying H1 is alive. */
+:root[data-motion="off"] .boot-splash-progress > span {
+  animation-duration: 1250ms !important;
+  animation-iteration-count: infinite !important;
+}
+
+.boot-splash-text {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.boot-splash-brand {
+  margin-top: var(--sp-5);
+}
+
+/* =====================================================================================
+   60. The focal point, and the levels it sits on
+   -------------------------------------------------------------------------------------
+   Home greeted you and then offered six things at once. A page needs one place the eye goes
+   first, and on Home that is the ask bar: it is the thing H1 is for. So the greeting states
+   what H1 does rather than asking a question, the line under it has a readable measure instead
+   of running the width of the window, and the ask bar is given the room and the edge to be the
+   single loudest object above the fold.
+
+   The surface levels, named once so the rest of the file can refer to them:
+
+     level 0   the desktop behind the window
+     level 1   the content stage, the sidebar, the title bar — the frame
+     level 2   cards and the two boxes you type into — things ON the frame
+     level 3   menus, popovers, dialogs — things briefly IN FRONT of everything
+
+   Each level is a different fraction of the interface-opacity setting and a different blur
+   (section 51), and nothing in H1 should invent a fifth.
+   ===================================================================================== */
+.home-hero .hero-sub {
+  max-width: 54ch;
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* The ask bar is the primary action on the page, so it is the one control that gets an edge
+   strong enough to read as a destination rather than as a field. */
+.home-ask .superbar {
+  border-color: var(--hairline-strong);
+}
+
+.home-ask .superbar:hover:not(:focus-within) {
+  border-color: color-mix(in srgb, var(--accent-1) 32%, var(--hairline-strong));
+}
+
+/* The suggestions under it are what you can do, so they read as a row of offers rather than as
+   a toolbar: they sit in from the bar's edge and keep their own rhythm. */
+.home-ask .superbar-suggestions {
+  padding-inline: var(--sp-1);
+}
+
